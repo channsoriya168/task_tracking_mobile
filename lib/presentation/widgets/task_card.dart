@@ -95,6 +95,10 @@ class TaskCard extends StatelessWidget {
                   _priorityTag(highlighted),
                 ],
               ),
+              if (task.status == TaskStatus.inProgress) ...[
+                const SizedBox(height: 10),
+                _progressBar(highlighted, isDark),
+              ],
               const SizedBox(height: 14),
 
               // ── Footer ──────────────────────────────────────
@@ -127,16 +131,77 @@ class TaskCard extends StatelessWidget {
     if (task.status == TaskStatus.todo && onAccept != null) {
       return _actionButton('Accept', kPrimary, Colors.white, onAccept!);
     }
-    if (task.status == TaskStatus.inProgress && onFinish != null) {
-      final bg = highlighted
-          ? Colors.white.withValues(alpha: 0.25)
-          : const Color(0xFF4CAF50);
-      return _actionButton('Submit', bg, Colors.white, onFinish!);
+    if (task.status == TaskStatus.inProgress) {
+      return _progressCountBadge();
     }
     if (task.status == TaskStatus.done) {
       return _doneBadge();
     }
     return const SizedBox.shrink();
+  }
+
+  Widget _progressCountBadge() {
+    final count = task.progressItems.length;
+    final color = highlighted ? Colors.white : kPrimary;
+    final bg = highlighted
+        ? Colors.white.withValues(alpha: 0.2)
+        : kPrimary.withValues(alpha: 0.1);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.notes_rounded, size: 11, color: color),
+          const SizedBox(width: 4),
+          Text(
+            '$count ${count == 1 ? 'note' : 'notes'}',
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _progressBar(bool highlighted, bool isDark) {
+    final count = task.progressItems.length;
+    final value = count == 0 ? 0.0 : (count / 5).clamp(0.0, 1.0);
+    final barBg = highlighted
+        ? Colors.white.withValues(alpha: 0.2)
+        : (isDark ? Colors.white12 : kPrimary.withValues(alpha: 0.08));
+    final barFg = highlighted ? Colors.white.withValues(alpha: 0.8) : kPrimary;
+    final textColor = highlighted
+        ? Colors.white.withValues(alpha: 0.75)
+        : kTextMuted;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text('Progress', style: TextStyle(fontSize: 11, color: textColor)),
+            const Spacer(),
+            Text(
+              '$count ${count == 1 ? 'note' : 'notes'}',
+              style: TextStyle(fontSize: 11, color: textColor),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: value,
+            backgroundColor: barBg,
+            valueColor: AlwaysStoppedAnimation(barFg),
+            minHeight: 4,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _actionButton(

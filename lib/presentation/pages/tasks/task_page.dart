@@ -4,6 +4,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/data/models/task_model.dart';
 import 'package:task_tracking_mobile/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/presentation/controllers/theme_controller.dart';
+import 'package:task_tracking_mobile/presentation/pages/tasks/task_detail_page.dart';
 import 'package:task_tracking_mobile/presentation/widgets/task_card.dart';
 import 'package:task_tracking_mobile/presentation/widgets/circular_icon_button.dart';
 
@@ -149,13 +150,18 @@ class TasksPage extends StatelessWidget {
                             highlighted: highlighted,
                             onToggle: () => ctrl.toggleComplete(task.id),
                             onDelete: () => ctrl.deleteTask(task.id),
-                            onTap: () {},
+                            onTap: task.status == TaskStatus.inProgress
+                                ? () => Get.to(
+                                      () => TaskDetailPage(
+                                        task: task,
+                                        ctrl: ctrl,
+                                      ),
+                                    )
+                                : () {},
                             onAccept: task.status == TaskStatus.todo
                                 ? () => showProgressSheet(context, ctrl, task)
                                 : null,
-                            onFinish: task.status == TaskStatus.inProgress
-                                ? () => showProgressSheet(context, ctrl, task)
-                                : null,
+                            onFinish: null,
                           ),
                         );
                       },

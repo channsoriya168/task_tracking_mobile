@@ -14,6 +14,8 @@ class TaskModel {
   String category;
   TaskPriority priority;
   final DateTime createdAt;
+  final List<String> members;
+  final List<String> progressItems;
   String? acceptedBy;
   String? acceptedByAvatar;
   String? assignedToId;
@@ -27,6 +29,8 @@ class TaskModel {
     this.category = 'General',
     this.priority = TaskPriority.medium,
     DateTime? createdAt,
+    this.members = const [],
+    this.progressItems = const [],
     this.acceptedBy,
     this.acceptedByAvatar,
     this.assignedToId,
@@ -79,6 +83,8 @@ class TaskModel {
     bool clearDueDate = false,
     String? category,
     TaskPriority? priority,
+    List<String>? members,
+    List<String>? progressItems,
     String? acceptedBy,
     bool clearAcceptedBy = false,
     String? acceptedByAvatar,
@@ -94,6 +100,8 @@ class TaskModel {
       category: category ?? this.category,
       priority: priority ?? this.priority,
       createdAt: createdAt,
+      members: members ?? List.from(this.members),
+      progressItems: progressItems ?? List.from(this.progressItems),
       acceptedBy: clearAcceptedBy ? null : (acceptedBy ?? this.acceptedBy),
       acceptedByAvatar: acceptedByAvatar ?? this.acceptedByAvatar,
       assignedToId: clearAssignedToId ? null : (assignedToId ?? this.assignedToId),
