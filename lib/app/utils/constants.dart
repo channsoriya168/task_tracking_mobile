@@ -83,6 +83,20 @@ const EdgeInsets kTagPaddingSmall = EdgeInsets.symmetric(
   vertical: 4,
 );
 
+// ── Status / Priority Maps ───────────────────────────────
+const Map<String, Color> kStatusColors = {
+  'Pending': Color(0xFFFFA502),
+  'In Progress': Color(0xFF6C63FF),
+  'Complete': Color(0xFF2ED573),
+  'Fail': Color(0xFFFF4757),
+};
+
+const Map<String, Color> kPriorityColors = {
+  'High': kHighPriority,
+  'Medium': kMediumPriority,
+  'Low': kLowPriority,
+};
+
 // ── Categories ──────────────────────────────────────────
 const List<String> kCategories = [
   'General',

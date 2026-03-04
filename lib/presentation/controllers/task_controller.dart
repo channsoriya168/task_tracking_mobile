@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/data/models/task_model.dart';
 class TaskController extends GetxController {
   final RxList<TaskModel> tasks = <TaskModel>[].obs;
   final RxInt navIndex = 0.obs;
-  final RxString filterStatus = 'Todo'.obs;
+  final RxString filterStatus = 'All'.obs;
   final RxString searchQuery = ''.obs;
 
   @override
@@ -77,6 +77,15 @@ class TaskController extends GetxController {
         category: 'Research',
         priority: TaskPriority.medium,
       ),
+      TaskModel(
+        id: '8',
+        title: 'Deploy to production',
+        description: 'Run deployment pipeline and verify all services are healthy.',
+        status: TaskStatus.fail,
+        dueDate: DateTime.now().subtract(const Duration(days: 2)),
+        category: 'Engineering',
+        priority: TaskPriority.high,
+      ),
     ]);
   }
 
@@ -93,24 +102,27 @@ class TaskController extends GetxController {
     }
 
     switch (filterStatus.value) {
-      case 'Complete':
-        result = result.where((t) => t.status == TaskStatus.done).toList();
-        break;
+      // Home page filter keys (display labels)
+      case 'Pending':
       case 'Todo':
         result = result.where((t) => t.status == TaskStatus.todo).toList();
         break;
+      case 'In Progress':
       case 'InProgress':
         result = result.where((t) => t.status == TaskStatus.inProgress).toList();
         break;
+      case 'Complete':
+        result = result.where((t) => t.status == TaskStatus.done).toList();
+        break;
+      case 'Fail':
+        result = result.where((t) => t.status == TaskStatus.fail).toList();
+        break;
     }
 
-    // Sort: todo/inProgress first, done last; then by due date
     result.sort((a, b) {
       if (a.status == TaskStatus.done && b.status != TaskStatus.done) return 1;
       if (a.status != TaskStatus.done && b.status == TaskStatus.done) return -1;
-      if (a.dueDate != null && b.dueDate != null) {
-        return a.dueDate!.compareTo(b.dueDate!);
-      }
+      if (a.dueDate != null && b.dueDate != null) return a.dueDate!.compareTo(b.dueDate!);
       if (a.dueDate != null) return -1;
       if (b.dueDate != null) return 1;
       return 0;
@@ -118,6 +130,9 @@ class TaskController extends GetxController {
 
     return result;
   }
+
+  List<TaskModel> get pendingTasks =>
+      tasks.where((t) => t.status == TaskStatus.todo).toList();
 
   List<TaskModel> get upcomingTasks {
     final now = DateTime.now();
@@ -133,9 +148,13 @@ class TaskController extends GetxController {
 
   int get totalTasks => tasks.length;
   int get completedTasks => tasks.where((t) => t.status == TaskStatus.done).length;
-  int get todoCount => tasks.where((t) => t.status == TaskStatus.todo).length;
-  int get inReviewCount => tasks.where((t) => t.status == TaskStatus.inProgress).length;
-  int get inProgressTasks => inReviewCount;
+  int get pendingCount => tasks.where((t) => t.status == TaskStatus.todo).length;
+  int get inProgressTasks => tasks.where((t) => t.status == TaskStatus.inProgress).length;
+  int get failCount => tasks.where((t) => t.status == TaskStatus.fail).length;
+
+  // Aliases for task_page.dart compatibility
+  int get todoCount => pendingCount;
+  int get inReviewCount => inProgressTasks;
 
   double get completionRate {
     if (tasks.isEmpty) return 0;

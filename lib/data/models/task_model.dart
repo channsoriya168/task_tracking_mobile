@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
-enum TaskStatus { todo, inProgress, done }
+enum TaskStatus { todo, inProgress, done, fail }
 
 enum TaskPriority { high, medium, low }
 
@@ -33,23 +33,19 @@ class TaskModel {
 
   String get statusLabel {
     switch (status) {
-      case TaskStatus.todo:
-        return 'To Do';
-      case TaskStatus.inProgress:
-        return 'In Progress';
-      case TaskStatus.done:
-        return 'Done';
+      case TaskStatus.todo:       return 'Pending';
+      case TaskStatus.inProgress: return 'In Progress';
+      case TaskStatus.done:       return 'Complete';
+      case TaskStatus.fail:       return 'Fail';
     }
   }
 
   Color get statusColor {
     switch (status) {
-      case TaskStatus.todo:
-        return kTextMuted;
-      case TaskStatus.inProgress:
-        return kPrimary;
-      case TaskStatus.done:
-        return kLowPriority;
+      case TaskStatus.todo:       return const Color(0xFFFFA502);
+      case TaskStatus.inProgress: return kPrimary;
+      case TaskStatus.done:       return kLowPriority;
+      case TaskStatus.fail:       return kHighPriority;
     }
   }
 
