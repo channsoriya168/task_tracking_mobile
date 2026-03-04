@@ -90,6 +90,8 @@ class TaskCard extends StatelessWidget {
               Row(
                 children: [
                   _categoryTag(highlighted, isDark),
+                  const SizedBox(width: 6),
+                  _priorityTag(highlighted),
                 ],
               ),
               const SizedBox(height: 14),
@@ -234,6 +236,14 @@ class TaskCard extends StatelessWidget {
           task.category, Colors.black.withOpacity(0.2), Colors.white);
     }
     return _pill(task.category, _catBg(), _catFg());
+  }
+
+  Widget _priorityTag(bool highlighted) {
+    final color = highlighted ? Colors.white : task.priorityColor;
+    final bg = highlighted
+        ? Colors.black.withValues(alpha: 0.15)
+        : task.priorityColor.withValues(alpha: 0.12);
+    return _pill(task.priorityLabel, bg, color);
   }
 
   Color _catBg() {

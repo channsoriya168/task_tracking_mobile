@@ -22,6 +22,7 @@ class TaskController extends GetxController {
         status: TaskStatus.inProgress,
         dueDate: DateTime.now().add(const Duration(days: 2)),
         category: 'Design',
+        priority: TaskPriority.high,
       ),
       TaskModel(
         id: '2',
@@ -30,6 +31,7 @@ class TaskController extends GetxController {
         status: TaskStatus.todo,
         dueDate: DateTime.now().add(const Duration(hours: 6)),
         category: 'Engineering',
+        priority: TaskPriority.high,
       ),
       TaskModel(
         id: '3',
@@ -38,6 +40,7 @@ class TaskController extends GetxController {
         status: TaskStatus.todo,
         dueDate: DateTime.now().add(const Duration(days: 5)),
         category: 'Documentation',
+        priority: TaskPriority.medium,
       ),
       TaskModel(
         id: '4',
@@ -46,6 +49,7 @@ class TaskController extends GetxController {
         status: TaskStatus.done,
         dueDate: DateTime.now().subtract(const Duration(days: 1)),
         category: 'Meeting',
+        priority: TaskPriority.low,
       ),
       TaskModel(
         id: '5',
@@ -54,6 +58,7 @@ class TaskController extends GetxController {
         status: TaskStatus.inProgress,
         dueDate: DateTime.now().add(const Duration(days: 7)),
         category: 'Engineering',
+        priority: TaskPriority.medium,
       ),
       TaskModel(
         id: '6',
@@ -61,6 +66,7 @@ class TaskController extends GetxController {
         description: 'Upgrade all packages to their latest stable versions.',
         status: TaskStatus.done,
         category: 'Maintenance',
+        priority: TaskPriority.low,
       ),
       TaskModel(
         id: '7',
@@ -69,6 +75,7 @@ class TaskController extends GetxController {
         status: TaskStatus.todo,
         dueDate: DateTime.now().add(const Duration(days: 3)),
         category: 'Research',
+        priority: TaskPriority.medium,
       ),
     ]);
   }
