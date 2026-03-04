@@ -71,11 +71,11 @@ class TasksPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               child: Row(
                 children: [
-                  _filterTab('Complete', ctrl.completedTasks, ctrl, isDark),
-                  const SizedBox(width: 8),
                   _filterTab('Todo', ctrl.todoCount, ctrl, isDark),
                   const SizedBox(width: 8),
-                  _filterTab('InReview', ctrl.inReviewCount, ctrl, isDark),
+                  _filterTab('InProgress', ctrl.inReviewCount, ctrl, isDark),
+                  const SizedBox(width: 8),
+                  _filterTab('Complete', ctrl.completedTasks, ctrl, isDark),
                 ],
               ),
             ),
@@ -149,7 +149,13 @@ class TasksPage extends StatelessWidget {
                             highlighted: highlighted,
                             onToggle: () => ctrl.toggleComplete(task.id),
                             onDelete: () => ctrl.deleteTask(task.id),
-                            onTap: () => showTaskSheet(context, ctrl, task),
+                            onTap: () {},
+                            onAccept: task.status == TaskStatus.todo
+                                ? () => showProgressSheet(context, ctrl, task)
+                                : null,
+                            onFinish: task.status == TaskStatus.inProgress
+                                ? () => showProgressSheet(context, ctrl, task)
+                                : null,
                           ),
                         );
                       },
@@ -170,7 +176,6 @@ class TasksPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleCtrl = TextEditingController(text: existing?.title ?? '');
     final descCtrl = TextEditingController(text: existing?.description ?? '');
-    final priority = (existing?.priority ?? TaskPriority.medium).obs;
     final category = (existing?.category ?? 'General').obs;
 
     Get.bottomSheet(
@@ -214,61 +219,6 @@ class TasksPage extends StatelessWidget {
                 _field(titleCtrl, 'Title', isDark),
                 const SizedBox(height: 12),
                 _field(descCtrl, 'Description (optional)', isDark, maxLines: 3),
-                const SizedBox(height: 16),
-                Text(
-                  'Priority',
-                  style: const TextStyle(fontSize: 13, color: kTextMuted),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: TaskPriority.values.map((p) {
-                    final sel = priority.value == p;
-                    final color = p == TaskPriority.high
-                        ? kHighPriority
-                        : p == TaskPriority.medium
-                        ? kMediumPriority
-                        : kLowPriority;
-                    final lbl = p == TaskPriority.high
-                        ? 'High'
-                        : p == TaskPriority.medium
-                        ? 'Medium'
-                        : 'Low';
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        onTap: () => priority.value = p,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 7,
-                          ),
-                          decoration: BoxDecoration(
-                            color: sel
-                                ? color.withOpacity(0.15)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: sel
-                                  ? color
-                                  : (isDark
-                                        ? Colors.white24
-                                        : Colors.grey.shade300),
-                            ),
-                          ),
-                          child: Text(
-                            lbl,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: sel ? color : kTextMuted,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
                 const SizedBox(height: 16),
                 Text(
                   'Category',
@@ -315,7 +265,6 @@ class TasksPage extends StatelessWidget {
                             id: ctrl.generateId(),
                             title: title,
                             description: descCtrl.text.trim(),
-                            priority: priority.value,
                             category: category.value,
                           ),
                         );
@@ -324,7 +273,6 @@ class TasksPage extends StatelessWidget {
                           existing.copyWith(
                             title: title,
                             description: descCtrl.text.trim(),
-                            priority: priority.value,
                             category: category.value,
                           ),
                         );
@@ -357,6 +305,138 @@ class TasksPage extends StatelessWidget {
     );
   }
 
+  static void showProgressSheet(
+    BuildContext context,
+    TaskController ctrl,
+    TaskModel task,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final descCtrl = TextEditingController(text: task.description);
+    final isAccept = task.status == TaskStatus.todo;
+
+    Get.bottomSheet(
+      Container(
+        decoration: BoxDecoration(
+          color: isDark ? kSurfaceDark : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.fromLTRB(
+          20,
+          16,
+          20,
+          MediaQuery.of(context).viewInsets.bottom + 24,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white24 : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                isAccept ? 'Accept Task' : 'Submit Task',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : kTextDark,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Title — read-only
+              const Text('Title',
+                  style: TextStyle(fontSize: 13, color: kTextMuted)),
+              const SizedBox(height: 6),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: isDark ? kCardDark : kBgLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  task.title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Category — read-only
+              const Text('Category',
+                  style: TextStyle(fontSize: 13, color: kTextMuted)),
+              const SizedBox(height: 6),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: isDark ? kCardDark : kBgLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  task.category,
+                  style: const TextStyle(
+                      fontSize: 14, color: kTextMuted),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Progress notes — editable
+              const Text('Progress Notes',
+                  style: TextStyle(fontSize: 13, color: kTextMuted)),
+              const SizedBox(height: 6),
+              _field(descCtrl, 'Describe your progress...', isDark,
+                  maxLines: 3),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    final desc = descCtrl.text.trim();
+                    if (isAccept) {
+                      ctrl.acceptTask(task.id, description: desc);
+                    } else {
+                      ctrl.finishTask(task.id, description: desc);
+                    }
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isAccept
+                        ? kPrimary
+                        : const Color(0xFF4CAF50),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    isAccept ? 'Accept Task' : 'Submit Task',
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
   // ── Helpers ────────────────────────────────────────────────
 
   Widget _filterTab(
@@ -366,7 +446,7 @@ class TasksPage extends StatelessWidget {
     bool isDark,
   ) {
     final selected = ctrl.filterStatus.value == filter;
-    final label = filter == 'InReview' ? 'In Review' : filter;
+    final label = filter == 'InProgress' ? 'In Progress' : filter;
     return GestureDetector(
       onTap: () => ctrl.filterStatus.value = filter,
       child: AnimatedContainer(

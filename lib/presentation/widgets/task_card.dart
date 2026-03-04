@@ -8,6 +8,8 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onTap;
   final bool highlighted;
+  final VoidCallback? onAccept;
+  final VoidCallback? onFinish;
 
   const TaskCard({
     super.key,
@@ -16,6 +18,8 @@ class TaskCard extends StatelessWidget {
     required this.onDelete,
     required this.onTap,
     this.highlighted = false,
+    this.onAccept,
+    this.onFinish,
   });
 
   @override
@@ -32,7 +36,9 @@ class TaskCard extends StatelessWidget {
 
     return Dismissible(
       key: Key(task.id),
-      direction: DismissDirection.endToStart,
+      direction: task.status == TaskStatus.done
+          ? DismissDirection.none
+          : DismissDirection.endToStart,
       onDismissed: (_) => onDelete(),
       background: Container(
         alignment: Alignment.centerRight,
@@ -68,12 +74,14 @@ class TaskCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () => _showMenu(context),
-                    child: Icon(Icons.more_horiz_rounded,
-                        color: mutedColor, size: 20),
-                  ),
+                  if (task.status != TaskStatus.done) ...[
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => _showMenu(context),
+                      child: Icon(Icons.more_horiz_rounded,
+                          color: mutedColor, size: 20),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: 10),
@@ -81,8 +89,6 @@ class TaskCard extends StatelessWidget {
               // ── Tags ────────────────────────────────────────
               Row(
                 children: [
-                  _priorityTag(highlighted),
-                  const SizedBox(width: 6),
                   _categoryTag(highlighted, isDark),
                 ],
               ),
@@ -100,23 +106,73 @@ class TaskCard extends StatelessWidget {
                         : 'No date',
                     style: TextStyle(fontSize: 12, color: mutedColor),
                   ),
-                  const SizedBox(width: 14),
-                  Icon(Icons.attach_file_rounded,
-                      size: 12, color: mutedColor),
-                  const SizedBox(width: 3),
-                  Text('5', style: TextStyle(fontSize: 12, color: mutedColor)),
-                  const SizedBox(width: 14),
-                  Icon(Icons.chat_bubble_outline_rounded,
-                      size: 12, color: mutedColor),
-                  const SizedBox(width: 3),
-                  Text('5', style: TextStyle(fontSize: 12, color: mutedColor)),
                   const Spacer(),
-                  _avatarStack(cardBg),
+                  _actionWidget(),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _actionWidget() {
+    if (task.status == TaskStatus.todo && onAccept != null) {
+      return _actionButton('Accept', kPrimary, Colors.white, onAccept!);
+    }
+    if (task.status == TaskStatus.inProgress && onFinish != null) {
+      final bg = highlighted
+          ? Colors.white.withValues(alpha: 0.25)
+          : const Color(0xFF4CAF50);
+      return _actionButton('Submit', bg, Colors.white, onFinish!);
+    }
+    if (task.status == TaskStatus.done) {
+      return _doneBadge();
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _actionButton(
+      String label, Color bg, Color fg, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+              color: fg, fontSize: 11, fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+
+  Widget _doneBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check_circle_rounded,
+              color: Color(0xFF4CAF50), size: 12),
+          SizedBox(width: 4),
+          Text(
+            'Done',
+            style: TextStyle(
+                color: Color(0xFF4CAF50),
+                fontSize: 11,
+                fontWeight: FontWeight.w600),
+          ),
+        ],
       ),
     );
   }
@@ -154,21 +210,6 @@ class TaskCard extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.check_circle_outline_rounded,
-                  color: isDark ? Colors.white70 : kTextDark),
-              title: Text(
-                task.status == TaskStatus.done
-                    ? 'Mark as To Do'
-                    : 'Mark as Complete',
-                style:
-                    TextStyle(color: isDark ? Colors.white : kTextDark),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                onToggle();
-              },
-            ),
-            ListTile(
               leading:
                   const Icon(Icons.delete_outline_rounded, color: kHighPriority),
               title: const Text('Delete',
@@ -186,30 +227,6 @@ class TaskCard extends StatelessWidget {
   }
 
   // ── Tag helpers ──────────────────────────────────────────
-
-  Widget _priorityTag(bool highlighted) {
-    Color bg, fg;
-    if (highlighted) {
-      bg = Colors.white.withOpacity(0.25);
-      fg = Colors.white;
-    } else {
-      switch (task.priority) {
-        case TaskPriority.high:
-          bg = const Color(0xFFFFE4E4);
-          fg = const Color(0xFFE53935);
-          break;
-        case TaskPriority.medium:
-          bg = const Color(0xFFFFF3E0);
-          fg = const Color(0xFFFB8C00);
-          break;
-        case TaskPriority.low:
-          bg = const Color(0xFFE8F5E9);
-          fg = const Color(0xFF43A047);
-          break;
-      }
-    }
-    return _pill(task.priorityLabel, bg, fg);
-  }
 
   Widget _categoryTag(bool highlighted, bool isDark) {
     if (highlighted) {
@@ -256,44 +273,6 @@ class TaskCard extends StatelessWidget {
         label,
         style: TextStyle(
             fontSize: 11, fontWeight: FontWeight.w600, color: fg),
-      ),
-    );
-  }
-
-  Widget _avatarStack(Color cardBg) {
-    const colors = [
-      Color(0xFF6C63FF),
-      Color(0xFFFF6584),
-      Color(0xFF43CBFF),
-    ];
-    return SizedBox(
-      width: 52,
-      height: 22,
-      child: Stack(
-        children: List.generate(
-          3,
-          (i) => Positioned(
-            left: i * 16.0,
-            child: Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: colors[i],
-                shape: BoxShape.circle,
-                border: Border.all(color: cardBg, width: 1.5),
-              ),
-              child: Center(
-                child: Text(
-                  String.fromCharCode(65 + i),
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

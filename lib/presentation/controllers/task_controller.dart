@@ -19,7 +19,6 @@ class TaskController extends GetxController {
         id: '1',
         title: 'Design new landing page',
         description: 'Create wireframes and high-fidelity mockups for the new marketing website.',
-        priority: TaskPriority.high,
         status: TaskStatus.inProgress,
         dueDate: DateTime.now().add(const Duration(days: 2)),
         category: 'Design',
@@ -28,7 +27,6 @@ class TaskController extends GetxController {
         id: '2',
         title: 'Fix authentication bug',
         description: 'Users are getting logged out unexpectedly on mobile devices after 10 minutes.',
-        priority: TaskPriority.high,
         status: TaskStatus.todo,
         dueDate: DateTime.now().add(const Duration(hours: 6)),
         category: 'Engineering',
@@ -37,7 +35,6 @@ class TaskController extends GetxController {
         id: '3',
         title: 'Write API documentation',
         description: 'Document all public endpoints for the v2 API release.',
-        priority: TaskPriority.medium,
         status: TaskStatus.todo,
         dueDate: DateTime.now().add(const Duration(days: 5)),
         category: 'Documentation',
@@ -46,7 +43,6 @@ class TaskController extends GetxController {
         id: '4',
         title: 'Team sync meeting',
         description: 'Weekly standup with the product and engineering team.',
-        priority: TaskPriority.low,
         status: TaskStatus.done,
         dueDate: DateTime.now().subtract(const Duration(days: 1)),
         category: 'Meeting',
@@ -55,7 +51,6 @@ class TaskController extends GetxController {
         id: '5',
         title: 'Performance optimization',
         description: 'Reduce app cold startup time by 40% through lazy loading.',
-        priority: TaskPriority.medium,
         status: TaskStatus.inProgress,
         dueDate: DateTime.now().add(const Duration(days: 7)),
         category: 'Engineering',
@@ -64,7 +59,6 @@ class TaskController extends GetxController {
         id: '6',
         title: 'Update dependencies',
         description: 'Upgrade all packages to their latest stable versions.',
-        priority: TaskPriority.low,
         status: TaskStatus.done,
         category: 'Maintenance',
       ),
@@ -72,7 +66,6 @@ class TaskController extends GetxController {
         id: '7',
         title: 'User research interviews',
         description: 'Conduct 5 user interviews to validate the new onboarding flow.',
-        priority: TaskPriority.medium,
         status: TaskStatus.todo,
         dueDate: DateTime.now().add(const Duration(days: 3)),
         category: 'Research',
@@ -99,7 +92,7 @@ class TaskController extends GetxController {
       case 'Todo':
         result = result.where((t) => t.status == TaskStatus.todo).toList();
         break;
-      case 'InReview':
+      case 'InProgress':
         result = result.where((t) => t.status == TaskStatus.inProgress).toList();
         break;
     }
@@ -136,8 +129,6 @@ class TaskController extends GetxController {
   int get todoCount => tasks.where((t) => t.status == TaskStatus.todo).length;
   int get inReviewCount => tasks.where((t) => t.status == TaskStatus.inProgress).length;
   int get inProgressTasks => inReviewCount;
-  int get highPriorityTasks =>
-      tasks.where((t) => t.priority == TaskPriority.high && t.status != TaskStatus.done).length;
 
   double get completionRate {
     if (tasks.isEmpty) return 0;
@@ -159,6 +150,24 @@ class TaskController extends GetxController {
     final task = tasks[i];
     final newStatus = task.status == TaskStatus.done ? TaskStatus.todo : TaskStatus.done;
     tasks[i] = task.copyWith(status: newStatus);
+  }
+
+  void acceptTask(String id, {String? description}) {
+    final i = tasks.indexWhere((t) => t.id == id);
+    if (i == -1) return;
+    tasks[i] = tasks[i].copyWith(
+      status: TaskStatus.inProgress,
+      description: description ?? tasks[i].description,
+    );
+  }
+
+  void finishTask(String id, {String? description}) {
+    final i = tasks.indexWhere((t) => t.id == id);
+    if (i == -1) return;
+    tasks[i] = tasks[i].copyWith(
+      status: TaskStatus.done,
+      description: description ?? tasks[i].description,
+    );
   }
 
   String generateId() => DateTime.now().millisecondsSinceEpoch.toString();
