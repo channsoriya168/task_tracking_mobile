@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/data/models/task_model.dart';
 class TaskController extends GetxController {
   final RxList<TaskModel> tasks = <TaskModel>[].obs;
   final RxInt navIndex = 0.obs;
-  final RxString filterStatus = 'All'.obs;
+  final RxString filterStatus = 'Todo'.obs;
   final RxString searchQuery = ''.obs;
 
   @override
