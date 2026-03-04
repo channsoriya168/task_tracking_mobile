@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/data/models/task_model.dart';
 class TaskController extends GetxController {
   final RxList<TaskModel> tasks = <TaskModel>[].obs;
   final RxInt navIndex = 0.obs;
-  final RxString filterStatus = 'All'.obs;
+  final RxString filterStatus = 'Todo'.obs;
   final RxString searchQuery = ''.obs;
 
   @override
@@ -93,11 +93,14 @@ class TaskController extends GetxController {
     }
 
     switch (filterStatus.value) {
-      case 'Active':
-        result = result.where((t) => t.status != TaskStatus.done).toList();
-        break;
-      case 'Done':
+      case 'Complete':
         result = result.where((t) => t.status == TaskStatus.done).toList();
+        break;
+      case 'Todo':
+        result = result.where((t) => t.status == TaskStatus.todo).toList();
+        break;
+      case 'InReview':
+        result = result.where((t) => t.status == TaskStatus.inProgress).toList();
         break;
     }
 
@@ -130,7 +133,9 @@ class TaskController extends GetxController {
 
   int get totalTasks => tasks.length;
   int get completedTasks => tasks.where((t) => t.status == TaskStatus.done).length;
-  int get inProgressTasks => tasks.where((t) => t.status == TaskStatus.inProgress).length;
+  int get todoCount => tasks.where((t) => t.status == TaskStatus.todo).length;
+  int get inReviewCount => tasks.where((t) => t.status == TaskStatus.inProgress).length;
+  int get inProgressTasks => inReviewCount;
   int get highPriorityTasks =>
       tasks.where((t) => t.priority == TaskPriority.high && t.status != TaskStatus.done).length;
 
