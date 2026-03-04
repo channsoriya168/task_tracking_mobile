@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 final ThemeData lightTheme = ThemeData(
@@ -8,13 +9,14 @@ final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
   ),
   scaffoldBackgroundColor: kBgLight,
-  appBarTheme: const AppBarTheme(
+  textTheme: GoogleFonts.interTextTheme(),
+  appBarTheme: AppBarTheme(
     backgroundColor: Colors.transparent,
     elevation: 0,
     scrolledUnderElevation: 0,
     centerTitle: false,
-    iconTheme: IconThemeData(color: kTextDark),
-    titleTextStyle: TextStyle(
+    iconTheme: const IconThemeData(color: kTextDark),
+    titleTextStyle: GoogleFonts.inter(
       color: kTextDark,
       fontSize: 26,
       fontWeight: FontWeight.bold,
@@ -24,9 +26,7 @@ final ThemeData lightTheme = ThemeData(
   cardTheme: CardThemeData(
     color: Colors.white,
     elevation: 0,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
@@ -57,7 +57,7 @@ final ThemeData lightTheme = ThemeData(
       elevation: 0,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+      textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
     ),
   ),
   chipTheme: ChipThemeData(

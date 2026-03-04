@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 final ThemeData darkTheme = ThemeData(
@@ -6,18 +7,16 @@ final ThemeData darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: kPrimary,
     brightness: Brightness.dark,
-  ).copyWith(
-    surface: kBgDark,
-    surfaceContainerHighest: kCardDark,
-  ),
+  ).copyWith(surface: kBgDark, surfaceContainerHighest: kCardDark),
   scaffoldBackgroundColor: kBgDark,
-  appBarTheme: const AppBarTheme(
+  textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+  appBarTheme: AppBarTheme(
     backgroundColor: Colors.transparent,
     elevation: 0,
     scrolledUnderElevation: 0,
     centerTitle: false,
-    iconTheme: IconThemeData(color: Colors.white),
-    titleTextStyle: TextStyle(
+    iconTheme: const IconThemeData(color: Colors.white),
+    titleTextStyle: GoogleFonts.inter(
       color: Colors.white,
       fontSize: 26,
       fontWeight: FontWeight.bold,
@@ -27,9 +26,7 @@ final ThemeData darkTheme = ThemeData(
   cardTheme: CardThemeData(
     color: kCardDark,
     elevation: 0,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
@@ -60,7 +57,7 @@ final ThemeData darkTheme = ThemeData(
       elevation: 0,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+      textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
     ),
   ),
   chipTheme: ChipThemeData(

@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? kSurfaceDark : kBgLight,
+      backgroundColor: isDark ? kBgDark : kBgLight,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

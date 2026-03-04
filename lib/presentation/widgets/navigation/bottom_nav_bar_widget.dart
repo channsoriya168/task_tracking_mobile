@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -14,34 +15,61 @@ class BottomNavBarWidget extends StatelessWidget {
     final isDarkMode = theme.brightness == Brightness.dark;
     return Obx(
       () => Container(
-        decoration: BoxDecoration(
-          color: isDarkMode ? kTextDark : Colors.white,
-          // boxShadow: [
-          //   BoxShadow(blurRadius: 20, color: Colors.black.withOpacity(.1)),
-          // ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: GNav(
-              rippleColor: kPrimary.withOpacity(0.1),
-              hoverColor: kPrimary.withOpacity(0.05),
-              gap: 8,
-              activeColor: Colors.white,
-              iconSize: 22,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-              duration: Duration(milliseconds: 300),
-              tabBackgroundColor: kPrimary,
-              tabBorderRadius: 50,
-              curve: Curves.easeInOutCubic,
-              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-              tabs: [
-                GButton(icon: Icons.home_rounded, text: 'Home'),
-                GButton(icon: Icons.list_rounded, text: 'Tasks'),
-                GButton(icon: Icons.person_rounded, text: 'Profile'),
-              ],
-              selectedIndex: navController.selectedIndex.value,
-              onTabChange: navController.changePage,
+        margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: (isDarkMode ? kBgDark : kBgLight),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: (isDarkMode ? Colors.white : Colors.black).withAlpha(
+                    26,
+                  ),
+                  width: 0.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                    color: Colors.black.withAlpha(isDarkMode ? 77 : 21),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 6,
+                  ),
+                  child: GNav(
+                    rippleColor: kPrimary.withAlpha(26),
+                    hoverColor: kPrimary.withAlpha(13),
+                    gap: 8,
+                    activeColor: Colors.white,
+                    iconSize: 22,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    duration: const Duration(milliseconds: 300),
+                    tabBackgroundColor: kPrimary,
+                    tabBorderRadius: 50,
+                    curve: Curves.easeInOutCubic,
+                    color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                    tabs: [
+                      GButton(icon: Icons.home_rounded, text: 'Home'),
+                      GButton(icon: Icons.list_rounded, text: 'Tasks'),
+                      GButton(icon: Icons.person_rounded, text: 'Profile'),
+                    ],
+                    selectedIndex: navController.selectedIndex.value,
+                    onTabChange: navController.changePage,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
