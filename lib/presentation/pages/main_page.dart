@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/presentation/pages/home_page.dart';
 import 'package:task_tracking_mobile/presentation/pages/profile_page.dart';
-import 'package:task_tracking_mobile/presentation/pages/tasks_page.dart';
+import 'package:task_tracking_mobile/presentation/pages/tasks/task_page.dart';
 import 'package:task_tracking_mobile/presentation/widgets/responsive_scaffold.dart';
 
 class MainPage extends StatelessWidget {
