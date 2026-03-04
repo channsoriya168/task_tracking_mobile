@@ -5,8 +5,8 @@ import 'package:task_tracking_mobile/app/routes/app_pages.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/app/themes/dark_theme.dart';
 import 'package:task_tracking_mobile/app/themes/light_theme.dart';
-import 'package:task_tracking_mobile/presentation/bindings/app_binding.dart';
-import 'package:task_tracking_mobile/presentation/controllers/theme_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/bindings/app_binding.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

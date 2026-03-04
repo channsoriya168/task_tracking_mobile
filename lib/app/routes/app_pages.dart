@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
-import 'package:task_tracking_mobile/presentation/bindings/app_binding.dart';
-import 'package:task_tracking_mobile/presentation/pages/auth/login_page.dart';
-import 'package:task_tracking_mobile/presentation/pages/main_page.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/pages/login_page.dart';
+import 'package:task_tracking_mobile/features/core/presentation/bindings/app_binding.dart';
+import 'package:task_tracking_mobile/features/core/presentation/pages/main_page.dart';
 
 class AppPages {
   static final routes = [
@@ -11,9 +11,6 @@ class AppPages {
       page: () => const LoginPage(),
       binding: AppBinding(), // ensures all controllers exist from the start
     ),
-    GetPage(
-      name: AppRoutes.mainPage,
-      page: () => const MainPage(),
-    ),
+    GetPage(name: AppRoutes.mainPage, page: () => const MainPage()),
   ];
 }
