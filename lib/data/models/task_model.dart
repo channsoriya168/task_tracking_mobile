@@ -14,6 +14,8 @@ class TaskModel {
   String category;
   TaskPriority priority;
   final DateTime createdAt;
+  String? acceptedBy;
+  String? acceptedByAvatar;
 
   TaskModel({
     required this.id,
@@ -24,6 +26,8 @@ class TaskModel {
     this.category = 'General',
     this.priority = TaskPriority.medium,
     DateTime? createdAt,
+    this.acceptedBy,
+    this.acceptedByAvatar,
   }) : createdAt = createdAt ?? DateTime.now();
 
   bool get isOverdue {
@@ -73,6 +77,9 @@ class TaskModel {
     bool clearDueDate = false,
     String? category,
     TaskPriority? priority,
+    String? acceptedBy,
+    bool clearAcceptedBy = false,
+    String? acceptedByAvatar,
   }) {
     return TaskModel(
       id: id,
@@ -83,6 +90,8 @@ class TaskModel {
       category: category ?? this.category,
       priority: priority ?? this.priority,
       createdAt: createdAt,
+      acceptedBy: clearAcceptedBy ? null : (acceptedBy ?? this.acceptedBy),
+      acceptedByAvatar: acceptedByAvatar ?? this.acceptedByAvatar,
     );
   }
 }
