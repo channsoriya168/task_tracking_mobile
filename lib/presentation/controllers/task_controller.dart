@@ -23,8 +23,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 2)),
         category: 'Design',
         priority: TaskPriority.high,
-        acceptedBy: 'Sarah K.',
-        acceptedByAvatar: 'https://i.pravatar.cc/150?img=47',
+        acceptedBy: 'Mike C.',
+        assignedToId: 'staff1',
       ),
       TaskModel(
         id: '2',
@@ -52,8 +52,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().subtract(const Duration(days: 1)),
         category: 'Meeting',
         priority: TaskPriority.low,
-        acceptedBy: 'Alex M.',
-        acceptedByAvatar: 'https://i.pravatar.cc/150?img=12',
+        acceptedBy: 'Emma D.',
+        assignedToId: 'staff2',
       ),
       TaskModel(
         id: '5',
@@ -63,8 +63,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 7)),
         category: 'Engineering',
         priority: TaskPriority.medium,
-        acceptedBy: 'You',
-        acceptedByAvatar: 'https://i.pravatar.cc/150?img=33',
+        acceptedBy: 'James W.',
+        assignedToId: 'staff3',
       ),
       TaskModel(
         id: '6',

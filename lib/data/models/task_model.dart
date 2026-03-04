@@ -16,6 +16,7 @@ class TaskModel {
   final DateTime createdAt;
   String? acceptedBy;
   String? acceptedByAvatar;
+  String? assignedToId;
 
   TaskModel({
     required this.id,
@@ -28,6 +29,7 @@ class TaskModel {
     DateTime? createdAt,
     this.acceptedBy,
     this.acceptedByAvatar,
+    this.assignedToId,
   }) : createdAt = createdAt ?? DateTime.now();
 
   bool get isOverdue {
@@ -80,6 +82,8 @@ class TaskModel {
     String? acceptedBy,
     bool clearAcceptedBy = false,
     String? acceptedByAvatar,
+    String? assignedToId,
+    bool clearAssignedToId = false,
   }) {
     return TaskModel(
       id: id,
@@ -92,6 +96,7 @@ class TaskModel {
       createdAt: createdAt,
       acceptedBy: clearAcceptedBy ? null : (acceptedBy ?? this.acceptedBy),
       acceptedByAvatar: acceptedByAvatar ?? this.acceptedByAvatar,
+      assignedToId: clearAssignedToId ? null : (assignedToId ?? this.assignedToId),
     );
   }
 }

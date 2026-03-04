@@ -6,13 +6,15 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/presentation/controllers/navigation_controller.dart';
 
 class BottomNavBarWidget extends StatelessWidget {
-  const BottomNavBarWidget({super.key});
+  const BottomNavBarWidget({super.key, required this.tabs});
+
+  final List<GButton> tabs;
 
   @override
   Widget build(BuildContext context) {
     final NavigationController navController = Get.find();
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Obx(
       () => Container(
         margin: kNavMargin,
@@ -22,19 +24,17 @@ class BottomNavBarWidget extends StatelessWidget {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
               decoration: BoxDecoration(
-                color: (isDarkMode ? kBgDark : kBgLight),
+                color: isDark ? kBgDark : kBgLight,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: (isDarkMode ? Colors.white : Colors.black).withAlpha(
-                    26,
-                  ),
+                  color: (isDark ? Colors.white : Colors.black).withAlpha(26),
                   width: 0.5,
                 ),
                 boxShadow: [
                   BoxShadow(
                     blurRadius: 12,
                     offset: const Offset(0, 4),
-                    color: Colors.black.withAlpha(isDarkMode ? 77 : 21),
+                    color: Colors.black.withAlpha(isDark ? 77 : 21),
                   ),
                 ],
               ),
@@ -53,14 +53,13 @@ class BottomNavBarWidget extends StatelessWidget {
                     tabBackgroundColor: kPrimary,
                     tabBorderRadius: 50,
                     curve: Curves.easeInOutCubic,
-                    color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
-                    tabs: [
-                      GButton(icon: Icons.home_rounded, text: 'Home'),
-                      GButton(icon: Icons.list_rounded, text: 'Tasks'),
-                      GButton(icon: Icons.person_rounded, text: 'Profile'),
-                    ],
+                    color: isDark ? Colors.grey[400] : Colors.grey[700],
+                    tabs: tabs,
                     selectedIndex: navController.selectedIndex.value,
-                    onTabChange: navController.changePage,
+                    onTabChange: (i) {
+                      // Clamp to valid range in case tabs count changed
+                      if (i < tabs.length) navController.changePage(i);
+                    },
                   ),
                 ),
               ),
