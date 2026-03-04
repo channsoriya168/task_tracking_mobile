@@ -15,7 +15,7 @@ class BottomNavBarWidget extends StatelessWidget {
     final isDarkMode = theme.brightness == Brightness.dark;
     return Obx(
       () => Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+        margin: kNavMargin,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: BackdropFilter(
@@ -41,20 +41,14 @@ class BottomNavBarWidget extends StatelessWidget {
               child: SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 6,
-                  ),
+                  padding: kNavContainer,
                   child: GNav(
                     rippleColor: kPrimary.withAlpha(26),
                     hoverColor: kPrimary.withAlpha(13),
                     gap: 8,
                     activeColor: Colors.white,
                     iconSize: 22,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
+                    padding: kNavPadding,
                     duration: const Duration(milliseconds: 300),
                     tabBackgroundColor: kPrimary,
                     tabBorderRadius: 50,

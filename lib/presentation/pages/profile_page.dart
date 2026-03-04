@@ -20,7 +20,7 @@ class ProfilePage extends StatelessWidget {
             // ── Header ────────────────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: kPagePadding,
                 child: Text(
                   'Profile',
                   style: TextStyle(
@@ -35,9 +35,9 @@ class ProfilePage extends StatelessWidget {
             // ── Profile card ──────────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                padding: kPageSectionLargePadding,
                 child: Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: kContentPaddingLarge,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [kPrimary, Color(0xFF9B8FFF)],
@@ -99,7 +99,7 @@ class ProfilePage extends StatelessWidget {
             // ── Quick stats ───────────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                padding: kPageSectionPadding,
                 child: Row(
                   children: [
                     _statTile('${ctrl.totalTasks}', 'Total', isDark),
@@ -157,8 +157,10 @@ class ProfilePage extends StatelessWidget {
                         iconColor: kMediumPriority,
                         title: 'Notifications',
                         isDark: isDark,
-                        trailing: Icon(Icons.chevron_right_rounded,
-                            color: isDark ? Colors.white38 : Colors.grey.shade400),
+                        trailing: Icon(
+                          Icons.chevron_right_rounded,
+                          color: isDark ? Colors.white38 : Colors.grey.shade400,
+                        ),
                       ),
                       _divider(isDark),
                       _settingRow(
@@ -166,8 +168,10 @@ class ProfilePage extends StatelessWidget {
                         iconColor: kHighPriority,
                         title: 'Privacy',
                         isDark: isDark,
-                        trailing: Icon(Icons.chevron_right_rounded,
-                            color: isDark ? Colors.white38 : Colors.grey.shade400),
+                        trailing: Icon(
+                          Icons.chevron_right_rounded,
+                          color: isDark ? Colors.white38 : Colors.grey.shade400,
+                        ),
                       ),
                       _divider(isDark),
                       _settingRow(
@@ -175,8 +179,10 @@ class ProfilePage extends StatelessWidget {
                         iconColor: kLowPriority,
                         title: 'Help & Support',
                         isDark: isDark,
-                        trailing: Icon(Icons.chevron_right_rounded,
-                            color: isDark ? Colors.white38 : Colors.grey.shade400),
+                        trailing: Icon(
+                          Icons.chevron_right_rounded,
+                          color: isDark ? Colors.white38 : Colors.grey.shade400,
+                        ),
                       ),
                     ],
                   ),
@@ -187,7 +193,7 @@ class ProfilePage extends StatelessWidget {
             // ── Sign out ──────────────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                padding: kPageBottomPadding,
                 child: GestureDetector(
                   onTap: () {},
                   child: Container(
@@ -199,8 +205,11 @@ class ProfilePage extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.logout_rounded,
-                            color: kHighPriority, size: 18),
+                        Icon(
+                          Icons.logout_rounded,
+                          color: kHighPriority,
+                          size: 18,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           'Sign Out',
@@ -241,9 +250,10 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(label,
-                style:
-                    const TextStyle(fontSize: 12, color: kTextMuted)),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12, color: kTextMuted),
+            ),
           ],
         ),
       ),

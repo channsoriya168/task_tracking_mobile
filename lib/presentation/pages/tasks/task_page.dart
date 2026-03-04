@@ -23,7 +23,7 @@ class TasksPage extends StatelessWidget {
           children: [
             // ── Header ────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: kPagePadding,
               child: Row(
                 children: [
                   Container(
@@ -68,7 +68,7 @@ class TasksPage extends StatelessWidget {
 
             // ── Filter tabs ───────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: kPagePadding,
               child: Row(
                 children: [
                   _filterTab('Complete', ctrl.completedTasks, ctrl, isDark),
@@ -82,7 +82,7 @@ class TasksPage extends StatelessWidget {
 
             // ── Search ────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              padding: kPageSectionPadding,
               child: Container(
                 height: 44,
                 decoration: BoxDecoration(
@@ -104,7 +104,7 @@ class TasksPage extends StatelessWidget {
                       size: 20,
                     ),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
               ),
@@ -136,14 +136,14 @@ class TasksPage extends StatelessWidget {
                       ),
                     )
                   : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      padding: kPageBottomPadding,
                       itemCount: ctrl.filteredTasks.length,
                       itemBuilder: (context, index) {
                         final task = ctrl.filteredTasks[index];
                         final highlighted =
                             task.status == TaskStatus.inProgress && index == 0;
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                          padding: kItemSpacing,
                           child: TaskCard(
                             task: task,
                             highlighted: highlighted,

@@ -47,7 +47,7 @@ final ThemeData lightTheme = ThemeData(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: kHighPriority, width: 1),
     ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    contentPadding: kInputPadding,
     hintStyle: const TextStyle(color: kTextMuted),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -55,7 +55,7 @@ final ThemeData lightTheme = ThemeData(
       backgroundColor: kPrimary,
       foregroundColor: Colors.white,
       elevation: 0,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      padding: kButtonPadding,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
     ),

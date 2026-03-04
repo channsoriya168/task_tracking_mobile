@@ -24,8 +24,9 @@ class TaskCard extends StatelessWidget {
     final Color cardBg = highlighted
         ? const Color(0xFF4CAF50)
         : (isDark ? kCardDark : Colors.white);
-    final Color titleColor =
-        highlighted ? Colors.white : (isDark ? Colors.white : kTextDark);
+    final Color titleColor = highlighted
+        ? Colors.white
+        : (isDark ? Colors.white : kTextDark);
     final Color mutedColor = highlighted
         ? Colors.white.withOpacity(0.75)
         : (isDark ? Colors.white54 : kTextMuted);
@@ -36,7 +37,7 @@ class TaskCard extends StatelessWidget {
       onDismissed: (_) => onDelete(),
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
+        padding: kItemSpacingRightLarge,
         decoration: BoxDecoration(
           color: kHighPriority.withOpacity(0.15),
           borderRadius: BorderRadius.circular(16),
@@ -46,7 +47,7 @@ class TaskCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: kContentPadding,
           decoration: BoxDecoration(
             color: cardBg,
             borderRadius: BorderRadius.circular(16),
@@ -71,8 +72,11 @@ class TaskCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () => _showMenu(context),
-                    child: Icon(Icons.more_horiz_rounded,
-                        color: mutedColor, size: 20),
+                    child: Icon(
+                      Icons.more_horiz_rounded,
+                      color: mutedColor,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
@@ -91,8 +95,11 @@ class TaskCard extends StatelessWidget {
               // ── Footer ──────────────────────────────────────
               Row(
                 children: [
-                  Icon(Icons.calendar_today_outlined,
-                      size: 12, color: mutedColor),
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 12,
+                    color: mutedColor,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     task.dueDate != null
@@ -101,13 +108,15 @@ class TaskCard extends StatelessWidget {
                     style: TextStyle(fontSize: 12, color: mutedColor),
                   ),
                   const SizedBox(width: 14),
-                  Icon(Icons.attach_file_rounded,
-                      size: 12, color: mutedColor),
+                  Icon(Icons.attach_file_rounded, size: 12, color: mutedColor),
                   const SizedBox(width: 3),
                   Text('5', style: TextStyle(fontSize: 12, color: mutedColor)),
                   const SizedBox(width: 14),
-                  Icon(Icons.chat_bubble_outline_rounded,
-                      size: 12, color: mutedColor),
+                  Icon(
+                    Icons.chat_bubble_outline_rounded,
+                    size: 12,
+                    color: mutedColor,
+                  ),
                   const SizedBox(width: 3),
                   Text('5', style: TextStyle(fontSize: 12, color: mutedColor)),
                   const Spacer(),
@@ -143,25 +152,29 @@ class TaskCard extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.edit_outlined,
-                  color: isDark ? Colors.white70 : kTextDark),
-              title: Text('Edit',
-                  style:
-                      TextStyle(color: isDark ? Colors.white : kTextDark)),
+              leading: Icon(
+                Icons.edit_outlined,
+                color: isDark ? Colors.white70 : kTextDark,
+              ),
+              title: Text(
+                'Edit',
+                style: TextStyle(color: isDark ? Colors.white : kTextDark),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onTap();
               },
             ),
             ListTile(
-              leading: Icon(Icons.check_circle_outline_rounded,
-                  color: isDark ? Colors.white70 : kTextDark),
+              leading: Icon(
+                Icons.check_circle_outline_rounded,
+                color: isDark ? Colors.white70 : kTextDark,
+              ),
               title: Text(
                 task.status == TaskStatus.done
                     ? 'Mark as To Do'
                     : 'Mark as Complete',
-                style:
-                    TextStyle(color: isDark ? Colors.white : kTextDark),
+                style: TextStyle(color: isDark ? Colors.white : kTextDark),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -169,10 +182,14 @@ class TaskCard extends StatelessWidget {
               },
             ),
             ListTile(
-              leading:
-                  const Icon(Icons.delete_outline_rounded, color: kHighPriority),
-              title: const Text('Delete',
-                  style: TextStyle(color: kHighPriority)),
+              leading: const Icon(
+                Icons.delete_outline_rounded,
+                color: kHighPriority,
+              ),
+              title: const Text(
+                'Delete',
+                style: TextStyle(color: kHighPriority),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onDelete();
@@ -213,35 +230,50 @@ class TaskCard extends StatelessWidget {
 
   Widget _categoryTag(bool highlighted, bool isDark) {
     if (highlighted) {
-      return _pill(
-          task.category, Colors.black.withOpacity(0.2), Colors.white);
+      return _pill(task.category, Colors.black.withOpacity(0.2), Colors.white);
     }
     return _pill(task.category, _catBg(), _catFg());
   }
 
   Color _catBg() {
     switch (task.category) {
-      case 'Meeting':       return const Color(0xFFE3F2FD);
-      case 'Engineering':   return const Color(0xFFEDE7F6);
-      case 'Design':        return const Color(0xFFFCE4EC);
-      case 'Research':      return const Color(0xFFE0F7FA);
-      case 'Documentation': return const Color(0xFFFFF8E1);
-      case 'Marketing':     return const Color(0xFFF3E5F5);
-      case 'Maintenance':   return const Color(0xFFECEFF1);
-      default:              return const Color(0xFFF5F5F5);
+      case 'Meeting':
+        return const Color(0xFFE3F2FD);
+      case 'Engineering':
+        return const Color(0xFFEDE7F6);
+      case 'Design':
+        return const Color(0xFFFCE4EC);
+      case 'Research':
+        return const Color(0xFFE0F7FA);
+      case 'Documentation':
+        return const Color(0xFFFFF8E1);
+      case 'Marketing':
+        return const Color(0xFFF3E5F5);
+      case 'Maintenance':
+        return const Color(0xFFECEFF1);
+      default:
+        return const Color(0xFFF5F5F5);
     }
   }
 
   Color _catFg() {
     switch (task.category) {
-      case 'Meeting':       return const Color(0xFF1976D2);
-      case 'Engineering':   return const Color(0xFF6B3FA0);
-      case 'Design':        return const Color(0xFFD81B60);
-      case 'Research':      return const Color(0xFF00838F);
-      case 'Documentation': return const Color(0xFFF57C00);
-      case 'Marketing':     return const Color(0xFF8E24AA);
-      case 'Maintenance':   return const Color(0xFF546E7A);
-      default:              return kTextMuted;
+      case 'Meeting':
+        return const Color(0xFF1976D2);
+      case 'Engineering':
+        return const Color(0xFF6B3FA0);
+      case 'Design':
+        return const Color(0xFFD81B60);
+      case 'Research':
+        return const Color(0xFF00838F);
+      case 'Documentation':
+        return const Color(0xFFF57C00);
+      case 'Marketing':
+        return const Color(0xFF8E24AA);
+      case 'Maintenance':
+        return const Color(0xFF546E7A);
+      default:
+        return kTextMuted;
     }
   }
 
@@ -254,18 +286,13 @@ class TaskCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-            fontSize: 11, fontWeight: FontWeight.w600, color: fg),
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: fg),
       ),
     );
   }
 
   Widget _avatarStack(Color cardBg) {
-    const colors = [
-      Color(0xFF6C63FF),
-      Color(0xFFFF6584),
-      Color(0xFF43CBFF),
-    ];
+    const colors = [Color(0xFF6C63FF), Color(0xFFFF6584), Color(0xFF43CBFF)];
     return SizedBox(
       width: 52,
       height: 22,
@@ -286,9 +313,10 @@ class TaskCard extends StatelessWidget {
                 child: Text(
                   String.fromCharCode(65 + i),
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -300,8 +328,18 @@ class TaskCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const m = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${date.day} ${m[date.month - 1]} ${date.year}';
   }

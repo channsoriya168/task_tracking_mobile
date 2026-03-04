@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/presentation/widgets/circular_icon_button.dart';
+import 'package:task_tracking_mobile/presentation/widgets/list_task_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,65 +16,68 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Header ────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: kPrimary.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.home_rounded,
-                      color: kPrimary,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Home',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : kTextDark,
-                    ),
-                  ),
-                  const Spacer(),
-                  CircularIconButton(
-                    icon: Icons.notifications_rounded,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              actions: [
+                //button notification
+                CircularIconButton(
+                  icon: Icons.notifications,
+                  isDark: isDark,
+                  onTap: () {},
+                ),
+                Padding(
+                  padding: kPagePaddingHorizontal,
+                  child: CircularIconButton(
                     isDark: isDark,
-                    onTap: () {
-                      // Handle notifications
-                    },
+                    icon: isDark ? Icons.light_mode : Icons.dark_mode,
+                    onTap: () => themeCtrl.toggle(),
                   ),
-                  const SizedBox(width: 8),
-                  CircularIconButton(
-                    icon: themeCtrl.isDark
-                        ? Icons.wb_sunny_rounded
-                        : Icons.nightlight_round,
-                    isDark: isDark,
-                    onTap: themeCtrl.toggle,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
 
-            // ── Content ───────────────────────────────────────
-            const Expanded(
-              child: Center(
-                child: Text(
-                  'Welcome to Home Page',
-                  style: TextStyle(fontSize: 18, color: kTextMuted),
+            //main have grid
+            SliverPadding(
+              padding: kPagePadding,
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? kCardDark : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(isDark ? 77 : 21),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                  ),
+                  childCount: 4,
+                ),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.2,
                 ),
               ),
             ),
+            // ── Tasks List ───────────────────────────────────────
+            SliverPadding(
+              padding: kPageSectionLargePadding,
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  'All Tasks',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            ListTaskWidget(isDark: isDark),
           ],
         ),
       ),
