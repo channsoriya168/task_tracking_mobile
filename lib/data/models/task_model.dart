@@ -14,6 +14,8 @@ class TaskModel {
   String category;
   TaskPriority priority;
   final DateTime createdAt;
+  final List<String> members;
+  final List<String> progressItems;
 
   TaskModel({
     required this.id,
@@ -24,6 +26,8 @@ class TaskModel {
     this.category = 'General',
     this.priority = TaskPriority.medium,
     DateTime? createdAt,
+    this.members = const [],
+    this.progressItems = const [],
   }) : createdAt = createdAt ?? DateTime.now();
 
   bool get isOverdue {
@@ -73,6 +77,8 @@ class TaskModel {
     bool clearDueDate = false,
     String? category,
     TaskPriority? priority,
+    List<String>? members,
+    List<String>? progressItems,
   }) {
     return TaskModel(
       id: id,
@@ -83,6 +89,8 @@ class TaskModel {
       category: category ?? this.category,
       priority: priority ?? this.priority,
       createdAt: createdAt,
+      members: members ?? List.from(this.members),
+      progressItems: progressItems ?? List.from(this.progressItems),
     );
   }
 }
