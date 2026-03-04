@@ -240,10 +240,7 @@ class TasksPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
+                    contentPadding: kContentPaddingSmall,
                   ),
                   style: TextStyle(
                     fontSize: 14,
@@ -357,8 +354,7 @@ class TasksPage extends StatelessWidget {
               const SizedBox(height: 6),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 12),
+                padding: kContentPaddingSmall,
                 decoration: BoxDecoration(
                   color: isDark ? kCardDark : kBgLight,
                   borderRadius: BorderRadius.circular(10),
@@ -379,8 +375,7 @@ class TasksPage extends StatelessWidget {
               const SizedBox(height: 6),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 12),
+                padding: kContentPaddingSmall,
                 decoration: BoxDecoration(
                   color: isDark ? kCardDark : kBgLight,
                   borderRadius: BorderRadius.circular(10),
@@ -451,7 +446,7 @@ class TasksPage extends StatelessWidget {
       onTap: () => ctrl.filterStatus.value = filter,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: kButtonPaddingSmall,
         decoration: BoxDecoration(
           color: selected ? kTextDark : (isDark ? kCardDark : Colors.white),
           borderRadius: BorderRadius.circular(24),
@@ -471,11 +466,11 @@ class TasksPage extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              padding: kItemSpacingSmall,
               decoration: BoxDecoration(
                 color: selected
-                    ? Colors.white.withOpacity(0.2)
-                    : kPrimary.withOpacity(0.1),
+                    ? Colors.white.withValues(alpha: 0.2)
+                    : kPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -512,10 +507,7 @@ class TasksPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
-        ),
+        contentPadding: kContentPaddingSmall,
       ),
     );
   }
