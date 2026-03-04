@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: themeCtrl.isDark ? ThemeMode.dark : ThemeMode.light,
-        initialRoute: AppRoutes.home,
+        initialRoute: AppRoutes.mainPage,
         getPages: AppPages.routes,
       ),
     );

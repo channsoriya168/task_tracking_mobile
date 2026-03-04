@@ -5,6 +5,7 @@ import 'package:task_tracking_mobile/data/models/task_model.dart';
 import 'package:task_tracking_mobile/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/presentation/widgets/task_card.dart';
+import 'package:task_tracking_mobile/presentation/widgets/circular_icon_button.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});
@@ -32,8 +33,11 @@ class TasksPage extends StatelessWidget {
                       color: kPrimary.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.space_dashboard_rounded,
-                        color: kPrimary, size: 22),
+                    child: const Icon(
+                      Icons.space_dashboard_rounded,
+                      color: kPrimary,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -45,14 +49,18 @@ class TasksPage extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  _headerBtn(Icons.reply_rounded, isDark, () {}),
+                  CircularIconButton(
+                    icon: Icons.reply_rounded,
+                    isDark: isDark,
+                    onTap: () {},
+                  ),
                   const SizedBox(width: 8),
-                  _headerBtn(
-                    themeCtrl.isDark
+                  CircularIconButton(
+                    icon: themeCtrl.isDark
                         ? Icons.wb_sunny_rounded
                         : Icons.nightlight_round,
-                    isDark,
-                    themeCtrl.toggle,
+                    isDark: isDark,
+                    onTap: themeCtrl.toggle,
                   ),
                 ],
               ),
@@ -84,13 +92,17 @@ class TasksPage extends StatelessWidget {
                 child: TextField(
                   onChanged: (v) => ctrl.searchQuery.value = v,
                   style: TextStyle(
-                      fontSize: 14,
-                      color: isDark ? Colors.white : kTextDark),
+                    fontSize: 14,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
                   decoration: const InputDecoration(
                     hintText: 'Search tasks...',
                     hintStyle: TextStyle(color: kTextMuted, fontSize: 14),
-                    prefixIcon:
-                        Icon(Icons.search_rounded, color: kTextMuted, size: 20),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: kTextMuted,
+                      size: 20,
+                    ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 12),
                   ),
@@ -105,18 +117,20 @@ class TasksPage extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.inbox_outlined,
-                              size: 52,
-                              color: isDark
-                                  ? Colors.white24
-                                  : Colors.grey.shade300),
+                          Icon(
+                            Icons.inbox_outlined,
+                            size: 52,
+                            color: isDark
+                                ? Colors.white24
+                                : Colors.grey.shade300,
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             'No tasks found',
                             style: TextStyle(
-                                fontSize: 15,
-                                color:
-                                    isDark ? Colors.white38 : kTextMuted),
+                              fontSize: 15,
+                              color: isDark ? Colors.white38 : kTextMuted,
+                            ),
                           ),
                         ],
                       ),
@@ -127,8 +141,7 @@ class TasksPage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final task = ctrl.filteredTasks[index];
                         final highlighted =
-                            task.status == TaskStatus.inProgress &&
-                                index == 0;
+                            task.status == TaskStatus.inProgress && index == 0;
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: TaskCard(
@@ -136,8 +149,7 @@ class TasksPage extends StatelessWidget {
                             highlighted: highlighted,
                             onToggle: () => ctrl.toggleComplete(task.id),
                             onDelete: () => ctrl.deleteTask(task.id),
-                            onTap: () =>
-                                showTaskSheet(context, ctrl, task),
+                            onTap: () => showTaskSheet(context, ctrl, task),
                           ),
                         );
                       },
@@ -151,13 +163,13 @@ class TasksPage extends StatelessWidget {
 
   // ── Static so HomeShell can call it for the FAB ────────────
   static void showTaskSheet(
-      BuildContext context, TaskController ctrl, TaskModel? existing) {
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
-    final titleCtrl =
-        TextEditingController(text: existing?.title ?? '');
-    final descCtrl =
-        TextEditingController(text: existing?.description ?? '');
+    BuildContext context,
+    TaskController ctrl,
+    TaskModel? existing,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleCtrl = TextEditingController(text: existing?.title ?? '');
+    final descCtrl = TextEditingController(text: existing?.description ?? '');
     final priority = (existing?.priority ?? TaskPriority.medium).obs;
     final category = (existing?.category ?? 'General').obs;
 
@@ -165,11 +177,14 @@ class TasksPage extends StatelessWidget {
       Container(
         decoration: BoxDecoration(
           color: isDark ? kSurfaceDark : Colors.white,
-          borderRadius:
-              const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: EdgeInsets.fromLTRB(
-            20, 16, 20, MediaQuery.of(context).viewInsets.bottom + 24),
+          20,
+          16,
+          20,
+          MediaQuery.of(context).viewInsets.bottom + 24,
+        ),
         child: Obx(
           () => SingleChildScrollView(
             child: Column(
@@ -181,8 +196,7 @@ class TasksPage extends StatelessWidget {
                     width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color:
-                          isDark ? Colors.white24 : Colors.grey.shade300,
+                      color: isDark ? Colors.white24 : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -199,12 +213,12 @@ class TasksPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 _field(titleCtrl, 'Title', isDark),
                 const SizedBox(height: 12),
-                _field(descCtrl, 'Description (optional)', isDark,
-                    maxLines: 3),
+                _field(descCtrl, 'Description (optional)', isDark, maxLines: 3),
                 const SizedBox(height: 16),
-                Text('Priority',
-                    style:
-                        const TextStyle(fontSize: 13, color: kTextMuted)),
+                Text(
+                  'Priority',
+                  style: const TextStyle(fontSize: 13, color: kTextMuted),
+                ),
                 const SizedBox(height: 8),
                 Row(
                   children: TaskPriority.values.map((p) {
@@ -212,13 +226,13 @@ class TasksPage extends StatelessWidget {
                     final color = p == TaskPriority.high
                         ? kHighPriority
                         : p == TaskPriority.medium
-                            ? kMediumPriority
-                            : kLowPriority;
+                        ? kMediumPriority
+                        : kLowPriority;
                     final lbl = p == TaskPriority.high
                         ? 'High'
                         : p == TaskPriority.medium
-                            ? 'Medium'
-                            : 'Low';
+                        ? 'Medium'
+                        : 'Low';
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: GestureDetector(
@@ -226,7 +240,9 @@ class TasksPage extends StatelessWidget {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 7),
+                            horizontal: 14,
+                            vertical: 7,
+                          ),
                           decoration: BoxDecoration(
                             color: sel
                                 ? color.withOpacity(0.15)
@@ -236,30 +252,33 @@ class TasksPage extends StatelessWidget {
                               color: sel
                                   ? color
                                   : (isDark
-                                      ? Colors.white24
-                                      : Colors.grey.shade300),
+                                        ? Colors.white24
+                                        : Colors.grey.shade300),
                             ),
                           ),
-                          child: Text(lbl,
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: sel ? color : kTextMuted)),
+                          child: Text(
+                            lbl,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: sel ? color : kTextMuted,
+                            ),
+                          ),
                         ),
                       ),
                     );
                   }).toList(),
                 ),
                 const SizedBox(height: 16),
-                Text('Category',
-                    style:
-                        const TextStyle(fontSize: 13, color: kTextMuted)),
+                Text(
+                  'Category',
+                  style: const TextStyle(fontSize: 13, color: kTextMuted),
+                ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: category.value,
                   items: kCategories
-                      .map((c) =>
-                          DropdownMenuItem(value: c, child: Text(c)))
+                      .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                       .toList(),
                   onChanged: (v) {
                     if (v != null) category.value = v;
@@ -272,11 +291,14 @@ class TasksPage extends StatelessWidget {
                       borderSide: BorderSide.none,
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 12),
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                   ),
                   style: TextStyle(
-                      fontSize: 14,
-                      color: isDark ? Colors.white : kTextDark),
+                    fontSize: 14,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
                   dropdownColor: isDark ? kCardDark : Colors.white,
                 ),
                 const SizedBox(height: 24),
@@ -288,20 +310,24 @@ class TasksPage extends StatelessWidget {
                       final title = titleCtrl.text.trim();
                       if (title.isEmpty) return;
                       if (existing == null) {
-                        ctrl.addTask(TaskModel(
-                          id: ctrl.generateId(),
-                          title: title,
-                          description: descCtrl.text.trim(),
-                          priority: priority.value,
-                          category: category.value,
-                        ));
+                        ctrl.addTask(
+                          TaskModel(
+                            id: ctrl.generateId(),
+                            title: title,
+                            description: descCtrl.text.trim(),
+                            priority: priority.value,
+                            category: category.value,
+                          ),
+                        );
                       } else {
-                        ctrl.updateTask(existing.copyWith(
-                          title: title,
-                          description: descCtrl.text.trim(),
-                          priority: priority.value,
-                          category: category.value,
-                        ));
+                        ctrl.updateTask(
+                          existing.copyWith(
+                            title: title,
+                            description: descCtrl.text.trim(),
+                            priority: priority.value,
+                            category: category.value,
+                          ),
+                        );
                       }
                       Get.back();
                     },
@@ -309,13 +335,16 @@ class TasksPage extends StatelessWidget {
                       backgroundColor: kPrimary,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                       elevation: 0,
                     ),
                     child: Text(
                       existing == null ? 'Add Task' : 'Save Changes',
                       style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -330,24 +359,12 @@ class TasksPage extends StatelessWidget {
 
   // ── Helpers ────────────────────────────────────────────────
 
-  Widget _headerBtn(IconData icon, bool isDark, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: isDark ? kCardDark : Colors.white,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon,
-            size: 18, color: isDark ? Colors.white70 : kTextDark),
-      ),
-    );
-  }
-
   Widget _filterTab(
-      String filter, int count, TaskController ctrl, bool isDark) {
+    String filter,
+    int count,
+    TaskController ctrl,
+    bool isDark,
+  ) {
     final selected = ctrl.filterStatus.value == filter;
     final label = filter == 'InReview' ? 'In Review' : filter;
     return GestureDetector(
@@ -374,8 +391,7 @@ class TasksPage extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
                 color: selected
                     ? Colors.white.withOpacity(0.2)
@@ -406,8 +422,7 @@ class TasksPage extends StatelessWidget {
     return TextField(
       controller: ctrl,
       maxLines: maxLines,
-      style: TextStyle(
-          fontSize: 14, color: isDark ? Colors.white : kTextDark),
+      style: TextStyle(fontSize: 14, color: isDark ? Colors.white : kTextDark),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: kTextMuted, fontSize: 14),
@@ -417,8 +432,10 @@ class TasksPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
       ),
     );
   }

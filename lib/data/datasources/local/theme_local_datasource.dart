@@ -2,10 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ThemeLocalDatasource {
   static const _key = 'is_dark';
-
-  final _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  final _storage = FlutterSecureStorage();
 
   Future<bool?> loadIsDark() async {
     final val = await _storage.read(key: _key);

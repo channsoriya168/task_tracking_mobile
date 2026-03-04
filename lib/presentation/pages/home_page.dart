@@ -1,161 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/presentation/pages/dashboard_page.dart';
-import 'package:task_tracking_mobile/presentation/pages/profile_page.dart';
-import 'package:task_tracking_mobile/presentation/pages/stats_page.dart';
-import 'package:task_tracking_mobile/presentation/pages/tasks_page.dart';
+import 'package:task_tracking_mobile/presentation/controllers/theme_controller.dart';
+import 'package:task_tracking_mobile/presentation/widgets/circular_icon_button.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static const _pages = [
-    DashboardPage(),
-    TasksPage(),
-    StatsPage(),
-    ProfilePage(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<TaskController>();
+    final themeCtrl = Get.find<ThemeController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Obx(
-      () => Scaffold(
-        backgroundColor: isDark ? kBgDark : kBgLight,
-        body: IndexedStack(
-          index: ctrl.navIndex.value,
-          children: _pages,
-        ),
-        floatingActionButton: ctrl.navIndex.value == 1
-            ? FloatingActionButton(
-                onPressed: () => TasksPage.showTaskSheet(context, ctrl, null),
-                backgroundColor: kTextDark,
-                foregroundColor: Colors.white,
-                shape: const CircleBorder(),
-                child: const Icon(Icons.add),
-              )
-            : null,
-        bottomNavigationBar: _BottomNav(ctrl: ctrl, isDark: isDark),
-      ),
-    );
-  }
-}
-
-class _BottomNav extends StatelessWidget {
-  final TaskController ctrl;
-  final bool isDark;
-
-  const _BottomNav({required this.ctrl, required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(
-      () => Container(
-        height: 72,
-        decoration: BoxDecoration(
-          color: isDark ? kCardDark : Colors.white,
-          border: Border(
-            top: BorderSide(
-              color: isDark ? Colors.white12 : Colors.grey.shade200,
-            ),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Scaffold(
+      backgroundColor: isDark ? kSurfaceDark : kBgLight,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _icon(Icons.grid_view_rounded, 0),
-            _pill(Icons.task_alt_rounded, 'Task', 1),
-            _icon(Icons.bar_chart_rounded, 2),
-            _avatar(3),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _icon(IconData icon, int index) {
-    final active = ctrl.navIndex.value == index;
-    return GestureDetector(
-      onTap: () => ctrl.navIndex.value = index,
-      child: Icon(
-        icon,
-        size: 26,
-        color: active
-            ? kPrimary
-            : (isDark ? Colors.white38 : Colors.grey.shade400),
-      ),
-    );
-  }
-
-  Widget _pill(IconData icon, String label, int index) {
-    final active = ctrl.navIndex.value == index;
-    return GestureDetector(
-      onTap: () => ctrl.navIndex.value = index,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-        decoration: BoxDecoration(
-          color: active ? kTextDark : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 18,
-              color: active
-                  ? Colors.white
-                  : (isDark ? Colors.white38 : Colors.grey.shade400),
+            // ── Header ────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: kPrimary.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.home_rounded,
+                      color: kPrimary,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Home',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : kTextDark,
+                    ),
+                  ),
+                  const Spacer(),
+                  CircularIconButton(
+                    icon: Icons.notifications_rounded,
+                    isDark: isDark,
+                    onTap: () {
+                      // Handle notifications
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  CircularIconButton(
+                    icon: themeCtrl.isDark
+                        ? Icons.wb_sunny_rounded
+                        : Icons.nightlight_round,
+                    isDark: isDark,
+                    onTap: themeCtrl.toggle,
+                  ),
+                ],
+              ),
             ),
-            if (active) ...[
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+
+            // ── Content ───────────────────────────────────────
+            const Expanded(
+              child: Center(
+                child: Text(
+                  'Welcome to Home Page',
+                  style: TextStyle(fontSize: 18, color: kTextMuted),
                 ),
               ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _avatar(int index) {
-    final active = ctrl.navIndex.value == index;
-    return GestureDetector(
-      onTap: () => ctrl.navIndex.value = index,
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [kPrimary, Color(0xFF9B8FFF)],
-          ),
-          shape: BoxShape.circle,
-          border: active
-              ? Border.all(color: kPrimary, width: 2.5)
-              : null,
-          boxShadow: active
-              ? [BoxShadow(color: kPrimary.withOpacity(0.4), blurRadius: 8)]
-              : null,
-        ),
-        child: const Center(
-          child: Text(
-            'A',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
             ),
-          ),
+          ],
         ),
       ),
     );
