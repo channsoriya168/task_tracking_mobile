@@ -16,6 +16,8 @@ class TaskModel {
   final DateTime createdAt;
   final List<String> members;
   final List<String> progressItems;
+  String? acceptedBy;
+  String? acceptedByAvatar;
 
   TaskModel({
     required this.id,
@@ -28,6 +30,8 @@ class TaskModel {
     DateTime? createdAt,
     this.members = const [],
     this.progressItems = const [],
+    this.acceptedBy,
+    this.acceptedByAvatar,
   }) : createdAt = createdAt ?? DateTime.now();
 
   bool get isOverdue {
@@ -79,6 +83,9 @@ class TaskModel {
     TaskPriority? priority,
     List<String>? members,
     List<String>? progressItems,
+    String? acceptedBy,
+    bool clearAcceptedBy = false,
+    String? acceptedByAvatar,
   }) {
     return TaskModel(
       id: id,
@@ -91,6 +98,8 @@ class TaskModel {
       createdAt: createdAt,
       members: members ?? List.from(this.members),
       progressItems: progressItems ?? List.from(this.progressItems),
+      acceptedBy: clearAcceptedBy ? null : (acceptedBy ?? this.acceptedBy),
+      acceptedByAvatar: acceptedByAvatar ?? this.acceptedByAvatar,
     );
   }
 }

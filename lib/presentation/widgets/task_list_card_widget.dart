@@ -109,7 +109,7 @@ class TaskListCard extends StatelessWidget {
 
                       const SizedBox(height: 12),
 
-                      // Due date + priority + Accept button
+                      // Due date + priority + action area
                       Row(
                         children: [
                           Icon(
@@ -132,7 +132,13 @@ class TaskListCard extends StatelessWidget {
                           _PriorityDot(color: priorityColor),
                           const Spacer(),
                           if (task.status == TaskStatus.todo)
-                            const _AcceptButton(),
+                            const _AcceptButton()
+                          else if (task.acceptedBy != null)
+                            _AcceptedByChip(
+                              name: task.acceptedBy!,
+                              avatarUrl: task.acceptedByAvatar,
+                              isDark: isDark,
+                            ),
                         ],
                       ),
                     ],
@@ -199,6 +205,69 @@ class _PriorityDot extends StatelessWidget {
       width: 8,
       height: 8,
       decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
+  }
+}
+
+// ── Accepted By Chip ─────────────────────────────────────────
+class _AcceptedByChip extends StatelessWidget {
+  const _AcceptedByChip({
+    required this.name,
+    required this.isDark,
+    this.avatarUrl,
+  });
+
+  final String name;
+  final bool isDark;
+  final String? avatarUrl;
+
+  String get _initials {
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    return name.isNotEmpty ? name[0].toUpperCase() : '?';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textColor = isDark ? Colors.white70 : kPrimary;
+    final bg = isDark ? Colors.white10 : kPrimary.withAlpha(15);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(
+            radius: 10,
+            backgroundColor: kPrimary.withAlpha(40),
+            backgroundImage:
+                avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+            child: avatarUrl == null
+                ? Text(
+                    _initials,
+                    style: TextStyle(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
+                    ),
+                  )
+                : null,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

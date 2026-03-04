@@ -23,6 +23,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 2)),
         category: 'Design',
         priority: TaskPriority.high,
+        acceptedBy: 'Sarah K.',
+        acceptedByAvatar: 'https://i.pravatar.cc/150?img=47',
       ),
       TaskModel(
         id: '2',
@@ -50,6 +52,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().subtract(const Duration(days: 1)),
         category: 'Meeting',
         priority: TaskPriority.low,
+        acceptedBy: 'Alex M.',
+        acceptedByAvatar: 'https://i.pravatar.cc/150?img=12',
       ),
       TaskModel(
         id: '5',
@@ -59,6 +63,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 7)),
         category: 'Engineering',
         priority: TaskPriority.medium,
+        acceptedBy: 'You',
+        acceptedByAvatar: 'https://i.pravatar.cc/150?img=33',
       ),
       TaskModel(
         id: '6',
@@ -178,12 +184,13 @@ class TaskController extends GetxController {
     tasks[i] = task.copyWith(status: newStatus);
   }
 
-  void acceptTask(String id, {String? description}) {
+  void acceptTask(String id, {String? description, String? acceptedBy}) {
     final i = tasks.indexWhere((t) => t.id == id);
     if (i == -1) return;
     tasks[i] = tasks[i].copyWith(
       status: TaskStatus.inProgress,
       description: description ?? tasks[i].description,
+      acceptedBy: acceptedBy ?? 'You',
     );
   }
 
