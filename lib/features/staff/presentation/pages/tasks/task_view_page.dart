@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-
-part 'task_view_widgets.dart';
+import 'task_view_description_widget.dart';
+import 'task_view_header_widget.dart';
+import 'task_view_members_widget.dart';
+import 'task_view_progress_widget.dart';
 
 class TaskViewPage extends StatelessWidget {
   final TaskModel task;
@@ -26,21 +28,31 @@ class TaskViewPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _ViewHeaderCard(
-                task: task, isDark: isDark,
-                borderColor: borderColor, cardBg: cardBg),
+            TaskViewHeaderCard(
+                task: task,
+                isDark: isDark,
+                borderColor: borderColor,
+                cardBg: cardBg),
             const SizedBox(height: 16),
-            _ViewDescriptionSection(
+            TaskViewDescriptionSection(
                 description: task.description,
-                isDark: isDark, borderColor: borderColor, cardBg: cardBg),
+                isDark: isDark,
+                borderColor: borderColor,
+                cardBg: cardBg),
+            if (task.members.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              TaskViewMembersSection(
+                  members: task.members,
+                  isDark: isDark,
+                  borderColor: borderColor,
+                  cardBg: cardBg),
+            ],
             const SizedBox(height: 12),
-            _ViewMembersSection(
-                members: task.members,
-                isDark: isDark, borderColor: borderColor, cardBg: cardBg),
-            const SizedBox(height: 12),
-            _ViewProgressSection(
+            TaskViewProgressSection(
                 items: task.progressItems,
-                isDark: isDark, borderColor: borderColor, cardBg: cardBg),
+                isDark: isDark,
+                borderColor: borderColor,
+                cardBg: cardBg),
           ],
         ),
       ),

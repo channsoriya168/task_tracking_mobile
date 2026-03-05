@@ -167,6 +167,7 @@ class TaskCard extends StatelessWidget {
                             task: task,
                             onAccept: onAccept,
                             onFinish: onFinish,
+                            onDetail: onTap,
                           ),
                         ],
                       ),
@@ -355,10 +356,12 @@ class _ActionWidget extends StatelessWidget {
     required this.task,
     required this.onAccept,
     required this.onFinish,
+    required this.onDetail,
   });
   final TaskModel task;
   final VoidCallback? onAccept;
   final VoidCallback? onFinish;
+  final VoidCallback onDetail;
 
   @override
   Widget build(BuildContext context) {
@@ -369,22 +372,7 @@ class _ActionWidget extends StatelessWidget {
       return _ActionButton(label: 'Progress', onTap: onFinish!);
     }
     if (task.status == TaskStatus.done) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.check_circle_rounded,
-              size: 13, color: kLowPriority),
-          const SizedBox(width: 4),
-          Text(
-            'Done',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: kLowPriority,
-            ),
-          ),
-        ],
-      );
+      return _ActionButton(label: 'Detail', onTap: onDetail);
     }
     return const SizedBox.shrink();
   }

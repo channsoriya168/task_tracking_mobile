@@ -5,6 +5,7 @@ import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart'
 import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_detail_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_sheets.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_view_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_card.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_empty_state.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_filter_tab.dart';
@@ -70,7 +71,9 @@ class TasksPage extends StatelessWidget {
                             highlighted: highlighted,
                             onToggle: () => ctrl.toggleComplete(task.id),
                             onDelete: () => ctrl.deleteTask(task.id),
-                            onTap: () {},
+                            onTap: task.status == TaskStatus.done
+                                ? () => Get.to(() => TaskViewPage(task: task))
+                                : () {},
                             onAccept: task.status == TaskStatus.todo
                                 ? () => showProgressSheet(context, ctrl, task)
                                 : null,
