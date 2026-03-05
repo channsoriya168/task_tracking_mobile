@@ -40,14 +40,17 @@ class RailItem extends StatelessWidget {
                   : (isDark ? Colors.grey[400] : Colors.grey[600]),
             ),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: selected
-                    ? Colors.white
-                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: selected
+                      ? Colors.white
+                      : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                ),
               ),
             ),
           ],
