@@ -34,42 +34,44 @@ class NavigationRailWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              // Logo
-              Container(
-                width: 150,
-                // height: 60,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/images/logo.jpg',
-                    width: 150,
-                    // height: 60,
-                    fit: BoxFit.cover,
-                  ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            // Logo
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/images/logo.jpg',
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 20),
-              // Nav items
-              ...items.asMap().entries.map((entry) {
-                final index = entry.key;
-                final item = entry.value;
-                final selected = navController.selectedIndex.value == index;
-                return RailItem(
-                  icon: item.icon,
-                  label: item.label,
-                  selected: selected,
-                  isDark: isDark,
-                  onTap: () => navController.changePage(index),
-                );
-              }),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            // Nav items
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: items.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final item = entry.value;
+                    final selected = navController.selectedIndex.value == index;
+                    return RailItem(
+                      icon: item.icon,
+                      label: item.label,
+                      selected: selected,
+                      isDark: isDark,
+                      onTap: () => navController.changePage(index),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
