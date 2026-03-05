@@ -25,20 +25,28 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isOverdue = task.isOverdue;
 
-    // ── Themed colours ─────────────────────────────────────
-    final Color cardBg = highlighted
-        ? const Color(0xFF4CAF50)
+    // Highlighted cards (active in-progress) get a very subtle status tint
+    final cardBg = highlighted
+        ? (isDark
+            ? kLowPriority.withValues(alpha: 0.10)
+            : kLowPriority.withValues(alpha: 0.05))
         : (isDark ? kCardDark : Colors.white);
-    final Color titleColor =
-        highlighted ? Colors.white : (isDark ? Colors.white : kTextDark);
-    final Color mutedColor = highlighted
-        ? Colors.white.withValues(alpha: 0.75)
-        : (isDark ? Colors.white54 : kTextMuted);
-    final Color accentColor =
-        highlighted ? Colors.white : task.priorityColor;
 
-    final bool isOverdue = task.isOverdue;
+    final borderColor = highlighted
+        ? kLowPriority.withValues(alpha: isDark ? 0.35 : 0.40)
+        : (isDark
+            ? Colors.white.withValues(alpha: 0.18)
+            : const Color(0xFFD1D5DB));
+
+    final titleColor = isDark ? Colors.white : const Color(0xFF111827);
+    final mutedColor = isDark ? Colors.white38 : const Color(0xFF9CA3AF);
+
+    // Progress
+    final done = task.progressItems.where((s) => s.startsWith('[x]')).length;
+    final total = task.progressItems.length;
+    final progressValue = total == 0 ? 0.0 : (done / total).clamp(0.0, 1.0);
 
     return Dismissible(
       key: Key(task.id),
@@ -48,121 +56,128 @@ class TaskCard extends StatelessWidget {
       onDismissed: (_) => onDelete(),
       background: Container(
         alignment: Alignment.centerRight,
-        padding: kItemSpacingRightLarge,
+        padding: const EdgeInsets.only(right: 24),
         decoration: BoxDecoration(
-          color: kHighPriority.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(16),
+          color: kHighPriority.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: kHighPriority.withValues(alpha: 0.2)),
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: kHighPriority),
+        child: const Icon(Icons.delete_outline_rounded,
+            color: kHighPriority, size: 20),
       ),
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             color: cardBg,
-            borderRadius: BorderRadius.circular(16),
-            border: highlighted
-                ? null
-                : Border(
-                    left: BorderSide(
-                      color: task.priorityColor,
-                      width: 3,
-                    ),
-                  ),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: borderColor),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Padding(
-              padding: kContentPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Header: title + menu ──────────────────
-                  Row(
+            borderRadius: BorderRadius.circular(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          task.title,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: titleColor,
-                            height: 1.3,
+                      // ── Meta row ───────────────────────────
+                      Row(
+                        children: [
+                          Text(
+                            task.category.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.1,
+                              color: _categoryColor(task.category),
+                            ),
                           ),
-                        ),
+                          const Spacer(),
+                          _PriorityDot(task: task),
+                          const SizedBox(width: 6),
+                          if (task.status != TaskStatus.done)
+                            _TaskMenu(
+                              onEdit: onTap,
+                              onDelete: onDelete,
+                              isDark: isDark,
+                              mutedColor: mutedColor,
+                            ),
+                        ],
                       ),
-                      if (task.status != TaskStatus.done) ...[
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () => _showMenu(context),
-                          child: Icon(
-                            Icons.more_horiz_rounded,
-                            color: mutedColor,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 8),
 
-                  // ── Tags: category + priority ─────────────
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 4,
-                    children: [
-                      _categoryTag(highlighted, isDark),
-                      _priorityTag(highlighted),
-                      _statusTag(highlighted, isDark),
-                    ],
-                  ),
+                      const SizedBox(height: 10),
 
-                  // ── Progress bar (inProgress only) ────────
-                  if (task.status == TaskStatus.inProgress) ...[
-                    const SizedBox(height: 12),
-                    _progressBar(highlighted, isDark, mutedColor),
-                  ],
-
-                  const SizedBox(height: 12),
-
-                  // ── Footer: date + accepted by + action ───
-                  Row(
-                    children: [
-                      Icon(
-                        isOverdue && !highlighted
-                            ? Icons.warning_amber_rounded
-                            : Icons.calendar_today_outlined,
-                        size: 12,
-                        color: isOverdue && !highlighted
-                            ? kHighPriority
-                            : mutedColor,
-                      ),
-                      const SizedBox(width: 4),
+                      // ── Title ──────────────────────────────
                       Text(
-                        task.dueDate != null
-                            ? _formatDate(task.dueDate!)
-                            : 'No date',
+                        task.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12,
-                          color: isOverdue && !highlighted
-                              ? kHighPriority
-                              : mutedColor,
-                          fontWeight: isOverdue && !highlighted
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: titleColor,
+                          height: 1.4,
                         ),
                       ),
-                      if (task.acceptedBy != null) ...[
-                        const SizedBox(width: 8),
-                        _acceptedByChip(task.acceptedBy!, accentColor, mutedColor, highlighted),
-                      ],
-                      const Spacer(),
-                      _actionWidget(),
+
+                      const SizedBox(height: 14),
+
+                      // ── Divider ────────────────────────────
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.10)
+                            : const Color(0xFFE5E7EB),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // ── Footer ─────────────────────────────
+                      Row(
+                        children: [
+                          Icon(
+                            isOverdue
+                                ? Icons.error_outline_rounded
+                                : Icons.radio_button_unchecked_rounded,
+                            size: 13,
+                            color: isOverdue
+                                ? kHighPriority
+                                : task.statusColor,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            _footerLabel(isOverdue),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color:
+                                  isOverdue ? kHighPriority : mutedColor,
+                            ),
+                          ),
+                          const Spacer(),
+                          if (task.acceptedBy != null) ...[
+                            _AssigneeAvatar(name: task.acceptedBy!),
+                            const SizedBox(width: 8),
+                          ],
+                          _ActionWidget(
+                            task: task,
+                            onAccept: onAccept,
+                            onFinish: onFinish,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+
+                // ── Progress strip ─────────────────────────
+                if (task.status == TaskStatus.inProgress)
+                  _ProgressStrip(value: progressValue, isDark: isDark),
+              ],
             ),
           ),
         ),
@@ -170,148 +185,87 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  // ── Action widget ───────────────────────────────────────
-
-  Widget _actionWidget() {
-    if (task.status == TaskStatus.todo && onAccept != null) {
-      return _actionButton('Accept', kPrimary, Colors.white, onAccept!);
+  static Color _categoryColor(String category) {
+    switch (category) {
+      case 'Meeting':       return const Color(0xFF1976D2);
+      case 'Engineering':   return const Color(0xFF6B3FA0);
+      case 'Design':        return const Color(0xFFD81B60);
+      case 'Research':      return const Color(0xFF00838F);
+      case 'Documentation': return const Color(0xFFF57C00);
+      case 'Marketing':     return const Color(0xFF8E24AA);
+      case 'Maintenance':   return const Color(0xFF546E7A);
+      default:              return kTextMuted;
     }
-    if (task.status == TaskStatus.inProgress) {
-      return _progressCountBadge();
-    }
-    if (task.status == TaskStatus.done) {
-      return _doneBadge();
-    }
-    return const SizedBox.shrink();
   }
 
-  Widget _progressCountBadge() {
-    final count = task.progressItems.length;
-    final color = highlighted ? Colors.white : kPrimary;
-    final bg = highlighted
-        ? Colors.white.withValues(alpha: 0.2)
-        : kPrimary.withValues(alpha: 0.1);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.notes_rounded, size: 11, color: color),
-          const SizedBox(width: 4),
-          Text(
-            '$count ${count == 1 ? 'note' : 'notes'}',
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
+  String _footerLabel(bool isOverdue) {
+    const m = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    if (task.dueDate == null) return task.statusLabel;
+    final d = task.dueDate!;
+    final datePart = '${d.day} ${m[d.month - 1]}';
+    return isOverdue ? 'Overdue · $datePart' : '${task.statusLabel} · $datePart';
   }
+}
 
-  Widget _progressBar(bool highlighted, bool isDark, Color textColor) {
-    final done =
-        task.progressItems.where((s) => s.startsWith('[x]')).length;
-    final total = task.progressItems.length;
-    final value = total == 0 ? 0.0 : (done / total).clamp(0.0, 1.0);
-    final barBg = highlighted
-        ? Colors.white.withValues(alpha: 0.2)
-        : (isDark ? Colors.white12 : kPrimary.withValues(alpha: 0.08));
-    final barFg =
-        highlighted ? Colors.white.withValues(alpha: 0.85) : kPrimary;
+// ── Sub-widgets ────────────────────────────────────────────────
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+class _PriorityDot extends StatelessWidget {
+  const _PriorityDot({required this.task});
+  final TaskModel task;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = task.priorityColor;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            Text(
-              'Progress',
-              style: TextStyle(fontSize: 11, color: textColor),
-            ),
-            const Spacer(),
-            Text(
-              total == 0 ? 'No notes' : '$done / $total',
-              style: TextStyle(
-                fontSize: 11,
-                color: textColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        const SizedBox(height: 5),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: value,
-            backgroundColor: barBg,
-            valueColor: AlwaysStoppedAnimation(barFg),
-            minHeight: 5,
+        const SizedBox(width: 5),
+        Text(
+          task.priorityLabel,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: color,
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _actionButton(
-      String label, Color bg, Color fg, VoidCallback onTap) {
+class _TaskMenu extends StatelessWidget {
+  const _TaskMenu({
+    required this.onEdit,
+    required this.onDelete,
+    required this.isDark,
+    required this.mutedColor,
+  });
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final bool isDark;
+  final Color mutedColor;
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: fg,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _show(context),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Icon(Icons.more_horiz_rounded, size: 18, color: mutedColor),
       ),
     );
   }
 
-  Widget _doneBadge() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.check_circle_rounded,
-              color: Color(0xFF4CAF50), size: 12),
-          SizedBox(width: 4),
-          Text(
-            'Done',
-            style: TextStyle(
-              color: Color(0xFF4CAF50),
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Bottom sheet menu ───────────────────────────────────
-
-  void _showMenu(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  void _show(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? kSurfaceDark : Colors.white,
@@ -332,29 +286,21 @@ class TaskCard extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(
-                Icons.edit_outlined,
-                color: isDark ? Colors.white70 : kTextDark,
-              ),
-              title: Text(
-                'Edit',
-                style:
-                    TextStyle(color: isDark ? Colors.white : kTextDark),
-              ),
+              leading: Icon(Icons.edit_outlined,
+                  color: isDark ? Colors.white70 : kTextDark),
+              title: Text('Edit',
+                  style:
+                      TextStyle(color: isDark ? Colors.white : kTextDark)),
               onTap: () {
                 Navigator.pop(context);
-                onTap();
+                onEdit();
               },
             ),
             ListTile(
-              leading: const Icon(
-                Icons.delete_outline_rounded,
-                color: kHighPriority,
-              ),
-              title: const Text(
-                'Delete',
-                style: TextStyle(color: kHighPriority),
-              ),
+              leading: const Icon(Icons.delete_outline_rounded,
+                  color: kHighPriority),
+              title: const Text('Delete',
+                  style: TextStyle(color: kHighPriority)),
               onTap: () {
                 Navigator.pop(context);
                 onDelete();
@@ -366,115 +312,130 @@ class TaskCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  // ── Tag helpers ─────────────────────────────────────────
+class _AssigneeAvatar extends StatelessWidget {
+  const _AssigneeAvatar({required this.name});
+  final String name;
 
-  Widget _statusTag(bool highlighted, bool isDark) {
-    if (highlighted) return const SizedBox.shrink();
-    final color = task.statusColor;
-    return _pill(
-      task.statusLabel,
-      color.withValues(alpha: 0.12),
-      color,
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final initials = name
+        .trim()
+        .split(' ')
+        .where((e) => e.isNotEmpty)
+        .map((e) => e[0].toUpperCase())
+        .take(2)
+        .join();
+    return Container(
+      width: 26,
+      height: 26,
+      decoration: BoxDecoration(
+        color: kPrimary.withValues(alpha: isDark ? 0.25 : 0.12),
+        shape: BoxShape.circle,
+        border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initials,
+        style: const TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.w800,
+          color: kPrimary,
+          letterSpacing: 0.3,
+        ),
+      ),
     );
   }
+}
 
-  Widget _categoryTag(bool highlighted, bool isDark) {
-    if (highlighted) {
-      return _pill(task.category, Colors.black.withValues(alpha: 0.2), Colors.white);
+class _ActionWidget extends StatelessWidget {
+  const _ActionWidget({
+    required this.task,
+    required this.onAccept,
+    required this.onFinish,
+  });
+  final TaskModel task;
+  final VoidCallback? onAccept;
+  final VoidCallback? onFinish;
+
+  @override
+  Widget build(BuildContext context) {
+    if (task.status == TaskStatus.todo && onAccept != null) {
+      return _ActionButton(label: 'Accept', onTap: onAccept!);
     }
-    return _pill(task.category, _catBg(), _catFg());
+    if (task.status == TaskStatus.inProgress && onFinish != null) {
+      return _ActionButton(label: 'Progress', onTap: onFinish!);
+    }
+    if (task.status == TaskStatus.done) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check_circle_rounded,
+              size: 13, color: kLowPriority),
+          const SizedBox(width: 4),
+          Text(
+            'Done',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: kLowPriority,
+            ),
+          ),
+        ],
+      );
+    }
+    return const SizedBox.shrink();
   }
+}
 
-  Widget _priorityTag(bool highlighted) {
-    final color = highlighted ? Colors.white : task.priorityColor;
-    final bg = highlighted
-        ? Colors.black.withValues(alpha: 0.15)
-        : task.priorityColor.withValues(alpha: 0.12);
-    return _pill(task.priorityLabel, bg, color);
-  }
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({required this.label, required this.onTap});
+  final String label;
+  final VoidCallback onTap;
 
-  Widget _acceptedByChip(
-      String name, Color accentColor, Color mutedColor, bool highlighted) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.person_outline_rounded, size: 11, color: mutedColor),
-        const SizedBox(width: 3),
-        Text(
-          name,
-          style: TextStyle(
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+        decoration: BoxDecoration(
+          color: kPrimary,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
             fontSize: 11,
-            color: mutedColor,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
-      ],
-    );
-  }
-
-  Color _catBg() {
-    switch (task.category) {
-      case 'Meeting':
-        return const Color(0xFFE3F2FD);
-      case 'Engineering':
-        return const Color(0xFFEDE7F6);
-      case 'Design':
-        return const Color(0xFFFCE4EC);
-      case 'Research':
-        return const Color(0xFFE0F7FA);
-      case 'Documentation':
-        return const Color(0xFFFFF8E1);
-      case 'Marketing':
-        return const Color(0xFFF3E5F5);
-      case 'Maintenance':
-        return const Color(0xFFECEFF1);
-      default:
-        return const Color(0xFFF5F5F5);
-    }
-  }
-
-  Color _catFg() {
-    switch (task.category) {
-      case 'Meeting':
-        return const Color(0xFF1976D2);
-      case 'Engineering':
-        return const Color(0xFF6B3FA0);
-      case 'Design':
-        return const Color(0xFFD81B60);
-      case 'Research':
-        return const Color(0xFF00838F);
-      case 'Documentation':
-        return const Color(0xFFF57C00);
-      case 'Marketing':
-        return const Color(0xFF8E24AA);
-      case 'Maintenance':
-        return const Color(0xFF546E7A);
-      default:
-        return kTextMuted;
-    }
-  }
-
-  Widget _pill(String label, Color bg, Color fg) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        label,
-        style:
-            TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: fg),
       ),
     );
   }
+}
 
-  String _formatDate(DateTime date) {
-    const m = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${date.day} ${m[date.month - 1]} ${date.year}';
+class _ProgressStrip extends StatelessWidget {
+  const _ProgressStrip({required this.value, required this.isDark});
+  final double value;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 3,
+      child: LinearProgressIndicator(
+        value: value,
+        backgroundColor:
+            isDark ? Colors.white12 : kPrimary.withValues(alpha: 0.08),
+        valueColor: AlwaysStoppedAnimation(
+          value >= 1.0 ? kLowPriority : kPrimary,
+        ),
+        borderRadius: BorderRadius.zero,
+      ),
+    );
   }
 }
