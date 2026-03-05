@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/admin/data/models/employee.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 
 // ── Avatar ─────────────────────────────────────────────────────
 /// Circular avatar that shows [imagePath] when available,

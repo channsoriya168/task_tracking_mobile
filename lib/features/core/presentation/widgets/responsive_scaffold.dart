@@ -42,8 +42,6 @@ class ResponsiveScaffold extends StatelessWidget {
       return Scaffold(
         backgroundColor: isDark ? kBgDark : kBgLight,
         body: SafeArea(
-          // Single SafeArea for the whole layout — pages must NOT add their own.
-          // Scaffold's bottomNavigationBar handles the bottom inset.
           bottom: false,
           child: Row(
             children: [

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/admin/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 
 class EmployeeController extends GetxController {
   final RxList<Position> positions = <Position>[].obs;
@@ -23,9 +23,7 @@ class EmployeeController extends GetxController {
   }
 
   List<Employee> employeesByPosition(String positionId) {
-    return filteredEmployees
-        .where((e) => e.positionId == positionId)
-        .toList();
+    return filteredEmployees.where((e) => e.positionId == positionId).toList();
   }
 
   Position? findPosition(String id) {

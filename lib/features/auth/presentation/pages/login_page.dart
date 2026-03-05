@@ -9,15 +9,15 @@ class LoginPage extends StatelessWidget {
 
   static const _roles = [
     _RoleConfig(
-      role: UserRole.admin,
-      label: 'Admin',
+      role: UserRole.manager,
+      label: 'Manager',
       subtitle: 'Manage tasks & team',
       icon: Icons.admin_panel_settings_rounded,
       color: Color(0xFF6C63FF),
     ),
     _RoleConfig(
-      role: UserRole.boss,
-      label: 'Boss',
+      role: UserRole.admin,
+      label: 'Admin',
       subtitle: 'View progress & analytics',
       icon: Icons.analytics_rounded,
       color: Color(0xFFFFA502),

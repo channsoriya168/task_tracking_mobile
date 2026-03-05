@@ -13,7 +13,7 @@ void main() {
   AppBinding().dependencies();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: Color.fromARGB(0, 245, 16, 16),
       statusBarIconBrightness: Brightness.dark,
     ),
   );

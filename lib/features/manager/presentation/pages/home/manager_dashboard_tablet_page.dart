@@ -4,8 +4,8 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 
-class AdminDashboardMobilePage extends StatelessWidget {
-  const AdminDashboardMobilePage({super.key});
+class ManagerDashboardTabletPage extends StatelessWidget {
+  const ManagerDashboardTabletPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class AdminDashboardMobilePage extends StatelessWidget {
             ),
           ),
 
-          // ── Summary Grid (2 columns) ───────────────────────
+          // ── Summary Grid (4 columns) ───────────────────────
           SliverPadding(
             padding: kPagePadding,
             sliver: SliverGrid(
@@ -83,10 +83,10 @@ class AdminDashboardMobilePage extends StatelessWidget {
                 childCount: _kStats.length,
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 4,
                 mainAxisSpacing: 14,
                 crossAxisSpacing: 14,
-                childAspectRatio: 1.6,
+                childAspectRatio: 1.5,
               ),
             ),
           ),
@@ -117,16 +117,19 @@ class AdminDashboardMobilePage extends StatelessWidget {
             ),
           ),
 
-          // ── Activity List ─────────────────────────────────
+          // ── Activity Grid (3 columns) ─────────────────────
           SliverPadding(
             padding: kPageSectionPadding,
-            sliver: SliverList(
+            sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
-                (_, i) => Padding(
-                  padding: kItemSpacing,
-                  child: _ActivityCard(isDark: isDark, index: i),
-                ),
+                (_, i) => _ActivityCard(isDark: isDark, index: i),
                 childCount: _kActivity.length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 2.4,
               ),
             ),
           ),

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/admin/data/models/employee.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_position_page.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/widgets/employee_dialogs.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/widgets/employee_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_position_page.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 
-class AdminEmployeeMobilePage extends StatelessWidget {
-  const AdminEmployeeMobilePage({super.key});
+class ManagerEmployeeMobilePage extends StatelessWidget {
+  const ManagerEmployeeMobilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,9 @@ class AdminEmployeeMobilePage extends StatelessWidget {
             ctrl: ctrl,
             padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
           ),
-          Expanded(child: _EmployeeList(isDark: isDark, ctrl: ctrl)),
+          Expanded(
+            child: _EmployeeList(isDark: isDark, ctrl: ctrl),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -62,18 +64,20 @@ class _Header extends StatelessWidget {
                   color: isDark ? Colors.white : kTextDark,
                 ),
               ),
-              Obx(() => Text(
-                    '${ctrl.employees.length} members',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isDark ? Colors.grey[500] : kTextMuted,
-                    ),
-                  )),
+              Obx(
+                () => Text(
+                  '${ctrl.employees.length} members',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.grey[500] : kTextMuted,
+                  ),
+                ),
+              ),
             ],
           ),
           const Spacer(),
           TextButton.icon(
-            onPressed: () => Get.to(() => const AdminPositionPage()),
+            onPressed: () => Get.to(() => const ManagerPositionPage()),
             icon: const Icon(Icons.work_outline_rounded, size: 16),
             label: const Text('Positions'),
             style: TextButton.styleFrom(foregroundColor: kPrimary),

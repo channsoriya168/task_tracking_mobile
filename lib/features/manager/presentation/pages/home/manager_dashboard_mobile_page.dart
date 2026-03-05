@@ -4,8 +4,8 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 
-class AdminDashboardTabletPage extends StatelessWidget {
-  const AdminDashboardTabletPage({super.key});
+class ManagerDashboardMobilePage extends StatelessWidget {
+  const ManagerDashboardMobilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,128 +15,126 @@ class AdminDashboardTabletPage extends StatelessWidget {
     return ColoredBox(
       color: isDark ? kBgDark : kBgLight,
       child: CustomScrollView(
-          slivers: [
-            // ── App Bar ───────────────────────────────────────
-            SliverAppBar(
-              backgroundColor: isDark ? kBgDark : kBgLight,
-              actions: [
-                Obx(
-                  () => CircularIconButton(
-                    icon: themeCtrl.isDark
-                        ? Icons.wb_sunny_rounded
-                        : Icons.nightlight_round,
-                    isDark: isDark,
-                    onTap: themeCtrl.toggle,
+        slivers: [
+          // ── App Bar ───────────────────────────────────────
+          SliverAppBar(
+            backgroundColor: isDark ? kBgDark : kBgLight,
+            actions: [
+              Obx(
+                () => CircularIconButton(
+                  icon: themeCtrl.isDark
+                      ? Icons.wb_sunny_rounded
+                      : Icons.nightlight_round,
+                  isDark: isDark,
+                  onTap: themeCtrl.toggle,
+                ),
+              ),
+              Padding(
+                padding: kPagePaddingHorizontal,
+                child: CircularIconButton(
+                  icon: Icons.settings_outlined,
+                  isDark: isDark,
+                  onTap: () {},
+                ),
+              ),
+            ],
+          ),
+
+          // ── Greeting ──────────────────────────────────────
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Admin Dashboard',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : kTextDark,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: kPagePaddingHorizontal,
-                  child: CircularIconButton(
-                    icon: Icons.settings_outlined,
-                    isDark: isDark,
-                    onTap: () {},
+                  const SizedBox(height: 4),
+                  Text(
+                    'Overview of your team and tasks',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.grey[500] : kTextMuted,
+                    ),
                   ),
-                ),
-              ],
-            ),
-
-            // ── Greeting ──────────────────────────────────────
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Admin Dashboard',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : kTextDark,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Overview of your team and tasks',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.grey[500] : kTextMuted,
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
+          ),
 
-            // ── Summary Grid (4 columns) ───────────────────────
-            SliverPadding(
-              padding: kPagePadding,
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) => _SummaryCard(
-                    isDark: isDark,
-                    label: _kStats[i].$1,
-                    count: _kStats[i].$2,
-                    icon: _kStats[i].$3,
-                    color: _kStats[i].$4,
+          // ── Summary Grid (2 columns) ───────────────────────
+          SliverPadding(
+            padding: kPagePadding,
+            sliver: SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (_, i) => _SummaryCard(
+                  isDark: isDark,
+                  label: _kStats[i].$1,
+                  count: _kStats[i].$2,
+                  icon: _kStats[i].$3,
+                  color: _kStats[i].$4,
+                ),
+                childCount: _kStats.length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 14,
+                childAspectRatio: 1.6,
+              ),
+            ),
+          ),
+
+          // ── Recent Activity Header ────────────────────────
+          SliverPadding(
+            padding: kPageSectionLargePadding,
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                children: [
+                  Text(
+                    'Recent Activity',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  childCount: _kStats.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 14,
-                  childAspectRatio: 1.5,
-                ),
-              ),
-            ),
-
-            // ── Recent Activity Header ────────────────────────
-            SliverPadding(
-              padding: kPageSectionLargePadding,
-              sliver: SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    Text(
-                      'Recent Activity',
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                  const Spacer(),
+                  const Text(
+                    'See all',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: kPrimary,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const Spacer(),
-                    const Text(
-                      'See all',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: kPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
 
-            // ── Activity Grid (3 columns) ─────────────────────
-            SliverPadding(
-              padding: kPageSectionPadding,
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) => _ActivityCard(isDark: isDark, index: i),
-                  childCount: _kActivity.length,
+          // ── Activity List ─────────────────────────────────
+          SliverPadding(
+            padding: kPageSectionPadding,
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (_, i) => Padding(
+                  padding: kItemSpacing,
+                  child: _ActivityCard(isDark: isDark, index: i),
                 ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 2.4,
-                ),
+                childCount: _kActivity.length,
               ),
             ),
+          ),
 
-            const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
-          ],
-        ),
-      );
+          const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
+        ],
+      ),
+    );
   }
 }
 

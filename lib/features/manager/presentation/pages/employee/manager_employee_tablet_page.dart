@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/admin/data/models/employee.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/widgets/employee_dialogs.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/widgets/employee_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 
-class AdminEmployeeTabletPage extends StatefulWidget {
-  const AdminEmployeeTabletPage({super.key});
+class ManagerEmployeeTabletPage extends StatefulWidget {
+  const ManagerEmployeeTabletPage({super.key});
 
   @override
-  State<AdminEmployeeTabletPage> createState() =>
-      _AdminEmployeeTabletPageState();
+  State<ManagerEmployeeTabletPage> createState() =>
+      _ManagerEmployeeTabletPageState();
 }
 
-class _AdminEmployeeTabletPageState extends State<AdminEmployeeTabletPage> {
+class _ManagerEmployeeTabletPageState extends State<ManagerEmployeeTabletPage> {
   String? _selectedPositionId;
 
   @override

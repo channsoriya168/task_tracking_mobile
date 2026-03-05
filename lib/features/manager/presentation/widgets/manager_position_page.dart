@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/admin/data/models/employee.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/widgets/employee_dialogs.dart';
+import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
 
-class AdminPositionPage extends StatelessWidget {
-  const AdminPositionPage({super.key});
+class ManagerPositionPage extends StatelessWidget {
+  const ManagerPositionPage({super.key});
 
   @override
   Widget build(BuildContext context) {

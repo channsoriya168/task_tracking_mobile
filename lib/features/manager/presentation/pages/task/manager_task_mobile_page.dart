@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
-class AdminTaskMobile extends StatelessWidget {
-  const AdminTaskMobile({super.key});
+class ManagerTaskMobilePage extends StatelessWidget {
+  const ManagerTaskMobilePage({super.key});
 
   @override
   Widget build(BuildContext context) {

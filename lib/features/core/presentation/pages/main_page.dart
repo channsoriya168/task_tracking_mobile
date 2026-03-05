@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/pages/admin_profile_page.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/pages/employee/admin_employee_page.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/pages/task/admin_task_page.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/manager_employee_page.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/pages/manager_profile_page.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/pages/home/manager_dashboard_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_page.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/user_model.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/pages/home/admin_dashboard_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/home_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/profile_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_page.dart';
@@ -17,30 +17,30 @@ class MainPage extends StatelessWidget {
 
   List<NavItem> _navItemsForRole(UserRole? role) {
     switch (role) {
-      case UserRole.admin:
+      case UserRole.manager:
         return const [
           NavItem(
             icon: Icons.dashboard_rounded,
             label: 'Dashboard',
-            page: AdminDashboardPage(),
+            page: ManagerDashboardPage(),
           ),
           NavItem(
             icon: Icons.list_alt_rounded,
             label: 'Tasks',
-            page: AdminTaskPage(),
+            page: ManagerTaskPage(),
           ),
           NavItem(
             icon: Icons.people_rounded,
             label: 'Employees',
-            page: AdminEmployeePage(),
+            page: ManagerEmployeePage(),
           ),
           NavItem(
             icon: Icons.person_rounded,
             label: 'Profile',
-            page: AdminProfilePage(),
+            page: ManagerProfilePage(),
           ),
         ];
-      case UserRole.boss:
+      case UserRole.admin:
         return const [
           NavItem(
             icon: Icons.analytics_rounded,
