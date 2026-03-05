@@ -41,54 +41,56 @@ class LoginPage extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: kPagePaddingWithBottom,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: kPrimary.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(16),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: kPrimary.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.task_alt_rounded,
+                    color: kPrimary,
+                    size: 30,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.task_alt_rounded,
-                  color: kPrimary,
-                  size: 30,
+                const SizedBox(height: 20),
+                Text(
+                  'Welcome to\nTaskFlow',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : kTextDark,
+                    height: 1.2,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Welcome to\nTaskFlow',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : kTextDark,
-                  height: 1.2,
+                const SizedBox(height: 8),
+                Text(
+                  'Select your role to continue',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: isDark ? Colors.white54 : kTextMuted,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Select your role to continue',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: isDark ? Colors.white54 : kTextMuted,
+                const SizedBox(height: 48),
+                ..._roles.map(
+                  (r) => _RoleCard(
+                    config: r,
+                    isDark: isDark,
+                    onTap: () => r.role == UserRole.staff
+                        ? _showStaffPicker(context, auth, isDark)
+                        : auth.login(
+                            kSampleUsers.firstWhere((u) => u.role == r.role),
+                          ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 48),
-              ..._roles.map(
-                (r) => _RoleCard(
-                  config: r,
-                  isDark: isDark,
-                  onTap: () => r.role == UserRole.staff
-                      ? _showStaffPicker(context, auth, isDark)
-                      : auth.login(
-                          kSampleUsers.firstWhere((u) => u.role == r.role),
-                        ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
