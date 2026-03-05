@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 class EmployeeCardWidget extends StatelessWidget {
@@ -65,23 +66,10 @@ class EmployeeCardWidget extends StatelessWidget {
   }
 
   Future<bool?> _confirmDelete(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Delete Employee'),
-        content: Text('Remove "${employee.name}" from the team?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: kHighPriority),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+    return showConfirmDeleteDialog(
+      context,
+      title: 'Delete Employee',
+      content: 'Remove "${employee.name}" from the team?',
     );
   }
 }

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_list_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/manager_position_page.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 class ManagerEmployeeMobilePage extends StatelessWidget {

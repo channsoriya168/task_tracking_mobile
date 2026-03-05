@@ -2,9 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/action_button.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_dialog.dart';
 
 class PositionCardWidget extends StatelessWidget {
   const PositionCardWidget({
@@ -15,7 +16,7 @@ class PositionCardWidget extends StatelessWidget {
   });
 
   final bool isDark;
-  final EmployeeController ctrl;
+  final PositionController ctrl;
   final Position position;
   final int employeeCount;
 
@@ -84,7 +85,10 @@ class PositionCardWidget extends StatelessWidget {
               ActionButton(
                 icon: Icons.delete_rounded,
                 color: kHighPriority,
-                onTap: () => _confirmDelete(context),
+                onTap: () async {
+                  final confirmed = await _confirmDelete(context);
+                  if (confirmed == true) ctrl.deletePosition(position.id);
+                },
               ),
             ],
           ),
@@ -93,29 +97,13 @@ class PositionCardWidget extends StatelessWidget {
     );
   }
 
-  Future<bool?> _confirmDelete(BuildContext context) async {
-    final hasMembers = employeeCount > 0;
-    return showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Delete Position'),
-        content: Text(
-          hasMembers
-              ? 'This will also remove $employeeCount ${employeeCount == 1 ? 'employee' : 'employees'} in "${position.name}". Continue?'
-              : 'Delete position "${position.name}"?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: kHighPriority),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+  Future<bool?> _confirmDelete(BuildContext context) {
+    return showConfirmDeleteDialog(
+      context,
+      title: 'Delete Position',
+      content: employeeCount > 0
+          ? 'This will also remove $employeeCount ${employeeCount == 1 ? 'employee' : 'employees'} in "${position.name}". Continue?'
+          : 'Delete position "${position.name}"?',
     );
   }
 }

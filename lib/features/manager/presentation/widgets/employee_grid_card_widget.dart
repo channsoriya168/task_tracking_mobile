@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 class EmployeeGridCardWidget extends StatelessWidget {
@@ -23,7 +24,14 @@ class EmployeeGridCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => showEmployeeDialog(context, ctrl, isDark, employee),
-      onLongPress: () => _confirmDelete(context),
+      onLongPress: () async {
+        final confirmed = await showConfirmDeleteDialog(
+          context,
+          title: 'Remove Employee',
+          content: 'Remove "${employee.name}" from the team?',
+        );
+        if (confirmed == true) ctrl.deleteEmployee(employee.id);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
@@ -48,30 +56,6 @@ class EmployeeGridCardWidget extends StatelessWidget {
           position: position,
           clampText: true,
         ),
-      ),
-    );
-  }
-
-  void _confirmDelete(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Remove Employee'),
-        content: Text('Remove "${employee.name}" from the team?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ctrl.deleteEmployee(employee.id);
-            },
-            style: TextButton.styleFrom(foregroundColor: kHighPriority),
-            child: const Text('Remove'),
-          ),
-        ],
       ),
     );
   }

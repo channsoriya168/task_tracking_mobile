@@ -1,15 +1,16 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
 
 class EmployeeController extends GetxController {
-  final RxList<Position> positions = <Position>[].obs;
   final RxList<Employee> employees = <Employee>[].obs;
   final RxString searchQuery = ''.obs;
+
+  RxList<Position> get positions => Get.find<PositionController>().positions;
 
   @override
   void onInit() {
     super.onInit();
-    positions.addAll(kMockPositions);
     employees.addAll(kMockEmployees);
   }
 
@@ -45,18 +46,6 @@ class EmployeeController extends GetxController {
   }
 
   void deleteEmployee(String id) => employees.removeWhere((e) => e.id == id);
-
-  void addPosition(Position position) => positions.add(position);
-
-  void updatePosition(Position updated) {
-    final i = positions.indexWhere((p) => p.id == updated.id);
-    if (i != -1) positions[i] = updated;
-  }
-
-  void deletePosition(String id) {
-    positions.removeWhere((p) => p.id == id);
-    employees.removeWhere((e) => e.positionId == id);
-  }
 
   String generateId() => DateTime.now().millisecondsSinceEpoch.toString();
 }

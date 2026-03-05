@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialogs.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_dialog.dart';
 
 class ManagerPositionPage extends StatelessWidget {
   const ManagerPositionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<EmployeeController>();
+    final ctrl = Get.find<PositionController>();
+    final employeeCtrl = Get.find<EmployeeController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -74,7 +75,7 @@ class ManagerPositionPage extends StatelessWidget {
           itemCount: positions.length,
           itemBuilder: (_, i) {
             final pos = positions[i];
-            final count = ctrl.employeeCountByPosition(pos.id);
+            final count = employeeCtrl.employeeCountByPosition(pos.id);
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: PositionCardWidget(
