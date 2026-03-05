@@ -4,7 +4,6 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 class EmployeeCardWidget extends StatelessWidget {
@@ -37,7 +36,7 @@ class EmployeeCardWidget extends StatelessWidget {
       confirmDismiss: (_) => _confirmDelete(context),
       onDismissed: (_) => ctrl.deleteEmployee(employee.id),
       child: GestureDetector(
-        onTap: () => showEmployeeDialog(context, ctrl, isDark, employee),
+        onTap: () => ctrl.showDialog(isDark, employee),
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(

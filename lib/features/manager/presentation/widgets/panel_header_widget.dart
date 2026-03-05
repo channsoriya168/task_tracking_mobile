@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
 
 class PanelHeaderWidget extends StatelessWidget {
   const PanelHeaderWidget({
@@ -53,13 +52,7 @@ class PanelHeaderWidget extends StatelessWidget {
             ),
             const Spacer(),
             ElevatedButton.icon(
-              onPressed: () => showEmployeeDialog(
-                context,
-                ctrl,
-                isDark,
-                null,
-                selectedPositionId,
-              ),
+              onPressed: () => ctrl.showDialog(isDark, null, selectedPositionId),
               icon: const Icon(Icons.person_add_rounded, size: 16),
               label: const Text('Add Employee'),
               style: ElevatedButton.styleFrom(

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/features/core/presentation/bindings/image_binding.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/bindings/manager_binding.dart';
@@ -14,8 +15,12 @@ class AppBinding extends Bindings {
     Get.put<ThemeController>(ThemeController(), permanent: true);
     Get.put<TaskController>(TaskController(), permanent: true);
     Get.put<AuthController>(AuthController(), permanent: true);
+    ImageBinding().dependencies();
     ManagerBinding().dependencies();
-    Get.put<AdminEmployeeController>(AdminEmployeeController(), permanent: true);
+    Get.put<AdminEmployeeController>(
+      AdminEmployeeController(),
+      permanent: true,
+    );
     Get.put<AdminTaskController>(AdminTaskController(), permanent: true);
   }
 }

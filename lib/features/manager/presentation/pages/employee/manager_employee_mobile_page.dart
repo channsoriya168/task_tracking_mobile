@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_list_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/manager_position_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
@@ -33,7 +32,7 @@ class ManagerEmployeeMobilePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
-        onPressed: () => showEmployeeDialog(context, ctrl, isDark),
+        onPressed: () => ctrl.showDialog(isDark),
         child: const Icon(Icons.person_add_rounded),
       ),
     );
@@ -76,11 +75,18 @@ class _Header extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          TextButton.icon(
+          OutlinedButton.icon(
             onPressed: () => Get.to(() => const ManagerPositionPage()),
             icon: const Icon(Icons.work_outline_rounded, size: 16),
             label: const Text('Positions'),
-            style: TextButton.styleFrom(foregroundColor: kPrimary),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: kPrimary,
+              side: const BorderSide(color: kPrimary),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            ),
           ),
         ],
       ),

@@ -6,6 +6,6 @@ class ManagerBinding extends Bindings {
   @override
   void dependencies() {
     Get.put<PositionController>(PositionController(), permanent: true);
-    Get.put<EmployeeController>(EmployeeController(), permanent: true);
+    Get.lazyPut<EmployeeController>(() => EmployeeController());
   }
 }
