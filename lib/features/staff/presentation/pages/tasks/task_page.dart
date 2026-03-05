@@ -70,15 +70,15 @@ class TasksPage extends StatelessWidget {
                             highlighted: highlighted,
                             onToggle: () => ctrl.toggleComplete(task.id),
                             onDelete: () => ctrl.deleteTask(task.id),
-                            onTap: task.status == TaskStatus.inProgress
-                                ? () => Get.to(
-                                    () => TaskDetailPage(task: task, ctrl: ctrl),
-                                  )
-                                : () {},
+                            onTap: () {},
                             onAccept: task.status == TaskStatus.todo
                                 ? () => showProgressSheet(context, ctrl, task)
                                 : null,
-                            onFinish: null,
+                            onFinish: task.status == TaskStatus.inProgress
+                                ? () => Get.to(
+                                    () => TaskDetailPage(task: task, ctrl: ctrl),
+                                  )
+                                : null,
                           ),
                         );
                       },

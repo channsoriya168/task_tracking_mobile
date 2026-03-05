@@ -52,7 +52,7 @@ class ProfilePage extends StatelessWidget {
                         width: 64,
                         height: 64,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: const Center(
@@ -83,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                             Text(
                               'alex@example.com',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.75),
+                                color: Colors.white.withValues(alpha: 0.75),
                                 fontSize: 13,
                               ),
                             ),
@@ -148,7 +148,7 @@ class ProfilePage extends StatelessWidget {
                         trailing: Switch(
                           value: themeCtrl.isDark,
                           onChanged: (_) => themeCtrl.toggle(),
-                          activeColor: kPrimary,
+                          activeThumbColor: kPrimary,
                         ),
                       ),
                       _divider(isDark),
@@ -199,7 +199,7 @@ class ProfilePage extends StatelessWidget {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: kHighPriority.withOpacity(0.1),
+                      color: kHighPriority.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: const Row(
@@ -275,7 +275,7 @@ class ProfilePage extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.12),
+              color: iconColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: iconColor, size: 18),

@@ -23,51 +23,43 @@ class AdminDashboardMobilePage extends StatelessWidget {
       color: isDark ? kBgDark : kBgLight,
       child: CustomScrollView(
         slivers: [
-          // ── App Bar ───────────────────────────────────────
-          SliverAppBar(
-            backgroundColor: isDark ? kBgDark : kBgLight,
-            actions: [
-              Obx(
-                () => CircularIconButton(
-                  icon: themeCtrl.isDark
-                      ? Icons.wb_sunny_rounded
-                      : Icons.nightlight_round,
-                  isDark: isDark,
-                  onTap: themeCtrl.toggle,
-                ),
-              ),
-              Padding(
-                padding: kPagePaddingHorizontal,
-                child: CircularIconButton(
-                  icon: Icons.settings_outlined,
-                  isDark: isDark,
-                  onTap: () {},
-                ),
-              ),
-            ],
-          ),
-
-          // ── Greeting ──────────────────────────────────────
+            // ── Greeting ──────────────────────────────────────
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             sliver: SliverToBoxAdapter(
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Admin Dashboard',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : kTextDark,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Admin Dashboard',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : kTextDark,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Overview of your team and tasks',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isDark ? Colors.grey[500] : kTextMuted,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Overview of your team and tasks',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isDark ? Colors.grey[500] : kTextMuted,
+                  Obx(
+                    () => CircularIconButton(
+                      icon: themeCtrl.isDark
+                          ? Icons.wb_sunny_rounded
+                          : Icons.nightlight_round,
+                      isDark: isDark,
+                      onTap: themeCtrl.toggle,
                     ),
                   ),
                 ],

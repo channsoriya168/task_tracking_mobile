@@ -135,8 +135,9 @@ class TaskController extends GetxController {
     result.sort((a, b) {
       if (a.status == TaskStatus.done && b.status != TaskStatus.done) return 1;
       if (a.status != TaskStatus.done && b.status == TaskStatus.done) return -1;
-      if (a.dueDate != null && b.dueDate != null)
+      if (a.dueDate != null && b.dueDate != null) {
         return a.dueDate!.compareTo(b.dueDate!);
+      }
       if (a.dueDate != null) return -1;
       if (b.dueDate != null) return 1;
       return 0;
