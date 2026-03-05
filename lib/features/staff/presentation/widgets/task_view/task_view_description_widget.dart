@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'task_view_widgets.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_view/task_view_widgets.dart';
 
 class TaskViewDescriptionSection extends StatelessWidget {
   const TaskViewDescriptionSection({

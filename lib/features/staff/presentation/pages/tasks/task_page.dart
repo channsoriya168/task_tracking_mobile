@@ -4,13 +4,13 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_detail_page.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_sheets.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_view_page.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_card.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_empty_state.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_filter_tab.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_page_header.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_search_bar.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_sheets.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_card.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_empty_state.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_filter_tab.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_page_header.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_search_bar.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});

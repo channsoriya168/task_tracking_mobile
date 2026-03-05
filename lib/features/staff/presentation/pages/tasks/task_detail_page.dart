@@ -4,9 +4,9 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
 
-part 'task_detail_header.dart';
-part 'task_detail_sections.dart';
-part 'task_detail_components.dart';
+part '../../widgets/task_detail/task_detail_header.dart';
+part '../../widgets/task_detail/task_detail_sections.dart';
+part '../../widgets/task_detail/task_detail_components.dart';
 
 class TaskDetailPage extends StatefulWidget {
   final TaskModel task;

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'task_view_description_widget.dart';
-import 'task_view_header_widget.dart';
-import 'task_view_members_widget.dart';
-import 'task_view_progress_widget.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_view/task_view_description_widget.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_view/task_view_header_widget.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_view/task_view_members_widget.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_view/task_view_progress_widget.dart';
 
 class TaskViewPage extends StatelessWidget {
   final TaskModel task;

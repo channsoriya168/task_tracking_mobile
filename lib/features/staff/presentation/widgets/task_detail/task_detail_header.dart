@@ -1,4 +1,4 @@
-part of 'task_detail_page.dart';
+part of '../../pages/tasks/task_detail_page.dart';
 
 // ── Header card ─────────────────────────────────────────────────
 
