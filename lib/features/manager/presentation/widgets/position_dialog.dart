@@ -21,16 +21,16 @@ const kPositionPresetColors = [
 ];
 
 // ── Add / Edit Position Dialog ─────────────────────────────────
-void showPositionDialog(
+Future<void> showPositionDialog(
   BuildContext context,
   PositionController ctrl,
   bool isDark, [
   Position? existing,
-]) {
+]) async {
   final nameCtrl = TextEditingController(text: existing?.name ?? '');
   final selectedColor = (existing?.color ?? kPositionPresetColors.first).obs;
 
-  showModalBottomSheet(
+  await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,

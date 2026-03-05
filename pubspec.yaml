@@ -41,6 +41,9 @@ dependencies:
   google_fonts: ^8.0.2
   syncfusion_flutter_treemap: ^32.2.8
   syncfusion_flutter_charts: ^32.2.8
+  image_picker: ^1.2.1
+  permission_handler: ^12.0.1
+  flutter_image_compress: ^2.4.0
 
 dev_dependencies:
   flutter_test:

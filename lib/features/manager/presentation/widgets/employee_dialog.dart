@@ -1,33 +1,23 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/date_picker_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 
-// ── Add / Edit Employee Dialog ─────────────────────────────────
-void showEmployeeDialog(
-  BuildContext context,
-  EmployeeController ctrl,
-  bool isDark, [
-  Employee? existing,
-  String? preselectedPositionId,
-]) {
-  final nameCtrl = TextEditingController(text: existing?.name ?? '');
-  final emailCtrl = TextEditingController(text: existing?.email ?? '');
-  final phoneCtrl = TextEditingController(text: existing?.phone ?? '');
-  final imageCtrl = TextEditingController(text: existing?.imagePath ?? '');
-  final imageUrl = (existing?.imagePath ?? '').obs;
-  final placeCtrl = TextEditingController(text: existing?.placeOfBirth ?? '');
-  final userIdCtrl = TextEditingController(text: existing?.userId ?? '');
-  final selectedPositionId =
-      (existing?.positionId ?? preselectedPositionId ?? ctrl.positions.firstOrNull?.id ?? '').obs;
-  final selectedDob = Rx<DateTime?>(existing?.dateOfBirth);
+// ── Sheet ──────────────────────────────────────────────────────
+class EmployeeDialogSheet extends StatelessWidget {
+  const EmployeeDialogSheet({super.key, required this.controller});
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => Padding(
+  final EmployeeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
@@ -44,7 +34,6 @@ void showEmployeeDialog(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Handle
             Center(
               child: Container(
                 width: 40,
@@ -57,7 +46,7 @@ void showEmployeeDialog(
             ),
             const SizedBox(height: 16),
             Text(
-              existing == null ? 'Add Employee' : 'Edit Employee',
+              controller.existing == null ? 'Add Employee' : 'Edit Employee',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -71,255 +60,101 @@ void showEmployeeDialog(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Avatar preview ───────────────────────────
+                    // ── Avatar ───────────────────────────────────
                     Center(
-                      child: Obx(() {
-                        final url = imageUrl.value;
-                        return CircleAvatar(
-                          radius: 40,
-                          backgroundColor: kPrimary.withAlpha(40),
-                          backgroundImage: url.isNotEmpty
-                              ? NetworkImage(url)
-                              : null,
-                          child: url.isEmpty
-                              ? Icon(
-                                  Icons.person_rounded,
-                                  size: 36,
-                                  color: kPrimary,
-                                )
-                              : null,
-                        );
-                      }),
+                      child: GestureDetector(
+                        onTap: () => controller.showImagePickerOptions(),
+                        child: Obx(() {
+                          final path = controller.formImagePath.value;
+                          return Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 40,
+                                backgroundColor: kPrimary.withAlpha(40),
+                                backgroundImage: path != null
+                                    ? FileImage(File(path))
+                                    : null,
+                                child: path == null
+                                    ? Icon(
+                                        Icons.person_rounded,
+                                        size: 36,
+                                        color: kPrimary,
+                                      )
+                                    : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: kPrimary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt_rounded,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    EmployeeDialogTextField(
-                      controller: imageCtrl,
-                      label: 'Profile Image URL',
-                      hint: 'https://example.com/avatar.jpg',
-                      isDark: isDark,
-                      icon: Icons.image_outlined,
-                      onChanged: (v) => imageUrl.value = v,
-                    ),
-                    const SizedBox(height: 14),
-                    EmployeeDialogTextField(
-                      controller: nameCtrl,
+                    const SizedBox(height: 16),
+                    TextFieldWidget(
+                      controller: controller.nameCtrl,
                       label: 'Full Name',
                       hint: 'e.g. Alice Johnson',
                       isDark: isDark,
-                      icon: Icons.person_outline_rounded,
                     ),
                     const SizedBox(height: 14),
-                    EmployeeDialogTextField(
-                      controller: emailCtrl,
+                    TextFieldWidget(
+                      controller: controller.emailCtrl,
                       label: 'Email',
                       hint: 'e.g. alice@company.com',
                       isDark: isDark,
-                      icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 14),
-                    EmployeeDialogTextField(
-                      controller: phoneCtrl,
+                    TextFieldWidget(
+                      controller: controller.phoneCtrl,
                       label: 'Phone',
                       hint: 'e.g. +855 12 345 678',
                       isDark: isDark,
-                      icon: Icons.phone_outlined,
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 14),
-                    // ── Date of Birth ────────────────────────────
-                    Text(
-                      'Date of Birth',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.grey[400] : kTextMuted,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Obx(
-                      () => GestureDetector(
-                        onTap: () async {
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate:
-                                selectedDob.value ?? DateTime(2000, 1, 1),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now(),
-                          );
-                          if (picked != null) selectedDob.value = picked;
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDark ? kSurfaceDark : kBgLight,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.cake_outlined,
-                                size: 18,
-                                color: isDark ? Colors.grey[500] : kTextMuted,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                selectedDob.value != null
-                                    ? '${selectedDob.value!.day.toString().padLeft(2, '0')}/'
-                                          '${selectedDob.value!.month.toString().padLeft(2, '0')}/'
-                                          '${selectedDob.value!.year}'
-                                    : 'Select date of birth',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: selectedDob.value != null
-                                      ? (isDark ? Colors.white : kTextDark)
-                                      : (isDark
-                                            ? Colors.grey[600]
-                                            : Colors.grey[400]),
-                                ),
-                              ),
-                              const Spacer(),
-                              Icon(
-                                Icons.calendar_today_rounded,
-                                size: 16,
-                                color: isDark ? Colors.grey[500] : kTextMuted,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    DatePickerWidget(
+                      isDark: isDark,
+                      value: controller.formDob,
+                      onPicked: (d) => controller.formDob.value = d,
+                      label: 'Select date of birth',
                     ),
                     const SizedBox(height: 14),
-                    EmployeeDialogTextField(
-                      controller: placeCtrl,
+                    TextFieldWidget(
+                      controller: controller.placeCtrl,
                       label: 'Place of Birth',
-                      hint: 'e.g. Phnom Penh, Cambodia',
+                      hint: 'e.g. Phnom Penh',
                       isDark: isDark,
-                      icon: Icons.location_on_outlined,
                     ),
                     const SizedBox(height: 14),
-                    EmployeeDialogTextField(
-                      controller: userIdCtrl,
-                      label: 'User Account ID',
-                      hint: 'Link to user account (optional)',
+                    _PositionPicker(
                       isDark: isDark,
-                      icon: Icons.account_circle_outlined,
-                    ),
-                    const SizedBox(height: 14),
-                    // ── Position ─────────────────────────────────
-                    Text(
-                      'Position',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.grey[400] : kTextMuted,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Obx(
-                      () => Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: ctrl.positions.map((p) {
-                          final selected = selectedPositionId.value == p.id;
-                          return GestureDetector(
-                            onTap: () => selectedPositionId.value = p.id,
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: selected
-                                    ? p.color.withAlpha(40)
-                                    : (isDark ? kSurfaceDark : kBgLight),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: selected
-                                      ? p.color
-                                      : Colors.transparent,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Text(
-                                p.name,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: selected
-                                      ? p.color
-                                      : (isDark
-                                            ? Colors.grey[400]
-                                            : kTextMuted),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                      positions: controller.positions,
+                      formPositionId: controller.formPositionId,
+                      onAddPosition: () =>
+                          controller.onOpenPositionDialog(context),
+                      onSelectPosition: (id) =>
+                          controller.formPositionId.value = id,
                     ),
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          final name = nameCtrl.text.trim();
-                          final email = emailCtrl.text.trim();
-                          final posId = selectedPositionId.value;
-                          if (name.isEmpty || email.isEmpty || posId.isEmpty) {
-                            return;
-                          }
-
-                          if (existing == null) {
-                            ctrl.addEmployee(
-                              Employee(
-                                id: ctrl.generateId(),
-                                name: name,
-                                email: email,
-                                positionId: posId,
-                                imagePath: imageCtrl.text.trim().isEmpty
-                                    ? null
-                                    : imageCtrl.text.trim(),
-                                dateOfBirth: selectedDob.value,
-                                placeOfBirth: placeCtrl.text.trim().isEmpty
-                                    ? null
-                                    : placeCtrl.text.trim(),
-                                phone: phoneCtrl.text.trim().isEmpty
-                                    ? null
-                                    : phoneCtrl.text.trim(),
-                                userId: userIdCtrl.text.trim().isEmpty
-                                    ? null
-                                    : userIdCtrl.text.trim(),
-                              ),
-                            );
-                          } else {
-                            ctrl.updateEmployee(
-                              existing.copyWith(
-                                name: name,
-                                email: email,
-                                positionId: posId,
-                                imagePath: imageCtrl.text.trim().isEmpty
-                                    ? null
-                                    : imageCtrl.text.trim(),
-                                dateOfBirth: selectedDob.value,
-                                placeOfBirth: placeCtrl.text.trim().isEmpty
-                                    ? null
-                                    : placeCtrl.text.trim(),
-                                phone: phoneCtrl.text.trim().isEmpty
-                                    ? null
-                                    : phoneCtrl.text.trim(),
-                                userId: userIdCtrl.text.trim().isEmpty
-                                    ? null
-                                    : userIdCtrl.text.trim(),
-                              ),
-                            );
-                          }
-                          Navigator.pop(context);
-                        },
+                        onPressed: controller.saveEmployee,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: kPrimary,
                           foregroundColor: Colors.white,
@@ -329,7 +164,9 @@ void showEmployeeDialog(
                           ),
                         ),
                         child: Text(
-                          existing == null ? 'Add Employee' : 'Save Changes',
+                          controller.existing == null
+                              ? 'Add Employee'
+                              : 'Save Changes',
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
@@ -344,76 +181,137 @@ void showEmployeeDialog(
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
-// ── Shared Dialog Text Field ───────────────────────────────────
-class EmployeeDialogTextField extends StatelessWidget {
-  const EmployeeDialogTextField({
-    super.key,
-    required this.controller,
-    required this.label,
-    required this.hint,
+// ── Position Picker ────────────────────────────────────────────
+class _PositionPicker extends StatelessWidget {
+  const _PositionPicker({
     required this.isDark,
-    required this.icon,
-    this.keyboardType,
-    this.onChanged,
+    required this.positions,
+    required this.formPositionId,
+    required this.onAddPosition,
+    required this.onSelectPosition,
   });
 
-  final TextEditingController controller;
-  final String label;
-  final String hint;
   final bool isDark;
-  final IconData icon;
-  final TextInputType? keyboardType;
-  final ValueChanged<String>? onChanged;
+  final RxList<Position> positions;
+  final RxString formPositionId;
+  final VoidCallback onAddPosition;
+  final void Function(String id) onSelectPosition;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.grey[400] : kTextMuted,
-          ),
+        Row(
+          children: [
+            Text(
+              'Position',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.grey[400] : kTextMuted,
+              ),
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: onAddPosition,
+              child: Row(
+                children: [
+                  Icon(Icons.add_rounded, size: 15, color: kPrimary),
+                  const SizedBox(width: 4),
+                  Text(
+                    'New Position',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          onChanged: onChanged,
-          style: TextStyle(
-            color: isDark ? Colors.white : kTextDark,
-            fontSize: 14,
-          ),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: isDark ? Colors.grey[600] : Colors.grey[400],
-              fontSize: 14,
-            ),
-            prefixIcon: Icon(
-              icon,
-              color: isDark ? Colors.grey[500] : kTextMuted,
-              size: 18,
-            ),
-            filled: true,
-            fillColor: isDark ? kSurfaceDark : kBgLight,
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 14,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
+        Obx(() {
+          if (positions.isEmpty) {
+            return GestureDetector(
+              onTap: onAddPosition,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: kPrimary.withAlpha(15),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: kPrimary.withAlpha(80), width: 1.2),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.work_outline_rounded, size: 18, color: kPrimary),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'No positions yet. Tap here to create one first.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.grey[400] : kTextMuted,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: kPrimary,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: positions.map((p) {
+              final selected = formPositionId.value == p.id;
+              return GestureDetector(
+                onTap: () => onSelectPosition(p.id),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? p.color.withAlpha(40)
+                        : (isDark ? kSurfaceDark : kBgLight),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: selected ? p.color : Colors.transparent,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Text(
+                    p.name,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: selected
+                          ? p.color
+                          : (isDark ? Colors.grey[400] : kTextMuted),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        }),
       ],
     );
   }
