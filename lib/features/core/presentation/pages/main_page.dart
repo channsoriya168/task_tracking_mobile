@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/features/core/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/manager_employee_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/manager_profile_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/home/manager_dashboard_page.dart';
