@@ -50,7 +50,7 @@ class LoginPage extends StatelessWidget {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: kPrimary.withOpacity(0.12),
+                    color: kPrimary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(
@@ -140,7 +140,7 @@ class LoginPage extends StatelessWidget {
               (user) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: CircleAvatar(
-                  backgroundColor: const Color(0xFF2ED573).withOpacity(0.15),
+                  backgroundColor: const Color(0xFF2ED573).withValues(alpha: 0.15),
                   child: Text(
                     user.avatarLetter,
                     style: const TextStyle(
@@ -212,10 +212,10 @@ class _RoleCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: config.color.withOpacity(0.2), width: 1.5),
+          border: Border.all(color: config.color.withValues(alpha: 0.2), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: config.color.withOpacity(0.08),
+              color: config.color.withValues(alpha: 0.08),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -227,7 +227,7 @@ class _RoleCard extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: config.color.withOpacity(0.12),
+                color: config.color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(config.icon, color: config.color, size: 26),

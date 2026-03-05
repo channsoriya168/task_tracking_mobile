@@ -33,7 +33,7 @@ class TaskCard extends StatelessWidget {
     final Color titleColor =
         highlighted ? Colors.white : (isDark ? Colors.white : kTextDark);
     final Color mutedColor = highlighted
-        ? Colors.white.withOpacity(0.75)
+        ? Colors.white.withValues(alpha: 0.75)
         : (isDark ? Colors.white54 : kTextMuted);
     final Color accentColor =
         highlighted ? Colors.white : task.priorityColor;
@@ -50,7 +50,7 @@ class TaskCard extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: kItemSpacingRightLarge,
         decoration: BoxDecoration(
-          color: kHighPriority.withOpacity(0.15),
+          color: kHighPriority.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Icon(Icons.delete_outline_rounded, color: kHighPriority),
@@ -381,7 +381,7 @@ class TaskCard extends StatelessWidget {
 
   Widget _categoryTag(bool highlighted, bool isDark) {
     if (highlighted) {
-      return _pill(task.category, Colors.black.withOpacity(0.2), Colors.white);
+      return _pill(task.category, Colors.black.withValues(alpha: 0.2), Colors.white);
     }
     return _pill(task.category, _catBg(), _catFg());
   }
