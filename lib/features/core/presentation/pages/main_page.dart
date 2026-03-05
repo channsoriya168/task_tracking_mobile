@@ -9,6 +9,7 @@ import 'package:task_tracking_mobile/features/manager/presentation/pages/task/ma
 import 'package:task_tracking_mobile/features/staff/data/models/user_model.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/pages/admin_nav_items.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/home_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/profile_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_page.dart';
@@ -42,23 +43,7 @@ class MainPage extends StatelessWidget {
           ),
         ];
       case UserRole.admin:
-        return const [
-          NavItem(
-            icon: Icons.analytics_rounded,
-            label: 'Dashboard',
-            page: HomePage(),
-          ),
-          NavItem(
-            icon: Icons.people_rounded,
-            label: 'Staff',
-            page: ProfilePage(),
-          ),
-          NavItem(
-            icon: Icons.person_rounded,
-            label: 'Profile',
-            page: ProfilePage(),
-          ),
-        ];
+        return adminNavItems;
       case UserRole.staff:
         return const [
           NavItem(icon: Icons.home, label: 'Home', page: HomePage()),
