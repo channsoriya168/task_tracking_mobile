@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(flutter pub get)",
+      "Bash(flutter analyze lib/features/admin/)"
     ]
   }
 }

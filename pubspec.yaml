@@ -39,6 +39,8 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   google_nav_bar: ^5.0.7
   google_fonts: ^8.0.2
+  syncfusion_flutter_treemap: ^32.2.8
+  syncfusion_flutter_charts: ^32.2.8
 
 dev_dependencies:
   flutter_test:
