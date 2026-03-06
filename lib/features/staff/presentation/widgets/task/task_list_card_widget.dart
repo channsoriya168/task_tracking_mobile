@@ -35,188 +35,118 @@ class TaskListCard extends StatelessWidget {
     final cardBg = isDark ? kCardDark : Colors.white;
     final titleColor = isDark ? Colors.white : kTextDark;
     final mutedColor = isDark ? Colors.grey[500]! : kTextMuted;
-    final dividerColor = isDark ? Colors.white10 : Colors.black.withAlpha(12);
+
+    final statusIcon = switch (task.status) {
+      TaskStatus.todo => Icons.radio_button_unchecked_rounded,
+      TaskStatus.inProgress => Icons.sync_rounded,
+      TaskStatus.done => Icons.check_circle_rounded,
+      TaskStatus.fail => Icons.cancel_rounded,
+    };
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: isDark
-                ? Colors.black.withAlpha(80)
-                : Colors.black.withAlpha(15),
-            blurRadius: 18,
-            offset: const Offset(0, 4),
+            color: Colors.black.withAlpha(isDark ? 40 : 8),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Left accent bar
-              Container(
-                width: 5,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [statusColor, statusColor.withAlpha(140)],
-                  ),
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            // Status icon box
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: statusColor.withAlpha(20),
+                borderRadius: BorderRadius.circular(12),
               ),
+              child: Icon(statusIcon, color: statusColor, size: 20),
+            ),
 
-              // Content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(width: 12),
+
+            // Title + meta
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    task.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: titleColor,
+                      letterSpacing: -0.1,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
                     children: [
-                      // Title + status badge
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              task.title,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: titleColor,
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          _StatusBadge(
-                            label: task.statusLabel,
-                            color: statusColor,
-                          ),
-                        ],
+                      Text(
+                        task.category,
+                        style: TextStyle(fontSize: 11, color: mutedColor),
                       ),
-
-                      const SizedBox(height: 8),
-
-                      // Description
-                      if (task.description.isNotEmpty)
-                        Text(
-                          task.description,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: mutedColor,
-                            height: 1.5,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(
+                          '·',
+                          style: TextStyle(color: mutedColor, fontSize: 11),
                         ),
-
-                      Divider(color: dividerColor, height: 1),
-
-                      const SizedBox(height: 12),
-
-                      // Due date + priority + action area
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_today_outlined,
-                            size: 14,
-                            color: mutedColor,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            task.dueDate != null
-                                ? 'Due ${_formatDate(task.dueDate!)}'
-                                : 'No due date',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: task.isOverdue
-                                  ? kHighPriority
-                                  : mutedColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          _PriorityDot(color: priorityColor),
-                          const Spacer(),
-                          if (task.status == TaskStatus.todo)
-                            const _AcceptButton()
-                          else if (task.acceptedBy != null)
-                            _AcceptedByChip(
-                              name: task.acceptedBy!,
-                              avatarUrl: task.acceptedByAvatar,
-                              isDark: isDark,
-                            ),
-                        ],
+                      ),
+                      Text(
+                        task.dueDate != null
+                            ? (task.isOverdue
+                                ? 'Overdue'
+                                : _formatDate(task.dueDate!))
+                            : 'No due date',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color:
+                              task.isOverdue ? kHighPriority : mutedColor,
+                          fontWeight: task.isOverdue
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: priorityColor,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+
+            const SizedBox(width: 10),
+
+            // Trailing action
+            if (task.status == TaskStatus.todo)
+              const _AcceptButton()
+            else if (task.acceptedBy != null)
+              _AcceptedByChip(
+                name: task.acceptedBy!,
+                avatarUrl: task.acceptedByAvatar,
+                isDark: isDark,
+              ),
+          ],
         ),
       ),
-    );
-  }
-}
-
-// ── Status Badge ────────────────────────────────────────────
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.label, required this.color});
-
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withAlpha(26),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withAlpha(80), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 5),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: color,
-              letterSpacing: 0.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Priority Dot ────────────────────────────────────────────
-class _PriorityDot extends StatelessWidget {
-  const _PriorityDot({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }

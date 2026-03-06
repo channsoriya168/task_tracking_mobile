@@ -32,66 +32,86 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
 
-            // ── Profile card ──────────────────────────────────
+            // ── Profile identity ───────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: kPageSectionLargePadding,
-                child: Container(
-                  padding: kContentPaddingLarge,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [kPrimary, Color(0xFF9B8FFF)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
+                padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
+                child: Column(
+                  children: [
+                    // Avatar ring
+                    Container(
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: kPrimary, width: 2.5),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
+                          color: isDark
+                              ? kPrimary.withValues(alpha: 0.18)
+                              : kPrimary.withValues(alpha: 0.1),
                         ),
                         child: const Center(
                           child: Text(
                             'A',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700,
+                              color: kPrimary,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Alex Johnson',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'alex@example.com',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.75),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                    ),
+                    const SizedBox(height: 14),
+                    // Name
+                    Text(
+                      'Alex Johnson',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                        color: isDark ? Colors.white : kTextDark,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // Email
+                    Text(
+                      'alex@example.com',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? Colors.white54 : kTextMuted,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Role pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: kPrimary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                          color: kPrimary.withValues(alpha: 0.25),
+                          width: 1,
                         ),
                       ),
-                    ],
-                  ),
+                      child: const Text(
+                        'Staff Member',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: kPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
