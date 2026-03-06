@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/manager_employee_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/manager_profile_page.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/home/manager_dashboard_page.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_page.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/user_model.dart';
