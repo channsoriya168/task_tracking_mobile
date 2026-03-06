@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/pages/employee/admin_employee_detail_page.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
@@ -216,11 +217,17 @@ class _AdminEmployeeList extends StatelessWidget {
           final employee = employees[i];
           final position = ctrl.findPosition(employee.positionId);
           final accentColor = position?.color ?? kPrimary;
-          return _AdminEmployeeCard(
-            isDark: isDark,
-            employee: employee,
-            accentColor: accentColor,
-            position: position,
+          return GestureDetector(
+            onTap: () => Get.to(() => AdminEmployeeDetailPage(
+                  employee: employee,
+                  position: position,
+                )),
+            child: _AdminEmployeeCard(
+              isDark: isDark,
+              employee: employee,
+              accentColor: accentColor,
+              position: position,
+            ),
           );
         },
       );
