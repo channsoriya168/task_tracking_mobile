@@ -104,37 +104,24 @@ class LeftPanelPositionWidget extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final pos = positions[i];
                   final count = ctrl.employeeCountByPosition(pos.id);
-                  return Dismissible(
-                    key: ValueKey(pos.id),
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 16),
-                      color: kHighPriority.withAlpha(180),
-                      child: const Icon(
-                        Icons.delete_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                    confirmDismiss: (_) => _confirmDelete(context, pos, count),
-                    onDismissed: (_) {
-                      if (selectedId == pos.id) onSelect(null);
-                      posCtrl.deletePosition(pos.id);
+                  return PositionTitleWidget(
+                    isDark: isDark,
+                    label: pos.name,
+                    count: count,
+                    color: pos.color,
+                    icon: Icons.work_rounded,
+                    selected: selectedId == pos.id,
+                    onTap: () => onSelect(pos.id),
+                    onEdit: () =>
+                        showPositionDialog(context, posCtrl, isDark, pos),
+                    onDelete: () async {
+                      final confirmed =
+                          await _confirmDelete(context, pos, count);
+                      if (confirmed == true) {
+                        if (selectedId == pos.id) onSelect(null);
+                        posCtrl.deletePosition(pos.id);
+                      }
                     },
-                    child: GestureDetector(
-                      onLongPress: () =>
-                          showPositionDialog(context, posCtrl, isDark, pos),
-                      child: PositionTitleWidget(
-                        isDark: isDark,
-                        label: pos.name,
-                        count: count,
-                        color: pos.color,
-                        icon: Icons.work_rounded,
-                        selected: selectedId == pos.id,
-                        onTap: () => onSelect(pos.id),
-                      ),
-                    ),
                   );
                 },
               );

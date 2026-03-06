@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +7,8 @@ import 'package:task_tracking_mobile/features/manager/data/models/employee.dart'
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_dialog.dart';
+import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
 
 class EmployeeController extends GetxController {
   final RxList<Employee> employees = <Employee>[].obs;
@@ -183,4 +183,42 @@ class EmployeeController extends GetxController {
   void deleteEmployee(String id) => employees.removeWhere((e) => e.id == id);
 
   String generateId() => DateTime.now().millisecondsSinceEpoch.toString();
+
+  // ── QR Code ────────────────────────────────────────────────────
+  static const Duration kQrValidDuration = Duration(days: 30);
+
+  String _generateQrToken(String employeeId) {
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    return 'emp:$employeeId:$ts';
+  }
+
+  void generateQrCode(String employeeId) {
+    final i = employees.indexWhere((e) => e.id == employeeId);
+    if (i == -1) return;
+    employees[i] = employees[i].copyWith(
+      qrCode: _generateQrToken(employeeId),
+      qrExpiresAt: DateTime.now().add(kQrValidDuration),
+    );
+  }
+
+  void resetQrCode(String employeeId) {
+    final i = employees.indexWhere((e) => e.id == employeeId);
+    if (i == -1) return;
+    employees[i] = employees[i].copyWith(
+      qrCode: _generateQrToken(employeeId),
+      qrExpiresAt: DateTime.now().add(kQrValidDuration),
+    );
+  }
+
+  // ── Tasks ──────────────────────────────────────────────────────
+  List<TaskModel> tasksForEmployee(String employeeId) {
+    try {
+      final taskCtrl = Get.find<TaskController>();
+      return taskCtrl.tasks
+          .where((t) => t.assignedToId == employeeId)
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
 }
