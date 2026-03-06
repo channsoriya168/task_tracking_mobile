@@ -12,6 +12,8 @@ class ManagerTaskController extends GetxController {
   final descTextEditor = TextEditingController();
   final selectedCategory = 'Engineering'.obs;
   final selectedDueDate = Rxn<DateTime>();
+  // Dashboard date filter (week calendar selection)
+  final dashboardSelectedDate = Rxn<DateTime>();
 
   @override
   void onInit() {
@@ -114,6 +116,7 @@ class ManagerTaskController extends GetxController {
   List<TaskModel> get filteredTasks {
     var result = tasks.toList();
 
+    // Search filter
     if (searchQuery.value.isNotEmpty) {
       final q = searchQuery.value.toLowerCase();
       result = result.where((t) {
@@ -123,6 +126,7 @@ class ManagerTaskController extends GetxController {
       }).toList();
     }
 
+    // Status filter
     switch (filterStatus.value) {
       case 'Pending':
         result = result.where((t) => t.status == TaskStatus.todo).toList();
@@ -138,6 +142,16 @@ class ManagerTaskController extends GetxController {
       case 'Fail':
         result = result.where((t) => t.status == TaskStatus.fail).toList();
         break;
+    }
+
+    // Date filter (dashboard week calendar)
+    final sel = dashboardSelectedDate.value;
+    if (sel != null) {
+      result = result.where((t) {
+        if (t.dueDate == null) return false;
+        final d = t.dueDate!;
+        return d.year == sel.year && d.month == sel.month && d.day == sel.day;
+      }).toList();
     }
 
     result.sort((a, b) {
