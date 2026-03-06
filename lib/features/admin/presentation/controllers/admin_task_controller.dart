@@ -5,6 +5,7 @@ import 'package:task_tracking_mobile/features/staff/presentation/controllers/tas
 class AdminTaskController extends GetxController {
   final RxString filterStatus = 'All'.obs;
   final RxString searchQuery = ''.obs;
+  final dashboardSelectedDate = Rxn<DateTime>();
 
   RxList<TaskModel> get tasks => Get.find<TaskController>().tasks;
 
@@ -34,6 +35,15 @@ class AdminTaskController extends GetxController {
       case 'Fail':
         result = result.where((t) => t.status == TaskStatus.fail).toList();
         break;
+    }
+
+    final sel = dashboardSelectedDate.value;
+    if (sel != null) {
+      result = result.where((t) {
+        if (t.dueDate == null) return false;
+        final d = t.dueDate!;
+        return d.year == sel.year && d.month == sel.month && d.day == sel.day;
+      }).toList();
     }
 
     result.sort((a, b) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_chart_widget.dart';
@@ -40,13 +39,6 @@ class ManagerDashboardMobilePage extends StatelessWidget {
         ),
       ),
       body: Obx(() {
-        final tasks = managerTaskController.tasks;
-        final pending = tasks.where((t) => t.status == TaskStatus.todo).length;
-        final inProgress = tasks
-            .where((t) => t.status == TaskStatus.inProgress)
-            .length;
-        final done = tasks.where((t) => t.status == TaskStatus.done).length;
-        final fail = tasks.where((t) => t.status == TaskStatus.fail).length;
         final filtered = managerTaskController.filteredTasks;
 
         return CustomScrollView(
@@ -82,10 +74,6 @@ class ManagerDashboardMobilePage extends StatelessWidget {
               sliver: SliverToBoxAdapter(
                 child: TaskChartWidget(
                   isDark: isDark,
-                  pending: pending,
-                  inProgress: inProgress,
-                  done: done,
-                  fail: fail,
                 ),
               ),
             ),
