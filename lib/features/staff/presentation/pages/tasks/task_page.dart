@@ -12,8 +12,19 @@ import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/ta
 import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_page_header.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_search_bar.dart';
 
-class TasksPage extends StatelessWidget {
+class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
+
+  @override
+  State<TasksPage> createState() => _TasksPageState();
+}
+
+class _TasksPageState extends State<TasksPage> {
+  @override
+  void initState() {
+    super.initState();
+    Get.find<TaskController>().filterStatus.value = 'Todo';
+  }
 
   @override
   Widget build(BuildContext context) {
