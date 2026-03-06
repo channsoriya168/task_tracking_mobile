@@ -66,7 +66,7 @@ class TaskCard extends StatelessWidget {
             color: kHighPriority, size: 20),
       ),
       child: GestureDetector(
-        onTap: onTap,
+        onTap: task.status != TaskStatus.done ? onTap : null,
         child: Container(
           decoration: BoxDecoration(
             color: cardBg,
