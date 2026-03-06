@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/features/core/presentation/controllers/them
 import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/pages/notification_page.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/list_task_widget.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/list_task_widget.dart';
 
 const _kStatusFilters = ['All', 'Pending', 'In Progress', 'Complete', 'Fail'];
 

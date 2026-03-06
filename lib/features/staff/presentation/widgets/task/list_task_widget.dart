@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task_list_card_widget.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_list_card_widget.dart';
 
 // ── List Task Widget ─────────────────────────────────────────
 class ListTaskWidget extends StatelessWidget {
