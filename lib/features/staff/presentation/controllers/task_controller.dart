@@ -24,8 +24,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 2)),
         category: 'Design',
         priority: TaskPriority.high,
-        acceptedBy: 'Mike C.',
-        assignedToId: 'staff1',
+        acceptedBy: 'Alice J.',
+        assignedToId: 'e1',
       ),
       TaskModel(
         id: '2',
@@ -36,6 +36,7 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(hours: 6)),
         category: 'Engineering',
         priority: TaskPriority.high,
+        assignedToId: 'e1',
       ),
       TaskModel(
         id: '3',
@@ -45,6 +46,7 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 5)),
         category: 'Documentation',
         priority: TaskPriority.medium,
+        assignedToId: 'e2',
       ),
       TaskModel(
         id: '4',
@@ -54,8 +56,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().subtract(const Duration(days: 1)),
         category: 'Meeting',
         priority: TaskPriority.low,
-        acceptedBy: 'Emma D.',
-        assignedToId: 'staff2',
+        acceptedBy: 'Bob S.',
+        assignedToId: 'e2',
       ),
       TaskModel(
         id: '5',
@@ -66,8 +68,8 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 7)),
         category: 'Engineering',
         priority: TaskPriority.medium,
-        acceptedBy: 'James W.',
-        assignedToId: 'staff3',
+        acceptedBy: 'Charlie B.',
+        assignedToId: 'e3',
       ),
       TaskModel(
         id: '6',
@@ -76,6 +78,7 @@ class TaskController extends GetxController {
         status: TaskStatus.done,
         category: 'Maintenance',
         priority: TaskPriority.low,
+        assignedToId: 'e3',
       ),
       TaskModel(
         id: '7',
@@ -86,6 +89,7 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().add(const Duration(days: 3)),
         category: 'Research',
         priority: TaskPriority.medium,
+        assignedToId: 'e4',
       ),
       TaskModel(
         id: '8',
@@ -96,6 +100,7 @@ class TaskController extends GetxController {
         dueDate: DateTime.now().subtract(const Duration(days: 2)),
         category: 'Engineering',
         priority: TaskPriority.high,
+        assignedToId: 'e4',
       ),
     ]);
   }

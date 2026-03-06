@@ -10,6 +10,8 @@ class Employee {
   final String? placeOfBirth;
   final String? phone;
   final String? userId;
+  final String? qrCode;
+  final DateTime? qrExpiresAt;
 
   const Employee({
     required this.id,
@@ -21,7 +23,14 @@ class Employee {
     this.placeOfBirth,
     this.phone,
     this.userId,
+    this.qrCode,
+    this.qrExpiresAt,
   });
+
+  bool get hasQr => qrCode != null && qrCode!.isNotEmpty;
+  bool get isQrExpired =>
+      hasQr && qrExpiresAt != null && qrExpiresAt!.isBefore(DateTime.now());
+  bool get isQrActive => hasQr && !isQrExpired;
 
   Employee copyWith({
     String? id,
@@ -33,6 +42,9 @@ class Employee {
     String? placeOfBirth,
     String? phone,
     String? userId,
+    String? qrCode,
+    DateTime? qrExpiresAt,
+    bool clearQrCode = false,
   }) {
     return Employee(
       id: id ?? this.id,
@@ -44,6 +56,8 @@ class Employee {
       placeOfBirth: placeOfBirth ?? this.placeOfBirth,
       phone: phone ?? this.phone,
       userId: userId ?? this.userId,
+      qrCode: clearQrCode ? null : (qrCode ?? this.qrCode),
+      qrExpiresAt: clearQrCode ? null : (qrExpiresAt ?? this.qrExpiresAt),
     );
   }
 }

@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 class PositionTitleWidget extends StatelessWidget {
+  final bool isDark;
+  final String label;
+  final int count;
+  final Color color;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
   const PositionTitleWidget({
     required this.isDark,
     required this.label,
@@ -11,15 +21,10 @@ class PositionTitleWidget extends StatelessWidget {
     required this.icon,
     required this.selected,
     required this.onTap,
+    this.onEdit,
+    this.onDelete,
+    super.key,
   });
-
-  final bool isDark;
-  final String label;
-  final int count;
-  final Color color;
-  final IconData icon;
-  final bool selected;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +33,13 @@ class PositionTitleWidget extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.only(left: 12, top: 6, bottom: 6, right: 4),
         decoration: BoxDecoration(
           color: selected ? color.withAlpha(30) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: color.withAlpha(selected ? 50 : 25),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, size: 16, color: color),
-            ),
-            const SizedBox(width: 10),
             Expanded(
               child: Text(
                 label,
@@ -73,6 +68,45 @@ class PositionTitleWidget extends StatelessWidget {
                 ),
               ),
             ),
+            if (onEdit != null || onDelete != null)
+              PopupMenuButton<String>(
+                padding: EdgeInsets.zero,
+                iconSize: 18,
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  color: isDark ? Colors.grey[500] : Colors.grey[400],
+                ),
+                onSelected: (value) {
+                  if (value == 'edit') onEdit?.call();
+                  if (value == 'delete') onDelete?.call();
+                },
+                itemBuilder: (_) => [
+                  if (onEdit != null)
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit_rounded, size: 16),
+                          SizedBox(width: 10),
+                          Text('Edit'),
+                        ],
+                      ),
+                    ),
+                  if (onDelete != null)
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_rounded,
+                              size: 16, color: Colors.redAccent),
+                          SizedBox(width: 10),
+                          Text('Delete',
+                              style: TextStyle(color: Colors.redAccent)),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
           ],
         ),
       ),
