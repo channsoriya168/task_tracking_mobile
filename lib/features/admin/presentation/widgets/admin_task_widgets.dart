@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_view_page.dart';
 import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_empty_state.dart';
 
 // ── Header ─────────────────────────────────────────────────────
@@ -215,12 +216,16 @@ class AdminTaskList extends StatelessWidget {
         itemCount: tasks.length,
         itemBuilder: (_, i) {
           final task = tasks[i];
+          final canView = task.status == TaskStatus.inProgress ||
+              task.status == TaskStatus.done;
           return Padding(
             padding: kItemSpacing,
             child: AdminTaskCard(
               task: task,
               onDelete: () => ctrl.deleteTask(task.id),
-              onTap: () {},
+              onTap: canView
+                  ? () => Get.to(() => TaskViewPage(task: task))
+                  : null,
             ),
           );
         },
@@ -254,7 +259,7 @@ class AdminTaskCard extends StatelessWidget {
 
   final TaskModel task;
   final VoidCallback onDelete;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -478,7 +483,7 @@ class _CardMenu extends StatelessWidget {
     required this.isDark,
     required this.mutedColor,
   });
-  final VoidCallback onEdit;
+  final VoidCallback? onEdit;
   final VoidCallback onDelete;
   final bool isDark;
   final Color mutedColor;
@@ -515,17 +520,18 @@ class _CardMenu extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.edit_outlined,
-                  color: isDark ? Colors.white70 : kTextDark),
-              title: Text('Edit',
-                  style: TextStyle(
-                      color: isDark ? Colors.white : kTextDark)),
-              onTap: () {
-                Navigator.pop(context);
-                onEdit();
-              },
-            ),
+            if (onEdit != null)
+              ListTile(
+                leading: Icon(Icons.visibility_outlined,
+                    color: isDark ? Colors.white70 : kTextDark),
+                title: Text('View Details',
+                    style: TextStyle(
+                        color: isDark ? Colors.white : kTextDark)),
+                onTap: () {
+                  Navigator.pop(context);
+                  onEdit!();
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.delete_outline_rounded,
                   color: kHighPriority),
