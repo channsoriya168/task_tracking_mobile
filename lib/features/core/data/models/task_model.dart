@@ -54,18 +54,7 @@ class TaskModel {
     }
   }
 
-  Color get statusColor {
-    switch (status) {
-      case TaskStatus.todo:
-        return const Color(0xFFFFA502);
-      case TaskStatus.inProgress:
-        return kPrimary;
-      case TaskStatus.done:
-        return kLowPriority;
-      case TaskStatus.fail:
-        return kHighPriority;
-    }
-  }
+  Color get statusColor => kStatusColors[statusLabel] ?? kPrimary;
 
   Color get priorityColor {
     switch (priority) {
