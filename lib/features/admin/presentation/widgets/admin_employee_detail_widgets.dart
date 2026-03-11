@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
 // ── Header card ──────────────────────────────────────────────────
 
@@ -10,17 +10,17 @@ class EmployeeDetailHeader extends StatelessWidget {
   const EmployeeDetailHeader({
     super.key,
     required this.employee,
-    required this.position,
+    required this.taskGroup,
     required this.isDark,
   });
 
   final Employee employee;
-  final Position? position;
+  final TaskGroup? taskGroup;
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final color = position?.color ?? kPrimary;
+    final color = taskGroup?.color ?? kPrimary;
 
     return Container(
       width: double.infinity,
@@ -61,16 +61,14 @@ class EmployeeDetailHeader extends StatelessWidget {
               fontSize: 13,
             ),
           ),
-          if (position != null) ...[
+          if (taskGroup != null) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -85,7 +83,7 @@ class EmployeeDetailHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    position!.name,
+                    taskGroup!.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -134,8 +132,8 @@ class EmployeeDetailInfoCard extends StatelessWidget {
               value: employee.phone!,
               isDark: isDark,
               borderColor: borderColor,
-              showDivider: employee.dateOfBirth != null ||
-                  employee.placeOfBirth != null,
+              showDivider:
+                  employee.dateOfBirth != null || employee.placeOfBirth != null,
             ),
           if (employee.dateOfBirth != null)
             _InfoRow(
@@ -174,8 +172,20 @@ class EmployeeDetailInfoCard extends StatelessWidget {
   }
 
   static String _formatDate(DateTime d) {
-    const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const m = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return '${d.day} ${m[d.month - 1]} ${d.year}';
   }
 }
@@ -410,10 +420,7 @@ class _SectionCard extends StatelessWidget {
                   color: isDark ? Colors.white70 : const Color(0xFF374151),
                 ),
               ),
-              if (trailing != null) ...[
-                const Spacer(),
-                trailing!,
-              ],
+              if (trailing != null) ...[const Spacer(), trailing!],
             ],
           ),
           const SizedBox(height: 10),

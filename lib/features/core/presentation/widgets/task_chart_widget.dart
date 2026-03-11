@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 
 enum _ChartFilter { day, week, month }
 
@@ -15,8 +14,14 @@ class _ChartData {
 }
 
 class TaskChartWidget extends StatefulWidget {
-  const TaskChartWidget({super.key, required this.isDark});
+  const TaskChartWidget({
+    super.key,
+    required this.isDark,
+    required this.tasks,
+  });
+
   final bool isDark;
+  final RxList<TaskItem> tasks;
 
   @override
   State<TaskChartWidget> createState() => _TaskChartWidgetState();
@@ -25,17 +30,23 @@ class TaskChartWidget extends StatefulWidget {
 class _TaskChartWidgetState extends State<TaskChartWidget> {
   _ChartFilter _filter = _ChartFilter.day;
 
-  List<TaskModel> _applyFilter(List<TaskModel> tasks) {
+  List<TaskItem> _applyFilter(List<TaskItem> tasks) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     return tasks.where((t) {
-      final created = DateTime(t.createdAt.year, t.createdAt.month, t.createdAt.day);
+      final created = DateTime(
+        t.createdAt.year,
+        t.createdAt.month,
+        t.createdAt.day,
+      );
       return switch (_filter) {
-        _ChartFilter.day   => created == today,
-        _ChartFilter.week  => !created.isBefore(today.subtract(const Duration(days: 6))) &&
-            !created.isAfter(today),
-        _ChartFilter.month => !created.isBefore(today.subtract(const Duration(days: 29))) &&
-            !created.isAfter(today),
+        _ChartFilter.day => created == today,
+        _ChartFilter.week =>
+          !created.isBefore(today.subtract(const Duration(days: 6))) &&
+              !created.isAfter(today),
+        _ChartFilter.month =>
+          !created.isBefore(today.subtract(const Duration(days: 29))) &&
+              !created.isAfter(today),
       };
     }).toList();
   }
@@ -43,30 +54,33 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final ctrl = Get.find<ManagerTaskController>();
 
     final cardBg = isDark ? kCardDark : Colors.white;
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.07)
         : Colors.black.withValues(alpha: 0.06);
-    final textColor  = isDark ? Colors.white : kTextDark;
+    final textColor = isDark ? Colors.white : kTextDark;
     final mutedColor = isDark ? Colors.grey[500]! : kTextMuted;
-    final chipBg     = isDark
+    final chipBg = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.black.withValues(alpha: 0.04);
 
     return Obx(() {
-      final filtered   = _applyFilter(ctrl.tasks);
-      final pending    = filtered.where((t) => t.status == TaskStatus.todo).length;
-      final inProgress = filtered.where((t) => t.status == TaskStatus.inProgress).length;
-      final done       = filtered.where((t) => t.status == TaskStatus.done).length;
-      final fail       = filtered.where((t) => t.status == TaskStatus.fail).length;
+      final filtered = _applyFilter(widget.tasks);
+      final pending =
+          filtered.where((t) => t.status == TaskItemStatus.todo).length;
+      final inProgress =
+          filtered.where((t) => t.status == TaskItemStatus.inProgress).length;
+      final done =
+          filtered.where((t) => t.status == TaskItemStatus.done).length;
+      final fail =
+          filtered.where((t) => t.status == TaskItemStatus.fail).length;
       final total = pending + inProgress + done + fail;
       final data = [
-        _ChartData('Pending',     pending,    kMediumPriority),
+        _ChartData('Pending', pending, kMediumPriority),
         _ChartData('In Progress', inProgress, kPrimary),
-        _ChartData('Complete',    done,       kLowPriority),
-        _ChartData('Fail',        fail,       kHighPriority),
+        _ChartData('Complete', done, kLowPriority),
+        _ChartData('Fail', fail, kHighPriority),
       ].where((d) => d.count > 0).toList();
 
       return Container(
@@ -92,7 +106,10 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: chipBg,
                     borderRadius: BorderRadius.circular(20),
@@ -116,14 +133,26 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
                         fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
-                      dropdownColor: isDark ? const Color(0xFF2A2A3A) : Colors.white,
+                      dropdownColor:
+                          isDark ? const Color(0xFF2A2A3A) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       items: const [
-                        DropdownMenuItem(value: _ChartFilter.day,   child: Text('Day')),
-                        DropdownMenuItem(value: _ChartFilter.week,  child: Text('Week')),
-                        DropdownMenuItem(value: _ChartFilter.month, child: Text('Month')),
+                        DropdownMenuItem(
+                          value: _ChartFilter.day,
+                          child: Text('Day'),
+                        ),
+                        DropdownMenuItem(
+                          value: _ChartFilter.week,
+                          child: Text('Week'),
+                        ),
+                        DropdownMenuItem(
+                          value: _ChartFilter.month,
+                          child: Text('Month'),
+                        ),
                       ],
-                      onChanged: (f) { if (f != null) setState(() => _filter = f); },
+                      onChanged: (f) {
+                        if (f != null) setState(() => _filter = f);
+                      },
                     ),
                   ),
                 ),
@@ -196,13 +225,37 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _LegendItem(label: 'Pending',     count: pending,    color: kMediumPriority, total: total, isDark: isDark),
+                      _LegendItem(
+                        label: 'Pending',
+                        count: pending,
+                        color: kMediumPriority,
+                        total: total,
+                        isDark: isDark,
+                      ),
                       const SizedBox(height: 12),
-                      _LegendItem(label: 'In Progress', count: inProgress, color: kPrimary,        total: total, isDark: isDark),
+                      _LegendItem(
+                        label: 'In Progress',
+                        count: inProgress,
+                        color: kPrimary,
+                        total: total,
+                        isDark: isDark,
+                      ),
                       const SizedBox(height: 12),
-                      _LegendItem(label: 'Complete',    count: done,       color: kLowPriority,    total: total, isDark: isDark),
+                      _LegendItem(
+                        label: 'Complete',
+                        count: done,
+                        color: kLowPriority,
+                        total: total,
+                        isDark: isDark,
+                      ),
                       const SizedBox(height: 12),
-                      _LegendItem(label: 'Fail',        count: fail,       color: kHighPriority,   total: total, isDark: isDark),
+                      _LegendItem(
+                        label: 'Fail',
+                        count: fail,
+                        color: kHighPriority,
+                        total: total,
+                        isDark: isDark,
+                      ),
                     ],
                   ),
                 ),

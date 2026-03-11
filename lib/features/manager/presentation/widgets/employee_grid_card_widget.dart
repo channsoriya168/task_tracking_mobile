@@ -17,7 +17,7 @@ class EmployeeGridCardWidget extends StatelessWidget {
   final bool isDark;
   final EmployeeController ctrl;
   final Employee employee;
-  final Position? position;
+  final TaskGroup? position;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class EmployeeGridCardWidget extends StatelessWidget {
           nameFontSize: 13,
           emailFontSize: 11,
           trailingIcon: Icons.more_vert_rounded,
-          position: position,
+          taskGroup: position,
           clampText: true,
         ),
       ),

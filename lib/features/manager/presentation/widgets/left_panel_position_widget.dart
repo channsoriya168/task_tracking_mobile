@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/position.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_dialog.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_title_widget.dart';
 
 class LeftPanelPositionWidget extends StatelessWidget {
@@ -20,7 +20,7 @@ class LeftPanelPositionWidget extends StatelessWidget {
 
   final bool isDark;
   final EmployeeController ctrl;
-  final PositionController posCtrl;
+  final TaskGroupController posCtrl;
   final String? selectedId;
   final ValueChanged<String?> onSelect;
 
@@ -108,15 +108,18 @@ class LeftPanelPositionWidget extends StatelessWidget {
                     isDark: isDark,
                     label: pos.name,
                     count: count,
-                    color: pos.color,
+                    color: pos.color ?? kPrimary,
                     icon: Icons.work_rounded,
                     selected: selectedId == pos.id,
                     onTap: () => onSelect(pos.id),
                     onEdit: () =>
                         showPositionDialog(context, posCtrl, isDark, pos),
                     onDelete: () async {
-                      final confirmed =
-                          await _confirmDelete(context, pos, count);
+                      final confirmed = await _confirmDelete(
+                        context,
+                        pos,
+                        count,
+                      );
                       if (confirmed == true) {
                         if (selectedId == pos.id) onSelect(null);
                         posCtrl.deletePosition(pos.id);
@@ -132,7 +135,7 @@ class LeftPanelPositionWidget extends StatelessWidget {
     );
   }
 
-  Future<bool?> _confirmDelete(BuildContext context, Position pos, int count) {
+  Future<bool?> _confirmDelete(BuildContext context, TaskGroup pos, int count) {
     return showConfirmDeleteDialog(
       context,
       title: 'Delete Position',

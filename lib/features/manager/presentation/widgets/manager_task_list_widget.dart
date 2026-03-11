@@ -4,7 +4,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_empty_state.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
 
 class ManagerTaskList extends StatelessWidget {
   const ManagerTaskList({

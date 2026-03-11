@@ -218,15 +218,17 @@ class _AdminEmployeeList extends StatelessWidget {
           final position = ctrl.findPosition(employee.positionId);
           final accentColor = position?.color ?? kPrimary;
           return GestureDetector(
-            onTap: () => Get.to(() => AdminEmployeeDetailPage(
-                  employee: employee,
-                  position: position,
-                )),
+            onTap: () => Get.to(
+              () => AdminEmployeeDetailPage(
+                employee: employee,
+                taskGroup: position,
+              ),
+            ),
             child: _AdminEmployeeCard(
               isDark: isDark,
               employee: employee,
               accentColor: accentColor,
-              position: position,
+              taskGroup: position,
             ),
           );
         },
@@ -241,13 +243,13 @@ class _AdminEmployeeCard extends StatelessWidget {
     required this.isDark,
     required this.employee,
     required this.accentColor,
-    required this.position,
+    required this.taskGroup,
   });
 
   final bool isDark;
   final Employee employee;
   final Color accentColor;
-  final Position? position;
+  final TaskGroup? taskGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +274,7 @@ class _AdminEmployeeCard extends StatelessWidget {
         nameFontSize: 14,
         emailFontSize: 12,
         trailingIcon: Icons.chevron_right_rounded,
-        position: position,
+        taskGroup: taskGroup,
       ),
     );
   }

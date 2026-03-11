@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/data/models/position_model.dart';
-import 'package:task_tracking_mobile/features/core/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
 Future<void> showTaskDetailSheet(
   BuildContext context,
   bool isDark,
-  TaskModel task,
+  TaskItem task,
   ManagerTaskController controller,
 ) async {
-  final positionColor = controller.positionColor(task.category);
+  final posCtrl = Get.find<TaskGroupController>();
+  final taskGroup = task.groupId != null
+      ? posCtrl.findPosition(task.groupId!)
+      : null;
+  final positionColor = taskGroup?.color ?? kPrimary;
   final textColor = isDark ? Colors.white : kTextDark;
   final mutedColor = isDark ? Colors.white38 : kTextMuted;
   final divColor = isDark
@@ -103,10 +108,10 @@ Future<void> showTaskDetailSheet(
             ),
 
             // Description
-            if (task.description.isNotEmpty) ...[
+            if ((task.description ?? '').isNotEmpty) ...[
               const SizedBox(height: 10),
               Text(
-                task.description,
+                task.description ?? '',
                 style: TextStyle(fontSize: 14, color: mutedColor, height: 1.6),
               ),
             ],
@@ -121,8 +126,10 @@ Future<void> showTaskDetailSheet(
               label: 'Position',
               isDark: isDark,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: positionColor.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -131,7 +138,7 @@ Future<void> showTaskDetailSheet(
                   ),
                 ),
                 child: Text(
-                  task.category,
+                  task.groupName ?? task.labelName ?? '',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -147,7 +154,7 @@ Future<void> showTaskDetailSheet(
               icon: Icons.person_outline_rounded,
               label: 'Accepted by',
               isDark: isDark,
-              child: task.acceptedBy != null
+              child: task.assignedToName != null
                   ? Row(
                       children: [
                         Container(
@@ -155,14 +162,16 @@ Future<void> showTaskDetailSheet(
                           height: 28,
                           decoration: BoxDecoration(
                             color: kPrimary.withValues(
-                                alpha: isDark ? 0.25 : 0.12),
+                              alpha: isDark ? 0.25 : 0.12,
+                            ),
                             shape: BoxShape.circle,
                             border: Border.all(
-                                color: kPrimary.withValues(alpha: 0.3)),
+                              color: kPrimary.withValues(alpha: 0.3),
+                            ),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            task.acceptedBy![0].toUpperCase(),
+                            task.assignedToName![0].toUpperCase(),
                             style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
@@ -172,7 +181,7 @@ Future<void> showTaskDetailSheet(
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          task.acceptedBy!,
+                          task.assignedToName!,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -210,8 +219,11 @@ Future<void> showTaskDetailSheet(
 }
 
 class _DetailBadge extends StatelessWidget {
-  const _DetailBadge(
-      {required this.label, required this.color, required this.isDark});
+  const _DetailBadge({
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
   final String label;
   final Color color;
   final bool isDark;
@@ -228,7 +240,10 @@ class _DetailBadge extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-            fontSize: 11, fontWeight: FontWeight.w700, color: color),
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: color,
+        ),
       ),
     );
   }
@@ -256,10 +271,7 @@ class _DetailRow extends StatelessWidget {
         const SizedBox(width: 8),
         SizedBox(
           width: 90,
-          child: Text(
-            label,
-            style: TextStyle(fontSize: 13, color: mutedColor),
-          ),
+          child: Text(label, style: TextStyle(fontSize: 13, color: mutedColor)),
         ),
         Expanded(child: child),
       ],
@@ -270,22 +282,25 @@ class _DetailRow extends StatelessWidget {
 Future<void> showTaskDialog(
   BuildContext context,
   bool isDark, {
-  TaskModel? task,
+  TaskItem? task,
 }) async {
   final managerTaskController = Get.find<ManagerTaskController>();
-  final positionItems = listPosition.map((p) => p.name).toList();
+  final posCtrl = Get.find<TaskGroupController>();
+  final groups = posCtrl.positions;
+  final positionItems = groups.map((g) => g.name).toList();
   final isEditMode = task != null;
 
   // Pre-populate form if editing
   if (isEditMode) {
     managerTaskController.titleTextEditor.text = task.title;
-    managerTaskController.descTextEditor.text = task.description;
-    managerTaskController.selectedCategory.value = task.category;
+    managerTaskController.descTextEditor.text = task.description ?? '';
+    managerTaskController.selectedCategory.value = task.groupName ?? '';
     managerTaskController.selectedDueDate.value = task.dueDate;
   }
 
   // Keep dropdown value valid to avoid DropdownButton assertion failures.
-  if (!positionItems.contains(managerTaskController.selectedCategory.value)) {
+  if (positionItems.isNotEmpty &&
+      !positionItems.contains(managerTaskController.selectedCategory.value)) {
     managerTaskController.selectedCategory.value = positionItems.first;
   }
 
@@ -348,22 +363,34 @@ Future<void> showTaskDialog(
               ),
               const SizedBox(height: 16),
 
-              // Position
-              _Label('Position', isDark: isDark),
+              // Group
+              _Label('Group', isDark: isDark),
               const SizedBox(height: 8),
-              Obx(
-                () => DropdownWidget<String>(
-                  value: managerTaskController.selectedCategory.value,
-                  items: positionItems,
-                  label: (v) => v,
+              Obx(() {
+                final selected = groups.firstWhereOrNull(
+                  (g) => g.name == managerTaskController.selectedCategory.value,
+                );
+                return DropdownWidget<TaskGroup>(
+                  value: selected,
+                  items: groups.toList(),
+                  label: (g) => g.name,
                   isDark: isDark,
-                  onChanged: (v) {
-                    if (v != null) {
-                      managerTaskController.selectedCategory.value = v;
+                  onChanged: (g) {
+                    if (g != null) {
+                      managerTaskController.selectedCategory.value = g.name;
                     }
                   },
-                ),
-              ),
+                  leadingBuilder: (g) => Container(
+                    width: 10,
+                    height: 10,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: BoxDecoration(
+                      color: g.color ?? kPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                );
+              }),
               const SizedBox(height: 16),
 
               // Due Date
@@ -450,7 +477,7 @@ Future<void> showTaskDialog(
                         title: title,
                         description: managerTaskController.descTextEditor.text
                             .trim(),
-                        category: managerTaskController.selectedCategory.value,
+                        groupName: managerTaskController.selectedCategory.value,
                         dueDate: managerTaskController.selectedDueDate.value,
                         clearDueDate:
                             managerTaskController.selectedDueDate.value == null,

@@ -196,7 +196,7 @@ class _PositionPicker extends StatelessWidget {
   });
 
   final bool isDark;
-  final RxList<Position> positions;
+  final RxList<TaskGroup> positions;
   final RxString formPositionId;
   final VoidCallback onAddPosition;
   final void Function(String id) onSelectPosition;
@@ -289,11 +289,11 @@ class _PositionPicker extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: selected
-                        ? p.color.withAlpha(40)
+                        ? (p.color ?? kPrimary).withAlpha(40)
                         : (isDark ? kSurfaceDark : kBgLight),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: selected ? p.color : Colors.transparent,
+                      color: selected ? (p.color ?? kPrimary) : Colors.transparent,
                       width: 1.5,
                     ),
                   ),
@@ -303,7 +303,7 @@ class _PositionPicker extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: selected
-                          ? p.color
+                          ? (p.color ?? kPrimary)
                           : (isDark ? Colors.grey[400] : kTextMuted),
                     ),
                   ),

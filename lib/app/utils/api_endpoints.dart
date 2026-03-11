@@ -7,4 +7,8 @@ abstract class ApiEndpoints {
   static const String login = '/api/v1/Auth/login';
   static const String logout = '/api/v1/Auth/logout';
   static const String me = '/api/v1/Auth/me';
+
+  // ── Task Groups ───────────────────────────────────────────
+  static const String taskGroups = '/api/v1/task-groups';
+  static String taskGroupById(String id) => '/api/v1/task-groups/$id';
 }

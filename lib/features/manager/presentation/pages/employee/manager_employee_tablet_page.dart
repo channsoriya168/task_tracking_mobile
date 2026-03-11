@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/left_panel_position_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/right_employee_panel_widget.dart';
 
@@ -20,7 +20,7 @@ class _ManagerEmployeeTabletPageState extends State<ManagerEmployeeTabletPage> {
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<EmployeeController>();
-    final posCtrl = Get.find<PositionController>();
+    final posCtrl = Get.find<TaskGroupController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ColoredBox(

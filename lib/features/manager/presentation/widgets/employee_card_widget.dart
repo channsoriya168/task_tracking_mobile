@@ -17,7 +17,7 @@ class EmployeeCardWidget extends StatelessWidget {
   final bool isDark;
   final EmployeeController ctrl;
   final Employee employee;
-  final Position position;
+  final TaskGroup position;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class EmployeeCardWidget extends StatelessWidget {
         employee: employee,
         ctrl: ctrl,
         isDark: isDark,
-        accentColor: position.color,
+        accentColor: position.color ?? kPrimary,
       ),
       child: Container(
         padding: const EdgeInsets.all(14),
@@ -44,7 +44,7 @@ class EmployeeCardWidget extends StatelessWidget {
         ),
         child: EmployeeCardContent(
           employee: employee,
-          accentColor: position.color,
+          accentColor: position.color ?? kPrimary,
           isDark: isDark,
           avatarRadius: 22,
           nameFontSize: 14,

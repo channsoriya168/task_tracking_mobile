@@ -7,7 +7,7 @@ import 'package:task_tracking_mobile/features/core/data/datasources/image_servic
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
 // ── Stubs ──────────────────────────────────────────────────────
 class _StubImageService extends ImageService {
@@ -22,7 +22,7 @@ EmployeeController _buildController() {
   Get.reset();
   Get.testMode = true;
 
-  Get.put<PositionController>(PositionController());
+  Get.put<TaskGroupController>(TaskGroupController());
   Get.put<PickAndCompressImageUseCase>(
     PickAndCompressImageUseCase(_StubImageService()),
   );
@@ -56,14 +56,20 @@ void main() {
       final ctrl = _buildController();
       ctrl.searchQuery.value = 'alice';
       final results = ctrl.filteredEmployees;
-      expect(results.every((e) => e.name.toLowerCase().contains('alice')), isTrue);
+      expect(
+        results.every((e) => e.name.toLowerCase().contains('alice')),
+        isTrue,
+      );
     });
 
     test('filteredEmployees filters by email', () {
       final ctrl = _buildController();
       ctrl.searchQuery.value = 'bob@company';
       final results = ctrl.filteredEmployees;
-      expect(results.every((e) => e.email.toLowerCase().contains('bob@company')), isTrue);
+      expect(
+        results.every((e) => e.email.toLowerCase().contains('bob@company')),
+        isTrue,
+      );
     });
 
     test('filteredEmployees returns empty when no match', () {
@@ -78,7 +84,12 @@ void main() {
       final ctrl = _buildController();
       final before = ctrl.employees.length;
       ctrl.addEmployee(
-        const Employee(id: 'new1', name: 'New Guy', email: 'new@test.com', positionId: 'p1'),
+        const Employee(
+          id: 'new1',
+          name: 'New Guy',
+          email: 'new@test.com',
+          positionId: 'p1',
+        ),
       );
       expect(ctrl.employees.length, before + 1);
       expect(ctrl.employees.any((e) => e.id == 'new1'), isTrue);
@@ -97,7 +108,12 @@ void main() {
       final ctrl = _buildController();
       final before = ctrl.employees.length;
       ctrl.updateEmployee(
-        const Employee(id: 'ghost', name: 'Ghost', email: 'g@g.com', positionId: 'p1'),
+        const Employee(
+          id: 'ghost',
+          name: 'Ghost',
+          email: 'g@g.com',
+          positionId: 'p1',
+        ),
       );
       expect(ctrl.employees.length, before);
     });
@@ -128,13 +144,15 @@ void main() {
     test('employeeCountByPosition counts correctly', () {
       final ctrl = _buildController();
       final positionId = ctrl.employees.first.positionId;
-      final expected = ctrl.employees.where((e) => e.positionId == positionId).length;
+      final expected = ctrl.employees
+          .where((e) => e.positionId == positionId)
+          .length;
       expect(ctrl.employeeCountByPosition(positionId), expected);
     });
 
     test('findPosition returns position when it exists', () {
       final ctrl = _buildController();
-      final posCtrl = Get.find<PositionController>();
+      final posCtrl = Get.find<TaskGroupController>();
       final pos = posCtrl.positions.first;
       expect(ctrl.findPosition(pos.id), isNotNull);
       expect(ctrl.findPosition(pos.id)!.id, pos.id);
@@ -162,11 +180,14 @@ void main() {
       expect(ctrl.formPositionId.value, emp.positionId);
     });
 
-    test('initDialogForm uses preselectedPositionId when no existing employee', () {
-      final ctrl = _buildController();
-      ctrl.initDialogForm(null, 'p2');
-      expect(ctrl.formPositionId.value, 'p2');
-    });
+    test(
+      'initDialogForm uses preselectedPositionId when no existing employee',
+      () {
+        final ctrl = _buildController();
+        ctrl.initDialogForm(null, 'p2');
+        expect(ctrl.formPositionId.value, 'p2');
+      },
+    );
 
     test('saveEmployee does nothing when name is empty', () {
       final ctrl = _buildController();

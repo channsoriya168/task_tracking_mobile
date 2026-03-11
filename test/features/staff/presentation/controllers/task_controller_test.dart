@@ -12,8 +12,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 // ── Helper: creates a fresh registered controller ────────────────────────────
 //
@@ -91,25 +91,33 @@ void main() {
 
     test('completedTasks counts only done tasks', () {
       final ctrl = _buildController();
-      final expected = ctrl.tasks.where((t) => t.status == TaskStatus.done).length;
+      final expected = ctrl.tasks
+          .where((t) => t.status == TaskStatus.done)
+          .length;
       expect(ctrl.completedTasks, equals(expected));
     });
 
     test('pendingCount counts only todo tasks', () {
       final ctrl = _buildController();
-      final expected = ctrl.tasks.where((t) => t.status == TaskStatus.todo).length;
+      final expected = ctrl.tasks
+          .where((t) => t.status == TaskStatus.todo)
+          .length;
       expect(ctrl.pendingCount, equals(expected));
     });
 
     test('inProgressTasks counts only inProgress tasks', () {
       final ctrl = _buildController();
-      final expected = ctrl.tasks.where((t) => t.status == TaskStatus.inProgress).length;
+      final expected = ctrl.tasks
+          .where((t) => t.status == TaskStatus.inProgress)
+          .length;
       expect(ctrl.inProgressTasks, equals(expected));
     });
 
     test('failCount counts only fail tasks', () {
       final ctrl = _buildController();
-      final expected = ctrl.tasks.where((t) => t.status == TaskStatus.fail).length;
+      final expected = ctrl.tasks
+          .where((t) => t.status == TaskStatus.fail)
+          .length;
       expect(ctrl.failCount, equals(expected));
     });
 
@@ -316,11 +324,11 @@ void main() {
       ctrl = _buildController();
       ctrl.tasks.clear();
       ctrl.tasks.addAll([
-        _task(id: '1', title: 'Todo A',       status: TaskStatus.todo),
-        _task(id: '2', title: 'Todo B',       status: TaskStatus.todo),
+        _task(id: '1', title: 'Todo A', status: TaskStatus.todo),
+        _task(id: '2', title: 'Todo B', status: TaskStatus.todo),
         _task(id: '3', title: 'InProgress A', status: TaskStatus.inProgress),
-        _task(id: '4', title: 'Done A',       status: TaskStatus.done),
-        _task(id: '5', title: 'Fail A',       status: TaskStatus.fail),
+        _task(id: '4', title: 'Done A', status: TaskStatus.done),
+        _task(id: '5', title: 'Fail A', status: TaskStatus.fail),
       ]);
     });
 
@@ -368,9 +376,27 @@ void main() {
       ctrl.tasks.clear();
       ctrl.filterStatus.value = 'Todo'; // keep filter open for todos
       ctrl.tasks.addAll([
-        TaskModel(id: '1', title: 'Fix login bug',   description: 'auth issue',  category: 'Engineering', status: TaskStatus.todo),
-        TaskModel(id: '2', title: 'Write docs',      description: 'api v2 docs', category: 'Documentation', status: TaskStatus.todo),
-        TaskModel(id: '3', title: 'Design homepage', description: 'wireframes',  category: 'Design', status: TaskStatus.todo),
+        TaskModel(
+          id: '1',
+          title: 'Fix login bug',
+          description: 'auth issue',
+          category: 'Engineering',
+          status: TaskStatus.todo,
+        ),
+        TaskModel(
+          id: '2',
+          title: 'Write docs',
+          description: 'api v2 docs',
+          category: 'Documentation',
+          status: TaskStatus.todo,
+        ),
+        TaskModel(
+          id: '3',
+          title: 'Design homepage',
+          description: 'wireframes',
+          category: 'Design',
+          status: TaskStatus.todo,
+        ),
       ]);
     });
 
@@ -426,8 +452,16 @@ void main() {
       final ctrl = _buildController();
       ctrl.tasks.clear();
       ctrl.tasks.addAll([
-        _task(id: '1', status: TaskStatus.todo, dueDate: DateTime.now().add(const Duration(hours: 12))),
-        _task(id: '2', status: TaskStatus.done, dueDate: DateTime.now().add(const Duration(hours: 12))),
+        _task(
+          id: '1',
+          status: TaskStatus.todo,
+          dueDate: DateTime.now().add(const Duration(hours: 12)),
+        ),
+        _task(
+          id: '2',
+          status: TaskStatus.done,
+          dueDate: DateTime.now().add(const Duration(hours: 12)),
+        ),
       ]);
 
       final result = ctrl.upcomingTasks;
@@ -448,7 +482,11 @@ void main() {
       final ctrl = _buildController();
       ctrl.tasks.clear();
       ctrl.tasks.add(
-        _task(id: '1', status: TaskStatus.todo, dueDate: DateTime.now().add(const Duration(days: 10))),
+        _task(
+          id: '1',
+          status: TaskStatus.todo,
+          dueDate: DateTime.now().add(const Duration(days: 10)),
+        ),
       );
 
       expect(ctrl.upcomingTasks, isEmpty);

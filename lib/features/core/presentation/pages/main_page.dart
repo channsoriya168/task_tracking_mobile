@@ -10,9 +10,9 @@ import 'package:task_tracking_mobile/features/manager/presentation/pages/task/ma
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/admin_nav_items.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/pages/home_page.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/pages/profile_page.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_page.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/pages/home_page.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/pages/profile_page.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});

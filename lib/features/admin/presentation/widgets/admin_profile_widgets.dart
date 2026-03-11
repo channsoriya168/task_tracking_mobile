@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
 // ── Profile header card ──────────────────────────────────────────
 

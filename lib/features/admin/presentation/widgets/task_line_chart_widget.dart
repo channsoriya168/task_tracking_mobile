@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 enum _Filter { day, week, month }
 
@@ -22,13 +22,19 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     return tasks.where((t) {
-      final created = DateTime(t.createdAt.year, t.createdAt.month, t.createdAt.day);
+      final created = DateTime(
+        t.createdAt.year,
+        t.createdAt.month,
+        t.createdAt.day,
+      );
       return switch (_filter) {
-        _Filter.day   => created == today,
-        _Filter.week  => !created.isBefore(today.subtract(const Duration(days: 6))) &&
-            !created.isAfter(today),
-        _Filter.month => !created.isBefore(today.subtract(const Duration(days: 29))) &&
-            !created.isAfter(today),
+        _Filter.day => created == today,
+        _Filter.week =>
+          !created.isBefore(today.subtract(const Duration(days: 6))) &&
+              !created.isAfter(today),
+        _Filter.month =>
+          !created.isBefore(today.subtract(const Duration(days: 29))) &&
+              !created.isAfter(today),
       };
     }).toList();
   }
@@ -36,26 +42,28 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final textColor  = isDark ? Colors.white : kTextDark;
+    final textColor = isDark ? Colors.white : kTextDark;
     final labelColor = isDark ? Colors.grey[400]! : kTextMuted;
-    final chipBg     = isDark
+    final chipBg = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.black.withValues(alpha: 0.04);
 
     return Obx(() {
       final taskCtrl = Get.find<TaskController>();
-      final filtered   = _applyFilter(taskCtrl.tasks);
-      final pending    = filtered.where((t) => t.status == TaskStatus.todo).length;
-      final inProgress = filtered.where((t) => t.status == TaskStatus.inProgress).length;
-      final done       = filtered.where((t) => t.status == TaskStatus.done).length;
-      final fail       = filtered.where((t) => t.status == TaskStatus.fail).length;
+      final filtered = _applyFilter(taskCtrl.tasks);
+      final pending = filtered.where((t) => t.status == TaskStatus.todo).length;
+      final inProgress = filtered
+          .where((t) => t.status == TaskStatus.inProgress)
+          .length;
+      final done = filtered.where((t) => t.status == TaskStatus.done).length;
+      final fail = filtered.where((t) => t.status == TaskStatus.fail).length;
       final total = pending + inProgress + done + fail;
 
       final data = [
-        _StatusData('Pending',     pending,    kMediumPriority),
+        _StatusData('Pending', pending, kMediumPriority),
         _StatusData('In Progress', inProgress, kPrimary),
-        _StatusData('Complete',    done,       kLowPriority),
-        _StatusData('Fail',        fail,       kHighPriority),
+        _StatusData('Complete', done, kLowPriority),
+        _StatusData('Fail', fail, kHighPriority),
       ];
       final chartData = data.where((d) => d.value > 0).toList();
 
@@ -75,7 +83,10 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 2,
+                ),
                 decoration: BoxDecoration(
                   color: chipBg,
                   borderRadius: BorderRadius.circular(20),
@@ -89,20 +100,34 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
                   child: DropdownButton<_Filter>(
                     value: _filter,
                     isDense: true,
-                    icon: Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: labelColor),
+                    icon: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      size: 16,
+                      color: labelColor,
+                    ),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
-                    dropdownColor: isDark ? const Color(0xFF2A2A3A) : Colors.white,
+                    dropdownColor: isDark
+                        ? const Color(0xFF2A2A3A)
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     items: const [
-                      DropdownMenuItem(value: _Filter.day,   child: Text('Day')),
-                      DropdownMenuItem(value: _Filter.week,  child: Text('Week')),
-                      DropdownMenuItem(value: _Filter.month, child: Text('Month')),
+                      DropdownMenuItem(value: _Filter.day, child: Text('Day')),
+                      DropdownMenuItem(
+                        value: _Filter.week,
+                        child: Text('Week'),
+                      ),
+                      DropdownMenuItem(
+                        value: _Filter.month,
+                        child: Text('Month'),
+                      ),
                     ],
-                    onChanged: (f) { if (f != null) setState(() => _filter = f); },
+                    onChanged: (f) {
+                      if (f != null) setState(() => _filter = f);
+                    },
                   ),
                 ),
               ),
@@ -163,7 +188,9 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
                             pointColorMapper: (d, _) => d.color,
                             innerRadius: '65%',
                             radius: '100%',
-                            dataLabelSettings: const DataLabelSettings(isVisible: false),
+                            dataLabelSettings: const DataLabelSettings(
+                              isVisible: false,
+                            ),
                           ),
                         ],
                       ),
@@ -176,13 +203,17 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: data.map((d) => _LegendItem(
-                    isDark: isDark,
-                    color: d.color,
-                    label: d.label,
-                    count: d.value,
-                    total: total,
-                  )).toList(),
+                  children: data
+                      .map(
+                        (d) => _LegendItem(
+                          isDark: isDark,
+                          color: d.color,
+                          label: d.label,
+                          count: d.value,
+                          total: total,
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
             ],

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 class AdminTaskController extends GetxController {
   final RxString filterStatus = 'All'.obs;
@@ -26,8 +26,9 @@ class AdminTaskController extends GetxController {
         result = result.where((t) => t.status == TaskStatus.todo).toList();
         break;
       case 'In Progress':
-        result =
-            result.where((t) => t.status == TaskStatus.inProgress).toList();
+        result = result
+            .where((t) => t.status == TaskStatus.inProgress)
+            .toList();
         break;
       case 'Complete':
         result = result.where((t) => t.status == TaskStatus.done).toList();

@@ -8,7 +8,7 @@ import 'package:task_tracking_mobile/features/core/data/datasources/image_servic
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
 class _StubImageService extends ImageService {
   @override
@@ -29,7 +29,7 @@ void _setupControllers() {
   Get.put<PickAndCompressImageUseCase>(
     PickAndCompressImageUseCase(_StubImageService()),
   );
-  Get.put<PositionController>(PositionController());
+  Get.put<TaskGroupController>(TaskGroupController());
   Get.put<EmployeeController>(EmployeeController());
 }
 
@@ -38,19 +38,19 @@ void main() {
 
   // ── Non-mutating tests (no snackbar) ─────────────────────────
 
-  group('PositionController – initial state', () {
+  group('TaskGroupController – initial state', () {
     test('positions loaded from mock data on init', () {
       _setupControllers();
-      final ctrl = Get.find<PositionController>();
+      final ctrl = Get.find<TaskGroupController>();
       expect(ctrl.positions, isNotEmpty);
       expect(ctrl.positions.length, kMockPositions.length);
     });
   });
 
-  group('PositionController – findPosition', () {
+  group('TaskGroupController – findPosition', () {
     test('returns position for known id', () {
       _setupControllers();
-      final ctrl = Get.find<PositionController>();
+      final ctrl = Get.find<TaskGroupController>();
       final pos = ctrl.positions.first;
       expect(ctrl.findPosition(pos.id), isNotNull);
       expect(ctrl.findPosition(pos.id)!.name, pos.name);
@@ -58,34 +58,34 @@ void main() {
 
     test('returns null for unknown id', () {
       _setupControllers();
-      final ctrl = Get.find<PositionController>();
+      final ctrl = Get.find<TaskGroupController>();
       expect(ctrl.findPosition('unknown_id'), isNull);
     });
   });
 
-  group('PositionController – generateId', () {
+  group('TaskGroupController – generateId', () {
     test('returns a non-empty string', () {
       _setupControllers();
-      final ctrl = Get.find<PositionController>();
+      final ctrl = Get.find<TaskGroupController>();
       expect(ctrl.generateId(), isNotEmpty);
     });
   });
 
   // ── Mutating tests (trigger snackbar – need widget overlay) ──
 
-  group('PositionController – addPosition', () {
+  group('TaskGroupController – addPosition', () {
     testWidgets('appends position to the list', (tester) async {
       _setupControllers();
       await tester.pumpWidget(_appWith(const SizedBox()));
-      final ctrl = Get.find<PositionController>();
+      final ctrl = Get.find<TaskGroupController>();
       final before = ctrl.positions.length;
 
       ctrl.addPosition(
         const Position(id: 'new_p', name: 'QA', color: Color(0xFF000000)),
       );
-      await tester.pump(Duration.zero);               // fire Future.delayed
-      await tester.pump(const Duration(seconds: 3));  // snackbar auto-dismisses
-      await tester.pumpAndSettle();                   // finish exit animation
+      await tester.pump(Duration.zero); // fire Future.delayed
+      await tester.pump(const Duration(seconds: 3)); // snackbar auto-dismisses
+      await tester.pumpAndSettle(); // finish exit animation
 
       expect(ctrl.positions.length, before + 1);
       expect(ctrl.positions.any((p) => p.id == 'new_p'), isTrue);

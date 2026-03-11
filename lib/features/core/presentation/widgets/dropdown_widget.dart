@@ -8,13 +8,15 @@ class DropdownWidget<T> extends StatelessWidget {
     required this.label,
     required this.isDark,
     required this.onChanged,
+    this.leadingBuilder,
   });
 
-  final T value;
+  final T? value;
   final List<T> items;
   final String Function(T) label;
   final bool isDark;
   final ValueChanged<T?> onChanged;
+  final Widget Function(T)? leadingBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,19 @@ class DropdownWidget<T> extends StatelessWidget {
             color: isDark ? Colors.white : kTextDark,
           ),
           items: items
-              .map((e) => DropdownMenuItem(value: e, child: Text(label(e))))
+              .map(
+                (e) => DropdownMenuItem(
+                  value: e,
+                  child: leadingBuilder != null
+                      ? Row(
+                          children: [
+                            leadingBuilder!(e),
+                            Text(label(e)),
+                          ],
+                        )
+                      : Text(label(e)),
+                ),
+              )
               .toList(),
           onChanged: onChanged,
         ),

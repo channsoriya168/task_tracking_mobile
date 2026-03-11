@@ -1,7 +1,7 @@
 // ── Manager Task Card ──────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/menu_sheet_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
@@ -15,7 +15,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
     required this.managerTaskController,
   });
 
-  final TaskModel task;
+  final TaskItem task;
   final ManagerTaskController managerTaskController;
 
   static const _months = [
@@ -49,13 +49,9 @@ class ManagerTaskCardWidget extends StatelessWidget {
     final isOverdue = task.isOverdue;
     final statusColor = isOverdue ? kHighPriority : task.statusColor;
 
-    final done = task.progressItems.where((s) => s.startsWith('[x]')).length;
-    final total = task.progressItems.length;
-    final progressValue = total == 0 ? 0.0 : (done / total).clamp(0.0, 1.0);
-
     return Dismissible(
       key: Key(task.id),
-      direction: task.status == TaskStatus.done
+      direction: task.status == TaskItemStatus.done
           ? DismissDirection.none
           : DismissDirection.endToStart,
       confirmDismiss: (_) => showConfirmDeleteDialog(
@@ -117,201 +113,167 @@ class ManagerTaskCardWidget extends StatelessWidget {
                   ),
                   // ── Content ──
                   Expanded(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
-                          child: Column(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Row 1 — title + menu
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Row 1 — title + menu
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      task.title,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: titleColor,
-                                        letterSpacing: -0.1,
-                                      ),
-                                    ),
-                                  ),
-                                  MenuSheetWidget(
-                                    isDark: isDark,
-                                    mutedColor: mutedColor,
-                                    actions: [
-                                      MenuSheetAction(
-                                        label: 'Edit',
-                                        icon: Icons.edit_outlined,
-                                        onTap: () => showTaskDialog(
-                                          context,
-                                          isDark,
-                                          task: task,
-                                        ),
-                                      ),
-                                      MenuSheetAction(
-                                        label: 'Delete',
-                                        icon: Icons.delete_outline_rounded,
-                                        color: kHighPriority,
-                                        onTap: () async {
-                                          final ok = await showConfirmDeleteDialog(
-                                            context,
-                                            title: 'Delete Task',
-                                            message:
-                                                'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
-                                          );
-                                          if (ok == true) {
-                                            managerTaskController.deleteTask(
-                                              task.id,
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              // Row 2 — description
-                              if (task.description.isNotEmpty) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  task.description,
+                              Expanded(
+                                child: Text(
+                                  task.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    color: mutedColor,
-                                    height: 1.4,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: titleColor,
+                                    letterSpacing: -0.1,
                                   ),
                                 ),
-                              ],
-                              const SizedBox(height: 8),
-                              // Row 3 — dates inline
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.today_rounded,
-                                    size: 11,
-                                    color: mutedColor,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    _fmt(task.createdAt),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: mutedColor,
-                                    ),
-                                  ),
-                                  if (task.dueDate != null) ...[
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                      ),
-                                      child: Icon(
-                                        Icons.arrow_right_alt_rounded,
-                                        size: 13,
-                                        color: mutedColor,
-                                      ),
-                                    ),
-                                    Icon(
-                                      isOverdue
-                                          ? Icons.warning_amber_rounded
-                                          : Icons.event_rounded,
-                                      size: 11,
-                                      color: isOverdue
-                                          ? kHighPriority
-                                          : kPrimary,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      _fmt(task.dueDate!),
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: isOverdue
-                                            ? kHighPriority
-                                            : kPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ],
                               ),
-                              const SizedBox(height: 8),
-                              // Row 4 — status · priority · members · category
-                              Row(
-                                children: [
-                                  // Status pill
-                                  StatusBadgeWidget(
-                                    label: isOverdue
-                                        ? 'Overdue'
-                                        : task.statusLabel,
-                                    color: statusColor,
-                                    isDark: isDark,
+                              MenuSheetWidget(
+                                isDark: isDark,
+                                mutedColor: mutedColor,
+                                actions: [
+                                  MenuSheetAction(
+                                    label: 'Edit',
+                                    icon: Icons.edit_outlined,
+                                    onTap: () => showTaskDialog(
+                                      context,
+                                      isDark,
+                                      task: task,
+                                    ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  // Category
-                                  StatusBadgeWidget(
-                                    label: task.category,
-                                    color: statusColor,
-                                    isDark: isDark,
+                                  MenuSheetAction(
+                                    label: 'Delete',
+                                    icon: Icons.delete_outline_rounded,
+                                    color: kHighPriority,
+                                    onTap: () async {
+                                      final ok = await showConfirmDeleteDialog(
+                                        context,
+                                        title: 'Delete Task',
+                                        message:
+                                            'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
+                                      );
+                                      if (ok == true) {
+                                        managerTaskController.deleteTask(
+                                          task.id,
+                                        );
+                                      }
+                                    },
                                   ),
-                                  const Spacer(),
-                                  // Member avatars
-                                  if (task.members.isNotEmpty) ...[
-                                    _MemberStack(
-                                      members: task.members,
-                                      isDark: isDark,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '${task.members.length}',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: mutedColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                  ] else if (task.acceptedBy != null) ...[
-                                    _SingleAvatar(name: task.acceptedBy!),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      task.acceptedBy!,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: mutedColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                  ],
                                 ],
                               ),
                             ],
                           ),
-                        ),
-                        // ── Progress bar (inProgress only) ──
-                        if (task.status == TaskStatus.inProgress)
-                          SizedBox(
-                            height: 3,
-                            child: LinearProgressIndicator(
-                              value: progressValue,
-                              backgroundColor: isDark
-                                  ? Colors.white12
-                                  : kPrimary.withValues(alpha: 0.08),
-                              valueColor: AlwaysStoppedAnimation(
-                                progressValue >= 1.0 ? kLowPriority : kPrimary,
+                          // Row 2 — description
+                          if ((task.description ?? '').isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              task.description ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: mutedColor,
+                                height: 1.4,
                               ),
-                              borderRadius: BorderRadius.zero,
                             ),
+                          ],
+                          const SizedBox(height: 8),
+                          // Row 3 — dates inline
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.today_rounded,
+                                size: 11,
+                                color: mutedColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _fmt(task.createdAt),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: mutedColor,
+                                ),
+                              ),
+                              if (task.dueDate != null) ...[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_right_alt_rounded,
+                                    size: 13,
+                                    color: mutedColor,
+                                  ),
+                                ),
+                                Icon(
+                                  isOverdue
+                                      ? Icons.warning_amber_rounded
+                                      : Icons.event_rounded,
+                                  size: 11,
+                                  color: isOverdue
+                                      ? kHighPriority
+                                      : kPrimary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  _fmt(task.dueDate!),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: isOverdue
+                                        ? kHighPriority
+                                        : kPrimary,
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
-                      ],
+                          const SizedBox(height: 8),
+                          // Row 4 — status · category · assignee
+                          Row(
+                            children: [
+                              // Status pill
+                              StatusBadgeWidget(
+                                label: isOverdue
+                                    ? 'Overdue'
+                                    : task.statusLabel,
+                                color: statusColor,
+                                isDark: isDark,
+                              ),
+                              const SizedBox(width: 8),
+                              // Category
+                              StatusBadgeWidget(
+                                label: task.groupName ?? task.labelName ?? '',
+                                color: statusColor,
+                                isDark: isDark,
+                              ),
+                              const Spacer(),
+                              // Assigned to
+                              if (task.assignedToName != null) ...[
+                                _SingleAvatar(name: task.assignedToName!),
+                                const SizedBox(width: 4),
+                                Text(
+                                  task.assignedToName!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: mutedColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -347,52 +309,6 @@ class _SingleAvatar extends StatelessWidget {
           fontWeight: FontWeight.w800,
           color: kPrimary,
         ),
-      ),
-    );
-  }
-}
-
-// ── Stacked member avatars ────────────────────────────────────
-class _MemberStack extends StatelessWidget {
-  const _MemberStack({required this.members, required this.isDark});
-
-  final List<String> members;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final show = members.take(3).toList();
-    return SizedBox(
-      height: 20,
-      width: show.length * 13.0 + 7,
-      child: Stack(
-        children: List.generate(show.length, (i) {
-          const color = kPrimary;
-          return Positioned(
-            left: i * 13.0,
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: isDark ? 0.25 : 0.15),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
-                  width: 1.5,
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                show[i].isNotEmpty ? show[i][0].toUpperCase() : '?',
-                style: TextStyle(
-                  fontSize: 7,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                ),
-              ),
-            ),
-          );
-        }),
       ),
     );
   }

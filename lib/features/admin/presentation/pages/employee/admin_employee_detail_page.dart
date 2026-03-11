@@ -7,12 +7,12 @@ import 'package:task_tracking_mobile/features/manager/data/models/employee.dart'
 
 class AdminEmployeeDetailPage extends StatelessWidget {
   final Employee employee;
-  final Position? position;
+  final TaskGroup? taskGroup;
 
   const AdminEmployeeDetailPage({
     super.key,
     required this.employee,
-    required this.position,
+    required this.taskGroup,
   });
 
   @override
@@ -68,7 +68,7 @@ class AdminEmployeeDetailPage extends StatelessWidget {
           children: [
             EmployeeDetailHeader(
               employee: employee,
-              position: position,
+              taskGroup: taskGroup,
               isDark: isDark,
             ),
             const SizedBox(height: 16),

@@ -1,4 +1,4 @@
-export 'package:task_tracking_mobile/features/manager/data/models/position.dart';
+export 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 
 class Employee {
   final String id;

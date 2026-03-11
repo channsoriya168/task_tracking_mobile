@@ -4,11 +4,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/image_picker_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_dialog.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_dialog.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 class EmployeeController extends GetxController {
   final RxList<Employee> employees = <Employee>[].obs;
@@ -18,7 +18,7 @@ class EmployeeController extends GetxController {
   // Track the employee being edited
   Employee? existing;
 
-  RxList<Position> get positions => Get.find<PositionController>().positions;
+  RxList<TaskGroup> get positions => Get.find<TaskGroupController>().positions;
 
   @override
   void onInit() {
@@ -51,7 +51,7 @@ class EmployeeController extends GetxController {
   }
 
   Future<void> onOpenPositionDialog(BuildContext context) async {
-    final posCtrl = Get.find<PositionController>();
+    final posCtrl = Get.find<TaskGroupController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final before = posCtrl.positions.map((p) => p.id).toSet();
 
@@ -76,7 +76,7 @@ class EmployeeController extends GetxController {
     return filteredEmployees.where((e) => e.positionId == positionId).toList();
   }
 
-  Position? findPosition(String id) {
+  TaskGroup? findPosition(String id) {
     try {
       return positions.firstWhere((p) => p.id == id);
     } catch (_) {
@@ -214,9 +214,7 @@ class EmployeeController extends GetxController {
   List<TaskModel> tasksForEmployee(String employeeId) {
     try {
       final taskCtrl = Get.find<TaskController>();
-      return taskCtrl.tasks
-          .where((t) => t.assignedToId == employeeId)
-          .toList();
+      return taskCtrl.tasks.where((t) => t.assignedToId == employeeId).toList();
     } catch (_) {
       return [];
     }

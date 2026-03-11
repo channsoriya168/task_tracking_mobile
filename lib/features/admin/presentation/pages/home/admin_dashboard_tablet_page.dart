@@ -7,7 +7,7 @@ import 'package:task_tracking_mobile/features/admin/presentation/widgets/task_li
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 class AdminDashboardTabletPage extends StatelessWidget {
   const AdminDashboardTabletPage({super.key});

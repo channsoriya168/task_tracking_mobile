@@ -71,7 +71,10 @@ class ManagerDashboardPage extends StatelessWidget {
             SliverPadding(
               padding: kPageSectionLargePadding,
               sliver: SliverToBoxAdapter(
-                child: TaskChartWidget(isDark: isDark),
+                child: TaskChartWidget(
+                  isDark: isDark,
+                  tasks: managerTaskController.tasks,
+                ),
               ),
             ),
 

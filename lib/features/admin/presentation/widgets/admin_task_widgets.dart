@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_view_page.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/widgets/task/task_empty_state.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_view_page.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
 
 // ── Header ─────────────────────────────────────────────────────
 class AdminTaskHeader extends StatelessWidget {
@@ -62,9 +62,7 @@ class AdminTaskFilterBar extends StatelessWidget {
       height: 52,
       child: Obx(() {
         final currentFilter = ctrl.filterStatus.value;
-        final counts = {
-          for (final f in _kFilters) f: ctrl.countByStatus(f),
-        };
+        final counts = {for (final f in _kFilters) f: ctrl.countByStatus(f)};
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
@@ -216,7 +214,8 @@ class AdminTaskList extends StatelessWidget {
         itemCount: tasks.length,
         itemBuilder: (_, i) {
           final task = tasks[i];
-          final canView = task.status == TaskStatus.inProgress ||
+          final canView =
+              task.status == TaskStatus.inProgress ||
               task.status == TaskStatus.done;
           return Padding(
             padding: kItemSpacing,
@@ -258,8 +257,18 @@ class AdminTaskCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]} ${dt.year}';
@@ -278,9 +287,13 @@ class AdminTaskCard extends StatelessWidget {
     final isOverdue = task.isOverdue;
     final statusColor = isOverdue ? kHighPriority : task.statusColor;
 
-    final doneProg = task.progressItems.where((s) => s.startsWith('[x]')).length;
+    final doneProg = task.progressItems
+        .where((s) => s.startsWith('[x]'))
+        .length;
     final totalProg = task.progressItems.length;
-    final progressValue = totalProg == 0 ? 0.0 : (doneProg / totalProg).clamp(0.0, 1.0);
+    final progressValue = totalProg == 0
+        ? 0.0
+        : (doneProg / totalProg).clamp(0.0, 1.0);
 
     return Dismissible(
       key: Key(task.id),
@@ -296,7 +309,11 @@ class AdminTaskCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: kHighPriority.withValues(alpha: 0.2)),
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: kHighPriority, size: 22),
+        child: const Icon(
+          Icons.delete_outline_rounded,
+          color: kHighPriority,
+          size: 22,
+        ),
       ),
       child: GestureDetector(
         onTap: onTap,
@@ -385,24 +402,38 @@ class AdminTaskCard extends StatelessWidget {
                               // Row 3 — dates
                               Row(
                                 children: [
-                                  Icon(Icons.today_rounded, size: 11, color: mutedColor),
+                                  Icon(
+                                    Icons.today_rounded,
+                                    size: 11,
+                                    color: mutedColor,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     _fmt(task.createdAt),
-                                    style: TextStyle(fontSize: 11, color: mutedColor),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: mutedColor,
+                                    ),
                                   ),
                                   if (task.dueDate != null) ...[
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                                      child: Icon(Icons.arrow_right_alt_rounded,
-                                          size: 13, color: mutedColor),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                      ),
+                                      child: Icon(
+                                        Icons.arrow_right_alt_rounded,
+                                        size: 13,
+                                        color: mutedColor,
+                                      ),
                                     ),
                                     Icon(
                                       isOverdue
                                           ? Icons.warning_amber_rounded
                                           : Icons.event_rounded,
                                       size: 11,
-                                      color: isOverdue ? kHighPriority : kPrimary,
+                                      color: isOverdue
+                                          ? kHighPriority
+                                          : kPrimary,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
@@ -410,7 +441,9 @@ class AdminTaskCard extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
-                                        color: isOverdue ? kHighPriority : kPrimary,
+                                        color: isOverdue
+                                            ? kHighPriority
+                                            : kPrimary,
                                       ),
                                     ),
                                   ],
@@ -421,7 +454,9 @@ class AdminTaskCard extends StatelessWidget {
                               Row(
                                 children: [
                                   _StatusBadge(
-                                    label: isOverdue ? 'Overdue' : task.statusLabel,
+                                    label: isOverdue
+                                        ? 'Overdue'
+                                        : task.statusLabel,
                                     color: statusColor,
                                     isDark: isDark,
                                   ),
@@ -439,7 +474,10 @@ class AdminTaskCard extends StatelessWidget {
                                       task.acceptedBy!,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 11, color: mutedColor),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: mutedColor,
+                                      ),
                                     ),
                                     const SizedBox(width: 8),
                                   ],
@@ -479,7 +517,11 @@ class AdminTaskCard extends StatelessWidget {
 // ── Sub-widgets ────────────────────────────────────────────────
 
 class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.label, required this.color, required this.isDark});
+  const _StatusBadge({
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
   final String label;
   final Color color;
   final bool isDark;
@@ -521,7 +563,11 @@ class _AssigneeAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: kPrimary),
+        style: const TextStyle(
+          fontSize: 8,
+          fontWeight: FontWeight.w800,
+          color: kPrimary,
+        ),
       ),
     );
   }
@@ -573,16 +619,32 @@ class _CardMenu extends StatelessWidget {
             ),
             if (onView != null)
               ListTile(
-                leading: Icon(Icons.visibility_outlined,
-                    color: isDark ? Colors.white70 : kTextDark),
-                title: Text('View Details',
-                    style: TextStyle(color: isDark ? Colors.white : kTextDark)),
-                onTap: () { Navigator.pop(context); onView!(); },
+                leading: Icon(
+                  Icons.visibility_outlined,
+                  color: isDark ? Colors.white70 : kTextDark,
+                ),
+                title: Text(
+                  'View Details',
+                  style: TextStyle(color: isDark ? Colors.white : kTextDark),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  onView!();
+                },
               ),
             ListTile(
-              leading: const Icon(Icons.delete_outline_rounded, color: kHighPriority),
-              title: const Text('Delete', style: TextStyle(color: kHighPriority)),
-              onTap: () { Navigator.pop(context); onDelete(); },
+              leading: const Icon(
+                Icons.delete_outline_rounded,
+                color: kHighPriority,
+              ),
+              title: const Text(
+                'Delete',
+                style: TextStyle(color: kHighPriority),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                onDelete();
+              },
             ),
             const SizedBox(height: 8),
           ],
@@ -591,4 +653,3 @@ class _CardMenu extends StatelessWidget {
     );
   }
 }
-

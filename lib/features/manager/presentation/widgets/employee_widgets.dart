@@ -99,7 +99,7 @@ class EmployeeCardContent extends StatelessWidget {
     required this.nameFontSize,
     required this.emailFontSize,
     required this.trailingIcon,
-    this.position,
+    this.taskGroup,
     this.clampText = false,
   });
 
@@ -112,7 +112,7 @@ class EmployeeCardContent extends StatelessWidget {
   final IconData trailingIcon;
 
   /// When set, shows a colored position badge below the email.
-  final Position? position;
+  final TaskGroup? taskGroup;
 
   /// When true, text is limited to 1 line with ellipsis (tablet grid).
   final bool clampText;
@@ -153,7 +153,7 @@ class EmployeeCardContent extends StatelessWidget {
                   color: isDark ? Colors.grey[500] : kTextMuted,
                 ),
               ),
-              if (position != null) ...[
+              if (taskGroup != null) ...[
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -165,7 +165,7 @@ class EmployeeCardContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    position!.name,
+                    taskGroup!.name,
                     style: TextStyle(
                       fontSize: 10,
                       color: accentColor,

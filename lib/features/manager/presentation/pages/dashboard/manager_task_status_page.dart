@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_dialog_wiget.dart';
@@ -37,21 +37,21 @@ class _ManagerTaskStatusPageState extends State<ManagerTaskStatusPage> {
     }
   }
 
-  List<TaskModel> _applyFilters(List<TaskModel> all) {
+  List<TaskItem> _applyFilters(List<TaskItem> all) {
     var result = all.where((t) {
       // Status filter
       switch (widget.filterStatus) {
         case 'Pending':
-          if (t.status != TaskStatus.todo) return false;
+          if (t.status != TaskItemStatus.todo) return false;
           break;
         case 'In Progress':
-          if (t.status != TaskStatus.inProgress) return false;
+          if (t.status != TaskItemStatus.inProgress) return false;
           break;
         case 'Complete':
-          if (t.status != TaskStatus.done) return false;
+          if (t.status != TaskItemStatus.done) return false;
           break;
         case 'Fail':
-          if (t.status != TaskStatus.fail) return false;
+          if (t.status != TaskItemStatus.fail) return false;
           break;
       }
 
@@ -69,8 +69,8 @@ class _ManagerTaskStatusPageState extends State<ManagerTaskStatusPage> {
       if (_searchQuery.isNotEmpty) {
         final q = _searchQuery.toLowerCase();
         if (!t.title.toLowerCase().contains(q) &&
-            !t.description.toLowerCase().contains(q) &&
-            !t.category.toLowerCase().contains(q)) {
+            !(t.description ?? '').toLowerCase().contains(q) &&
+            !(t.groupName ?? '').toLowerCase().contains(q)) {
           return false;
         }
       }

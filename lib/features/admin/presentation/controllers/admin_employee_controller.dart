@@ -1,27 +1,29 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
 class AdminEmployeeController extends GetxController {
   final RxString searchQuery = ''.obs;
   final RxString selectedPositionId = ''.obs; // '' = All
 
   RxList<Employee> get employees => Get.find<EmployeeController>().employees;
-  RxList<Position> get positions => Get.find<PositionController>().positions;
+  RxList<TaskGroup> get positions => Get.find<TaskGroupController>().positions;
 
   List<Employee> get filteredEmployees {
     return employees.where((e) {
-      final matchesPosition = selectedPositionId.value.isEmpty ||
+      final matchesPosition =
+          selectedPositionId.value.isEmpty ||
           e.positionId == selectedPositionId.value;
       final q = searchQuery.value.toLowerCase();
-      final matchesSearch = q.isEmpty ||
+      final matchesSearch =
+          q.isEmpty ||
           e.name.toLowerCase().contains(q) ||
           e.email.toLowerCase().contains(q);
       return matchesPosition && matchesSearch;
     }).toList();
   }
 
-  Position? findPosition(String id) =>
-      Get.find<PositionController>().findPosition(id);
+  TaskGroup? findPosition(String id) =>
+      Get.find<TaskGroupController>().findPosition(id);
 }

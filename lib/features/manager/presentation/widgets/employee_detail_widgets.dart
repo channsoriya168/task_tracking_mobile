@@ -6,7 +6,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
 // ── Profile Header ─────────────────────────────────────────────
 class EmployeeDetailHeader extends StatelessWidget {
@@ -21,7 +21,7 @@ class EmployeeDetailHeader extends StatelessWidget {
   final Employee emp;
   final Color accentColor;
   final bool isDark;
-  final Position? pos;
+  final TaskGroup? pos;
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +71,8 @@ class EmployeeDetailHeader extends StatelessWidget {
       backgroundImage: isLocal
           ? FileImage(File(path))
           : isNetwork
-              ? NetworkImage(path) as ImageProvider
-              : null,
+          ? NetworkImage(path) as ImageProvider
+          : null,
       child: (path == null || path.isEmpty)
           ? Text(
               employeeInitials(emp.name),
@@ -100,7 +100,7 @@ class EmployeeInfoSection extends StatelessWidget {
   final Employee emp;
   final bool isDark;
   final Color accentColor;
-  final Position? pos;
+  final TaskGroup? pos;
 
   @override
   Widget build(BuildContext context) {
@@ -274,11 +274,7 @@ class EmployeeDetailSectionLabel extends StatelessWidget {
 
 // ── QR Code Section (read-only display) ───────────────────────
 class EmployeeQrSection extends StatelessWidget {
-  const EmployeeQrSection({
-    super.key,
-    required this.emp,
-    required this.isDark,
-  });
+  const EmployeeQrSection({super.key, required this.emp, required this.isDark});
 
   final Employee emp;
   final bool isDark;
@@ -299,7 +295,9 @@ class EmployeeQrSection extends StatelessWidget {
           ),
         ],
       ),
-      child: emp.hasQr ? _QrDisplay(emp: emp, isDark: isDark) : _QrNone(isDark: isDark),
+      child: emp.hasQr
+          ? _QrDisplay(emp: emp, isDark: isDark)
+          : _QrNone(isDark: isDark),
     );
   }
 }
@@ -325,10 +323,26 @@ class _QrDisplay extends StatelessWidget {
             if (isExpired)
               ColorFiltered(
                 colorFilter: const ColorFilter.matrix([
-                  0.2126, 0.7152, 0.0722, 0, 0,
-                  0.2126, 0.7152, 0.0722, 0, 0,
-                  0.2126, 0.7152, 0.0722, 0, 0,
-                  0,      0,      0,      1, 0,
+                  0.2126,
+                  0.7152,
+                  0.0722,
+                  0,
+                  0,
+                  0.2126,
+                  0.7152,
+                  0.0722,
+                  0,
+                  0,
+                  0.2126,
+                  0.7152,
+                  0.0722,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
                 ]),
                 child: QrImageView(
                   data: emp.qrCode!,
@@ -586,14 +600,8 @@ class _TaskRow extends StatelessWidget {
                 Wrap(
                   spacing: 6,
                   children: [
-                    _Chip(
-                      label: task.statusLabel,
-                      color: task.statusColor,
-                    ),
-                    _Chip(
-                      label: task.priorityLabel,
-                      color: task.priorityColor,
-                    ),
+                    _Chip(label: task.statusLabel, color: task.statusColor),
+                    _Chip(label: task.priorityLabel, color: task.priorityColor),
                     if (task.dueDate != null)
                       _DueChip(task: task, isDark: isDark),
                   ],

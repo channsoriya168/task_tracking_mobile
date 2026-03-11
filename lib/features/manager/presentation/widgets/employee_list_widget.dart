@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_section_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_section_widget.dart';
 
 class EmployeeListWidget extends StatelessWidget {
   const EmployeeListWidget({required this.isDark, required this.ctrl});
@@ -35,7 +35,7 @@ class EmployeeListWidget extends StatelessWidget {
         itemCount: sections.length,
         itemBuilder: (_, i) {
           final (position, emps) = sections[i];
-          return PositionSectionWidget(
+          return TaskGroupSectionWidget(
             isDark: isDark,
             ctrl: ctrl,
             position: position,

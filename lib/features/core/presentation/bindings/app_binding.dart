@@ -2,6 +2,9 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_group_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/data/repositories/task_group_repository_impl.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
 import 'package:task_tracking_mobile/features/core/presentation/bindings/image_binding.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_profile_controller.dart';
@@ -11,7 +14,7 @@ import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/splash_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -19,6 +22,10 @@ class AppBinding extends Bindings {
     // ── Infrastructure ───────────────────────────────────────
     Get.put<AuthRepository>(
       AuthRepositoryImpl(AuthRemoteDatasource()),
+      permanent: true,
+    );
+    Get.put<TaskGroupRepository>(
+      TaskGroupRepositoryImpl(TaskGroupRemoteDatasource()),
       permanent: true,
     );
 

@@ -7,8 +7,8 @@ import 'package:task_tracking_mobile/features/admin/presentation/widgets/task_li
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/staff/presentation/pages/tasks/task_view_page.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_view_page.dart';
 
 class AdminDashboardMobilePage extends StatelessWidget {
   const AdminDashboardMobilePage({super.key});

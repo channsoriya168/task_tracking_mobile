@@ -12,7 +12,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
 // ── Helper: builds a basic TaskModel so every test starts clean ──────────────
 //
@@ -95,7 +95,10 @@ void main() {
         task.createdAt.isAfter(before.subtract(const Duration(seconds: 1))),
         isTrue,
       );
-      expect(task.createdAt.isBefore(after.add(const Duration(seconds: 1))), isTrue);
+      expect(
+        task.createdAt.isBefore(after.add(const Duration(seconds: 1))),
+        isTrue,
+      );
     });
 
     test('custom createdAt is preserved', () {
@@ -134,15 +137,24 @@ void main() {
   // ── Group 3: priorityLabel ───────────────────────────────────────────────
   group('TaskModel – priorityLabel', () {
     test('high → "High"', () {
-      expect(_makeTask(priority: TaskPriority.high).priorityLabel, equals('High'));
+      expect(
+        _makeTask(priority: TaskPriority.high).priorityLabel,
+        equals('High'),
+      );
     });
 
     test('medium → "Medium"', () {
-      expect(_makeTask(priority: TaskPriority.medium).priorityLabel, equals('Medium'));
+      expect(
+        _makeTask(priority: TaskPriority.medium).priorityLabel,
+        equals('Medium'),
+      );
     });
 
     test('low → "Low"', () {
-      expect(_makeTask(priority: TaskPriority.low).priorityLabel, equals('Low'));
+      expect(
+        _makeTask(priority: TaskPriority.low).priorityLabel,
+        equals('Low'),
+      );
     });
   });
 
@@ -212,7 +224,11 @@ void main() {
   //   (d) honour special flags like clearDueDate / clearAcceptedBy
   group('TaskModel – copyWith', () {
     test('changes title and preserves other fields', () {
-      final original = _makeTask(id: '42', title: 'Old Title', priority: TaskPriority.high);
+      final original = _makeTask(
+        id: '42',
+        title: 'Old Title',
+        priority: TaskPriority.high,
+      );
       final copy = original.copyWith(title: 'New Title');
 
       expect(copy.title, equals('New Title'));
@@ -238,9 +254,7 @@ void main() {
     });
 
     test('clearDueDate flag sets dueDate to null', () {
-      final original = _makeTask(
-        dueDate: DateTime(2025, 6, 1),
-      );
+      final original = _makeTask(dueDate: DateTime(2025, 6, 1));
       final copy = original.copyWith(clearDueDate: true);
 
       // TUTORIAL: The special clearDueDate flag lets you set dueDate to null
