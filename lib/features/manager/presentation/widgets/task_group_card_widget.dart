@@ -37,7 +37,7 @@ class TaskGroupCardWidget extends StatelessWidget {
       confirmDismiss: (_) => _confirmDelete(context),
       onDismissed: (_) => ctrl.deletePosition(position.id),
       child: GestureDetector(
-        onTap: () => showPositionDialog(context, ctrl, isDark, position),
+        onTap: () => showTaskGroupDialog(context, ctrl, isDark, position),
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -79,7 +79,7 @@ class TaskGroupCardWidget extends StatelessWidget {
                 icon: Icons.edit_rounded,
                 color: position.color ?? kPrimary,
                 onTap: () =>
-                    showPositionDialog(context, ctrl, isDark, position),
+                    showTaskGroupDialog(context, ctrl, isDark, position),
               ),
               const SizedBox(width: 6),
               ActionButton(

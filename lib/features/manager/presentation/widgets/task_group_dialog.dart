@@ -22,7 +22,7 @@ const kPositionPresetColors = [
 ];
 
 // ── Add / Edit Position Dialog ─────────────────────────────────
-Future<void> showPositionDialog(
+Future<void> showTaskGroupDialog(
   BuildContext context,
   TaskGroupController ctrl,
   bool isDark, [

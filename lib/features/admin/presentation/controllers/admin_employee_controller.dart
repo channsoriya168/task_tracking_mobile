@@ -8,7 +8,7 @@ class AdminEmployeeController extends GetxController {
   final RxString selectedPositionId = ''.obs; // '' = All
 
   RxList<Employee> get employees => Get.find<EmployeeController>().employees;
-  RxList<TaskGroup> get positions => Get.find<TaskGroupController>().positions;
+  RxList<TaskGroup> get positions => Get.find<TaskGroupController>().taskGroups;
 
   List<Employee> get filteredEmployees {
     return employees.where((e) {

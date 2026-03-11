@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/left_panel_position_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/left_panel_task_group_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/right_employee_panel_widget.dart';
 
 class ManagerEmployeeTabletPage extends StatefulWidget {
@@ -30,7 +30,7 @@ class _ManagerEmployeeTabletPageState extends State<ManagerEmployeeTabletPage> {
           // ── Left Panel: Positions ─────────────────────────
           SizedBox(
             width: 260,
-            child: LeftPanelPositionWidget(
+            child: LeftPanelTaskGroupWidget(
               isDark: isDark,
               ctrl: ctrl,
               posCtrl: posCtrl,
