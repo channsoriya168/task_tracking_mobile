@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/features/admin/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 
 class EmployeeModel extends Employee {
   const EmployeeModel({
