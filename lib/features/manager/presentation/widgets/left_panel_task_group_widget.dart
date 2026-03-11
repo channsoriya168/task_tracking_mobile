@@ -9,8 +9,8 @@ import 'package:task_tracking_mobile/features/manager/presentation/widgets/confi
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/position_title_widget.dart';
 
-class LeftPanelPositionWidget extends StatelessWidget {
-  const LeftPanelPositionWidget({
+class LeftPanelTaskGroupWidget extends StatelessWidget {
+  const LeftPanelTaskGroupWidget({
     required this.isDark,
     required this.ctrl,
     required this.posCtrl,
@@ -46,7 +46,8 @@ class LeftPanelPositionWidget extends StatelessWidget {
                 ),
                 const Spacer(),
                 IconButton(
-                  onPressed: () => showPositionDialog(context, posCtrl, isDark),
+                  onPressed: () =>
+                      showTaskGroupDialog(context, posCtrl, isDark),
                   icon: Icon(Icons.add_rounded, color: kPrimary, size: 22),
                   tooltip: 'Add Position',
                 ),
@@ -113,7 +114,7 @@ class LeftPanelPositionWidget extends StatelessWidget {
                     selected: selectedId == pos.id,
                     onTap: () => onSelect(pos.id),
                     onEdit: () =>
-                        showPositionDialog(context, posCtrl, isDark, pos),
+                        showTaskGroupDialog(context, posCtrl, isDark, pos),
                     onDelete: () async {
                       final confirmed = await _confirmDelete(
                         context,

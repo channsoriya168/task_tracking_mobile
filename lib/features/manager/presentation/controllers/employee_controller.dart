@@ -18,7 +18,7 @@ class EmployeeController extends GetxController {
   // Track the employee being edited
   Employee? existing;
 
-  RxList<TaskGroup> get positions => Get.find<TaskGroupController>().positions;
+  RxList<TaskGroup> get positions => Get.find<TaskGroupController>().taskGroups;
 
   @override
   void onInit() {
@@ -53,11 +53,11 @@ class EmployeeController extends GetxController {
   Future<void> onOpenPositionDialog(BuildContext context) async {
     final posCtrl = Get.find<TaskGroupController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final before = posCtrl.positions.map((p) => p.id).toSet();
+    final before = posCtrl.taskGroups.map((p) => p.id).toSet();
 
-    await showPositionDialog(context, posCtrl, isDark);
+    await showTaskGroupDialog(context, posCtrl, isDark);
 
-    final added = posCtrl.positions
+    final added = posCtrl.taskGroups
         .where((p) => !before.contains(p.id))
         .toList();
     if (added.isNotEmpty) formPositionId.value = added.first.id;

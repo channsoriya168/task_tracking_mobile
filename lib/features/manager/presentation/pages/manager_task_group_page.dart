@@ -6,8 +6,8 @@ import 'package:task_tracking_mobile/features/manager/presentation/controllers/t
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_card_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_dialog.dart';
 
-class ManagerPositionPage extends StatelessWidget {
-  const ManagerPositionPage({super.key});
+class ManageTaskGroupWidget extends StatelessWidget {
+  const ManageTaskGroupWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class ManagerPositionPage extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          'Positions',
+          'Task Groups',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : kTextDark,
@@ -37,7 +37,7 @@ class ManagerPositionPage extends StatelessWidget {
         ),
       ),
       body: Obx(() {
-        final positions = ctrl.positions;
+        final positions = ctrl.taskGroups;
         if (positions.isEmpty) {
           return Center(
             child: Column(
@@ -50,19 +50,11 @@ class ManagerPositionPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'No positions yet',
+                  'No task groups yet',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: isDark ? Colors.grey[500] : kTextMuted,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Tap + to create your first position',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? Colors.grey[600] : Colors.grey[400],
                   ),
                 ),
               ],
@@ -91,7 +83,7 @@ class ManagerPositionPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
-        onPressed: () => showPositionDialog(context, ctrl, isDark),
+        onPressed: () => showTaskGroupDialog(context, ctrl, isDark),
         child: const Icon(Icons.add_rounded),
       ),
     );

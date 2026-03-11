@@ -286,7 +286,7 @@ Future<void> showTaskDialog(
 }) async {
   final managerTaskController = Get.find<ManagerTaskController>();
   final posCtrl = Get.find<TaskGroupController>();
-  final groups = posCtrl.positions;
+  final groups = posCtrl.taskGroups;
   final positionItems = groups.map((g) => g.name).toList();
   final isEditMode = task != null;
 
