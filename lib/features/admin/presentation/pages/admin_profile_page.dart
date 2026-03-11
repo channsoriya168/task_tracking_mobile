@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_profile_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_profile_widgets.dart';
 
 class AdminProfilePage extends StatelessWidget {
@@ -7,6 +9,7 @@ class AdminProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ctrl = Get.find<AdminProfileController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
@@ -25,9 +28,18 @@ class AdminProfilePage extends StatelessWidget {
               ),
             ),
           ),
-          SliverToBoxAdapter(child: AdminProfileHeader(isDark: isDark)),
-SliverToBoxAdapter(child: AdminProfileSettings(isDark: isDark)),
-          SliverToBoxAdapter(child: AdminProfileSignOut(onTap: () {})),
+          SliverToBoxAdapter(
+            child: AdminProfileHeader(
+              isDark: isDark,
+              name: ctrl.displayName,
+              phone: ctrl.phoneNumber,
+              avatarLetter: ctrl.avatarLetter,
+            ),
+          ),
+          SliverToBoxAdapter(child: AdminProfileSettings(isDark: isDark)),
+          SliverToBoxAdapter(
+            child: AdminProfileSignOut(onTap: ctrl.confirmSignOut),
+          ),
         ],
       ),
     );

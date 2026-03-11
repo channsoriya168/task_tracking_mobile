@@ -9,9 +9,18 @@ import 'package:task_tracking_mobile/features/staff/data/models/task_model.dart'
 // ── Profile header card ──────────────────────────────────────────
 
 class AdminProfileHeader extends StatelessWidget {
-  const AdminProfileHeader({super.key, required this.isDark});
+  const AdminProfileHeader({
+    super.key,
+    required this.isDark,
+    required this.name,
+    required this.phone,
+    required this.avatarLetter,
+  });
 
   final bool isDark;
+  final String name;
+  final String phone;
+  final String avatarLetter;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +53,10 @@ class AdminProfileHeader extends StatelessWidget {
                       width: 2,
                     ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'M',
-                      style: TextStyle(
+                      avatarLetter,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -60,9 +69,9 @@ class AdminProfileHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Admin',
-                        style: TextStyle(
+                      Text(
+                        name,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -70,7 +79,7 @@ class AdminProfileHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'admin@company.com',
+                        phone,
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 13,
