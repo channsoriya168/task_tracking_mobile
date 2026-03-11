@@ -1,0 +1,45 @@
+import 'package:flutter/material.dart';
+
+class EmployeeTaskGroup {
+  final String groupId;
+  final String groupName;
+  final Color groupColor;
+  final int role; // 0 = member, 1 = lead
+  final DateTime joinedAt;
+
+  const EmployeeTaskGroup({
+    required this.groupId,
+    required this.groupName,
+    required this.groupColor,
+    required this.role,
+    required this.joinedAt,
+  });
+}
+
+class Employee {
+  final String id;
+  final String fullName;
+  final String email;
+  final String? phone;
+  final bool isActive;
+  final String? profileImageUrl;
+  final String? placeOfBirth;
+  final DateTime? dateOfBirth;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final List<EmployeeTaskGroup> taskGroups;
+
+  const Employee({
+    required this.id,
+    required this.fullName,
+    required this.email,
+    this.phone,
+    required this.isActive,
+    this.profileImageUrl,
+    this.placeOfBirth,
+    this.dateOfBirth,
+    required this.createdAt,
+    this.updatedAt,
+    required this.taskGroups,
+  });
+}

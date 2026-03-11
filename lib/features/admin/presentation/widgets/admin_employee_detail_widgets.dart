@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/admin/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
@@ -10,17 +10,17 @@ class EmployeeDetailHeader extends StatelessWidget {
   const EmployeeDetailHeader({
     super.key,
     required this.employee,
-    required this.taskGroup,
     required this.isDark,
   });
 
   final Employee employee;
-  final TaskGroup? taskGroup;
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final color = taskGroup?.color ?? kPrimary;
+    final color = employee.taskGroups.isNotEmpty
+        ? employee.taskGroups.first.groupColor
+        : kPrimary;
 
     return Container(
       width: double.infinity,
@@ -39,14 +39,14 @@ class EmployeeDetailHeader extends StatelessWidget {
       child: Column(
         children: [
           EmployeeAvatar(
-            name: employee.name,
+            name: employee.fullName,
             color: Colors.white,
             radius: 36,
-            imagePath: employee.imagePath,
+            imagePath: employee.profileImageUrl,
           ),
           const SizedBox(height: 14),
           Text(
-            employee.name,
+            employee.fullName,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -61,37 +61,49 @@ class EmployeeDetailHeader extends StatelessWidget {
               fontSize: 13,
             ),
           ),
-          if (taskGroup != null) ...[
+          if (employee.taskGroups.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              alignment: WrapAlignment.center,
+              children: employee.taskGroups.map((g) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    taskGroup!.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        g.groupName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              }).toList(),
             ),
           ],
         ],
@@ -173,18 +185,8 @@ class EmployeeDetailInfoCard extends StatelessWidget {
 
   static String _formatDate(DateTime d) {
     const m = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${d.day} ${m[d.month - 1]} ${d.year}';
   }

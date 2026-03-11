@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/admin/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_employee_detail_widgets.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 
 class AdminEmployeeDetailPage extends StatelessWidget {
   final Employee employee;
-  final TaskGroup? taskGroup;
 
-  const AdminEmployeeDetailPage({
-    super.key,
-    required this.employee,
-    required this.taskGroup,
-  });
+  const AdminEmployeeDetailPage({super.key, required this.employee});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +20,7 @@ class AdminEmployeeDetailPage extends StatelessWidget {
 
     final taskCtrl = Get.find<AdminTaskController>();
     final assignedTasks = taskCtrl.tasks
-        .where((t) => t.acceptedBy == employee.name)
+        .where((t) => t.acceptedBy == employee.fullName)
         .toList();
 
     return Scaffold(
@@ -66,11 +61,7 @@ class AdminEmployeeDetailPage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         child: Column(
           children: [
-            EmployeeDetailHeader(
-              employee: employee,
-              taskGroup: taskGroup,
-              isDark: isDark,
-            ),
+            EmployeeDetailHeader(employee: employee, isDark: isDark),
             const SizedBox(height: 16),
             EmployeeDetailInfoCard(
               employee: employee,

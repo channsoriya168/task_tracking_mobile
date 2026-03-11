@@ -11,4 +11,7 @@ abstract class ApiEndpoints {
   // ── Task Groups ───────────────────────────────────────────
   static const String taskGroups = '/api/v1/task-groups';
   static String taskGroupById(String id) => '/api/v1/task-groups/$id';
+
+  // ── Employees ─────────────────────────────────────────────
+  static const String employees = '/api/v1/employees';
 }
