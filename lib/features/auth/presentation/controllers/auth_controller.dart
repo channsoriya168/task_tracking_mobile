@@ -6,8 +6,8 @@ import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repo
 import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/restore_session_usecase.dart';
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/user_model.dart';
 
 class AuthController extends GetxController {
   late final LoginUsecase _loginUsecase;
@@ -23,13 +23,13 @@ class AuthController extends GetxController {
 
   bool get isAuthenticated => currentAuth.value != null;
 
-  /// Maps the API role string to the app's [UserRole] enum.
+  /// Maps the API role string (e.g. "Admin") to [UserRole].
   UserRole? get role {
     final r = currentAuth.value?.primaryRole.toLowerCase();
-    if (r == 'admin') return UserRole.admin;
-    if (r == 'manager') return UserRole.manager;
-    if (r == null || r.isEmpty) return null;
-    return UserRole.staff;
+    if (r == 'admin') return UserRole.Admin;
+    if (r == 'manager') return UserRole.Manager;
+    if (r == 'employee') return UserRole.Employee;
+    return null;
   }
 
   @override
@@ -49,11 +49,14 @@ class AuthController extends GetxController {
   }
 
   // ── Login ────────────────────────────────────────────────
-  Future<void> login(String phoneNumber, String password) async {
+  Future<void> login() async {
     errorMessage.value = '';
     isLoading.value = true;
     try {
-      final auth = await _loginUsecase(phoneNumber.trim(), password);
+      final auth = await _loginUsecase(
+        phoneController.text.trim(),
+        passwordController.text,
+      );
       currentAuth.value = auth;
       Get.find<NavigationController>().changePage(0);
       Get.offAllNamed(AppRoutes.mainPage);

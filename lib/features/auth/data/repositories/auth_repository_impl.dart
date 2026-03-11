@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/services/storage_service.dart';
+import 'package:task_tracking_mobile/app/utils/validators.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/models/auth_model.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
@@ -15,7 +16,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Auth> login(String phoneNumber, String password) async {
     try {
-      final auth = await _remote.login(_toE164(phoneNumber), password);
+      final auth = await _remote.login(Validators.toE164(phoneNumber), password);
       // Save token separately; save only minimal user info locally
       await _storage.saveToken(auth.accessToken);
       await _storage.saveUser(jsonEncode(AuthModel.toLocalJson(auth)));
@@ -35,7 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final map = jsonDecode(userJson) as Map<String, dynamic>;
       final auth = AuthModel.fromLocalJson(map, token);
       if (auth == null) {
-        // Token expired — clean up storage
+        // Token expired — clean up storage\
         await _storage.clearAll();
         return null;
       }
@@ -48,16 +49,6 @@ class AuthRepositoryImpl implements AuthRepository {
   // ── Logout ───────────────────────────────────────────────
   @override
   Future<void> logout() => _storage.clearAll();
-
-  // ── Phone → E.164 (+855) ─────────────────────────────────
-  /// Converts `0884311016` → `+855884311016`.
-  /// Leaves numbers already starting with `+` unchanged.
-  String _toE164(String phone) {
-    final digits = phone.trim();
-    if (digits.startsWith('+')) return digits;
-    if (digits.startsWith('0')) return '+855${digits.substring(1)}';
-    return '+855$digits';
-  }
 
   // ── Dio error → readable message ─────────────────────────
   String _mapDioError(DioException e) {

@@ -4,9 +4,9 @@ import 'package:task_tracking_mobile/features/core/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/manager_employee_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/manager_profile_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_page.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/user_model.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/admin_nav_items.dart';
@@ -19,7 +19,7 @@ class MainPage extends StatelessWidget {
 
   List<NavItem> _navItemsForRole(UserRole? role) {
     switch (role) {
-      case UserRole.manager:
+      case UserRole.Manager:
         return const [
           NavItem(
             icon: Icons.dashboard_rounded,
@@ -42,9 +42,9 @@ class MainPage extends StatelessWidget {
             page: ManagerProfilePage(),
           ),
         ];
-      case UserRole.admin:
+      case UserRole.Admin:
         return adminNavItems;
-      case UserRole.staff:
+      case UserRole.Employee:
         return const [
           NavItem(icon: Icons.home, label: 'Home', page: HomePage()),
           NavItem(
