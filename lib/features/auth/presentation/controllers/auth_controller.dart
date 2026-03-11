@@ -1,21 +1,72 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
-import 'package:task_tracking_mobile/features/staff/data/models/user_model.dart';
+import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
+import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/restore_session_usecase.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/staff/data/models/user_model.dart';
 
 class AuthController extends GetxController {
-  final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
+  late final LoginUsecase _loginUsecase;
+  late final RestoreSessionUsecase _restoreSessionUsecase;
+  late final LogoutUsecase _logoutUsecase;
 
-  UserRole? get role => currentUser.value?.role;
+  final Rx<Auth?> currentAuth = Rx<Auth?>(null);
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
 
-  void login(UserModel user) {
-    currentUser.value = user;
-    Get.find<NavigationController>().changePage(0);
-    Get.offAllNamed(AppRoutes.mainPage);
+  bool get isAuthenticated => currentAuth.value != null;
+
+  /// Maps the API role string to the app's [UserRole] enum.
+  UserRole? get role {
+    final r = currentAuth.value?.primaryRole.toLowerCase();
+    if (r == 'admin') return UserRole.admin;
+    if (r == 'manager') return UserRole.manager;
+    if (r == null || r.isEmpty) return null;
+    return UserRole.staff;
   }
 
-  void logout() {
-    currentUser.value = null;
+  @override
+  void onInit() {
+    super.onInit();
+    final repo = Get.find<AuthRepository>();
+    _loginUsecase = LoginUsecase(repo);
+    _restoreSessionUsecase = RestoreSessionUsecase(repo);
+    _logoutUsecase = LogoutUsecase(repo);
+  }
+
+  // ── Login ────────────────────────────────────────────────
+  Future<void> login(String phoneNumber, String password) async {
+    errorMessage.value = '';
+    isLoading.value = true;
+    try {
+      final auth = await _loginUsecase(phoneNumber.trim(), password);
+      currentAuth.value = auth;
+      Get.find<NavigationController>().changePage(0);
+      Get.offAllNamed(AppRoutes.mainPage);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ── Restore session (called from Splash) ─────────────────
+  Future<bool> restoreSession() async {
+    final auth = await _restoreSessionUsecase();
+    if (auth != null) {
+      currentAuth.value = auth;
+      return true;
+    }
+    return false;
+  }
+
+  // ── Logout ───────────────────────────────────────────────
+  Future<void> logout() async {
+    await _logoutUsecase();
+    currentAuth.value = null;
     Get.find<NavigationController>().changePage(0);
     Get.offAllNamed(AppRoutes.login);
   }

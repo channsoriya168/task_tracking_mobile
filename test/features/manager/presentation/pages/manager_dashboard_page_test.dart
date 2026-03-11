@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_mobile_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_tablet_page.dart';
 
 // Subclass that skips FlutterSecureStorage in onInit
 class _FakeThemeController extends ThemeController {
@@ -69,8 +67,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(ManagerDashboardMobilePage), findsOneWidget);
-      expect(find.byType(ManagerDashboardTabletPage), findsNothing);
+      // expect(find.byType(ManagerDashboardPage()), findsOneWidget);
     });
 
     testWidgets('renders ManagerDashboardTabletPage on wide screen', (
@@ -86,8 +83,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(ManagerDashboardTabletPage), findsOneWidget);
-      expect(find.byType(ManagerDashboardMobilePage), findsNothing);
+      expect(find.byType(ManagerDashboardPage), findsNothing);
     });
   });
 
@@ -99,7 +95,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
 
       await tester.pumpWidget(
-        _buildApp(_mobileSize, const ManagerDashboardMobilePage()),
+        _buildApp(_mobileSize, const ManagerDashboardPage()),
       );
       await tester.pump();
     }

@@ -70,7 +70,7 @@ class MainPage extends StatelessWidget {
     final auth = Get.find<AuthController>();
 
     return Obx(() {
-      final role = auth.currentUser.value?.role;
+      final role = auth.role; // reads currentAuth.value → reactive
       final navItems = _navItemsForRole(role);
 
       // Reset nav index when role changes to avoid out-of-bounds

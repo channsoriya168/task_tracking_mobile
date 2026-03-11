@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/routes/app_pages.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
@@ -8,8 +9,9 @@ import 'package:task_tracking_mobile/app/themes/light_theme.dart';
 import 'package:task_tracking_mobile/features/core/presentation/bindings/app_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   AppBinding().dependencies();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: themeCtrl.isDark ? ThemeMode.dark : ThemeMode.light,
-        initialRoute: AppRoutes.login,
+        initialRoute: AppRoutes.splash,
         getPages: AppPages.routes,
       ),
     );
