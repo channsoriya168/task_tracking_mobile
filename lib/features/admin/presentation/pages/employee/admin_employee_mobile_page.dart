@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/admin/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/employee/admin_employee_detail_page.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 class AdminEmployeeMobilePage extends StatelessWidget {
@@ -71,7 +71,7 @@ class _AdminEmployeeHeader extends StatelessWidget {
   }
 }
 
-// ── Position Dropdown ──────────────────────────────────────────
+// ── Group Dropdown ──────────────────────────────────────────────
 class _PositionDropdown extends StatelessWidget {
   const _PositionDropdown({required this.isDark, required this.ctrl});
 
@@ -83,7 +83,7 @@ class _PositionDropdown extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Obx(() {
-        final positions = ctrl.positions;
+        final groups = ctrl.groups;
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
@@ -93,7 +93,7 @@ class _PositionDropdown extends StatelessWidget {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               isExpanded: true,
-              value: ctrl.selectedPositionId.value,
+              value: ctrl.selectedGroupId.value,
               dropdownColor: isDark ? kCardDark : Colors.white,
               icon: Icon(
                 Icons.keyboard_arrow_down_rounded,
@@ -115,7 +115,7 @@ class _PositionDropdown extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'All Positions',
+                        'All Groups',
                         style: TextStyle(
                           color: isDark ? Colors.grey[400] : kTextMuted,
                         ),
@@ -123,27 +123,27 @@ class _PositionDropdown extends StatelessWidget {
                     ],
                   ),
                 ),
-                ...positions.map(
-                  (p) => DropdownMenuItem(
-                    value: p.id,
+                ...groups.map(
+                  (g) => DropdownMenuItem(
+                    value: g.groupId,
                     child: Row(
                       children: [
                         Container(
                           width: 10,
                           height: 10,
                           decoration: BoxDecoration(
-                            color: p.color,
+                            color: g.groupColor,
                             shape: BoxShape.circle,
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Text(p.name),
+                        Text(g.groupName),
                       ],
                     ),
                   ),
                 ),
               ],
-              onChanged: (val) => ctrl.selectedPositionId.value = val ?? '',
+              onChanged: (val) => ctrl.selectedGroupId.value = val ?? '',
             ),
           ),
         );
@@ -200,6 +200,29 @@ class _AdminEmployeeList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      if (ctrl.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (ctrl.errorMessage.value.isNotEmpty) {
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                ctrl.errorMessage.value,
+                style: TextStyle(
+                  color: isDark ? Colors.grey[500] : kTextMuted,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: ctrl.fetchEmployees,
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        );
+      }
       final employees = ctrl.filteredEmployees;
       if (employees.isEmpty) {
         return Center(
@@ -215,20 +238,18 @@ class _AdminEmployeeList extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (_, i) {
           final employee = employees[i];
-          final position = ctrl.findPosition(employee.positionId);
-          final accentColor = position?.color ?? kPrimary;
+          final accentColor =
+              employee.taskGroups.isNotEmpty
+                  ? employee.taskGroups.first.groupColor
+                  : kPrimary;
           return GestureDetector(
             onTap: () => Get.to(
-              () => AdminEmployeeDetailPage(
-                employee: employee,
-                taskGroup: position,
-              ),
+              () => AdminEmployeeDetailPage(employee: employee),
             ),
             child: _AdminEmployeeCard(
               isDark: isDark,
               employee: employee,
               accentColor: accentColor,
-              taskGroup: position,
             ),
           );
         },
@@ -243,13 +264,11 @@ class _AdminEmployeeCard extends StatelessWidget {
     required this.isDark,
     required this.employee,
     required this.accentColor,
-    required this.taskGroup,
   });
 
   final bool isDark;
   final Employee employee;
   final Color accentColor;
-  final TaskGroup? taskGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -266,15 +285,71 @@ class _AdminEmployeeCard extends StatelessWidget {
           ),
         ],
       ),
-      child: EmployeeCardContent(
-        employee: employee,
-        accentColor: accentColor,
-        isDark: isDark,
-        avatarRadius: 22,
-        nameFontSize: 14,
-        emailFontSize: 12,
-        trailingIcon: Icons.chevron_right_rounded,
-        taskGroup: taskGroup,
+      child: Row(
+        children: [
+          EmployeeAvatar(
+            name: employee.fullName,
+            color: accentColor,
+            radius: 22,
+            imagePath: employee.profileImageUrl,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  employee.fullName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  employee.email,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.grey[500] : kTextMuted,
+                  ),
+                ),
+                if (employee.taskGroups.isNotEmpty) ...[
+                  const SizedBox(height: 5),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: employee.taskGroups.map((g) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: g.groupColor.withAlpha(25),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          g.groupName,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: g.groupColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Icon(
+            Icons.chevron_right_rounded,
+            size: 16,
+            color: isDark ? Colors.grey[600] : Colors.grey[400],
+          ),
+        ],
       ),
     );
   }
