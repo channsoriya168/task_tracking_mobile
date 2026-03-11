@@ -7,9 +7,10 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/task_cha
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_dialog_wiget.dart';
 
-class ManagerDashboardPage extends StatelessWidget {
-  const ManagerDashboardPage({super.key});
+class ManagerDashboardMobilePage extends StatelessWidget {
+  const ManagerDashboardMobilePage({super.key});
 
   static const _filters = ['All', 'Pending', 'In Progress', 'Complete', 'Fail'];
 
@@ -27,16 +28,16 @@ class ManagerDashboardPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () => showTaskDialog(context, isDark),
-      //   backgroundColor: kPrimary,
-      //   foregroundColor: Colors.white,
-      //   icon: const Icon(Icons.add_rounded),
-      //   label: const Text(
-      //     'New Task',
-      //     style: TextStyle(fontWeight: FontWeight.w600),
-      //   ),
-      // ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => showTaskDialog(context, isDark),
+        backgroundColor: kPrimary,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text(
+          'New Task',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
       body: Obx(() {
         final filtered = managerTaskController.filteredTasks;
 
@@ -71,7 +72,9 @@ class ManagerDashboardPage extends StatelessWidget {
             SliverPadding(
               padding: kPageSectionLargePadding,
               sliver: SliverToBoxAdapter(
-                child: TaskChartWidget(isDark: isDark),
+                child: TaskChartWidget(
+                  isDark: isDark,
+                ),
               ),
             ),
 

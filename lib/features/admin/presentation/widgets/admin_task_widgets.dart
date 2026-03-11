@@ -236,18 +236,14 @@ class AdminTaskList extends StatelessWidget {
 
 // ── Admin Task Card ────────────────────────────────────────────
 //
-// Layout:
-//  ┌──────────────────────────────────────────────────┐
-//  │  ENGINEERING                        ● High  ···  │  meta row
-//  │                                                  │
-//  │  Fix authentication bug when user               │  title
-//  │  logs in from multiple devices                   │
-//  │                                                  │
-//  │  ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──  │  divider
-//  │                                                  │
-//  │  ⚠ Overdue · 3 Mar 2026              [J D]      │  footer
-//  ├══════════════════════════════════════════════════╡  progress strip
-//  └──────────────────────────────────────────────────┘
+// Matches the ManagerTaskCardWidget layout:
+//  ┌─┬──────────────────────────────────────────────┐
+//  │▌│ Title                                   ···  │
+//  │▌│ Description (1 line)                         │
+//  │▌│ 📅 Created → ⚠ Due date                     │
+//  │▌│ [Status] [Category]          [Avatar] Name   │
+//  │▌├══════════════════════════════════════════════╡ progress
+//  └─┴──────────────────────────────────────────────┘
 //
 class AdminTaskCard extends StatelessWidget {
   const AdminTaskCard({
@@ -261,22 +257,30 @@ class AdminTaskCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback? onTap;
 
+  static const _months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]} ${dt.year}';
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? kCardDark : Colors.white;
     final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.18)
-        : const Color(0xFFD1D5DB);
+        ? Colors.white.withValues(alpha: 0.12)
+        : const Color(0xFFE5E7EB);
     final titleColor = isDark ? Colors.white : const Color(0xFF111827);
-    final mutedColor = isDark ? Colors.white38 : const Color(0xFF9CA3AF);
+    final mutedColor = isDark
+        ? Colors.white.withValues(alpha: 0.45)
+        : const Color(0xFF9CA3AF);
     final isOverdue = task.isOverdue;
+    final statusColor = isOverdue ? kHighPriority : task.statusColor;
 
-    // Progress data
-    final done = task.progressItems.where((s) => s.startsWith('[x]')).length;
-    final total = task.progressItems.length;
-    final progressValue =
-        total == 0 ? 0.0 : (done / total).clamp(0.0, 1.0);
+    final doneProg = task.progressItems.where((s) => s.startsWith('[x]')).length;
+    final totalProg = task.progressItems.length;
+    final progressValue = totalProg == 0 ? 0.0 : (doneProg / totalProg).clamp(0.0, 1.0);
 
     return Dismissible(
       key: Key(task.id),
@@ -286,16 +290,13 @@ class AdminTaskCard extends StatelessWidget {
       onDismissed: (_) => onDelete(),
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 24),
+        padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
           color: kHighPriority.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: kHighPriority.withValues(alpha: 0.2),
-          ),
+          border: Border.all(color: kHighPriority.withValues(alpha: 0.2)),
         ),
-        child: const Icon(Icons.delete_outline_rounded,
-            color: kHighPriority, size: 20),
+        child: const Icon(Icons.delete_outline_rounded, color: kHighPriority, size: 22),
       ),
       child: GestureDetector(
         onTap: onTap,
@@ -304,186 +305,236 @@ class AdminTaskCard extends StatelessWidget {
             color: cardBg,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: borderColor),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ── Meta row: category · priority · menu ──
-                      Row(
-                        children: [
-                          Text(
-                            task.category.toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.1,
-                              color: _categoryColor(task.category),
-                            ),
-                          ),
-                          const Spacer(),
-                          _PriorityTag(task: task),
-                          const SizedBox(width: 6),
-                          _CardMenu(
-                            onEdit: onTap,
-                            onDelete: onDelete,
-                            isDark: isDark,
-                            mutedColor: mutedColor,
-                          ),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // ── Left accent strip ──────────────────────────
+                  Container(
+                    width: 4,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          statusColor,
+                          statusColor.withValues(alpha: 0.4),
                         ],
                       ),
-
-                      const SizedBox(height: 10),
-
-                      // ── Title ──────────────────────────────────
-                      Text(
-                        task.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: titleColor,
-                          height: 1.4,
+                    ),
+                  ),
+                  // ── Content ────────────────────────────────────
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Row 1 — title + menu
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      task.title,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: titleColor,
+                                        letterSpacing: -0.1,
+                                      ),
+                                    ),
+                                  ),
+                                  _CardMenu(
+                                    onView: onTap,
+                                    onDelete: onDelete,
+                                    isDark: isDark,
+                                    mutedColor: mutedColor,
+                                  ),
+                                ],
+                              ),
+                              // Row 2 — description
+                              if (task.description.isNotEmpty) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  task.description,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: mutedColor,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 8),
+                              // Row 3 — dates
+                              Row(
+                                children: [
+                                  Icon(Icons.today_rounded, size: 11, color: mutedColor),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _fmt(task.createdAt),
+                                    style: TextStyle(fontSize: 11, color: mutedColor),
+                                  ),
+                                  if (task.dueDate != null) ...[
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                                      child: Icon(Icons.arrow_right_alt_rounded,
+                                          size: 13, color: mutedColor),
+                                    ),
+                                    Icon(
+                                      isOverdue
+                                          ? Icons.warning_amber_rounded
+                                          : Icons.event_rounded,
+                                      size: 11,
+                                      color: isOverdue ? kHighPriority : kPrimary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      _fmt(task.dueDate!),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: isOverdue ? kHighPriority : kPrimary,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // Row 4 — status · category · assignee
+                              Row(
+                                children: [
+                                  _StatusBadge(
+                                    label: isOverdue ? 'Overdue' : task.statusLabel,
+                                    color: statusColor,
+                                    isDark: isDark,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  _StatusBadge(
+                                    label: task.category,
+                                    color: statusColor,
+                                    isDark: isDark,
+                                  ),
+                                  const Spacer(),
+                                  if (task.acceptedBy != null) ...[
+                                    _AssigneeAvatar(name: task.acceptedBy!),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      task.acceptedBy!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 11, color: mutedColor),
+                                    ),
+                                    const SizedBox(width: 8),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      // ── Divider ────────────────────────────────
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.10)
-                            : Colors.black.withValues(alpha: 0.08),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // ── Footer ─────────────────────────────────
-                      Row(
-                        children: [
-                          // Status + date
-                          Icon(
-                            isOverdue
-                                ? Icons.error_outline_rounded
-                                : Icons.radio_button_unchecked_rounded,
-                            size: 13,
-                            color: isOverdue
-                                ? kHighPriority
-                                : task.statusColor,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            _footerLabel(isOverdue),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: isOverdue ? kHighPriority : mutedColor,
+                        // ── Progress strip (inProgress only) ──────
+                        if (task.status == TaskStatus.inProgress)
+                          SizedBox(
+                            height: 3,
+                            child: LinearProgressIndicator(
+                              value: progressValue,
+                              backgroundColor: isDark
+                                  ? Colors.white12
+                                  : kPrimary.withValues(alpha: 0.08),
+                              valueColor: AlwaysStoppedAnimation(
+                                progressValue >= 1.0 ? kLowPriority : kPrimary,
+                              ),
+                              borderRadius: BorderRadius.zero,
                             ),
                           ),
-                          const Spacer(),
-                          // Assignee
-                          if (task.acceptedBy != null)
-                            _AssigneeChip(
-                              name: task.acceptedBy!,
-                              isDark: isDark,
-                            ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-
-                // ── Progress strip at bottom ───────────────
-                if (task.status == TaskStatus.inProgress)
-                  _ProgressStrip(
-                    value: progressValue,
-                    isDark: isDark,
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
-  String _footerLabel(bool isOverdue) {
-    final statusPart = task.statusLabel;
-    if (task.dueDate == null) return statusPart;
-    const m = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final d = task.dueDate!;
-    final datePart = '${d.day} ${m[d.month - 1]}';
-    return isOverdue ? 'Overdue · $datePart' : '$statusPart · $datePart';
-  }
-
-  static Color _categoryColor(String category) {
-    switch (category) {
-      case 'Meeting':       return const Color(0xFF1976D2);
-      case 'Engineering':   return const Color(0xFF6B3FA0);
-      case 'Design':        return const Color(0xFFD81B60);
-      case 'Research':      return const Color(0xFF00838F);
-      case 'Documentation': return const Color(0xFFF57C00);
-      case 'Marketing':     return const Color(0xFF8E24AA);
-      case 'Maintenance':   return const Color(0xFF546E7A);
-      default:              return kTextMuted;
-    }
-  }
 }
 
 // ── Sub-widgets ────────────────────────────────────────────────
 
-class _PriorityTag extends StatelessWidget {
-  const _PriorityTag({required this.task});
-  final TaskModel task;
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.label, required this.color, required this.isDark});
+  final String label;
+  final Color color;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final color = task.priorityColor;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 7,
-          height: 7,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.18 : 0.10),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
         ),
-        const SizedBox(width: 5),
-        Text(
-          task.priorityLabel,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: color,
-          ),
-        ),
-      ],
+      ),
+    );
+  }
+}
+
+class _AssigneeAvatar extends StatelessWidget {
+  const _AssigneeAvatar({required this.name});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        color: kPrimary.withValues(alpha: 0.15),
+        shape: BoxShape.circle,
+        border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: kPrimary),
+      ),
     );
   }
 }
 
 class _CardMenu extends StatelessWidget {
   const _CardMenu({
-    required this.onEdit,
+    required this.onView,
     required this.onDelete,
     required this.isDark,
     required this.mutedColor,
   });
-  final VoidCallback? onEdit;
+  final VoidCallback? onView;
   final VoidCallback onDelete;
   final bool isDark;
   final Color mutedColor;
@@ -520,27 +571,18 @@ class _CardMenu extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            if (onEdit != null)
+            if (onView != null)
               ListTile(
                 leading: Icon(Icons.visibility_outlined,
                     color: isDark ? Colors.white70 : kTextDark),
                 title: Text('View Details',
-                    style: TextStyle(
-                        color: isDark ? Colors.white : kTextDark)),
-                onTap: () {
-                  Navigator.pop(context);
-                  onEdit!();
-                },
+                    style: TextStyle(color: isDark ? Colors.white : kTextDark)),
+                onTap: () { Navigator.pop(context); onView!(); },
               ),
             ListTile(
-              leading: const Icon(Icons.delete_outline_rounded,
-                  color: kHighPriority),
-              title: const Text('Delete',
-                  style: TextStyle(color: kHighPriority)),
-              onTap: () {
-                Navigator.pop(context);
-                onDelete();
-              },
+              leading: const Icon(Icons.delete_outline_rounded, color: kHighPriority),
+              title: const Text('Delete', style: TextStyle(color: kHighPriority)),
+              onTap: () { Navigator.pop(context); onDelete(); },
             ),
             const SizedBox(height: 8),
           ],
@@ -550,63 +592,3 @@ class _CardMenu extends StatelessWidget {
   }
 }
 
-class _AssigneeChip extends StatelessWidget {
-  const _AssigneeChip({required this.name, required this.isDark});
-  final String name;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final initials = name
-        .trim()
-        .split(' ')
-        .where((e) => e.isNotEmpty)
-        .map((e) => e[0].toUpperCase())
-        .take(2)
-        .join();
-    return Container(
-      width: 26,
-      height: 26,
-      decoration: BoxDecoration(
-        color: kPrimary.withValues(alpha: isDark ? 0.25 : 0.12),
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: kPrimary.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: TextStyle(
-          fontSize: 9,
-          fontWeight: FontWeight.w800,
-          color: kPrimary,
-          letterSpacing: 0.3,
-        ),
-      ),
-    );
-  }
-}
-
-class _ProgressStrip extends StatelessWidget {
-  const _ProgressStrip({required this.value, required this.isDark});
-  final double value;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 3,
-      child: LinearProgressIndicator(
-        value: value,
-        backgroundColor:
-            isDark ? Colors.white12 : kPrimary.withValues(alpha: 0.08),
-        valueColor: AlwaysStoppedAnimation(
-          value >= 1.0 ? kLowPriority : kPrimary,
-        ),
-        borderRadius: BorderRadius.zero,
-      ),
-    );
-  }
-}
