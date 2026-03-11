@@ -91,7 +91,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(
-                    'No positions yet.\nTap + to create one.',
+                    'No task groups yet.\nTap + to create one.',
                     style: TextStyle(
                       fontSize: 13,
                       color: isDark ? Colors.grey[600] : kTextMuted,
@@ -123,7 +123,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
                       );
                       if (confirmed == true) {
                         if (selectedId == pos.id) onSelect(null);
-                        posCtrl.deletePosition(pos.id);
+                        posCtrl.deleteTaskGroup(pos.id);
                       }
                     },
                   );

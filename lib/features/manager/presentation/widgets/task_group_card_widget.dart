@@ -35,7 +35,7 @@ class TaskGroupCardWidget extends StatelessWidget {
         child: const Icon(Icons.delete_rounded, color: Colors.white, size: 22),
       ),
       confirmDismiss: (_) => _confirmDelete(context),
-      onDismissed: (_) => ctrl.deletePosition(position.id),
+      onDismissed: (_) => ctrl.deleteTaskGroup(position.id),
       child: GestureDetector(
         onTap: () => showTaskGroupDialog(context, ctrl, isDark, position),
         child: Container(
@@ -87,7 +87,7 @@ class TaskGroupCardWidget extends StatelessWidget {
                 color: kHighPriority,
                 onTap: () async {
                   final confirmed = await _confirmDelete(context);
-                  if (confirmed == true) ctrl.deletePosition(position.id);
+                  if (confirmed == true) ctrl.deleteTaskGroup(position.id);
                 },
               ),
             ],

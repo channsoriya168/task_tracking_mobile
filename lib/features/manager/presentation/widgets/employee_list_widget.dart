@@ -18,7 +18,7 @@ class EmployeeListWidget extends StatelessWidget {
       if (positions.isEmpty) {
         return Center(
           child: Text(
-            'No positions yet.\nTap "Positions" to add one.',
+            'No task groups yet.\nTap "Positions" to add one.',
             textAlign: TextAlign.center,
             style: TextStyle(color: isDark ? Colors.grey[500] : kTextMuted),
           ),

@@ -11,6 +11,10 @@ class TextFieldWidget extends StatelessWidget {
     required this.isDark,
     this.keyboardType,
     this.onChanged,
+    this.maxLines = 1,
+    this.prefixIcon,
+    this.isRequired = false,
+    this.errorText,
   });
 
   final TextEditingController controller;
@@ -19,18 +23,31 @@ class TextFieldWidget extends StatelessWidget {
   final bool isDark;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
+  final int maxLines;
+  final IconData? prefixIcon;
+  final bool isRequired;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.grey[400] : kTextMuted,
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.grey[400] : kTextMuted,
+            ),
+            children: [
+              TextSpan(text: label),
+              if (isRequired)
+                const TextSpan(
+                  text: ' *',
+                  style: TextStyle(color: Colors.red),
+                ),
+            ],
           ),
         ),
         const SizedBox(height: 8),
@@ -38,18 +55,28 @@ class TextFieldWidget extends StatelessWidget {
           controller: controller,
           keyboardType: keyboardType,
           onChanged: onChanged,
+          maxLines: maxLines,
           style: TextStyle(
             color: isDark ? Colors.white : kTextDark,
             fontSize: 14,
           ),
           decoration: InputDecoration(
             hintText: hint,
+            errorText: errorText,
             hintStyle: TextStyle(
               color: isDark ? Colors.grey[600] : Colors.grey[400],
               fontSize: 14,
             ),
             filled: true,
             fillColor: isDark ? kSurfaceDark : kBgLight,
+            alignLabelWithHint: maxLines > 1,
+            prefixIcon: prefixIcon == null
+                ? null
+                : Icon(
+                    prefixIcon,
+                    color: isDark ? Colors.grey[500] : kTextMuted,
+                    size: 18,
+                  ),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 12,
               horizontal: 14,

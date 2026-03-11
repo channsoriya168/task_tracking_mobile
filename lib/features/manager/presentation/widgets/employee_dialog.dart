@@ -257,7 +257,7 @@ class _PositionPicker extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'No positions yet. Tap here to create one first.',
+                        'No task groups yet. Tap here to create one first.',
                         style: TextStyle(
                           fontSize: 13,
                           color: isDark ? Colors.grey[400] : kTextMuted,
@@ -293,7 +293,9 @@ class _PositionPicker extends StatelessWidget {
                         : (isDark ? kSurfaceDark : kBgLight),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: selected ? (p.color ?? kPrimary) : Colors.transparent,
+                      color: selected
+                          ? (p.color ?? kPrimary)
+                          : Colors.transparent,
                       width: 1.5,
                     ),
                   ),
