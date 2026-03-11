@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
@@ -16,6 +17,9 @@ class AuthController extends GetxController {
   final Rx<Auth?> currentAuth = Rx<Auth?>(null);
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxBool obscurePassword = true.obs;
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   bool get isAuthenticated => currentAuth.value != null;
 
@@ -35,6 +39,13 @@ class AuthController extends GetxController {
     _loginUsecase = LoginUsecase(repo);
     _restoreSessionUsecase = RestoreSessionUsecase(repo);
     _logoutUsecase = LogoutUsecase(repo);
+  }
+
+  @override
+  void onClose() {
+    phoneController.dispose();
+    passwordController.dispose();
+    super.onClose();
   }
 
   // ── Login ────────────────────────────────────────────────
