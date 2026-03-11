@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
 // ── Preset Colors ─────────────────────────────────────────────
-const kPositionPresetColors = [
+const taskGroupPresetColors = [
   Color(0xFF6C63FF),
   Color(0xFF2ED573),
   Color(0xFFFFA502),
@@ -21,15 +21,16 @@ const kPositionPresetColors = [
   Color(0xFFa55eea),
 ];
 
-// ── Add / Edit Position Dialog ─────────────────────────────────
+// ── Add / Edit Task Group Dialog ─────────────────────────────────
 Future<void> showTaskGroupDialog(
   BuildContext context,
   TaskGroupController ctrl,
   bool isDark, [
   TaskGroup? existing,
 ]) async {
-  final nameCtrl = TextEditingController(text: existing?.name ?? '');
-  final selectedColor = (existing?.color ?? kPositionPresetColors.first).obs;
+  ctrl.initTaskGroupForm(existing);
+  final showNameError = false.obs;
+  final showColorError = false.obs;
 
   await showModalBottomSheet(
     context: context,
@@ -62,7 +63,7 @@ Future<void> showTaskGroupDialog(
             ),
             const SizedBox(height: 20),
             Text(
-              existing == null ? 'New Position' : 'Edit Position',
+              existing == null ? 'New Task Group' : 'Edit Task Group',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -70,116 +71,147 @@ Future<void> showTaskGroupDialog(
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              'Position Name',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.grey[400] : kTextMuted,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: nameCtrl,
-              style: TextStyle(
-                color: isDark ? Colors.white : kTextDark,
-                fontSize: 14,
-              ),
-              decoration: InputDecoration(
-                hintText: 'e.g. Engineering',
-                hintStyle: TextStyle(
-                  color: isDark ? Colors.grey[600] : Colors.grey[400],
-                  fontSize: 14,
-                ),
-                prefixIcon: Icon(
-                  Icons.work_outline_rounded,
-                  color: isDark ? Colors.grey[500] : kTextMuted,
-                  size: 18,
-                ),
-                filled: true,
-                fillColor: isDark ? kSurfaceDark : kBgLight,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 14,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
+            Obx(
+              () => TextFieldWidget(
+                controller: ctrl.nameEditingController,
+                label: 'Task Group Name',
+                hint: 'e.g. Engineering',
+                isDark: isDark,
+                isRequired: true,
+                errorText: showNameError.value
+                    ? 'Task group name is required'
+                    : null,
+                onChanged: (_) {
+                  if (showNameError.value &&
+                      ctrl.nameEditingController.text.trim().isNotEmpty) {
+                    showNameError.value = false;
+                  }
+                },
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              'Color',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.grey[400] : kTextMuted,
+            TextFieldWidget(
+              controller: ctrl.descriptionEditingController,
+              label: 'Description',
+              hint: 'Short notes about this position',
+              isDark: isDark,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 20),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.grey[400] : kTextMuted,
+                ),
+                children: const [
+                  TextSpan(text: 'Color'),
+                  TextSpan(
+                    text: ' *',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 12),
             Obx(
-              () => Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: kPositionPresetColors.map((color) {
-                  final selected = selectedColor.value == color;
-                  return GestureDetector(
-                    onTap: () => selectedColor.value = color,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: selected
-                              ? (isDark ? Colors.white : kTextDark)
-                              : Colors.transparent,
-                          width: 2.5,
+              () => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: taskGroupPresetColors.map((color) {
+                      final selected = ctrl.selectedColor.value == color;
+                      return GestureDetector(
+                        onTap: () {
+                          ctrl.selectedColor.value = color;
+                          if (showColorError.value) {
+                            showColorError.value = false;
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: selected
+                                  ? (isDark ? Colors.white : kTextDark)
+                                  : Colors.transparent,
+                              width: 2.5,
+                            ),
+                            boxShadow: selected
+                                ? [
+                                    BoxShadow(
+                                      color: color.withAlpha(100),
+                                      blurRadius: 8,
+                                      spreadRadius: 2,
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: selected
+                              ? const Icon(
+                                  Icons.check_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                )
+                              : null,
                         ),
-                        boxShadow: selected
-                            ? [
-                                BoxShadow(
-                                  color: color.withAlpha(100),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ]
-                            : [],
+                      );
+                    }).toList(),
+                  ),
+                  if (showColorError.value)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Color is required',
+                        style: TextStyle(
+                          color: Colors.red.shade400,
+                          fontSize: 12,
+                        ),
                       ),
-                      child: selected
-                          ? const Icon(
-                              Icons.check_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            )
-                          : null,
                     ),
-                  );
-                }).toList(),
+                ],
               ),
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  final name = nameCtrl.text.trim();
-                  if (name.isEmpty) return;
+                onPressed: () async {
+                  final name = ctrl.nameEditingController.text.trim();
+                  final description = ctrl.descriptionEditingController.text
+                      .trim();
+                  final descriptionValue = description.isEmpty
+                      ? null
+                      : description;
+                  final isNameValid = name.isNotEmpty;
+                  final isColorValid = ctrl.selectedColor.value != null;
+
+                  showNameError.value = !isNameValid;
+                  showColorError.value = !isColorValid;
+
+                  if (!isNameValid || !isColorValid) return;
 
                   if (existing == null) {
-                    ctrl.addPosition(
-                      TaskGroup(
-                        id: ctrl.generateId(),
-                        name: name,
-                        color: selectedColor.value,
-                      ),
+                    final created = await ctrl.createTaskGroup(
+                      name: name,
+                      color: ctrl.selectedColor.value!,
+                      description: descriptionValue,
                     );
+                    if (!created) return;
                   } else {
-                    ctrl.updatePosition(
-                      existing.copyWith(name: name, color: selectedColor.value),
+                    ctrl.updateTaskGroup(
+                      existing.copyWith(
+                        name: name,
+                        color: ctrl.selectedColor.value!,
+                        description: descriptionValue,
+                      ),
                     );
                   }
                   Navigator.pop(context);
@@ -193,7 +225,7 @@ Future<void> showTaskGroupDialog(
                   ),
                 ),
                 child: Text(
-                  existing == null ? 'Create Position' : 'Save Changes',
+                  existing == null ? 'Create Task Group' : 'Save Changes',
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
