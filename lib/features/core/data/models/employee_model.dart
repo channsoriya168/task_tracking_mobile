@@ -23,7 +23,7 @@ class EmployeeModel extends Employee {
         groupId: g['groupId'] as String,
         groupName: g['groupName'] as String,
         groupColor: _hexToColor(g['groupColor'] as String? ?? '#3B82F6'),
-        role: g['role'] as int? ?? 0,
+        role: _extractRole(g['role']),
         joinedAt: DateTime.parse(g['joinedAt'] as String),
       );
     }).toList();
@@ -45,6 +45,12 @@ class EmployeeModel extends Employee {
           : null,
       taskGroups: taskGroups,
     );
+  }
+
+  static int _extractRole(dynamic value) {
+    if (value is int) return value;
+    if (value is Map) return value['id'] as int? ?? 0;
+    return 0;
   }
 
   static Color _hexToColor(String hex) {

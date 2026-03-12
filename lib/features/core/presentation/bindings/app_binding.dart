@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/bindings/admin_binding.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
@@ -50,12 +49,10 @@ class AppBinding extends Bindings {
 
     // ── Feature bindings ──────────────────────────────────────
     ImageBinding().dependencies();
-    AdminBinding().dependencies();
     ManagerBinding().dependencies();
-    Get.put<EmployeeRepository>(
-      EmployeeRepositoryImpl(EmployeeRemoteDatasource()),
-      permanent: true,
-    );
+    EmployeeBinding().dependencies();
+
+    // ── Admin controllers ─────────────────────────────────────
     Get.lazyPut<AdminEmployeeController>(
       () => AdminEmployeeController(Get.find<EmployeeRepository>()),
       fenix: true,
@@ -64,7 +61,10 @@ class AppBinding extends Bindings {
       () => AdminEmployeeFormController(Get.find<EmployeeRepository>()),
       fenix: true,
     );
-    Get.put<AdminTaskController>(AdminTaskController(), permanent: true);
+    Get.lazyPut<AdminTaskController>(
+      () => AdminTaskController(),
+      fenix: true,
+    );
     Get.lazyPut<AdminTaskGroupController>(
       () => AdminTaskGroupController(
         GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
@@ -74,6 +74,5 @@ class AppBinding extends Bindings {
       ),
       fenix: true,
     );
-    EmployeeBinding().dependencies();
   }
 }

@@ -54,6 +54,7 @@ class AdminEmployeeController extends GetxController {
       employees.value = await FetchEmployeesUsecase(_repo).call();
       developer.log('Employees fetched successfully.');
     } catch (e) {
+      developer.log('Failed to fetch employees: $e');
       errorMessage.value = 'Failed to load employees.';
     } finally {
       isLoading.value = false;
