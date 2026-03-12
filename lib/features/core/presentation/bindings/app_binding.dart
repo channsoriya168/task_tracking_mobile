@@ -6,9 +6,9 @@ import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_
 import 'package:task_tracking_mobile/features/core/data/repositories/task_group_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
 import 'package:task_tracking_mobile/features/core/presentation/bindings/image_binding.dart';
-import 'package:task_tracking_mobile/features/admin/data/datasources/employee_remote_datasource.dart';
-import 'package:task_tracking_mobile/features/admin/data/repositories/employee_repository_impl.dart';
-import 'package:task_tracking_mobile/features/admin/domain/repositories/employee_repository.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/remote/employee_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/data/repositories/employee_repository_impl.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_profile_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';

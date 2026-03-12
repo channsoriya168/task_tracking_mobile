@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
-import 'package:task_tracking_mobile/features/admin/data/models/employee_model.dart';
-import 'package:task_tracking_mobile/features/admin/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/data/models/employee_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 
 class EmployeeRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;

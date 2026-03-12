@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/admin/domain/entities/employee.dart';
-import 'package:task_tracking_mobile/features/admin/domain/repositories/employee_repository.dart';
-import 'package:task_tracking_mobile/features/admin/domain/usecases/fetch_employees_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
 
 class AdminEmployeeController extends GetxController {
   final EmployeeRepository _repo;
