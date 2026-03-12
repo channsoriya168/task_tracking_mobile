@@ -244,7 +244,7 @@ class _AdminEmployeeList extends StatelessWidget {
                   : kPrimary;
           return GestureDetector(
             onTap: () => Get.to(
-              () => AdminEmployeeDetailPage(employee: employee),
+              () => AdminEmployeeDetailPage(employeeId: employee.id),
             ),
             child: _AdminEmployeeCard(
               isDark: isDark,
@@ -287,11 +287,33 @@ class _AdminEmployeeCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          EmployeeAvatar(
-            name: employee.fullName,
-            color: accentColor,
-            radius: 22,
-            imagePath: employee.profileImageUrl,
+          Stack(
+            children: [
+              EmployeeAvatar(
+                name: employee.fullName,
+                color: accentColor,
+                radius: 22,
+                imagePath: employee.profileImageUrl,
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  width: 11,
+                  height: 11,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: employee.isActive
+                        ? const Color(0xFF2ED573)
+                        : const Color(0xFFFF4757),
+                    border: Border.all(
+                      color: isDark ? kCardDark : Colors.white,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(width: 12),
           Expanded(

@@ -9,4 +9,8 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
 
   @override
   Future<List<Employee>> fetchEmployees() => _remote.fetchEmployees();
+
+  @override
+  Future<Employee> fetchEmployeeById(String id) =>
+      _remote.fetchEmployeeById(id);
 }

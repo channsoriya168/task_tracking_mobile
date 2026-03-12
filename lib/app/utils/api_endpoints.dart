@@ -16,4 +16,5 @@ abstract class ApiEndpoints {
 
   // ── Employees ─────────────────────────────────────────────
   static const String employees = '/api/v1/employees';
+  static String employeeById(String id) => '/api/v1/employees/$id';
 }

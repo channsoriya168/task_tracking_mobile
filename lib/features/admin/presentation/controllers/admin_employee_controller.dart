@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
+import 'dart:developer' as developer;
 
 class AdminEmployeeController extends GetxController {
   final EmployeeRepository _repo;
@@ -51,6 +52,7 @@ class AdminEmployeeController extends GetxController {
     errorMessage.value = '';
     try {
       employees.value = await FetchEmployeesUsecase(_repo).call();
+      developer.log('Employees fetched successfully.');
     } catch (e) {
       errorMessage.value = 'Failed to load employees.';
     } finally {
