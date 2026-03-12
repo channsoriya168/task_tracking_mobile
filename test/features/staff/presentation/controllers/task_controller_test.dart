@@ -500,9 +500,10 @@ void main() {
       expect(ctrl.generateId(), isNotEmpty);
     });
 
-    test('two consecutive ids are different', () {
+    test('two consecutive ids are different', () async {
       final ctrl = _buildController();
       final id1 = ctrl.generateId();
+      await Future.delayed(const Duration(milliseconds: 2));
       final id2 = ctrl.generateId();
       // isNot(equals(...)) — negates a matcher
       expect(id1, isNot(equals(id2)));

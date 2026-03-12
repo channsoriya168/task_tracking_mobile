@@ -5,11 +5,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/image_service.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/position_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_card_widget.dart';
+
+// ── Stubs ──────────────────────────────────────────────────────
 
 class _StubImageService extends ImageService {
   @override
@@ -19,21 +25,57 @@ class _StubImageService extends ImageService {
   Future<File?> compressImage(File file) async => null;
 }
 
+class _StubTaskGroupRepository implements TaskGroupRepository {
+  @override
+  Future<List<TaskGroup>> getAll() async => [];
+
+  @override
+  Future<TaskGroup> getById(String id) async => TaskGroup(id: id, name: 'Stub');
+
+  @override
+  Future<TaskGroup> create({
+    required String name,
+    String? color,
+    String? description,
+  }) async =>
+      TaskGroup(id: 'new', name: name);
+
+  @override
+  Future<TaskGroup> update(
+    String id, {
+    required String name,
+    String? color,
+    String? description,
+  }) async =>
+      TaskGroup(id: id, name: name);
+
+  @override
+  Future<void> delete(String id) async {}
+}
+
+// ── Test ───────────────────────────────────────────────────────
+
 void main() {
-  late PositionController posCtrl;
-  const position = Position(
+  late TaskGroupController posCtrl;
+  final taskGroup = TaskGroup(
     id: 'p1',
     name: 'Engineering',
-    color: Color(0xFF6C63FF),
+    color: const Color(0xFF6C63FF),
   );
 
   setUp(() {
     Get.reset();
     Get.testMode = true;
+    final stub = _StubTaskGroupRepository();
     Get.put<PickAndCompressImageUseCase>(
       PickAndCompressImageUseCase(_StubImageService()),
     );
-    posCtrl = Get.put<PositionController>(PositionController());
+    posCtrl = Get.put<TaskGroupController>(
+      TaskGroupController(
+        GetAllTaskGroupsUseCase(stub),
+        CreateTaskGroupUseCase(stub),
+      ),
+    );
     Get.put<EmployeeController>(EmployeeController());
   });
 
@@ -42,17 +84,17 @@ void main() {
   Widget _buildWidget({int employeeCount = 3, bool isDark = false}) {
     return GetMaterialApp(
       home: Scaffold(
-        body: PositionCardWidget(
+        body: TaskGroupCardWidget(
           isDark: isDark,
           ctrl: posCtrl,
-          position: position,
+          position: taskGroup,
           employeeCount: employeeCount,
         ),
       ),
     );
   }
 
-  testWidgets('renders position name', (tester) async {
+  testWidgets('renders task group name', (tester) async {
     await tester.pumpWidget(_buildWidget());
     await tester.pumpAndSettle();
 
@@ -100,7 +142,7 @@ void main() {
     expect(find.text('Delete'), findsOneWidget);
   });
 
-  testWidgets('delete dialog content warns about employees when count > 0', (
+  testWidgets('delete dialog warns about employees when count > 0', (
     tester,
   ) async {
     await tester.pumpWidget(_buildWidget(employeeCount: 2));
@@ -109,13 +151,10 @@ void main() {
     await tester.drag(find.byType(Dismissible), const Offset(-400, 0));
     await tester.pumpAndSettle();
 
-    // Should warn about employees being removed
     expect(find.textContaining('2 employees'), findsOneWidget);
   });
 
-  testWidgets('delete dialog content is simple when no employees', (
-    tester,
-  ) async {
+  testWidgets('delete dialog is simple when no employees', (tester) async {
     await tester.pumpWidget(_buildWidget(employeeCount: 0));
     await tester.pumpAndSettle();
 
