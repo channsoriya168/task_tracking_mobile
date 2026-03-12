@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/bindings/admin_binding.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
@@ -11,7 +12,6 @@ import 'package:task_tracking_mobile/features/core/data/repositories/employee_re
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_form_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_profile_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
@@ -23,14 +23,18 @@ import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/splash_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/bindings/employee_binding.dart';
 
 class AppBinding extends Bindings {
   @override
   void dependencies() {
-    // ── Infrastructure ───────────────────────────────────────
+    // ── Repositories (app-wide singletons) ───────────────────
     Get.put<AuthRepository>(
       AuthRepositoryImpl(AuthRemoteDatasource()),
+      permanent: true,
+    );
+    Get.put<EmployeeRepository>(
+      EmployeeRepositoryImpl(EmployeeRemoteDatasource()),
       permanent: true,
     );
     Get.put<TaskGroupRepository>(
@@ -38,17 +42,15 @@ class AppBinding extends Bindings {
       permanent: true,
     );
 
-    // ── Core ─────────────────────────────────────────────────
+    // ── Core controllers ──────────────────────────────────────
     Get.put<NavigationController>(NavigationController(), permanent: true);
     Get.put<ThemeController>(ThemeController(), permanent: true);
-    Get.put<TaskController>(TaskController(), permanent: true);
-
-    // ── Auth ─────────────────────────────────────────────────
     Get.put<AuthController>(AuthController(), permanent: true);
     Get.put<SplashController>(SplashController());
 
-    // ── Feature bindings ─────────────────────────────────────
+    // ── Feature bindings ──────────────────────────────────────
     ImageBinding().dependencies();
+    AdminBinding().dependencies();
     ManagerBinding().dependencies();
     Get.put<EmployeeRepository>(
       EmployeeRepositoryImpl(EmployeeRemoteDatasource()),
@@ -63,7 +65,6 @@ class AppBinding extends Bindings {
       fenix: true,
     );
     Get.put<AdminTaskController>(AdminTaskController(), permanent: true);
-    Get.put<AdminProfileController>(AdminProfileController(), permanent: true);
     Get.lazyPut<AdminTaskGroupController>(
       () => AdminTaskGroupController(
         GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
@@ -73,5 +74,6 @@ class AppBinding extends Bindings {
       ),
       fenix: true,
     );
+    EmployeeBinding().dependencies();
   }
 }

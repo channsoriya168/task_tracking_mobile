@@ -1,61 +1,67 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' hide Response;
-import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'storage_service.dart';
 
 class ApiClient {
-  ApiClient._() {
-    final baseUrl = dotenv.env['BASE_URL'] ?? '';
-    final connectMs =
-        int.tryParse(dotenv.env['CONNECT_TIMEOUT_MS'] ?? '') ?? 15000;
-    final receiveMs =
-        int.tryParse(dotenv.env['RECEIVE_TIMEOUT_MS'] ?? '') ?? 30000;
+  static final ApiClient instance = ApiClient._internal();
+  factory ApiClient() => instance;
 
-    _dio = Dio(
+  late final Dio dio;
+  final StorageService storage = StorageService();
+
+  ApiClient._internal() {
+    dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: Duration(milliseconds: connectMs),
-        receiveTimeout: Duration(milliseconds: receiveMs),
-        headers: const {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        baseUrl: dotenv.env['BASE_URL'] ?? '',
+        connectTimeout: Duration(
+          milliseconds:
+              int.tryParse(dotenv.env['CONNECT_TIMEOUT_MS'] ?? '') ?? 15000,
+        ),
+        receiveTimeout: Duration(
+          milliseconds:
+              int.tryParse(dotenv.env['RECEIVE_TIMEOUT_MS'] ?? '') ?? 30000,
+        ),
       ),
     );
 
-    // Allow self-signed certs in debug only
-    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-      final client = HttpClient();
-      client.badCertificateCallback = (cert, host, port) => kDebugMode;
-      return client;
-    };
-
-    _dio.interceptors.addAll([
-      _AuthInterceptor(),
-      if (kDebugMode) _LoggingInterceptor(),
-    ]);
+    dio.interceptors.add(_AuthInterceptor(storage: storage));
   }
 
-  static final ApiClient instance = ApiClient._();
-
-  late final Dio _dio;
-
-  Dio get dio => _dio;
+  /// Create a Dio instance without interceptors (for refresh)
+  static Dio createDioWithoutInterceptor() {
+    return Dio(
+      BaseOptions(
+        baseUrl: dotenv.env['BASE_URL'] ?? '',
+        connectTimeout: Duration(
+          milliseconds:
+              int.tryParse(dotenv.env['CONNECT_TIMEOUT_MS'] ?? '') ?? 15000,
+        ),
+        receiveTimeout: Duration(
+          milliseconds:
+              int.tryParse(dotenv.env['RECEIVE_TIMEOUT_MS'] ?? '') ?? 30000,
+        ),
+      ),
+    );
+  }
 }
 
-// ── Auth Interceptor ──────────────────────────────────────────────────────────
+/// ── Auth Interceptor ───────────────────────────────────────────────
 class _AuthInterceptor extends Interceptor {
+  final StorageService storage;
+  bool _isRefreshing = false;
+  final List<_PendingRequest> _pending = [];
+
+  _AuthInterceptor({required this.storage});
+
+  AuthController get _authController => Get.find<AuthController>();
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final token = await StorageService().readToken();
+    final token = await storage.readToken();
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -64,37 +70,60 @@ class _AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
-      await StorageService().clearAll();
-      if (Get.isRegistered<AuthController>()) {
-        Get.find<AuthController>().currentAuth.value = null;
-      }
-      Get.offAllNamed(AppRoutes.login);
+    final is401 = err.response?.statusCode == 401;
+    final path = err.requestOptions.path.toLowerCase();
+    final isRefreshEndpoint = path.contains('/auth/refresh');
+    final isChangePasswordEndpoint = path.contains('/auth/change-password');
+    final alreadyRetried = err.requestOptions.extra['_retried'] == true;
+
+    if (!is401 || isRefreshEndpoint || isChangePasswordEndpoint || alreadyRetried) {
+      handler.next(err);
+      return;
     }
-    handler.next(err);
+
+    if (_isRefreshing) {
+      _pending.add(_PendingRequest(err.requestOptions, handler));
+      return;
+    }
+
+    _isRefreshing = true;
+    try {
+      final success = await _authController.refreshToken();
+      if (!success) throw Exception('Refresh failed');
+
+      // Retry original request
+      err.requestOptions.extra['_retried'] = true;
+      final retried = await ApiClient.instance.dio.fetch(err.requestOptions);
+      handler.resolve(retried);
+
+      // Retry any queued requests
+      for (final p in _pending) {
+        p.options.extra['_retried'] = true;
+        final r = await ApiClient.instance.dio.fetch(p.options);
+        p.handler.resolve(r);
+      }
+    } catch (_) {
+      for (final p in _pending) {
+        p.handler.next(
+          DioException(
+            requestOptions: p.options,
+            type: DioExceptionType.cancel,
+            error: 'Session expired',
+          ),
+        );
+      }
+      await _authController.logout();
+      handler.next(err);
+    } finally {
+      _pending.clear();
+      _isRefreshing = false;
+    }
   }
 }
 
-// ── Logging Interceptor ───────────────────────────────────────────────────────
-class _LoggingInterceptor extends Interceptor {
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    debugPrint('[API] → ${options.method} ${options.uri}');
-    debugPrint('[API] body: ${options.data}');
-    handler.next(options);
-  }
-
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    debugPrint('[API] ← ${response.statusCode} ${response.requestOptions.uri}');
-    handler.next(response);
-  }
-
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    debugPrint(
-      '[API] ✖ ${err.response?.statusCode} ${err.requestOptions.uri} — ${err.message}',
-    );
-    handler.next(err);
-  }
+/// Helper class for queued requests
+class _PendingRequest {
+  final RequestOptions options;
+  final ErrorInterceptorHandler handler;
+  _PendingRequest(this.options, this.handler);
 }

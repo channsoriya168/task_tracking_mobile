@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/manager_employee_page.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/manager_profile_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
 import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
@@ -11,7 +10,7 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/responsi
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/admin_nav_items.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/home_page.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/profile_page.dart';
+import 'package:task_tracking_mobile/features/core/presentation/pages/profile_page.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_page.dart';
 
 class MainPage extends StatelessWidget {
@@ -39,7 +38,7 @@ class MainPage extends StatelessWidget {
           NavItem(
             icon: Icons.person_rounded,
             label: 'Profile',
-            page: ManagerProfilePage(),
+            page: ProfilePage(),
           ),
         ];
       case UserRole.Admin:

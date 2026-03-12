@@ -17,9 +17,9 @@ class SplashController extends GetxController {
     await Future.delayed(500.ms);
     progress.value = 1.0;
 
-    // Wait for animation to finish then resolve session
+    // Wait for animation to finish then validate session
     await Future.delayed(2900.ms);
-    final hasSession = await Get.find<AuthController>().restoreSession();
-    Get.offAllNamed(hasSession ? AppRoutes.mainPage : AppRoutes.login);
+    final isValid = await Get.find<AuthController>().checkAuth();
+    Get.offAllNamed(isValid ? AppRoutes.mainPage : AppRoutes.login);
   }
 }

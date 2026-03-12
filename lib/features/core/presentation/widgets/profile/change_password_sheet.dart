@@ -1,0 +1,219 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_shared_widgets.dart';
+
+class ChangePasswordSheet extends StatelessWidget {
+  const ChangePasswordSheet({super.key, required this.isDark});
+
+  final bool isDark;
+
+  String _currentFieldError(String err) {
+    if (err.contains('required')) return 'Current password is required.';
+    if (err.contains('incorrect')) return 'Current password is incorrect.';
+    return '';
+  }
+
+  String _newFieldError(String err) {
+    if (err.contains('required')) return 'New password is required.';
+    if (err.contains('Min 8'))
+      return 'Min 8 chars · uppercase · lowercase · number · special.';
+    if (err.contains('match')) return 'Passwords do not match.';
+    return '';
+  }
+
+  String _confirmFieldError(String err) {
+    if (err.contains('required')) return 'Please confirm your new password.';
+    if (err.contains('match')) return 'Passwords do not match.';
+    return '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = Get.find<AuthController>();
+
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? kCardDark : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        child: Obx(() {
+          final err = ctrl.changePasswordError.value;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Handle ────────────────────────────────────
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white24 : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // ── Title + subtitle ───────────────────────────
+              Text(
+                'Change Password',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : kTextDark,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Enter your current password then choose a new one.',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? Colors.white54 : kTextMuted,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // ── Current password ───────────────────────────
+              PasswordFieldWidget(
+                controller: ctrl.currentPasswordController,
+                label: 'Current Password',
+                isDark: isDark,
+                obscure: ctrl.obscureCurrent.value,
+                onToggle: () =>
+                    ctrl.obscureCurrent.value = !ctrl.obscureCurrent.value,
+                hasError: _currentFieldError(err).isNotEmpty,
+              ),
+              _FieldError(message: _currentFieldError(err)),
+
+              const SizedBox(height: 10),
+
+              // ── New password ───────────────────────────────
+              PasswordFieldWidget(
+                controller: ctrl.newPasswordController,
+                label: 'New Password',
+                isDark: isDark,
+                obscure: ctrl.obscureNew.value,
+                onToggle: () => ctrl.obscureNew.value = !ctrl.obscureNew.value,
+                hasError: _newFieldError(err).isNotEmpty,
+              ),
+              _FieldError(message: _newFieldError(err)),
+
+              // ── Password hint (shown only when no new-field error) ──
+              if (_newFieldError(err).isEmpty) ...[
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 12,
+                      color: isDark ? Colors.white38 : kTextMuted,
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        'Min 8 chars · uppercase · lowercase · number · special (e.g. Ditway@168)',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark ? Colors.white38 : kTextMuted,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              const SizedBox(height: 10),
+
+              // ── Confirm password ───────────────────────────
+              PasswordFieldWidget(
+                controller: ctrl.confirmPasswordController,
+                label: 'Confirm New Password',
+                isDark: isDark,
+                obscure: ctrl.obscureConfirm.value,
+                onToggle: () =>
+                    ctrl.obscureConfirm.value = !ctrl.obscureConfirm.value,
+                hasError: _confirmFieldError(err).isNotEmpty,
+              ),
+              _FieldError(message: _confirmFieldError(err)),
+
+              const SizedBox(height: 20),
+
+              // ── Submit button ──────────────────────────────
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: ctrl.isChangingPassword.value
+                      ? null
+                      : ctrl.submitChangePassword,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimary,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: kPrimary.withAlpha(120),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: ctrl.isChangingPassword.value
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Update Password',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _FieldError extends StatelessWidget {
+  const _FieldError({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    if (message.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 4),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.error_outline_rounded,
+            size: 13,
+            color: kHighPriority,
+          ),
+          const SizedBox(width: 5),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(fontSize: 12, color: kHighPriority),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
