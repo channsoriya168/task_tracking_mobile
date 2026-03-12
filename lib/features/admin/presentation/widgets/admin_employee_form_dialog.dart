@@ -35,11 +35,6 @@ class AdminEmployeeFormDialog extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(24, 16, 16, 0),
               child: Row(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(right: 12),
-                  ),
                   Expanded(
                     child: Text(
                       'Add Employee',

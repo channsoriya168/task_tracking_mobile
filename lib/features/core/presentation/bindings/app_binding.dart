@@ -9,8 +9,14 @@ import 'package:task_tracking_mobile/features/core/presentation/bindings/image_b
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/employee_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/repositories/employee_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/remote/label_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/data/repositories/label_repository_impl.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/label_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_labels_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_label_usecase.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_form_controller.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_label_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
@@ -38,6 +44,10 @@ class AppBinding extends Bindings {
     );
     Get.put<TaskGroupRepository>(
       TaskGroupRepositoryImpl(TaskGroupRemoteDatasource()),
+      permanent: true,
+    );
+    Get.put<LabelRepository>(
+      LabelRepositoryImpl(LabelRemoteDatasource()),
       permanent: true,
     );
 
@@ -71,6 +81,13 @@ class AppBinding extends Bindings {
         CreateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
         UpdateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
         DeleteTaskGroupUseCase(Get.find<TaskGroupRepository>()),
+      ),
+      fenix: true,
+    );
+    Get.lazyPut<AdminLabelController>(
+      () => AdminLabelController(
+        GetAllLabelsUseCase(Get.find<LabelRepository>()),
+        CreateLabelUseCase(Get.find<LabelRepository>()),
       ),
       fenix: true,
     );
