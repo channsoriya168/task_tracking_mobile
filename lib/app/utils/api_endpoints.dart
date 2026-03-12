@@ -20,4 +20,5 @@ abstract class ApiEndpoints {
 
   // ── Labels ────────────────────────────────────────────────
   static const String labels = '/api/v1/Labels';
+  static String labelById(String id) => '/api/v1/Labels/$id';
 }

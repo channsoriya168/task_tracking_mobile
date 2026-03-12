@@ -13,4 +13,11 @@ class LabelRepositoryImpl implements LabelRepository {
   @override
   Future<Label> create({required String name, String? description}) =>
       _remote.create(name: name, description: description);
+
+  @override
+  Future<Label> update(String id, {required String name, String? description}) =>
+      _remote.update(id, name: name, description: description);
+
+  @override
+  Future<void> delete(String id) => _remote.delete(id);
 }

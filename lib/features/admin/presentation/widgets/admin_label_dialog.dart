@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_label_controller.dart';
 
 Future<void> showAdminLabelDialog(
   BuildContext context,
   AdminLabelController ctrl,
-  bool isDark,
-) async {
-  ctrl.initForm();
+  bool isDark, [
+  Label? existing,
+]) async {
+  ctrl.initForm(existing);
 
   await showModalBottomSheet(
     context: context,
@@ -42,7 +44,7 @@ Future<void> showAdminLabelDialog(
             ),
             const SizedBox(height: 20),
             Text(
-              'New Label',
+              existing == null ? 'New Label' : 'Edit Label',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -88,7 +90,9 @@ Future<void> showAdminLabelDialog(
                       ? null
                       : () async {
                           final nav = Navigator.of(context);
-                          final success = await ctrl.createLabel();
+                          final success = existing == null
+                              ? await ctrl.createLabel()
+                              : await ctrl.updateLabel(existing.id);
                           if (success) nav.pop();
                         },
                   style: ElevatedButton.styleFrom(
@@ -109,9 +113,9 @@ Future<void> showAdminLabelDialog(
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Create Label',
-                          style: TextStyle(
+                      : Text(
+                          existing == null ? 'Create Label' : 'Save Changes',
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),

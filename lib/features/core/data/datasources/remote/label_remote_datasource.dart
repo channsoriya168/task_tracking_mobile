@@ -28,4 +28,24 @@ class LabelRemoteDatasource {
     );
     return LabelModel.fromJson(response.data as Map<String, dynamic>);
   }
+
+  Future<LabelModel> update(
+    String id, {
+    required String name,
+    String? description,
+  }) async {
+    final response = await _dio.put(
+      ApiEndpoints.labelById(id),
+      data: {
+        'name': name,
+        if (description != null && description.isNotEmpty)
+          'description': description,
+      },
+    );
+    return LabelModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<void> delete(String id) async {
+    await _dio.delete(ApiEndpoints.labelById(id));
+  }
 }

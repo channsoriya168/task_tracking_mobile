@@ -14,6 +14,8 @@ import 'package:task_tracking_mobile/features/core/data/repositories/label_repos
 import 'package:task_tracking_mobile/features/core/domain/repositories/label_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_labels_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_label_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/update_label_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/delete_label_usecase.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_form_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_label_controller.dart';
@@ -88,6 +90,8 @@ class AppBinding extends Bindings {
       () => AdminLabelController(
         GetAllLabelsUseCase(Get.find<LabelRepository>()),
         CreateLabelUseCase(Get.find<LabelRepository>()),
+        UpdateLabelUseCase(Get.find<LabelRepository>()),
+        DeleteLabelUseCase(Get.find<LabelRepository>()),
       ),
       fenix: true,
     );
