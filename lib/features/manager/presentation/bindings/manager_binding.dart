@@ -9,14 +9,13 @@ import 'package:task_tracking_mobile/features/manager/presentation/controllers/t
 class ManagerBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put<TaskGroupController>(
-      TaskGroupController(
+    Get.lazyPut<TaskGroupController>(
+      () => TaskGroupController(
         GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
         CreateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
       ),
-      permanent: true,
     );
-    Get.put<EmployeeController>(EmployeeController(), permanent: true);
-    Get.put<ManagerTaskController>(ManagerTaskController(), permanent: true);
+    Get.lazyPut<EmployeeController>(() => EmployeeController());
+    Get.lazyPut<ManagerTaskController>(() => ManagerTaskController());
   }
 }
