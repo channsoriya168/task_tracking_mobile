@@ -15,8 +15,8 @@ class Validators {
     final stripped = raw.startsWith('+855')
         ? raw.substring(4)
         : raw.startsWith('0')
-            ? raw.substring(1)
-            : raw;
+        ? raw.substring(1)
+        : raw;
 
     if (!RegExp(r'^\d{8,9}$').hasMatch(stripped)) {
       return 'Enter a valid Cambodian phone number.';
@@ -40,6 +40,18 @@ class Validators {
   static String? password(String? value) {
     if (value == null || value.isEmpty) return 'Password is required.';
     if (value.length < 6) return 'Password must be at least 6 characters.';
+    return null;
+  }
+
+  /// Strong password: min 8 chars, uppercase, lowercase, digit, special char.
+  static String? strongPassword(String? value) {
+    if (value == null || value.isEmpty) return 'Password is required.';
+    final regex = RegExp(
+      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:,.<>?]).{8,}$',
+    );
+    if (!regex.hasMatch(value)) {
+      return 'Min 8 chars with uppercase, lowercase, number & special character (e.g. Ditway@168).';
+    }
     return null;
   }
 

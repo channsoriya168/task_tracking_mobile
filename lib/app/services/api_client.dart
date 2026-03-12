@@ -71,10 +71,12 @@ class _AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     final is401 = err.response?.statusCode == 401;
-    final isRefreshEndpoint = err.requestOptions.path.contains('/auth/refresh');
+    final path = err.requestOptions.path.toLowerCase();
+    final isRefreshEndpoint = path.contains('/auth/refresh');
+    final isChangePasswordEndpoint = path.contains('/auth/change-password');
     final alreadyRetried = err.requestOptions.extra['_retried'] == true;
 
-    if (!is401 || isRefreshEndpoint || alreadyRetried) {
+    if (!is401 || isRefreshEndpoint || isChangePasswordEndpoint || alreadyRetried) {
       handler.next(err);
       return;
     }

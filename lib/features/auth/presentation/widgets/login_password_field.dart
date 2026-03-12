@@ -34,8 +34,8 @@ class LoginPasswordField extends StatelessWidget {
           suffixIcon: IconButton(
             icon: Icon(
               obscure
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
+                  ? Icons.visibility_off_outlined
+                  : Icons.visibility_outlined,
               size: 20,
               color: kTextMuted,
             ),

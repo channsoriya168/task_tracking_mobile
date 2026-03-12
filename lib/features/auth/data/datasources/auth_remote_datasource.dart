@@ -5,7 +5,6 @@ import 'package:task_tracking_mobile/features/auth/data/models/auth_model.dart';
 import 'package:task_tracking_mobile/features/auth/data/models/employee_profile_model.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
-import 'dart:developer' as developer;
 
 class AuthRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;
@@ -42,7 +41,6 @@ class AuthRemoteDatasource {
 
   Future<EmployeeProfile?> fetchProfile() async {
     final response = await _dio.get(ApiEndpoints.profile);
-    developer.log('Fetching profile... $response');
 
     final statusCode = response.statusCode ?? 0;
     if (statusCode < 200 || statusCode >= 300) {

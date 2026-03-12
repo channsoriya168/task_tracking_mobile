@@ -14,7 +14,10 @@ String mapDioError(DioException e) {
   if (status == 400) {
     return e.response?.data?['message'] as String? ?? 'Invalid credentials.';
   }
-  if (status == 401) return 'Incorrect phone number or password.';
+  if (status == 401) {
+    return e.response?.data?['message'] as String? ??
+        'Incorrect phone number or password.';
+  }
   if (status == 403) return 'Access denied.';
   if (status == 500) return 'Server error. Please try again later.';
   return e.response?.data?['message'] as String? ??

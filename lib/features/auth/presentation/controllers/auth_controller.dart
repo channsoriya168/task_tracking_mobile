@@ -11,6 +11,7 @@ import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase
 import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:task_tracking_mobile/app/enums/user_role.dart';
+import 'package:task_tracking_mobile/app/utils/validators.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 
 class AuthController extends GetxController {
@@ -31,6 +32,13 @@ class AuthController extends GetxController {
   final TextEditingController currentPasswordController =
       TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final RxBool obscureCurrent = true.obs;
+  final RxBool obscureNew = true.obs;
+  final RxBool obscureConfirm = true.obs;
+  final RxBool isChangingPassword = false.obs;
+  final RxString changePasswordError = ''.obs;
 
   bool get isAuthenticated => currentAuth.value != null;
 
@@ -52,12 +60,16 @@ class AuthController extends GetxController {
     _fetchProfileUsecase = FetchProfileUsecase(repo);
     _checkAuthUsecase = CheckAuthUsecase(repo);
     _changePasswordUsecase = ChangePasswordUsecase(repo);
+    _initChangePasswordListeners();
   }
 
   @override
   void onClose() {
     phoneController.dispose();
     passwordController.dispose();
+    currentPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
     super.onClose();
   }
 
@@ -74,6 +86,13 @@ class AuthController extends GetxController {
       fetchProfile();
       Get.find<NavigationController>().changePage(0);
       Get.offAllNamed(AppRoutes.mainPage);
+      Get.snackbar(
+        'Welcome back, ${auth.fullName}!',
+        '',
+        backgroundColor: const Color(0xFF2ED573),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
@@ -120,15 +139,69 @@ class AuthController extends GetxController {
   }
 
   // ── Change password ───────────────────────────────────────
-  Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmNewPassword,
-  }) => _changePasswordUsecase(
-    currentPassword: currentPassword,
-    newPassword: newPassword,
-    confirmNewPassword: confirmNewPassword,
-  );
+  Future<void> submitChangePassword() async {
+    final current = currentPasswordController.text.trim();
+    final newPass = newPasswordController.text;
+    final confirm = confirmPasswordController.text;
+
+    if (current.isEmpty || newPass.isEmpty || confirm.isEmpty) {
+      changePasswordError.value = 'All fields are required.';
+      return;
+    }
+    if (newPass != confirm) {
+      changePasswordError.value = 'New passwords do not match.';
+      return;
+    }
+    final passError = Validators.strongPassword(newPass);
+    if (passError != null) {
+      changePasswordError.value = passError;
+      return;
+    }
+
+    isChangingPassword.value = true;
+    changePasswordError.value = '';
+    try {
+      await _changePasswordUsecase(
+        currentPassword: current,
+        newPassword: newPass,
+        confirmNewPassword: confirm,
+      );
+      clearChangePasswordForm();
+      Get.back();
+      Get.snackbar(
+        'Success',
+        'Password changed successfully.',
+        backgroundColor: const Color(0xFF2ED573),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } catch (e) {
+      changePasswordError.value = e.toString();
+    } finally {
+      isChangingPassword.value = false;
+    }
+  }
+
+  void _initChangePasswordListeners() {
+    void clearError() {
+      if (changePasswordError.value.isNotEmpty) {
+        changePasswordError.value = '';
+      }
+    }
+    currentPasswordController.addListener(clearError);
+    newPasswordController.addListener(clearError);
+    confirmPasswordController.addListener(clearError);
+  }
+
+  void clearChangePasswordForm() {
+    currentPasswordController.clear();
+    newPasswordController.clear();
+    confirmPasswordController.clear();
+    obscureCurrent.value = true;
+    obscureNew.value = true;
+    obscureConfirm.value = true;
+    changePasswordError.value = '';
+  }
 
   // ── Logout ───────────────────────────────────────────────
   Future<void> logout() async {

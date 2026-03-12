@@ -103,6 +103,9 @@ class AuthRepositoryImpl implements AuthRepository {
         confirmNewPassword: confirmNewPassword,
       );
     } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        throw 'Current password is incorrect.';
+      }
       throw mapDioError(e);
     }
   }
