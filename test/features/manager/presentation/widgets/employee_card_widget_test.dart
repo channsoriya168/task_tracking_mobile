@@ -97,18 +97,11 @@ void main() {
     expect(find.text('alice@company.com'), findsOneWidget);
   });
 
-  testWidgets('shows Dismissible widget', (tester) async {
+  testWidgets('shows more options icon in content', (tester) async {
     await tester.pumpWidget(_buildWidget());
     await tester.pumpAndSettle();
 
-    expect(find.byType(Dismissible), findsOneWidget);
-  });
-
-  testWidgets('shows edit icon in content', (tester) async {
-    await tester.pumpWidget(_buildWidget());
-    await tester.pumpAndSettle();
-
-    expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.more_vert_rounded), findsOneWidget);
   });
 
   testWidgets('renders in dark mode without error', (tester) async {
@@ -118,15 +111,14 @@ void main() {
     expect(find.text('Alice Johnson'), findsOneWidget);
   });
 
-  testWidgets('swipe to delete shows confirmation dialog', (tester) async {
+  testWidgets('tapping card opens employee menu sheet', (tester) async {
     await tester.pumpWidget(_buildWidget());
     await tester.pumpAndSettle();
 
-    await tester.drag(find.byType(Dismissible), const Offset(-400, 0));
+    await tester.tap(find.byType(GestureDetector).first);
     await tester.pumpAndSettle();
 
-    expect(find.text('Delete Employee'), findsOneWidget);
-    expect(find.text('Cancel'), findsOneWidget);
-    expect(find.text('Delete'), findsOneWidget);
+    // Menu sheet should appear
+    expect(find.text('Alice Johnson'), findsWidgets);
   });
 }

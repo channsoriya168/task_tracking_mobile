@@ -17,9 +17,5 @@ class Auth {
   final String refreshToken;
   final DateTime accessTokenExpiration;
 
-  String get avatarLetter =>
-      fullName.isNotEmpty ? fullName[0].toUpperCase() : '?';
-
-  String get primaryRole =>
-      roles.isNotEmpty ? roles.first : '';
+  String get primaryRole => roles.isNotEmpty ? roles.first : '';
 }

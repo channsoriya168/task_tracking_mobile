@@ -16,7 +16,7 @@ class ManagerBinding extends Bindings {
       ),
       permanent: true,
     );
-    Get.lazyPut<EmployeeController>(() => EmployeeController());
-    Get.lazyPut<ManagerTaskController>(() => ManagerTaskController());
+    Get.put<EmployeeController>(EmployeeController(), permanent: true);
+    Get.put<ManagerTaskController>(ManagerTaskController(), permanent: true);
   }
 }

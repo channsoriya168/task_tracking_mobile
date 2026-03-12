@@ -10,7 +10,6 @@ import 'package:task_tracking_mobile/features/core/data/datasources/remote/emplo
 import 'package:task_tracking_mobile/features/core/data/repositories/employee_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_profile_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/bindings/manager_binding.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
@@ -53,6 +52,5 @@ class AppBinding extends Bindings {
       permanent: true,
     );
     Get.put<AdminTaskController>(AdminTaskController(), permanent: true);
-    Get.put<AdminProfileController>(AdminProfileController(), permanent: true);
   }
 }
