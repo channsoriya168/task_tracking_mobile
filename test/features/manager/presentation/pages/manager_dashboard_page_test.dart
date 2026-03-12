@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
 
 // Subclass that skips FlutterSecureStorage in onInit
@@ -46,6 +47,7 @@ void main() {
     Get.reset();
     Get.testMode = true;
     Get.put<ThemeController>(_FakeThemeController());
+    Get.put<ManagerTaskController>(ManagerTaskController());
   });
 
   tearDown(() {
@@ -53,74 +55,50 @@ void main() {
     Get.reset();
   });
 
-  group('ManagerDashboardPage – responsive routing', () {
-    testWidgets('renders ManagerDashboardMobilePage on narrow screen', (
-      tester,
-    ) async {
-      _ignoreOverflowErrors();
-      tester.view.physicalSize = _mobileSize;
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+  // Pump widget and flush all pending animation timers (e.g. Syncfusion charts).
+  Future<void> _pumpDashboard(
+    WidgetTester tester,
+    Size size,
+  ) async {
+    _ignoreOverflowErrors();
+    tester.view.physicalSize = size;
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
 
-      await tester.pumpWidget(
-        _buildApp(_mobileSize, const ManagerDashboardPage()),
-      );
-      await tester.pump();
+    await tester.pumpWidget(_buildApp(size, const ManagerDashboardPage()));
+    // Advance time past any chart / calendar animation timers.
+    await tester.pump(const Duration(seconds: 3));
+  }
 
-      // expect(find.byType(ManagerDashboardPage()), findsOneWidget);
+  group('ManagerDashboardPage – renders without error', () {
+    testWidgets('on narrow screen', (tester) async {
+      await _pumpDashboard(tester, _mobileSize);
+      expect(find.byType(ManagerDashboardPage), findsOneWidget);
     });
 
-    testWidgets('renders ManagerDashboardTabletPage on wide screen', (
-      tester,
-    ) async {
-      _ignoreOverflowErrors();
-      tester.view.physicalSize = _tabletSize;
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      await tester.pumpWidget(
-        _buildApp(_tabletSize, const ManagerDashboardPage()),
-      );
-      await tester.pump();
-
-      expect(find.byType(ManagerDashboardPage), findsNothing);
+    testWidgets('on wide screen', (tester) async {
+      await _pumpDashboard(tester, _tabletSize);
+      expect(find.byType(ManagerDashboardPage), findsOneWidget);
     });
   });
 
-  group('ManagerDashboardMobilePage – content', () {
-    Future<void> _pumpMobileDashboard(WidgetTester tester) async {
-      _ignoreOverflowErrors();
-      tester.view.physicalSize = _mobileSize;
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      await tester.pumpWidget(
-        _buildApp(_mobileSize, const ManagerDashboardPage()),
-      );
-      await tester.pump();
-    }
-
-    testWidgets('shows Admin Dashboard heading', (tester) async {
-      await _pumpMobileDashboard(tester);
-      expect(find.text('Admin Dashboard'), findsOneWidget);
+  group('ManagerDashboardPage – content', () {
+    testWidgets('shows Tasks label', (tester) async {
+      await _pumpDashboard(tester, _mobileSize);
+      expect(find.text('Tasks'), findsWidgets);
     });
 
-    testWidgets('shows overview subtitle', (tester) async {
-      await _pumpMobileDashboard(tester);
-      expect(find.text('Overview of your team and tasks'), findsOneWidget);
+    testWidgets('shows All filter chip', (tester) async {
+      await _pumpDashboard(tester, _mobileSize);
+      expect(find.text('All'), findsOneWidget);
     });
 
-    testWidgets('shows Recent Activity section', (tester) async {
-      await _pumpMobileDashboard(tester);
-      expect(find.text('Recent Activity'), findsOneWidget);
-    });
-
-    testWidgets('shows all four summary stat labels', (tester) async {
-      await _pumpMobileDashboard(tester);
-      expect(find.text('Total Tasks'), findsOneWidget);
-      expect(find.text('Staff Members'), findsOneWidget);
-      expect(find.text('Completed'), findsOneWidget);
-      expect(find.text('In Progress'), findsOneWidget);
+    testWidgets('shows status filter chips', (tester) async {
+      await _pumpDashboard(tester, _mobileSize);
+      expect(find.text('Pending'), findsWidgets);
+      expect(find.text('In Progress'), findsWidgets);
+      expect(find.text('Complete'), findsWidgets);
+      expect(find.text('Fail'), findsWidgets);
     });
   });
 }

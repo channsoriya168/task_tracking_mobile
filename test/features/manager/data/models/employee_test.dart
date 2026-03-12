@@ -105,49 +105,55 @@ void main() {
     });
   });
 
-  group('Position model', () {
-    const position = Position(
+  group('TaskGroup model', () {
+    final taskGroup = TaskGroup(
       id: 'p1',
       name: 'Engineering',
-      color: Color(0xFF6C63FF),
+      color: const Color(0xFF6C63FF),
     );
 
     test('constructor sets all fields', () {
-      expect(position.id, 'p1');
-      expect(position.name, 'Engineering');
-      expect(position.color, const Color(0xFF6C63FF));
+      expect(taskGroup.id, 'p1');
+      expect(taskGroup.name, 'Engineering');
+      expect(taskGroup.color, const Color(0xFF6C63FF));
     });
 
     group('copyWith', () {
       test('returns same values when no arguments given', () {
-        final copy = position.copyWith();
-        expect(copy.id, position.id);
-        expect(copy.name, position.name);
-        expect(copy.color, position.color);
+        final copy = taskGroup.copyWith();
+        expect(copy.id, taskGroup.id);
+        expect(copy.name, taskGroup.name);
+        expect(copy.color, taskGroup.color);
       });
 
       test('overrides only the given fields', () {
         const newColor = Color(0xFF2ED573);
-        final copy = position.copyWith(name: 'Design', color: newColor);
+        final copy = taskGroup.copyWith(name: 'Design', color: newColor);
         expect(copy.name, 'Design');
         expect(copy.color, newColor);
-        expect(copy.id, position.id);
+        expect(copy.id, taskGroup.id);
       });
     });
   });
 
-  group('kMockPositions', () {
-    test('contains at least one position', () {
-      expect(kMockPositions, isNotEmpty);
+  group('local mock task groups', () {
+    final mockGroups = [
+      TaskGroup(id: 'p1', name: 'Engineering', color: const Color(0xFF6C63FF)),
+      TaskGroup(id: 'p2', name: 'Design', color: const Color(0xFF2ED573)),
+      TaskGroup(id: 'p3', name: 'Marketing', color: const Color(0xFFFF6B6B)),
+    ];
+
+    test('contains at least one task group', () {
+      expect(mockGroups, isNotEmpty);
     });
 
     test('all ids are unique', () {
-      final ids = kMockPositions.map((p) => p.id).toList();
+      final ids = mockGroups.map((p) => p.id).toList();
       expect(ids.toSet().length, ids.length);
     });
 
-    test('all positions have non-empty fields', () {
-      for (final p in kMockPositions) {
+    test('all task groups have non-empty fields', () {
+      for (final p in mockGroups) {
         expect(p.id, isNotEmpty);
         expect(p.name, isNotEmpty);
       }

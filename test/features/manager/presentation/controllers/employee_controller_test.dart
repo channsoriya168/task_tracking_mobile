@@ -4,12 +4,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/image_service.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
 // ── Stubs ──────────────────────────────────────────────────────
+
 class _StubImageService extends ImageService {
   @override
   Future<File?> pickImage(ImageSource source) async => null;
@@ -18,11 +23,50 @@ class _StubImageService extends ImageService {
   Future<File?> compressImage(File file) async => null;
 }
 
+class _StubTaskGroupRepository implements TaskGroupRepository {
+  @override
+  Future<List<TaskGroup>> getAll() async => [
+        TaskGroup(id: 'p1', name: 'Engineering'),
+        TaskGroup(id: 'p2', name: 'Design'),
+        TaskGroup(id: 'p3', name: 'Marketing'),
+        TaskGroup(id: 'p4', name: 'Finance'),
+      ];
+
+  @override
+  Future<TaskGroup> getById(String id) async => TaskGroup(id: id, name: 'Stub');
+
+  @override
+  Future<TaskGroup> create({
+    required String name,
+    String? color,
+    String? description,
+  }) async =>
+      TaskGroup(id: 'new', name: name);
+
+  @override
+  Future<TaskGroup> update(
+    String id, {
+    required String name,
+    String? color,
+    String? description,
+  }) async =>
+      TaskGroup(id: id, name: name);
+
+  @override
+  Future<void> delete(String id) async {}
+}
+
 EmployeeController _buildController() {
   Get.reset();
   Get.testMode = true;
 
-  Get.put<TaskGroupController>(TaskGroupController());
+  final stub = _StubTaskGroupRepository();
+  Get.put<TaskGroupController>(
+    TaskGroupController(
+      GetAllTaskGroupsUseCase(stub),
+      CreateTaskGroupUseCase(stub),
+    ),
+  );
   Get.put<PickAndCompressImageUseCase>(
     PickAndCompressImageUseCase(_StubImageService()),
   );
@@ -150,10 +194,11 @@ void main() {
       expect(ctrl.employeeCountByPosition(positionId), expected);
     });
 
-    test('findPosition returns position when it exists', () {
+    test('findPosition returns position when it exists', () async {
       final ctrl = _buildController();
       final posCtrl = Get.find<TaskGroupController>();
-      final pos = posCtrl.positions.first;
+      await posCtrl.fetchTaskGroups(); // ensure task groups are loaded
+      final pos = posCtrl.taskGroups.first;
       expect(ctrl.findPosition(pos.id), isNotNull);
       expect(ctrl.findPosition(pos.id)!.id, pos.id);
     });
