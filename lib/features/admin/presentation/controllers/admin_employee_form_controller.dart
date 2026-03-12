@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_employee_form_dialog.dart';
 
 class AdminEmployeeFormController extends GetxController {
   final CreateEmployeeUsecase _createEmployee;
+  final UpdateEmployeeUsecase _updateEmployee;
 
-  AdminEmployeeFormController(this._createEmployee);
+  AdminEmployeeFormController(this._createEmployee, this._updateEmployee);
 
   // ── Form fields ───────────────────────────────────────────────
   final nameCtrl = TextEditingController();
@@ -27,6 +30,12 @@ class AdminEmployeeFormController extends GetxController {
   final RxBool showPassword = false.obs;
   final RxBool showConfirmPassword = false.obs;
   final RxMap<String, String> fieldErrors = <String, String>{}.obs;
+
+  // ── Edit mode ─────────────────────────────────────────────────
+  final RxBool isEditMode = false.obs;
+  String? _editingId;
+  String? existingImageUrl;
+  final RxBool removeProfileImage = false.obs;
 
   // ── Image ─────────────────────────────────────────────────────
   Future<void> pickImage() async {
@@ -47,6 +56,24 @@ class AdminEmployeeFormController extends GetxController {
     );
   }
 
+  void showEditDialog(Employee employee) {
+    _resetForm();
+    isEditMode.value = true;
+    _editingId = employee.id;
+    existingImageUrl = employee.profileImageUrl;
+    nameCtrl.text = employee.fullName;
+    emailCtrl.text = employee.email;
+    phoneCtrl.text = employee.phone ?? '';
+    placeCtrl.text = employee.placeOfBirth ?? '';
+    formDob.value = employee.dateOfBirth;
+    selectedGroupIds.assignAll(employee.taskGroups.map((g) => g.groupId));
+    Get.bottomSheet(
+      AdminEmployeeFormDialog(controller: this),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
   void _resetForm() {
     nameCtrl.clear();
     emailCtrl.clear();
@@ -60,6 +87,10 @@ class AdminEmployeeFormController extends GetxController {
     showPassword.value = false;
     showConfirmPassword.value = false;
     fieldErrors.clear();
+    isEditMode.value = false;
+    _editingId = null;
+    existingImageUrl = null;
+    removeProfileImage.value = false;
   }
 
   void toggleGroup(String groupId) {
@@ -72,6 +103,14 @@ class AdminEmployeeFormController extends GetxController {
 
   // ── Save ──────────────────────────────────────────────────────
   Future<void> save() async {
+    if (isEditMode.value) {
+      await _saveEdit();
+    } else {
+      await _saveCreate();
+    }
+  }
+
+  Future<void> _saveCreate() async {
     fieldErrors.clear();
 
     final name = nameCtrl.text.trim();
@@ -80,7 +119,7 @@ class AdminEmployeeFormController extends GetxController {
     final password = passwordCtrl.text;
     final confirmPassword = confirmPasswordCtrl.text;
 
-    if (!_validate(
+    if (!_validateCreate(
       name: name,
       email: email,
       phone: phone,
@@ -107,14 +146,69 @@ class AdminEmployeeFormController extends GetxController {
       Get.back();
       Get.find<AdminEmployeeController>().fetchEmployees();
     } catch (e) {
-      _handleApiError(e);
+      _handleApiError(e, label: 'Create Employee');
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
+  Future<void> _saveEdit() async {
+    fieldErrors.clear();
+
+    final name = nameCtrl.text.trim();
+    final email = emailCtrl.text.trim();
+    final phone = phoneCtrl.text.trim();
+
+    if (!_validateEdit(name: name, email: email, phone: phone)) return;
+
+    isSaving.value = true;
+    try {
+      await _updateEmployee(
+        _editingId!,
+        fullName: name,
+        email: email,
+        phone: phone.isEmpty ? null : phone,
+        placeOfBirth:
+            placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
+        dateOfBirth: formDob.value,
+        groupIds: selectedGroupIds.isEmpty ? null : selectedGroupIds.toList(),
+        profileImagePath: profileImage.value?.path,
+        removeProfileImage: removeProfileImage.value,
+      );
+      Get.back();
+      Get.find<AdminEmployeeController>().fetchEmployees();
+      AppSnackbar.update('Employee Updated', 'Changes have been saved.');
+    } catch (e) {
+      _handleApiError(e, label: 'Edit Employee');
     } finally {
       isSaving.value = false;
     }
   }
 
   // ── Validation ────────────────────────────────────────────────
-  bool _validate({
+  bool _validateEdit({
+    required String name,
+    required String email,
+    required String phone,
+  }) {
+    final errors = <String, String>{};
+    if (name.isEmpty) errors['fullName'] = 'Full name is required.';
+    if (email.isEmpty) {
+      errors['email'] = 'Email is required.';
+    } else if (!GetUtils.isEmail(email)) {
+      errors['email'] = 'Enter a valid email address.';
+    }
+    if (phone.isNotEmpty && !RegExp(r'^\+855\d{8,9}$').hasMatch(phone)) {
+      errors['phone'] = 'Must use +855 format (e.g. +85512345678).';
+    }
+    if (errors.isNotEmpty) {
+      fieldErrors.assignAll(errors);
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateCreate({
     required String name,
     required String email,
     required String phone,
@@ -171,7 +265,7 @@ class AdminEmployeeFormController extends GetxController {
     'DateOfBirth': 'dateOfBirth',
   };
 
-  void _handleApiError(Object e) {
+  void _handleApiError(Object e, {String label = 'Employee'}) {
     if (e is DioException) {
       final data = e.response?.data;
       if (data is Map && data['errors'] is Map) {
@@ -187,7 +281,7 @@ class AdminEmployeeFormController extends GetxController {
         }
       }
     }
-    AppSnackbar.error('Create Employee', AppSnackbar.parseApiError(e));
+    AppSnackbar.error(label, AppSnackbar.parseApiError(e));
   }
 
   @override

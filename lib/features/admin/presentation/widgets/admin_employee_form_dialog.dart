@@ -31,13 +31,15 @@ class AdminEmployeeFormDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // ── Header ───────────────────────────────────────────────
-            Padding(
+            Obx(() => Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 16, 0),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
-                      'Add Employee',
+                      controller.isEditMode.value
+                          ? 'Edit Employee'
+                          : 'Add Employee',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -54,7 +56,7 @@ class AdminEmployeeFormDialog extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            )),
             // drag handle
             Center(
               child: Container(
@@ -77,46 +79,80 @@ class AdminEmployeeFormDialog extends StatelessWidget {
                     // ── Avatar ───────────────────────────────────────
                     Obx(() {
                       final img = controller.profileImage.value;
+                      final existingUrl = controller.existingImageUrl;
+                      final removed = controller.removeProfileImage.value;
+                      ImageProvider? bgImage;
+                      if (img != null) {
+                        bgImage = FileImage(File(img.path));
+                      } else if (!removed &&
+                          existingUrl != null &&
+                          existingUrl.isNotEmpty) {
+                        bgImage = NetworkImage(existingUrl);
+                      }
                       return Center(
-                        child: GestureDetector(
-                          onTap: controller.pickImage,
-                          child: Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 44,
-                                backgroundColor:
-                                    isDark ? Colors.grey[800] : Colors.grey[200],
-                                backgroundImage: img != null
-                                    ? FileImage(File(img.path))
-                                    : null,
-                                child: img == null
-                                    ? Icon(Icons.person_rounded,
-                                        size: 44,
-                                        color: isDark
-                                            ? Colors.grey[600]
-                                            : Colors.grey[400])
-                                    : null,
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: kPrimary,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color:
-                                          isDark ? kCardDark : Colors.white,
-                                      width: 2,
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: controller.pickImage,
+                              child: Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 44,
+                                    backgroundColor: isDark
+                                        ? Colors.grey[800]
+                                        : Colors.grey[200],
+                                    backgroundImage: bgImage,
+                                    child: bgImage == null
+                                        ? Icon(Icons.person_rounded,
+                                            size: 44,
+                                            color: isDark
+                                                ? Colors.grey[600]
+                                                : Colors.grey[400])
+                                        : null,
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: kPrimary,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: isDark
+                                              ? kCardDark
+                                              : Colors.white,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                          Icons.camera_alt_rounded,
+                                          size: 14,
+                                          color: Colors.white),
                                     ),
                                   ),
-                                  child: const Icon(Icons.camera_alt_rounded,
-                                      size: 14, color: Colors.white),
+                                ],
+                              ),
+                            ),
+                            if (controller.isEditMode.value &&
+                                bgImage != null) ...[
+                              const SizedBox(height: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  controller.profileImage.value = null;
+                                  controller.removeProfileImage.value = true;
+                                },
+                                child: Text(
+                                  'Remove photo',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: kHighPriority,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ],
-                          ),
+                          ],
                         ),
                       );
                     }),
@@ -160,48 +196,66 @@ class AdminEmployeeFormDialog extends StatelessWidget {
                           prefixIcon: Icons.email_outlined,
                           errorText: controller.fieldErrors['email'],
                         )),
-                    const SizedBox(height: 12),
-                    Obx(() => TextFieldWidget(
-                          controller: controller.passwordCtrl,
-                          label: 'Password',
-                          hint: 'e.g. MyPass@123',
-                          isDark: isDark,
-                          isRequired: true,
-                          obscureText: !controller.showPassword.value,
-                          prefixIcon: Icons.lock_outline_rounded,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              controller.showPassword.value
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              size: 18,
-                              color: isDark ? Colors.grey[500] : Colors.grey[500],
-                            ),
-                            onPressed: () => controller.showPassword.toggle(),
-                          ),
-                          errorText: controller.fieldErrors['password'],
-                        )),
-                    const SizedBox(height: 12),
-                    Obx(() => TextFieldWidget(
-                          controller: controller.confirmPasswordCtrl,
-                          label: 'Confirm Password',
-                          hint: 'Re-enter password',
-                          isDark: isDark,
-                          isRequired: true,
-                          obscureText: !controller.showConfirmPassword.value,
-                          prefixIcon: Icons.lock_outline_rounded,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              controller.showConfirmPassword.value
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              size: 18,
-                              color: isDark ? Colors.grey[500] : Colors.grey[500],
-                            ),
-                            onPressed: () => controller.showConfirmPassword.toggle(),
-                          ),
-                          errorText: controller.fieldErrors['confirmPassword'],
-                        )),
+                    Obx(() => controller.isEditMode.value
+                        ? const SizedBox.shrink()
+                        : Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              Obx(() => TextFieldWidget(
+                                    controller: controller.passwordCtrl,
+                                    label: 'Password',
+                                    hint: 'e.g. MyPass@123',
+                                    isDark: isDark,
+                                    isRequired: true,
+                                    obscureText:
+                                        !controller.showPassword.value,
+                                    prefixIcon: Icons.lock_outline_rounded,
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        controller.showPassword.value
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        size: 18,
+                                        color: isDark
+                                            ? Colors.grey[500]
+                                            : Colors.grey[500],
+                                      ),
+                                      onPressed: () =>
+                                          controller.showPassword.toggle(),
+                                    ),
+                                    errorText:
+                                        controller.fieldErrors['password'],
+                                  )),
+                              const SizedBox(height: 12),
+                              Obx(() => TextFieldWidget(
+                                    controller:
+                                        controller.confirmPasswordCtrl,
+                                    label: 'Confirm Password',
+                                    hint: 'Re-enter password',
+                                    isDark: isDark,
+                                    isRequired: true,
+                                    obscureText: !controller
+                                        .showConfirmPassword.value,
+                                    prefixIcon: Icons.lock_outline_rounded,
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        controller.showConfirmPassword.value
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        size: 18,
+                                        color: isDark
+                                            ? Colors.grey[500]
+                                            : Colors.grey[500],
+                                      ),
+                                      onPressed: () => controller
+                                          .showConfirmPassword
+                                          .toggle(),
+                                    ),
+                                    errorText: controller
+                                        .fieldErrors['confirmPassword'],
+                                  )),
+                            ],
+                          )),
                     const SizedBox(height: 20),
 
                     // ── Section: Personal Details ─────────────────────
@@ -254,13 +308,15 @@ class AdminEmployeeFormDialog extends StatelessWidget {
                                       color: Colors.white,
                                     ),
                                   )
-                                : const Text(
-                                    'Add Employee',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 15,
-                                    ),
-                                  ),
+                                : Obx(() => Text(
+                                      controller.isEditMode.value
+                                          ? 'Save Changes'
+                                          : 'Add Employee',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                      ),
+                                    )),
                           ),
                         )),
                   ],

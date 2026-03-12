@@ -11,6 +11,8 @@ import 'package:task_tracking_mobile/features/core/data/repositories/employee_re
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/delete_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/label_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/repositories/label_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/label_repository.dart';
@@ -70,12 +72,14 @@ class AppBinding extends Bindings {
     Get.lazyPut<AdminEmployeeController>(
       () => AdminEmployeeController(
         FetchEmployeesUsecase(Get.find<EmployeeRepository>()),
+        DeleteEmployeeUsecase(Get.find<EmployeeRepository>()),
       ),
       fenix: true,
     );
     Get.lazyPut<AdminEmployeeFormController>(
       () => AdminEmployeeFormController(
         CreateEmployeeUsecase(Get.find<EmployeeRepository>()),
+        UpdateEmployeeUsecase(Get.find<EmployeeRepository>()),
       ),
       fenix: true,
     );

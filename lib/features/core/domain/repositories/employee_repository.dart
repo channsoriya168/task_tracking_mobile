@@ -14,4 +14,18 @@ abstract class EmployeeRepository {
     List<String>? groupIds,
     String? profileImagePath,
   });
+
+  Future<Employee> updateEmployee(
+    String id, {
+    required String fullName,
+    required String email,
+    String? phone,
+    String? placeOfBirth,
+    DateTime? dateOfBirth,
+    List<String>? groupIds,
+    String? profileImagePath,
+    bool removeProfileImage = false,
+  });
+
+  Future<void> deleteEmployee(String id);
 }

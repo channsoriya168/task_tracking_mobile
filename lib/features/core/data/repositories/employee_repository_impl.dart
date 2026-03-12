@@ -36,4 +36,30 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
         groupIds: groupIds,
         profileImagePath: profileImagePath,
       );
+
+  @override
+  Future<Employee> updateEmployee(
+    String id, {
+    required String fullName,
+    required String email,
+    String? phone,
+    String? placeOfBirth,
+    DateTime? dateOfBirth,
+    List<String>? groupIds,
+    String? profileImagePath,
+    bool removeProfileImage = false,
+  }) => _remote.updateEmployee(
+        id,
+        fullName: fullName,
+        email: email,
+        phone: phone,
+        placeOfBirth: placeOfBirth,
+        dateOfBirth: dateOfBirth,
+        groupIds: groupIds,
+        profileImagePath: profileImagePath,
+        removeProfileImage: removeProfileImage,
+      );
+
+  @override
+  Future<void> deleteEmployee(String id) => _remote.deleteEmployee(id);
 }
