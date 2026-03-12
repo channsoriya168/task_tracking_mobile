@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
-import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_employee_form_dialog.dart';
 
 class AdminEmployeeFormController extends GetxController {
-  final EmployeeRepository _repo;
+  final CreateEmployeeUsecase _createEmployee;
 
-  AdminEmployeeFormController(this._repo);
+  AdminEmployeeFormController(this._createEmployee);
 
-  // ── Form fields ──────────────────────────────────────────────
+  // ── Form fields ───────────────────────────────────────────────
   final nameCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
@@ -27,8 +26,6 @@ class AdminEmployeeFormController extends GetxController {
   final RxBool isSaving = false.obs;
   final RxBool showPassword = false.obs;
   final RxBool showConfirmPassword = false.obs;
-
-  /// Per-field error messages shown under each TextFieldWidget.
   final RxMap<String, String> fieldErrors = <String, String>{}.obs;
 
   // ── Image ─────────────────────────────────────────────────────
@@ -40,7 +37,7 @@ class AdminEmployeeFormController extends GetxController {
     if (picked != null) profileImage.value = picked;
   }
 
-  // ── Open dialog ───────────────────────────────────────────────
+  // ── Dialog ────────────────────────────────────────────────────
   void showCreateDialog(bool isDark) {
     _resetForm();
     Get.bottomSheet(
@@ -83,7 +80,7 @@ class AdminEmployeeFormController extends GetxController {
     final password = passwordCtrl.text;
     final confirmPassword = confirmPasswordCtrl.text;
 
-    if (!_validateFrontend(
+    if (!_validate(
       name: name,
       email: email,
       phone: phone,
@@ -95,13 +92,14 @@ class AdminEmployeeFormController extends GetxController {
 
     isSaving.value = true;
     try {
-      await CreateEmployeeUsecase(_repo).call(
+      await _createEmployee(
         fullName: name,
         email: email,
         password: password,
         confirmPassword: confirmPassword,
         phone: phone,
-        placeOfBirth: placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
+        placeOfBirth:
+            placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
         dateOfBirth: formDob.value,
         groupIds: selectedGroupIds.isEmpty ? null : selectedGroupIds.toList(),
         profileImagePath: profileImage.value?.path,
@@ -115,8 +113,8 @@ class AdminEmployeeFormController extends GetxController {
     }
   }
 
-  // ── Frontend validation ───────────────────────────────────────
-  bool _validateFrontend({
+  // ── Validation ────────────────────────────────────────────────
+  bool _validate({
     required String name,
     required String email,
     required String phone,
@@ -125,24 +123,20 @@ class AdminEmployeeFormController extends GetxController {
   }) {
     final errors = <String, String>{};
 
-    // Full name
     if (name.isEmpty) errors['fullName'] = 'Full name is required.';
 
-    // Email
     if (email.isEmpty) {
       errors['email'] = 'Email is required.';
     } else if (!GetUtils.isEmail(email)) {
       errors['email'] = 'Enter a valid email address.';
     }
 
-    // Phone — must be +855 format
     if (phone.isEmpty) {
       errors['phone'] = 'Phone is required.';
     } else if (!RegExp(r'^\+855\d{8,9}$').hasMatch(phone)) {
       errors['phone'] = 'Must use +855 format (e.g. +85512345678).';
     }
 
-    // Password — uppercase + lowercase + special char
     if (password.isEmpty) {
       errors['password'] = 'Password is required.';
     } else if (!RegExp(r'[A-Z]').hasMatch(password)) {
@@ -153,7 +147,6 @@ class AdminEmployeeFormController extends GetxController {
       errors['password'] = 'Must contain at least one special character.';
     }
 
-    // Confirm password
     if (confirmPassword.isEmpty) {
       errors['confirmPassword'] = 'Please confirm your password.';
     } else if (password != confirmPassword) {
@@ -167,8 +160,7 @@ class AdminEmployeeFormController extends GetxController {
     return true;
   }
 
-  // ── Backend error mapping ─────────────────────────────────────
-  // Maps PascalCase backend field names to our camelCase keys.
+  // ── API error mapping ─────────────────────────────────────────
   static const _fieldKeyMap = {
     'FullName': 'fullName',
     'Email': 'email',
@@ -195,7 +187,6 @@ class AdminEmployeeFormController extends GetxController {
         }
       }
     }
-    // No field-level errors — fall back to snackbar
     AppSnackbar.error('Create Employee', AppSnackbar.parseApiError(e));
   }
 

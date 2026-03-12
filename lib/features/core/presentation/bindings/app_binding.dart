@@ -9,6 +9,8 @@ import 'package:task_tracking_mobile/features/core/presentation/bindings/image_b
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/employee_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/repositories/employee_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/label_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/repositories/label_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/label_repository.dart';
@@ -66,11 +68,15 @@ class AppBinding extends Bindings {
 
     // ── Admin controllers ─────────────────────────────────────
     Get.lazyPut<AdminEmployeeController>(
-      () => AdminEmployeeController(Get.find<EmployeeRepository>()),
+      () => AdminEmployeeController(
+        FetchEmployeesUsecase(Get.find<EmployeeRepository>()),
+      ),
       fenix: true,
     );
     Get.lazyPut<AdminEmployeeFormController>(
-      () => AdminEmployeeFormController(Get.find<EmployeeRepository>()),
+      () => AdminEmployeeFormController(
+        CreateEmployeeUsecase(Get.find<EmployeeRepository>()),
+      ),
       fenix: true,
     );
     Get.lazyPut<AdminTaskController>(

@@ -1,21 +1,18 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
-import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
-import 'dart:developer' as developer;
 
 class AdminEmployeeController extends GetxController {
-  final EmployeeRepository _repo;
+  final FetchEmployeesUsecase _fetchEmployees;
 
-  AdminEmployeeController(this._repo);
+  AdminEmployeeController(this._fetchEmployees);
 
   final RxList<Employee> employees = <Employee>[].obs;
   final RxString searchQuery = ''.obs;
-  final RxString selectedGroupId = ''.obs; // '' = All
+  final RxString selectedGroupId = ''.obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
-  /// Unique task groups derived from all loaded employees.
   List<EmployeeTaskGroup> get groups {
     final seen = <String>{};
     final result = <EmployeeTaskGroup>[];
@@ -51,10 +48,8 @@ class AdminEmployeeController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
     try {
-      employees.value = await FetchEmployeesUsecase(_repo).call();
-      developer.log('Employees fetched successfully.');
+      employees.value = await _fetchEmployees();
     } catch (e) {
-      developer.log('Failed to fetch employees: $e');
       errorMessage.value = 'Failed to load employees.';
     } finally {
       isLoading.value = false;
