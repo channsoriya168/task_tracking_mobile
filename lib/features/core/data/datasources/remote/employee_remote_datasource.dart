@@ -14,4 +14,9 @@ class EmployeeRemoteDatasource {
         .map((e) => EmployeeModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  Future<Employee> fetchEmployeeById(String id) async {
+    final response = await _dio.get(ApiEndpoints.employeeById(id));
+    return EmployeeModel.fromJson(response.data as Map<String, dynamic>);
+  }
 }
