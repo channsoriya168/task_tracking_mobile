@@ -10,8 +10,14 @@ import 'package:task_tracking_mobile/features/core/data/datasources/remote/emplo
 import 'package:task_tracking_mobile/features/core/data/repositories/employee_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_form_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_profile_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/delete_task_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/update_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/bindings/manager_binding.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/splash_controller.dart';
@@ -48,11 +54,24 @@ class AppBinding extends Bindings {
       EmployeeRepositoryImpl(EmployeeRemoteDatasource()),
       permanent: true,
     );
-    Get.put<AdminEmployeeController>(
-      AdminEmployeeController(Get.find<EmployeeRepository>()),
-      permanent: true,
+    Get.lazyPut<AdminEmployeeController>(
+      () => AdminEmployeeController(Get.find<EmployeeRepository>()),
+      fenix: true,
+    );
+    Get.lazyPut<AdminEmployeeFormController>(
+      () => AdminEmployeeFormController(Get.find<EmployeeRepository>()),
+      fenix: true,
     );
     Get.put<AdminTaskController>(AdminTaskController(), permanent: true);
     Get.put<AdminProfileController>(AdminProfileController(), permanent: true);
+    Get.lazyPut<AdminTaskGroupController>(
+      () => AdminTaskGroupController(
+        GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
+        CreateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
+        UpdateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
+        DeleteTaskGroupUseCase(Get.find<TaskGroupRepository>()),
+      ),
+      fenix: true,
+    );
   }
 }

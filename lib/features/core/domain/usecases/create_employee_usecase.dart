@@ -1,21 +1,12 @@
-import 'package:task_tracking_mobile/features/core/data/datasources/remote/employee_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 
-class EmployeeRepositoryImpl implements EmployeeRepository {
-  final EmployeeRemoteDatasource _remote;
+class CreateEmployeeUsecase {
+  final EmployeeRepository _repo;
 
-  EmployeeRepositoryImpl(this._remote);
+  CreateEmployeeUsecase(this._repo);
 
-  @override
-  Future<List<Employee>> fetchEmployees() => _remote.fetchEmployees();
-
-  @override
-  Future<Employee> fetchEmployeeById(String id) =>
-      _remote.fetchEmployeeById(id);
-
-  @override
-  Future<Employee> createEmployee({
+  Future<Employee> call({
     required String fullName,
     required String email,
     required String password,
@@ -25,7 +16,7 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     DateTime? dateOfBirth,
     List<String>? groupIds,
     String? profileImagePath,
-  }) => _remote.createEmployee(
+  }) => _repo.createEmployee(
         fullName: fullName,
         email: email,
         password: password,

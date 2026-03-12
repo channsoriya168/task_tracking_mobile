@@ -14,6 +14,8 @@ class TextFieldWidget extends StatelessWidget {
     this.maxLines = 1,
     this.prefixIcon,
     this.isRequired = false,
+    this.obscureText = false,
+    this.suffixIcon,
     this.errorText,
   });
 
@@ -26,6 +28,8 @@ class TextFieldWidget extends StatelessWidget {
   final int maxLines;
   final IconData? prefixIcon;
   final bool isRequired;
+  final bool obscureText;
+  final Widget? suffixIcon;
   final String? errorText;
 
   @override
@@ -55,13 +59,15 @@ class TextFieldWidget extends StatelessWidget {
           controller: controller,
           keyboardType: keyboardType,
           onChanged: onChanged,
-          maxLines: maxLines,
+          obscureText: obscureText,
+          maxLines: obscureText ? 1 : maxLines,
           style: TextStyle(
             color: isDark ? Colors.white : kTextDark,
             fontSize: 14,
           ),
           decoration: InputDecoration(
             hintText: hint,
+            suffixIcon: suffixIcon,
             errorText: errorText,
             hintStyle: TextStyle(
               color: isDark ? Colors.grey[600] : Colors.grey[400],

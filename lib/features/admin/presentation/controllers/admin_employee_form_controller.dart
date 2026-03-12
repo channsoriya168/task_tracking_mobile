@@ -1,0 +1,212 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_employee_form_dialog.dart';
+
+class AdminEmployeeFormController extends GetxController {
+  final EmployeeRepository _repo;
+
+  AdminEmployeeFormController(this._repo);
+
+  // ── Form fields ──────────────────────────────────────────────
+  final nameCtrl = TextEditingController();
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  final confirmPasswordCtrl = TextEditingController();
+  final phoneCtrl = TextEditingController();
+  final placeCtrl = TextEditingController();
+
+  final Rx<DateTime?> formDob = Rx(null);
+  final RxList<String> selectedGroupIds = <String>[].obs;
+  final Rxn<XFile> profileImage = Rxn<XFile>();
+  final RxBool isSaving = false.obs;
+  final RxBool showPassword = false.obs;
+  final RxBool showConfirmPassword = false.obs;
+
+  /// Per-field error messages shown under each TextFieldWidget.
+  final RxMap<String, String> fieldErrors = <String, String>{}.obs;
+
+  // ── Image ─────────────────────────────────────────────────────
+  Future<void> pickImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (picked != null) profileImage.value = picked;
+  }
+
+  // ── Open dialog ───────────────────────────────────────────────
+  void showCreateDialog(bool isDark) {
+    _resetForm();
+    Get.bottomSheet(
+      AdminEmployeeFormDialog(controller: this),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  void _resetForm() {
+    nameCtrl.clear();
+    emailCtrl.clear();
+    passwordCtrl.clear();
+    confirmPasswordCtrl.clear();
+    phoneCtrl.clear();
+    placeCtrl.clear();
+    formDob.value = null;
+    selectedGroupIds.clear();
+    profileImage.value = null;
+    showPassword.value = false;
+    showConfirmPassword.value = false;
+    fieldErrors.clear();
+  }
+
+  void toggleGroup(String groupId) {
+    if (selectedGroupIds.contains(groupId)) {
+      selectedGroupIds.remove(groupId);
+    } else {
+      selectedGroupIds.add(groupId);
+    }
+  }
+
+  // ── Save ──────────────────────────────────────────────────────
+  Future<void> save() async {
+    fieldErrors.clear();
+
+    final name = nameCtrl.text.trim();
+    final email = emailCtrl.text.trim();
+    final phone = phoneCtrl.text.trim();
+    final password = passwordCtrl.text;
+    final confirmPassword = confirmPasswordCtrl.text;
+
+    if (!_validateFrontend(
+      name: name,
+      email: email,
+      phone: phone,
+      password: password,
+      confirmPassword: confirmPassword,
+    )) {
+      return;
+    }
+
+    isSaving.value = true;
+    try {
+      await CreateEmployeeUsecase(_repo).call(
+        fullName: name,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        phone: phone,
+        placeOfBirth: placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
+        dateOfBirth: formDob.value,
+        groupIds: selectedGroupIds.isEmpty ? null : selectedGroupIds.toList(),
+        profileImagePath: profileImage.value?.path,
+      );
+      Get.back();
+      Get.find<AdminEmployeeController>().fetchEmployees();
+    } catch (e) {
+      _handleApiError(e);
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
+  // ── Frontend validation ───────────────────────────────────────
+  bool _validateFrontend({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required String confirmPassword,
+  }) {
+    final errors = <String, String>{};
+
+    // Full name
+    if (name.isEmpty) errors['fullName'] = 'Full name is required.';
+
+    // Email
+    if (email.isEmpty) {
+      errors['email'] = 'Email is required.';
+    } else if (!GetUtils.isEmail(email)) {
+      errors['email'] = 'Enter a valid email address.';
+    }
+
+    // Phone — must be +855 format
+    if (phone.isEmpty) {
+      errors['phone'] = 'Phone is required.';
+    } else if (!RegExp(r'^\+855\d{8,9}$').hasMatch(phone)) {
+      errors['phone'] = 'Must use +855 format (e.g. +85512345678).';
+    }
+
+    // Password — uppercase + lowercase + special char
+    if (password.isEmpty) {
+      errors['password'] = 'Password is required.';
+    } else if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      errors['password'] = 'Must contain at least one uppercase letter.';
+    } else if (!RegExp(r'[a-z]').hasMatch(password)) {
+      errors['password'] = 'Must contain at least one lowercase letter.';
+    } else if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(password)) {
+      errors['password'] = 'Must contain at least one special character.';
+    }
+
+    // Confirm password
+    if (confirmPassword.isEmpty) {
+      errors['confirmPassword'] = 'Please confirm your password.';
+    } else if (password != confirmPassword) {
+      errors['confirmPassword'] = 'Passwords do not match.';
+    }
+
+    if (errors.isNotEmpty) {
+      fieldErrors.assignAll(errors);
+      return false;
+    }
+    return true;
+  }
+
+  // ── Backend error mapping ─────────────────────────────────────
+  // Maps PascalCase backend field names to our camelCase keys.
+  static const _fieldKeyMap = {
+    'FullName': 'fullName',
+    'Email': 'email',
+    'Phone': 'phone',
+    'Password': 'password',
+    'ConfirmPassword': 'confirmPassword',
+    'PlaceOfBirth': 'placeOfBirth',
+    'DateOfBirth': 'dateOfBirth',
+  };
+
+  void _handleApiError(Object e) {
+    if (e is DioException) {
+      final data = e.response?.data;
+      if (data is Map && data['errors'] is Map) {
+        final mapped = <String, String>{};
+        (data['errors'] as Map).forEach((key, value) {
+          final localKey = _fieldKeyMap[key] ?? key.toString();
+          final msgs = value is List ? value : [value];
+          if (msgs.isNotEmpty) mapped[localKey] = msgs.first.toString();
+        });
+        if (mapped.isNotEmpty) {
+          fieldErrors.assignAll(mapped);
+          return;
+        }
+      }
+    }
+    // No field-level errors — fall back to snackbar
+    AppSnackbar.error('Create Employee', AppSnackbar.parseApiError(e));
+  }
+
+  @override
+  void onClose() {
+    nameCtrl.dispose();
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    confirmPasswordCtrl.dispose();
+    phoneCtrl.dispose();
+    placeCtrl.dispose();
+    super.onClose();
+  }
+}
