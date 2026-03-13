@@ -1,13 +1,110 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 class AdminTaskController extends GetxController {
   final RxString filterStatus = 'All'.obs;
   final RxString searchQuery = ''.obs;
   final dashboardSelectedDate = Rxn<DateTime>();
 
-  RxList<TaskModel> get tasks => Get.find<TaskController>().tasks;
+  final RxList<TaskModel> tasks = <TaskModel>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadSampleData();
+  }
+
+  void _loadSampleData() {
+    tasks.addAll([
+      TaskModel(
+        id: '1',
+        title: 'Design new landing page',
+        description:
+            'Create wireframes and high-fidelity mockups for the new marketing website.',
+        status: TaskStatus.inProgress,
+        dueDate: DateTime.now().add(const Duration(days: 2)),
+        category: 'Design',
+        priority: TaskPriority.high,
+        acceptedBy: 'Alice J.',
+        assignedToId: 'e1',
+      ),
+      TaskModel(
+        id: '2',
+        title: 'Fix authentication bug',
+        description:
+            'Users are getting logged out unexpectedly on mobile devices after 10 minutes.',
+        status: TaskStatus.todo,
+        dueDate: DateTime.now().add(const Duration(hours: 6)),
+        category: 'Engineering',
+        priority: TaskPriority.high,
+        assignedToId: 'e1',
+      ),
+      TaskModel(
+        id: '3',
+        title: 'Write API documentation',
+        description: 'Document all public endpoints for the v2 API release.',
+        status: TaskStatus.todo,
+        dueDate: DateTime.now().add(const Duration(days: 5)),
+        category: 'Documentation',
+        priority: TaskPriority.medium,
+        assignedToId: 'e2',
+      ),
+      TaskModel(
+        id: '4',
+        title: 'Team sync meeting',
+        description: 'Weekly standup with the product and engineering team.',
+        status: TaskStatus.done,
+        dueDate: DateTime.now().subtract(const Duration(days: 1)),
+        category: 'Meeting',
+        priority: TaskPriority.low,
+        acceptedBy: 'Bob S.',
+        assignedToId: 'e2',
+      ),
+      TaskModel(
+        id: '5',
+        title: 'Performance optimization',
+        description:
+            'Reduce app cold startup time by 40% through lazy loading.',
+        status: TaskStatus.inProgress,
+        dueDate: DateTime.now().add(const Duration(days: 7)),
+        category: 'Engineering',
+        priority: TaskPriority.medium,
+        acceptedBy: 'Charlie B.',
+        assignedToId: 'e3',
+      ),
+      TaskModel(
+        id: '6',
+        title: 'Update dependencies',
+        description: 'Upgrade all packages to their latest stable versions.',
+        status: TaskStatus.done,
+        category: 'Maintenance',
+        priority: TaskPriority.low,
+        assignedToId: 'e3',
+      ),
+      TaskModel(
+        id: '7',
+        title: 'User research interviews',
+        description:
+            'Conduct 5 user interviews to validate the new onboarding flow.',
+        status: TaskStatus.todo,
+        dueDate: DateTime.now().add(const Duration(days: 3)),
+        category: 'Research',
+        priority: TaskPriority.medium,
+        assignedToId: 'e4',
+      ),
+      TaskModel(
+        id: '8',
+        title: 'Deploy to production',
+        description:
+            'Run deployment pipeline and verify all services are healthy.',
+        status: TaskStatus.fail,
+        dueDate: DateTime.now().subtract(const Duration(days: 2)),
+        category: 'Engineering',
+        priority: TaskPriority.high,
+        assignedToId: 'e4',
+      ),
+    ]);
+  }
 
   List<TaskModel> get filteredTasks {
     var result = tasks.toList();
@@ -78,5 +175,11 @@ class AdminTaskController extends GetxController {
     }
   }
 
-  void deleteTask(String id) => Get.find<TaskController>().deleteTask(id);
+  int get totalTasks => tasks.length;
+  int get inProgressTasks =>
+      tasks.where((t) => t.status == TaskStatus.inProgress).length;
+  int get completedTasks =>
+      tasks.where((t) => t.status == TaskStatus.done).length;
+
+  void deleteTask(String id) => tasks.removeWhere((t) => t.id == id);
 }

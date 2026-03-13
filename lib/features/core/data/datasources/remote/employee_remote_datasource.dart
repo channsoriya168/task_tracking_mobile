@@ -7,8 +7,17 @@ import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart
 class EmployeeRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;
 
-  Future<List<Employee>> fetchEmployees() async {
-    final response = await _dio.get(ApiEndpoints.employees);
+  Future<List<Employee>> fetchEmployees({
+    String? name,
+    String? groupId,
+  }) async {
+    final params = <String, dynamic>{};
+    if (name != null && name.isNotEmpty) params['Name'] = name;
+    if (groupId != null && groupId.isNotEmpty) params['GroupId'] = groupId;
+    final response = await _dio.get(
+      ApiEndpoints.employees,
+      queryParameters: params.isEmpty ? null : params,
+    );
     final list = response.data as List<dynamic>;
     return list
         .map((e) => EmployeeModel.fromJson(e as Map<String, dynamic>))

@@ -38,7 +38,7 @@ class AdminEmployeeHeader extends StatelessWidget {
               ),
               Obx(
                 () => Text(
-                  '${ctrl.filteredEmployees.length} of ${ctrl.employees.length} members',
+                  '${ctrl.employees.length} members',
                   style: TextStyle(
                     fontSize: 13,
                     color: isDark ? Colors.grey[500] : kTextMuted,
@@ -83,7 +83,8 @@ class AdminEmployeeGroupDropdown extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Obx(() {
-        final groups = ctrl.groups;
+        final tgCtrl = Get.find<AdminTaskGroupController>();
+        final groups = tgCtrl.taskGroups.toList();
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
@@ -125,19 +126,19 @@ class AdminEmployeeGroupDropdown extends StatelessWidget {
                 ),
                 ...groups.map(
                   (g) => DropdownMenuItem(
-                    value: g.groupId,
+                    value: g.id,
                     child: Row(
                       children: [
                         Container(
                           width: 10,
                           height: 10,
                           decoration: BoxDecoration(
-                            color: g.groupColor,
+                            color: g.color ?? kPrimary,
                             shape: BoxShape.circle,
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Text(g.groupName),
+                        Text(g.name),
                       ],
                     ),
                   ),
@@ -231,7 +232,7 @@ class AdminEmployeeList extends StatelessWidget {
           ),
         );
       }
-      final employees = ctrl.filteredEmployees;
+      final employees = ctrl.employees;
       if (employees.isEmpty) {
         return Center(
           child: Text(

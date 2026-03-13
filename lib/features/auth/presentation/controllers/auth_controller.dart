@@ -59,6 +59,7 @@ class AuthController extends GetxController {
     _logoutUsecase = LogoutUsecase(repo);
     _fetchProfileUsecase = FetchProfileUsecase(repo);
     _checkAuthUsecase = CheckAuthUsecase(repo);
+    _refreshTokenUsecase = RefreshTokenUsecase(repo);
     _changePasswordUsecase = ChangePasswordUsecase(repo);
     _initChangePasswordListeners();
   }

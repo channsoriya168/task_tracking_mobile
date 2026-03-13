@@ -6,5 +6,5 @@ class FetchEmployeesUsecase {
 
   FetchEmployeesUsecase(this._repo);
 
-  Future<List<Employee>> call() => _repo.fetchEmployees();
+  Future<List<Employee>> call({String? name, String? groupId}) => _repo.fetchEmployees(name: name, groupId: groupId);
 }

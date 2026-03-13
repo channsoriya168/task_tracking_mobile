@@ -3,53 +3,37 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
-// ── Hero header ──────────────────────────────────────────────────
+// ── Header (FlexibleSpaceBar background) ─────────────────────────
 
-class EmployeeDetailHeader extends StatelessWidget {
-  const EmployeeDetailHeader({
+class EmployeeDetailHeaderContent extends StatelessWidget {
+  const EmployeeDetailHeaderContent({
     super.key,
     required this.employee,
-    required this.isDark,
+    required this.accent,
   });
 
   final Employee employee;
-  final bool isDark;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
-    final accent = employee.taskGroups.isNotEmpty
-        ? employee.taskGroups.first.groupColor
-        : kPrimary;
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
-          colors: [
-            accent.withValues(alpha: isDark ? 0.55 : 0.90),
-            accent,
-          ],
+          colors: [accent.withValues(alpha: 0.85), accent],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: accent.withValues(alpha: 0.30),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Stack(
         children: [
-          // decorative circles
           Positioned(
-            top: -28,
-            right: -28,
+            top: -30,
+            right: -30,
             child: Container(
-              width: 120,
-              height: 120,
+              width: 140,
+              height: 140,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withValues(alpha: 0.07),
@@ -57,193 +41,146 @@ class EmployeeDetailHeader extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: -40,
-            left: -20,
+            bottom: -50,
+            left: -30,
             child: Container(
-              width: 160,
-              height: 160,
+              width: 190,
+              height: 190,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withValues(alpha: 0.05),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 32, 24, 28),
-            child: Column(
-              children: [
-                // avatar + active badge
-                Stack(
+          SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 48, bottom: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.20),
-                      ),
-                      child: EmployeeAvatar(
-                        name: employee.fullName,
-                        color: Colors.white,
-                        radius: 40,
-                        imagePath: employee.profileImageUrl,
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: employee.isActive
-                              ? const Color(0xFF2ED573)
-                              : const Color(0xFFFF4757),
-                          border: Border.all(color: Colors.white, width: 2.5),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // name
-                Text(
-                  employee.fullName,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                // email
-                Text(
-                  employee.email,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                // active status pill
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: employee.isActive
-                        ? const Color(0xFF2ED573).withValues(alpha: 0.20)
-                        : const Color(0xFFFF4757).withValues(alpha: 0.20),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: employee.isActive
-                          ? const Color(0xFF2ED573).withValues(alpha: 0.50)
-                          : const Color(0xFFFF4757).withValues(alpha: 0.50),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: employee.isActive
-                              ? const Color(0xFF2ED573)
-                              : const Color(0xFFFF4757),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        employee.isActive ? 'Active' : 'Inactive',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: employee.isActive
-                              ? const Color(0xFF2ED573)
-                              : const Color(0xFFFF4757),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // task group badges
-                if (employee.taskGroups.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  const Divider(color: Colors.white24, height: 1),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    alignment: WrapAlignment.center,
-                    children: employee.taskGroups.map((g) {
-                      final isLead = g.role == 1;
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
+                    // Avatar with status dot
+                    Stack(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
                             color: Colors.white.withValues(alpha: 0.25),
                           ),
+                          child: EmployeeAvatar(
+                            name: employee.fullName,
+                            color: Colors.white,
+                            radius: 44,
+                            imagePath: employee.profileImageUrl,
+                          ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 7,
-                              height: 7,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
+                        Positioned(
+                          bottom: 4,
+                          right: 4,
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: employee.isActive
+                                  ? const Color(0xFF2ED573)
+                                  : const Color(0xFFFF4757),
+                              border: Border.all(color: Colors.white, width: 2.5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      employee.fullName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      employee.email,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontSize: 13,
+                      ),
+                    ),
+                    if (employee.taskGroups.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        alignment: WrapAlignment.center,
+                        children: employee.taskGroups.map((g) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.30),
                               ),
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              g.groupName,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            if (isLead) ...[
-                              const SizedBox(width: 5),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.25),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Text(
-                                  'Lead',
-                                  style: TextStyle(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
                                     color: Colors.white,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.3,
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ],
+                                const SizedBox(width: 6),
+                                Text(
+                                  g.groupName,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (g.role == 1) ...[
+                                  const SizedBox(width: 5),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 1,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.25),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Text(
+                                      'Lead',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -252,54 +189,263 @@ class EmployeeDetailHeader extends StatelessWidget {
   }
 }
 
-// ── Info card ─────────────────────────────────────────────────────
+// ── Stats row ────────────────────────────────────────────────────
 
-class EmployeeDetailInfoCard extends StatelessWidget {
-  const EmployeeDetailInfoCard({
+class EmployeeDetailStats extends StatelessWidget {
+  const EmployeeDetailStats({
     super.key,
     required this.employee,
     required this.isDark,
-    required this.borderColor,
-    required this.cardBg,
   });
 
   final Employee employee;
   final bool isDark;
-  final Color borderColor;
-  final Color cardBg;
 
   @override
   Widget build(BuildContext context) {
-    final rows = <_InfoRowData>[
+    final textColor = isDark ? Colors.white : kTextDark;
+    final mutedColor = isDark ? Colors.white38 : kTextMuted;
+    final dividerColor = isDark ? Colors.white12 : const Color(0xFFE5E7EB);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: isDark ? kCardDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            _StatItem(
+              label: 'Groups',
+              value: '${employee.taskGroups.length}',
+              valueColor: textColor,
+              labelColor: mutedColor,
+            ),
+            VerticalDivider(width: 1, color: dividerColor),
+            _StatItem(
+              label: 'Status',
+              value: employee.isActive ? 'Active' : 'Inactive',
+              valueColor: employee.isActive
+                  ? const Color(0xFF2ED573)
+                  : const Color(0xFFFF4757),
+              labelColor: mutedColor,
+            ),
+            VerticalDivider(width: 1, color: dividerColor),
+            _StatItem(
+              label: 'Since',
+              value: '${employee.createdAt.year}',
+              valueColor: textColor,
+              labelColor: mutedColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  const _StatItem({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+    required this.labelColor,
+  });
+
+  final String label;
+  final String value;
+  final Color valueColor;
+  final Color labelColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: valueColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(fontSize: 12, color: labelColor),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Action buttons ────────────────────────────────────────────────
+
+class EmployeeDetailActions extends StatelessWidget {
+  const EmployeeDetailActions({
+    super.key,
+    required this.isDark,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  final bool isDark;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _ActionButton(
+            label: 'Edit Employee',
+            icon: Icons.edit_rounded,
+            color: kPrimary,
+            filled: true,
+            onTap: onEdit,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _ActionButton(
+            label: 'Delete',
+            icon: Icons.delete_outline_rounded,
+            color: kHighPriority,
+            filled: false,
+            onTap: onDelete,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.filled,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool filled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 46,
+        decoration: BoxDecoration(
+          color: filled ? color : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 16, color: filled ? Colors.white : color),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: filled ? Colors.white : color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Info list (no card) ───────────────────────────────────────────
+
+class EmployeeDetailInfoList extends StatelessWidget {
+  const EmployeeDetailInfoList({
+    super.key,
+    required this.employee,
+    required this.isDark,
+  });
+
+  final Employee employee;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final textColor = isDark ? Colors.white : kTextDark;
+    final mutedColor = isDark ? Colors.white38 : kTextMuted;
+    final dividerColor = isDark ? Colors.white10 : const Color(0xFFF3F4F6);
+
+    final rows = <_InfoData>[
+      _InfoData(
+        icon: Icons.email_outlined,
+        label: 'Email',
+        value: employee.email,
+      ),
       if (employee.phone != null)
-        _InfoRowData(icon: Icons.phone_outlined, label: 'Phone', value: employee.phone!),
+        _InfoData(
+          icon: Icons.phone_outlined,
+          label: 'Phone',
+          value: employee.phone!,
+        ),
       if (employee.dateOfBirth != null)
-        _InfoRowData(icon: Icons.cake_outlined, label: 'Date of Birth', value: _formatDate(employee.dateOfBirth!)),
+        _InfoData(
+          icon: Icons.cake_outlined,
+          label: 'Date of Birth',
+          value: _formatDate(employee.dateOfBirth!),
+        ),
       if (employee.placeOfBirth != null)
-        _InfoRowData(icon: Icons.location_on_outlined, label: 'Place of Birth', value: employee.placeOfBirth!),
-      _InfoRowData(icon: Icons.calendar_today_outlined, label: 'Joined', value: _formatDate(employee.createdAt)),
+        _InfoData(
+          icon: Icons.location_on_outlined,
+          label: 'Place of Birth',
+          value: employee.placeOfBirth!,
+        ),
+      _InfoData(
+        icon: Icons.calendar_today_outlined,
+        label: 'Joined',
+        value: _formatDate(employee.createdAt),
+      ),
     ];
 
-    if (rows.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return _SectionCard(
-      isDark: isDark,
-      borderColor: borderColor,
-      cardBg: cardBg,
-      icon: Icons.person_outline_rounded,
-      label: 'Profile Info',
-      child: Column(
-        children: List.generate(rows.length, (i) {
-          return _InfoRow(
-            data: rows[i],
-            isDark: isDark,
-            borderColor: borderColor,
-            showDivider: i < rows.length - 1,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Information',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: textColor,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...List.generate(rows.length, (i) {
+          return Column(
+            children: [
+              _InfoRow(
+                data: rows[i],
+                textColor: textColor,
+                mutedColor: mutedColor,
+              ),
+              if (i < rows.length - 1)
+                Divider(height: 1, color: dividerColor),
+            ],
           );
         }),
-      ),
+      ],
     );
   }
 
@@ -312,137 +458,57 @@ class EmployeeDetailInfoCard extends StatelessWidget {
   }
 }
 
-class _InfoRowData {
+class _InfoData {
   final IconData icon;
   final String label;
   final String value;
-
-  const _InfoRowData({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
+  const _InfoData({required this.icon, required this.label, required this.value});
 }
 
 class _InfoRow extends StatelessWidget {
   const _InfoRow({
     required this.data,
-    required this.isDark,
-    required this.borderColor,
-    required this.showDivider,
+    required this.textColor,
+    required this.mutedColor,
   });
 
-  final _InfoRowData data;
-  final bool isDark;
-  final Color borderColor;
-  final bool showDivider;
+  final _InfoData data;
+  final Color textColor;
+  final Color mutedColor;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            children: [
-              Icon(
-                data.icon,
-                size: 20,
-                color: isDark ? Colors.white70 : Colors.black87,
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.label,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isDark ? Colors.white38 : kTextMuted,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      data.value,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (showDivider)
-          Divider(
-            height: 1,
-            color: isDark ? Colors.white24 : Colors.grey.shade300,
-          ),
-      ],
-    );
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.isDark,
-    required this.borderColor,
-    required this.cardBg,
-    required this.icon,
-    required this.label,
-    required this.child,
-    this.trailing,
-  });
-
-  final bool isDark;
-  final Color borderColor;
-  final Color cardBg;
-  final IconData icon;
-  final String label;
-  final Widget child;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Icon(icon, color: isDark ? Colors.white70 : Colors.black87, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.1,
-                  color: isDark ? Colors.white : kTextDark,
+          Icon(data.icon, size: 20, color: mutedColor),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: mutedColor,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.3,
+                  ),
                 ),
-              ),
-              if (trailing != null) ...[const Spacer(), trailing!],
-            ],
+                const SizedBox(height: 3),
+                Text(
+                  data.value,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 4),
-          Divider(
-            color: isDark ? Colors.white10 : Colors.grey.shade100,
-            height: 20,
-          ),
-          child,
         ],
       ),
     );

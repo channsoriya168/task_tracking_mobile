@@ -56,7 +56,7 @@ class AdminEmployeeFormController extends GetxController {
     );
   }
 
-  void showEditDialog(Employee employee) {
+  Future<void> showEditDialog(Employee employee) async {
     _resetForm();
     isEditMode.value = true;
     _editingId = employee.id;
@@ -67,7 +67,7 @@ class AdminEmployeeFormController extends GetxController {
     placeCtrl.text = employee.placeOfBirth ?? '';
     formDob.value = employee.dateOfBirth;
     selectedGroupIds.assignAll(employee.taskGroups.map((g) => g.groupId));
-    Get.bottomSheet(
+    await Get.bottomSheet(
       AdminEmployeeFormDialog(controller: this),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
