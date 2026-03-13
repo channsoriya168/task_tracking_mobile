@@ -36,4 +36,12 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
   @override
   Future<void> deleteTaskItem(TaskItem taskItem) =>
       _remote.delete(taskItem.id);
+
+  @override
+  Future<void> assignTask(String id, String assignedToId) =>
+      _remote.assignTask(id, assignedToId);
+
+  @override
+  Future<void> updateTaskStatus(String id, int status) =>
+      _remote.updateStatus(id, status);
 }

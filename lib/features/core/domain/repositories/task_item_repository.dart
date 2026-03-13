@@ -11,4 +11,6 @@ abstract interface class TaskItemRepository {
   Future<void> addTaskItem(TaskItem taskItem);
   Future<void> updateTaskItem(TaskItem taskItem);
   Future<void> deleteTaskItem(TaskItem taskItem);
+  Future<void> assignTask(String id, String assignedToId);
+  Future<void> updateTaskStatus(String id, int status);
 }
