@@ -131,6 +131,7 @@ class ManagerTaskController extends GetxController {
   void selectTaskDate(DateTime? date) {
     taskSelectedDate.value = date;
     if (date == null) {
+      taskSelectedDate.value = DateTime.now();
       filterDueDateFrom.value = null;
       filterDueDateTo.value = null;
     } else {

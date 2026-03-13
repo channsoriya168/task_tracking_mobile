@@ -81,7 +81,7 @@ Future<void> showTaskDetailSheet(
             // Position / Group
             _DetailRow(
               icon: Icons.work_outline_rounded,
-              label: 'Position',
+              label: 'Task Group',
               isDark: isDark,
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -224,4 +224,3 @@ class _DetailRow extends StatelessWidget {
     );
   }
 }
-

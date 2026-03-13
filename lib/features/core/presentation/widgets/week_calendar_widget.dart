@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:intl/intl.dart';
 
-// ── Week Calendar ──────────────────────────────────────────────
-// _WeekCalendar stays StatefulWidget because _weekStart (navigation state)
-// is purely local UI — it does not belong in the business controller.
 class WeekCalendarWidget extends StatefulWidget {
   const WeekCalendarWidget({
     required this.isDark,

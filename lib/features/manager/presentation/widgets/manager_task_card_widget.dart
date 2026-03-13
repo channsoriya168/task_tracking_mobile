@@ -7,7 +7,7 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/menu_she
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_dialog.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_dialog_wiget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_detail_sheet.dart';
 
 class ManagerTaskCardWidget extends StatelessWidget {
   const ManagerTaskCardWidget({

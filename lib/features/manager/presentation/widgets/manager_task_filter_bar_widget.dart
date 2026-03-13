@@ -1,6 +1,7 @@
 // ── Filter Bar ─────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 
@@ -33,25 +34,28 @@ class ManagerTaskFilterBarWidget extends StatelessWidget {
                 .length,
         };
 
-        return ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
-          itemCount: statusItems.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
-          itemBuilder: (_, i) {
-            final status = statusItems[i];
-            final label = status?.name ?? 'All';
-            final isSelected = selected == label;
-            final count = counts[label] ?? 0;
+        return Container(
+          padding: kPagePaddingHorizontal,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 4),
+            itemCount: statusItems.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (_, i) {
+              final status = statusItems[i];
+              final label = status?.name ?? 'All';
+              final isSelected = selected == label;
+              final count = counts[label] ?? 0;
 
-            return FilterChipWidget(
-              isDark: isDark,
-              filter: label,
-              count: count,
-              selected: isSelected,
-              onTap: () => ctrl.selectStatus(status),
-            );
-          },
+              return FilterChipWidget(
+                isDark: isDark,
+                filter: label,
+                count: count,
+                selected: isSelected,
+                onTap: () => ctrl.selectStatus(status),
+              );
+            },
+          ),
         );
       }),
     );
