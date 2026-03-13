@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_dialog_wiget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_filter_bar_widget.dart';
@@ -22,6 +23,19 @@ class ManagerTaskMobilePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ManagerTaskHeaderWidget(isDark: isDark, ctrl: ctrl),
+
+          // ── Week calendar ──────────────────────────────────
+          Padding(
+            padding: kPageSectionPadding,
+            child: Obx(
+              () => WeekCalendarWidget(
+                isDark: isDark,
+                selectedDate: ctrl.taskSelectedDate.value,
+                onDateSelected: ctrl.selectTaskDate,
+              ),
+            ),
+          ),
+
           ManagerTaskFilterBarWidget(isDark: isDark, ctrl: ctrl),
           SearchBarWidget(
             isDark: isDark,

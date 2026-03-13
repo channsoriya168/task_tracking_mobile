@@ -19,25 +19,38 @@ class ManagerTaskFilterBarWidget extends StatelessWidget {
     return SizedBox(
       height: 52,
       child: Obx(() {
+        final selected = ctrl.filterStatus.value;
+        final statusItems = [null, ...ctrl.taskStatus]; // null = "All"
+
+        // Compute counts inside Obx so ctrl.tasks is tracked reactively.
+        final counts = <String, int>{
+          'All': ctrl.tasks.length,
+          for (final s in ctrl.taskStatus)
+            s.name: ctrl.tasks
+                .where(
+                  (t) => t.status.name.toLowerCase() == s.name.toLowerCase(),
+                )
+                .length,
+        };
+
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
-          itemCount: ctrl.taskStatus.length,
+          itemCount: statusItems.length,
           separatorBuilder: (_, __) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
-            final f = ctrl.taskStatus[i];
-            final selected = ctrl.filterStatus.value == f.name;
-            final count = ctrl.countByStatus(f.name);
-            return Text(
-              f.name,
-            ); // Placeholder, replace with actual FilterChipWidget
-            // return FilterChipWidget(
-            //   isDark: isDark,
-            //   filter: f.name,
-            //   count: count,
-            //   selected: selected,
-            //   onTap: () => ctrl.filterStatus.value = f.name,
-            // );
+            final status = statusItems[i];
+            final label = status?.name ?? 'All';
+            final isSelected = selected == label;
+            final count = counts[label] ?? 0;
+
+            return FilterChipWidget(
+              isDark: isDark,
+              filter: label,
+              count: count,
+              selected: isSelected,
+              onTap: () => ctrl.selectStatus(status),
+            );
           },
         );
       }),

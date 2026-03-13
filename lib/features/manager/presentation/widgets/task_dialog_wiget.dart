@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
@@ -288,29 +288,18 @@ Future<void> showTaskDialog(
   final ctrl = Get.find<ManagerTaskController>();
   final posCtrl = Get.find<TaskGroupController>();
   final groups = posCtrl.taskGroups;
-  final isEditMode = task != null;
 
-  // Pre-populate form
-  if (isEditMode) {
-    ctrl.titleTextEditor.text = task.title;
-    ctrl.descTextEditor.text = task.description ?? '';
-    ctrl.selectedGroupId.value = task.groupId;
-    ctrl.selectedCategory.value = task.groupName ?? '';
-    ctrl.selectedPriority.value = task.priority;
-    ctrl.selectedDueDate.value = task.dueDate;
-  } else {
-    ctrl.titleTextEditor.clear();
-    ctrl.descTextEditor.clear();
-    ctrl.selectedGroupId.value = groups.isNotEmpty ? groups.first.id : null;
-    ctrl.selectedCategory.value = groups.isNotEmpty ? groups.first.name : '';
-    // ctrl.selectedPriority.value = ctrl.availablePriorities.isNotEmpty
-    //     ? (ctrl.availablePriorities.firstWhereOrNull(
-    //             (p) => p.name.toLowerCase() == 'medium',
-    //           ) ??
-    //           ctrl.availablePriorities.first)
-    //     : null;
-    ctrl.selectedDueDate.value = null;
-  }
+  // Reset form state
+  ctrl.selectedLabel.value = null;
+  ctrl.selectedGroupId.value = groups.isNotEmpty ? groups.first.id : null;
+  ctrl.selectedPriority.value = ctrl.taskPriority.isNotEmpty
+      ? (ctrl.taskPriority.firstWhereOrNull(
+              (p) => p.name.toLowerCase() == 'medium',
+            ) ??
+            ctrl.taskPriority.first)
+      : null;
+  ctrl.selectedStartDate.value = null;
+  ctrl.selectedDueDate.value = null;
 
   await showModalBottomSheet(
     context: context,
@@ -344,7 +333,7 @@ Future<void> showTaskDialog(
               ),
               const SizedBox(height: 20),
               Text(
-                isEditMode ? 'Edit Task' : 'New Task',
+                'New Task',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -353,21 +342,28 @@ Future<void> showTaskDialog(
               ),
               const SizedBox(height: 20),
 
-              // Title
-              TextFieldWidget(
-                controller: ctrl.titleTextEditor,
-                label: 'Title',
-                hint: 'Task title',
-                isDark: isDark,
-              ),
-              const SizedBox(height: 16),
-
-              // Description
-              TextFieldWidget(
-                controller: ctrl.descTextEditor,
-                label: 'Description',
-                hint: 'Optional description',
-                isDark: isDark,
+              // Label (required)
+              _Label('Label *', isDark: isDark),
+              const SizedBox(height: 8),
+              Obx(
+                () => DropdownWidget<Label>(
+                  value: ctrl.selectedLabel.value,
+                  items: ctrl.labels.toList(),
+                  label: (l) => l.name,
+                  isDark: isDark,
+                  onChanged: (l) => ctrl.selectedLabel.value = l,
+                  leadingBuilder: (l) => Container(
+                    width: 10,
+                    height: 10,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: BoxDecoration(
+                      color: l.color != null
+                          ? _hexColor(l.color!)
+                          : kPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -402,8 +398,8 @@ Future<void> showTaskDialog(
               }),
               const SizedBox(height: 16),
 
-              // Priority
-              _Label('Priority', isDark: isDark),
+              // Priority (required)
+              _Label('Priority *', isDark: isDark),
               const SizedBox(height: 8),
               Obx(
                 () => DropdownWidget<TaskPriority>(
@@ -427,104 +423,83 @@ Future<void> showTaskDialog(
               ),
               const SizedBox(height: 16),
 
-              // Due Date
-              _Label('Due Date', isDark: isDark),
-              const SizedBox(height: 8),
-              Obx(
-                () => GestureDetector(
-                  onTap: () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: ctrl.selectedDueDate.value ?? DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (picked != null) ctrl.selectedDueDate.value = picked;
-                  },
-                  child: Container(
-                    height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: isDark ? kSurfaceDark : kBgLight,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
-                      ),
-                    ),
-                    child: Row(
+              // Start Date & Due Date side by side
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.calendar_today_rounded,
-                          size: 16,
-                          color: isDark ? Colors.grey[500] : kTextMuted,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          ctrl.selectedDueDate.value == null
-                              ? 'No due date'
-                              : _formatDate(ctrl.selectedDueDate.value!),
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: ctrl.selectedDueDate.value == null
-                                ? (isDark ? Colors.grey[600] : Colors.grey[400])
-                                : (isDark ? Colors.white : kTextDark),
+                        _Label('Start Date', isDark: isDark),
+                        const SizedBox(height: 8),
+                        Obx(
+                          () => _DatePickerField(
+                            isDark: isDark,
+                            value: ctrl.selectedStartDate.value,
+                            hint: 'Start',
+                            onPick: (picked) =>
+                                ctrl.selectedStartDate.value = picked,
+                            onClear: () =>
+                                ctrl.selectedStartDate.value = null,
+                            context: context,
                           ),
                         ),
-                        const Spacer(),
-                        if (ctrl.selectedDueDate.value != null)
-                          GestureDetector(
-                            onTap: () => ctrl.selectedDueDate.value = null,
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 16,
-                              color: isDark ? Colors.grey[500] : kTextMuted,
-                            ),
-                          ),
                       ],
                     ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Label('Due Date', isDark: isDark),
+                        const SizedBox(height: 8),
+                        Obx(
+                          () => _DatePickerField(
+                            isDark: isDark,
+                            value: ctrl.selectedDueDate.value,
+                            hint: 'Due',
+                            onPick: (picked) =>
+                                ctrl.selectedDueDate.value = picked,
+                            onClear: () => ctrl.selectedDueDate.value = null,
+                            context: context,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 28),
 
-              // Create / Update button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final title = ctrl.titleTextEditor.text.trim();
-                    if (title.isEmpty) return;
-
-                    if (isEditMode) {
-                      // final updatedTask = task.copyWith(
-                      //   title: title,
-                      //   description: ctrl.descTextEditor.text.trim(),
-                      //   groupId: ctrl.selectedGroupId.value,
-                      //   groupName: ctrl.selectedCategory.value,
-                      //   priority: ctrl.selectedPriority.value,
-                      //   dueDate: ctrl.selectedDueDate.value,
-                      //   clearDueDate: ctrl.selectedDueDate.value == null,
-                      // );
-                      // await ctrl.updateTask(updatedTask);
-                    } else {
-                      await ctrl.createTask();
-                    }
-
-                    if (context.mounted) Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              // Create button
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed:
+                        (ctrl.selectedLabel.value == null ||
+                                ctrl.selectedPriority.value == null)
+                            ? null
+                            : () async {
+                                await ctrl.createTask();
+                                if (context.mounted) Navigator.pop(context);
+                              },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kPrimary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: kPrimary.withValues(alpha: 0.4),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    isEditMode ? 'Update Task' : 'Create Task',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
+                    child: const Text(
+                      'Create Task',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                 ),
@@ -535,6 +510,13 @@ Future<void> showTaskDialog(
       ),
     ),
   );
+}
+
+Color _hexColor(String hex) {
+  final clean = hex.replaceFirst('#', '');
+  final value = int.tryParse(clean, radix: 16);
+  if (value == null) return kPrimary;
+  return Color(0xFF000000 | value);
 }
 
 String _formatDate(DateTime d) {
@@ -568,6 +550,90 @@ class _Label extends StatelessWidget {
         fontSize: 13,
         fontWeight: FontWeight.w600,
         color: isDark ? Colors.grey[400] : kTextMuted,
+      ),
+    );
+  }
+}
+
+// ── Date picker field ──────────────────────────────────────────
+class _DatePickerField extends StatelessWidget {
+  const _DatePickerField({
+    required this.isDark,
+    required this.value,
+    required this.hint,
+    required this.onPick,
+    required this.onClear,
+    required this.context,
+  });
+
+  final bool isDark;
+  final DateTime? value;
+  final String hint;
+  final ValueChanged<DateTime> onPick;
+  final VoidCallback onClear;
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext ctx) {
+    return GestureDetector(
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: value ?? DateTime.now(),
+          firstDate: DateTime(2020),
+          lastDate: DateTime.now().add(const Duration(days: 730)),
+          builder: (context, child) => Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: Theme.of(
+                context,
+              ).colorScheme.copyWith(primary: kPrimary),
+            ),
+            child: child!,
+          ),
+        );
+        if (picked != null) onPick(picked);
+      },
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: isDark ? kSurfaceDark : kBgLight,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.calendar_today_rounded,
+              size: 14,
+              color: isDark ? Colors.grey[500] : kTextMuted,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                value == null ? hint : _formatDate(value!),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: value == null
+                      ? (isDark ? Colors.grey[600] : Colors.grey[400])
+                      : (isDark ? Colors.white : kTextDark),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (value != null)
+              GestureDetector(
+                onTap: onClear,
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 14,
+                  color: isDark ? Colors.grey[500] : kTextMuted,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

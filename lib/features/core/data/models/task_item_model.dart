@@ -76,12 +76,12 @@ class TaskItemModel extends TaskItem {
   Map<String, dynamic> toJson() {
     return {
       'title': title,
-      if (description != null) 'description': description,
+      if (description != null && description!.isNotEmpty)
+        'description': description,
       if (groupId != null) 'groupId': groupId,
       if (labelId != null) 'labelId': labelId,
       if (assignedToId != null) 'assignedToId': assignedToId,
-      'priorityId': priority.id,
-      'statusId': status.id,
+      'priority': priority.id,
       if (startDate != null) 'startDate': startDate!.toUtc().toIso8601String(),
       if (dueDate != null) 'dueDate': dueDate!.toUtc().toIso8601String(),
     };

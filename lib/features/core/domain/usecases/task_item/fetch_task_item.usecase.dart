@@ -6,7 +6,17 @@ class FetchTaskItemsUsecase {
 
   FetchTaskItemsUsecase(this._repository);
 
-  Future<List<TaskItem>> call() async {
-    return await _repository.fetchTaskItems();
+  Future<List<TaskItem>> call({
+    String? search,
+    int? statusId,
+    DateTime? dueDateFrom,
+    DateTime? dueDateTo,
+  }) async {
+    return await _repository.fetchTaskItems(
+      search: search,
+      statusId: statusId,
+      dueDateFrom: dueDateFrom,
+      dueDateTo: dueDateTo,
+    );
   }
 }
