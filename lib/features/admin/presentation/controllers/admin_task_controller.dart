@@ -1,185 +1,235 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_priorities_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_labels_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
 
 class AdminTaskController extends GetxController {
+  final FetchTaskItemsUsecase _fetchTaskItems;
+  final CreateTaskItemUsecase _createTaskItem;
+  final UpdateTaskItemUsecase _updateTaskItem;
+  final DeleteTaskItemUsecase _deleteTaskItem;
+  final FetchTaskPrioritiesUsecase _fetchPriorities;
+  final FetchTaskStatusesUsecase _fetchStatuses;
+  final GetAllLabelsUseCase _getAllLabels;
+
+  AdminTaskController(
+    this._fetchTaskItems,
+    this._createTaskItem,
+    this._updateTaskItem,
+    this._deleteTaskItem,
+    this._fetchPriorities,
+    this._fetchStatuses,
+    this._getAllLabels,
+  );
+
+  final RxList<TaskItem> tasks = <TaskItem>[].obs;
+  final RxList<TaskPriority> taskPriority = <TaskPriority>[].obs;
+  final RxList<TaskStatusLookup> taskStatus = <TaskStatusLookup>[].obs;
+  final RxList<Label> labels = <Label>[].obs;
+
+  /// Selected status name — 'All' means no status filter.
   final RxString filterStatus = 'All'.obs;
+
+  /// Corresponding status ID sent to the API (null = no filter).
+  final Rxn<int> filterStatusId = Rxn<int>();
+
   final RxString searchQuery = ''.obs;
+
+  /// Selected single day from the week calendar.
+  final Rxn<DateTime> taskSelectedDate = Rxn<DateTime>();
+
+  /// Due-date range filter sent to the API.
+  final Rxn<DateTime> filterDueDateFrom = Rxn<DateTime>();
+  final Rxn<DateTime> filterDueDateTo = Rxn<DateTime>();
+
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+
+  final titleTextEditor = TextEditingController();
+  final descTextEditor = TextEditingController();
+  final selectedCategory = ''.obs;
+  final selectedGroupId = Rxn<String>();
+  final selectedPriority = Rxn<TaskPriority>();
+  final selectedLabel = Rxn<Label>();
+  final selectedDueDate = Rxn<DateTime>();
+  final selectedStartDate = Rxn<DateTime>();
   final dashboardSelectedDate = Rxn<DateTime>();
 
-  final RxList<TaskModel> tasks = <TaskModel>[].obs;
+  /// Tasks are already server-filtered; expose as-is.
+  List<TaskItem> get filteredTasks => tasks.toList();
+
+  int countByStatus(String statusName) {
+    if (statusName == 'All') return tasks.length;
+    return tasks
+        .where((t) => t.status.name.toLowerCase() == statusName.toLowerCase())
+        .length;
+  }
+
+  bool get hasDateFilter => taskSelectedDate.value != null;
+
+  int get totalTasks => tasks.length;
+  int get inProgressTasks => tasks
+      .where((t) => t.status.name.toLowerCase() == 'inprogress')
+      .length;
+  int get completedTasks => tasks
+      .where((t) => t.status.name.toLowerCase() == 'completed')
+      .length;
 
   @override
   void onInit() {
     super.onInit();
-    _loadSampleData();
+    // Default to today so the calendar and API filter start on the current day.
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    taskSelectedDate.value = today;
+    filterDueDateFrom.value = today;
+    filterDueDateTo.value = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+    fetchTasks();
+    fetchPriorities();
+    fetchStatuses();
+    fetchLabels();
+
+    // Re-fetch when status filter changes.
+    ever(filterStatusId, (_) => fetchTasks());
+
+    // Debounce search so we don't hit the API on every keystroke.
+    debounce(
+      searchQuery,
+      (_) => fetchTasks(),
+      time: const Duration(milliseconds: 500),
+    );
   }
 
-  void _loadSampleData() {
-    tasks.addAll([
-      TaskModel(
-        id: '1',
-        title: 'Design new landing page',
-        description:
-            'Create wireframes and high-fidelity mockups for the new marketing website.',
-        status: TaskStatus.inProgress,
-        dueDate: DateTime.now().add(const Duration(days: 2)),
-        category: 'Design',
-        priority: TaskPriority.high,
-        acceptedBy: 'Alice J.',
-        assignedToId: 'e1',
-      ),
-      TaskModel(
-        id: '2',
-        title: 'Fix authentication bug',
-        description:
-            'Users are getting logged out unexpectedly on mobile devices after 10 minutes.',
-        status: TaskStatus.todo,
-        dueDate: DateTime.now().add(const Duration(hours: 6)),
-        category: 'Engineering',
-        priority: TaskPriority.high,
-        assignedToId: 'e1',
-      ),
-      TaskModel(
-        id: '3',
-        title: 'Write API documentation',
-        description: 'Document all public endpoints for the v2 API release.',
-        status: TaskStatus.todo,
-        dueDate: DateTime.now().add(const Duration(days: 5)),
-        category: 'Documentation',
-        priority: TaskPriority.medium,
-        assignedToId: 'e2',
-      ),
-      TaskModel(
-        id: '4',
-        title: 'Team sync meeting',
-        description: 'Weekly standup with the product and engineering team.',
-        status: TaskStatus.done,
-        dueDate: DateTime.now().subtract(const Duration(days: 1)),
-        category: 'Meeting',
-        priority: TaskPriority.low,
-        acceptedBy: 'Bob S.',
-        assignedToId: 'e2',
-      ),
-      TaskModel(
-        id: '5',
-        title: 'Performance optimization',
-        description:
-            'Reduce app cold startup time by 40% through lazy loading.',
-        status: TaskStatus.inProgress,
-        dueDate: DateTime.now().add(const Duration(days: 7)),
-        category: 'Engineering',
-        priority: TaskPriority.medium,
-        acceptedBy: 'Charlie B.',
-        assignedToId: 'e3',
-      ),
-      TaskModel(
-        id: '6',
-        title: 'Update dependencies',
-        description: 'Upgrade all packages to their latest stable versions.',
-        status: TaskStatus.done,
-        category: 'Maintenance',
-        priority: TaskPriority.low,
-        assignedToId: 'e3',
-      ),
-      TaskModel(
-        id: '7',
-        title: 'User research interviews',
-        description:
-            'Conduct 5 user interviews to validate the new onboarding flow.',
-        status: TaskStatus.todo,
-        dueDate: DateTime.now().add(const Duration(days: 3)),
-        category: 'Research',
-        priority: TaskPriority.medium,
-        assignedToId: 'e4',
-      ),
-      TaskModel(
-        id: '8',
-        title: 'Deploy to production',
-        description:
-            'Run deployment pipeline and verify all services are healthy.',
-        status: TaskStatus.fail,
-        dueDate: DateTime.now().subtract(const Duration(days: 2)),
-        category: 'Engineering',
-        priority: TaskPriority.high,
-        assignedToId: 'e4',
-      ),
-    ]);
-  }
-
-  List<TaskModel> get filteredTasks {
-    var result = tasks.toList();
-
-    if (searchQuery.value.isNotEmpty) {
-      final q = searchQuery.value.toLowerCase();
-      result = result.where((t) {
-        return t.title.toLowerCase().contains(q) ||
-            t.description.toLowerCase().contains(q) ||
-            t.category.toLowerCase().contains(q);
-      }).toList();
-    }
-
-    switch (filterStatus.value) {
-      case 'Pending':
-        result = result.where((t) => t.status == TaskStatus.todo).toList();
-        break;
-      case 'In Progress':
-        result = result
-            .where((t) => t.status == TaskStatus.inProgress)
-            .toList();
-        break;
-      case 'Complete':
-        result = result.where((t) => t.status == TaskStatus.done).toList();
-        break;
-      case 'Fail':
-        result = result.where((t) => t.status == TaskStatus.fail).toList();
-        break;
-    }
-
-    final sel = dashboardSelectedDate.value;
-    if (sel != null) {
-      result = result.where((t) {
-        if (t.dueDate == null) return false;
-        final d = t.dueDate!;
-        return d.year == sel.year && d.month == sel.month && d.day == sel.day;
-      }).toList();
-    }
-
-    result.sort((a, b) {
-      if (a.status == TaskStatus.done && b.status != TaskStatus.done) return 1;
-      if (a.status != TaskStatus.done && b.status == TaskStatus.done) return -1;
-      if (a.dueDate != null && b.dueDate != null) {
-        return a.dueDate!.compareTo(b.dueDate!);
-      }
-      if (a.dueDate != null) return -1;
-      if (b.dueDate != null) return 1;
-      return 0;
-    });
-
-    return result;
-  }
-
-  int countByStatus(String status) {
-    switch (status) {
-      case 'All':
-        return tasks.length;
-      case 'Pending':
-        return tasks.where((t) => t.status == TaskStatus.todo).length;
-      case 'In Progress':
-        return tasks.where((t) => t.status == TaskStatus.inProgress).length;
-      case 'Complete':
-        return tasks.where((t) => t.status == TaskStatus.done).length;
-      case 'Fail':
-        return tasks.where((t) => t.status == TaskStatus.fail).length;
-      default:
-        return 0;
+  Future<void> fetchTasks() async {
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+      final result = await _fetchTaskItems(
+        search: searchQuery.value.isEmpty ? null : searchQuery.value,
+        statusId: filterStatusId.value,
+        dueDateFrom: filterDueDateFrom.value,
+        dueDateTo: filterDueDateTo.value,
+      );
+      tasks.assignAll(result);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  int get totalTasks => tasks.length;
-  int get inProgressTasks =>
-      tasks.where((t) => t.status == TaskStatus.inProgress).length;
-  int get completedTasks =>
-      tasks.where((t) => t.status == TaskStatus.done).length;
+  /// Select (or deselect) a single day from the week calendar.
+  void selectTaskDate(DateTime? date) {
+    taskSelectedDate.value = date;
+    if (date == null) {
+      filterDueDateFrom.value = null;
+      filterDueDateTo.value = null;
+    } else {
+      filterDueDateFrom.value = DateTime(date.year, date.month, date.day);
+      filterDueDateTo.value = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        23,
+        59,
+        59,
+      );
+    }
+    fetchTasks();
+  }
 
-  void deleteTask(String id) => tasks.removeWhere((t) => t.id == id);
+  /// Select a status chip. Pass null to clear (show all).
+  void selectStatus(TaskStatusLookup? status) {
+    if (status == null) {
+      filterStatus.value = 'All';
+      filterStatusId.value = null;
+    } else {
+      filterStatus.value = status.name;
+      filterStatusId.value = status.id;
+    }
+  }
+
+  Future<void> fetchPriorities() async {
+    try {
+      final result = await _fetchPriorities();
+      if (result.isNotEmpty) taskPriority.assignAll(result);
+    } catch (_) {}
+  }
+
+  Future<void> fetchStatuses() async {
+    try {
+      final result = await _fetchStatuses();
+      if (result.isNotEmpty) taskStatus.assignAll(result);
+    } catch (_) {}
+  }
+
+  Future<void> fetchLabels() async {
+    try {
+      final result = await _getAllLabels();
+      if (result.isNotEmpty) labels.assignAll(result);
+    } catch (_) {}
+  }
+
+  Future<void> createTask() async {
+    final label = selectedLabel.value;
+    final priority = selectedPriority.value;
+    if (label == null || priority == null) return;
+
+    try {
+      final model = TaskItemModel(
+        id: '',
+        title: label.name,
+        labelId: label.id,
+        groupId: selectedGroupId.value,
+        priority: priority,
+        status: const TaskStatusLookup(id: 0, name: 'Pending'),
+        startDate: selectedStartDate.value,
+        dueDate: selectedDueDate.value,
+      );
+      await _createTaskItem(model);
+      await fetchTasks();
+      _clearForm();
+    } catch (e) {
+      errorMessage.value = e.toString();
+    }
+  }
+
+  Future<void> updateTask(TaskItem updated) async {
+    try {
+      await _updateTaskItem(updated);
+      final i = tasks.indexWhere((t) => t.id == updated.id);
+      if (i != -1) tasks[i] = updated;
+    } catch (e) {
+      errorMessage.value = e.toString();
+    }
+  }
+
+  Future<void> deleteTask(TaskItem taskItem) async {
+    try {
+      await _deleteTaskItem(taskItem);
+      tasks.removeWhere((t) => t.id == taskItem.id);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    }
+  }
+
+  void _clearForm() {
+    selectedLabel.value = null;
+    selectedGroupId.value = null;
+    selectedCategory.value = '';
+    selectedPriority.value = null;
+    selectedStartDate.value = null;
+    selectedDueDate.value = null;
+  }
 }

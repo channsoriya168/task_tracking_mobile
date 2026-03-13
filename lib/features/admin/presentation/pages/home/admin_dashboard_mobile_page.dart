@@ -7,8 +7,6 @@ import 'package:task_tracking_mobile/features/admin/presentation/widgets/task_li
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
-import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_view_page.dart';
 
 class AdminDashboardMobilePage extends StatelessWidget {
   const AdminDashboardMobilePage({super.key});
@@ -272,19 +270,12 @@ class AdminDashboardMobilePage extends StatelessWidget {
                       delegate: SliverChildBuilderDelegate(
                         (context, i) {
                           final task = filtered[i];
-                          final canView =
-                              task.status == TaskStatus.inProgress ||
-                                  task.status == TaskStatus.done;
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: AdminTaskCard(
                               task: task,
-                              onDelete: () =>
-                                  adminTaskCtrl.deleteTask(task.id),
-                              onTap: canView
-                                  ? () =>
-                                      Get.to(() => TaskViewPage(task: task))
-                                  : null,
+                              isDark: isDark,
+                              onDelete: () => adminTaskCtrl.deleteTask(task),
                             ),
                           );
                         },

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/label/admin_label_page.dart';
-import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_view_page.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
 
 // ── Header ─────────────────────────────────────────────────────
@@ -34,7 +33,7 @@ class AdminTaskHeader extends StatelessWidget {
               ),
               Obx(
                 () => Text(
-                  '${ctrl.filteredTasks.length} of ${ctrl.tasks.length} tasks',
+                  '${ctrl.tasks.length} tasks',
                   style: TextStyle(
                     fontSize: 13,
                     color: isDark ? Colors.grey[500] : kTextMuted,
@@ -64,8 +63,6 @@ class AdminTaskHeader extends StatelessWidget {
 }
 
 // ── Filter Bar ─────────────────────────────────────────────────
-const _kFilters = ['All', 'Pending', 'In Progress', 'Complete', 'Fail'];
-
 class AdminTaskFilterBar extends StatelessWidget {
   const AdminTaskFilterBar({
     super.key,
@@ -81,138 +78,40 @@ class AdminTaskFilterBar extends StatelessWidget {
     return SizedBox(
       height: 52,
       child: Obx(() {
-        final currentFilter = ctrl.filterStatus.value;
-        final counts = {for (final f in _kFilters) f: ctrl.countByStatus(f)};
+        final selected = ctrl.filterStatus.value;
+        final statusItems = [null, ...ctrl.taskStatus]; // null = "All"
+
+        final counts = <String, int>{
+          'All': ctrl.tasks.length,
+          for (final s in ctrl.taskStatus)
+            s.name: ctrl.tasks
+                .where(
+                  (t) => t.status.name.toLowerCase() == s.name.toLowerCase(),
+                )
+                .length,
+        };
+
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
-          itemCount: _kFilters.length,
+          itemCount: statusItems.length,
           separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
-            final filter = _kFilters[i];
-            final selected = currentFilter == filter;
-            final count = counts[filter] ?? 0;
-            return _FilterChip(
+            final status = statusItems[i];
+            final label = status?.name ?? 'All';
+            final isSelected = selected == label;
+            final count = counts[label] ?? 0;
+
+            return FilterChipWidget(
               isDark: isDark,
-              filter: filter,
+              filter: label,
               count: count,
-              selected: selected,
-              onTap: () => ctrl.filterStatus.value = filter,
+              selected: isSelected,
+              onTap: () => ctrl.selectStatus(status),
             );
           },
         );
       }),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.isDark,
-    required this.filter,
-    required this.count,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final bool isDark;
-  final String filter;
-  final int count;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: kButtonPaddingSmall,
-        decoration: BoxDecoration(
-          color: selected ? kTextDark : (isDark ? kCardDark : Colors.white),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              filter,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: selected
-                    ? Colors.white
-                    : (isDark ? Colors.white54 : kTextMuted),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Container(
-              padding: kItemSpacingSmall,
-              decoration: BoxDecoration(
-                color: selected
-                    ? Colors.white.withValues(alpha: 0.2)
-                    : kPrimary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: selected ? Colors.white : kPrimary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Search Bar ─────────────────────────────────────────────────
-class AdminTaskSearchBar extends StatelessWidget {
-  const AdminTaskSearchBar({
-    super.key,
-    required this.isDark,
-    required this.ctrl,
-  });
-
-  final bool isDark;
-  final AdminTaskController ctrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: kPageSectionPadding,
-      child: Container(
-        height: 44,
-        decoration: BoxDecoration(
-          color: isDark ? kCardDark : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: TextField(
-          onChanged: (v) => ctrl.searchQuery.value = v,
-          style: TextStyle(
-            fontSize: 14,
-            color: isDark ? Colors.white : kTextDark,
-          ),
-          decoration: InputDecoration(
-            hintText: 'Search tasks...',
-            hintStyle: TextStyle(
-              color: isDark ? Colors.grey[600] : kTextMuted,
-              fontSize: 14,
-            ),
-            prefixIcon: Icon(
-              Icons.search_rounded,
-              color: isDark ? Colors.grey[600] : kTextMuted,
-              size: 20,
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -227,6 +126,9 @@ class AdminTaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      if (ctrl.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
       final tasks = ctrl.filteredTasks;
       if (tasks.isEmpty) return TaskEmptyState(isDark: isDark);
       return ListView.builder(
@@ -234,17 +136,12 @@ class AdminTaskList extends StatelessWidget {
         itemCount: tasks.length,
         itemBuilder: (_, i) {
           final task = tasks[i];
-          final canView =
-              task.status == TaskStatus.inProgress ||
-              task.status == TaskStatus.done;
           return Padding(
             padding: kItemSpacing,
             child: AdminTaskCard(
               task: task,
-              onDelete: () => ctrl.deleteTask(task.id),
-              onTap: canView
-                  ? () => Get.to(() => TaskViewPage(task: task))
-                  : null,
+              isDark: isDark,
+              onDelete: () => ctrl.deleteTask(task),
             ),
           );
         },
@@ -254,55 +151,60 @@ class AdminTaskList extends StatelessWidget {
 }
 
 // ── Admin Task Card ────────────────────────────────────────────
-//
-// Matches the ManagerTaskCardWidget layout:
-//  ┌─┬──────────────────────────────────────────────┐
-//  │▌│ Title                                   ···  │
-//  │▌│ Description (1 line)                         │
-//  │▌│ 📅 Created → ⚠ Due date                     │
-//  │▌│ [Status] [Category]          [Avatar] Name   │
-//  │▌├══════════════════════════════════════════════╡ progress
-//  └─┴──────────────────────────────────────────────┘
-//
 class AdminTaskCard extends StatelessWidget {
   const AdminTaskCard({
     super.key,
     required this.task,
+    required this.isDark,
     required this.onDelete,
-    required this.onTap,
   });
 
-  final TaskModel task;
+  final TaskItem task;
+  final bool isDark;
   final VoidCallback onDelete;
-  final VoidCallback? onTap;
+
+  static const _months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]}';
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? kCardDark : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : const Color(0xFFE5E7EB);
     final titleColor = isDark ? Colors.white : const Color(0xFF111827);
     final mutedColor = isDark
-        ? Colors.white.withValues(alpha: 0.45)
+        ? Colors.white.withValues(alpha: 0.4)
         : const Color(0xFF9CA3AF);
-    final isOverdue = task.isOverdue;
-    final statusColor = isOverdue ? kHighPriority : task.statusColor;
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.05);
 
-    final doneProg = task.progressItems
-        .where((s) => s.startsWith('[x]'))
-        .length;
-    final totalProg = task.progressItems.length;
-    final progressValue = totalProg == 0
-        ? 0.0
-        : (doneProg / totalProg).clamp(0.0, 1.0);
+    final statusColor = task.status.color;
+    final priorityColor = task.priority.color;
+
+    final isOverdue =
+        task.dueDate != null &&
+        task.dueDate!.isBefore(DateTime.now()) &&
+        task.status.name.toLowerCase() != 'completed' &&
+        task.status.name.toLowerCase() != 'cancelled';
+
+    final assignee = task.assignedToName ?? task.createdByEmployeeName;
 
     return Dismissible(
       key: Key(task.id),
-      direction: task.status == TaskStatus.done
-          ? DismissDirection.none
-          : DismissDirection.endToStart,
+      direction: DismissDirection.endToStart,
       onDismissed: (_) => onDelete(),
       background: Container(
         alignment: Alignment.centerRight,
@@ -310,7 +212,6 @@ class AdminTaskCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: kHighPriority.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: kHighPriority.withValues(alpha: 0.2)),
         ),
         child: const Icon(
           Icons.delete_outline_rounded,
@@ -318,209 +219,129 @@ class AdminTaskCard extends StatelessWidget {
           size: 22,
         ),
       ),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: cardBg,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // ── Left accent strip ──────────────────────────
-                  Container(
-                    width: 4,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          statusColor,
-                          statusColor.withValues(alpha: 0.4),
-                        ],
-                      ),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: borderColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Row 1: title + status pill + menu
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    task.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: titleColor,
+                      height: 1.35,
                     ),
                   ),
-                  // ── Content ────────────────────────────────────
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Row 1 — title + menu
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      task.title,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: titleColor,
-                                        letterSpacing: -0.1,
-                                      ),
-                                    ),
-                                  ),
-                                  _CardMenu(
-                                    onView: onTap,
-                                    onDelete: onDelete,
-                                    isDark: isDark,
-                                    mutedColor: mutedColor,
-                                  ),
-                                ],
-                              ),
-                              // Row 2 — description
-                              if (task.description.isNotEmpty) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  task.description,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: mutedColor,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(height: 8),
-                              // Row 3 — dates
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.today_rounded,
-                                    size: 11,
-                                    color: mutedColor,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    formatDate(task.createdAt),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: mutedColor,
-                                    ),
-                                  ),
-                                  if (task.dueDate != null) ...[
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                      ),
-                                      child: Icon(
-                                        Icons.arrow_right_alt_rounded,
-                                        size: 13,
-                                        color: mutedColor,
-                                      ),
-                                    ),
-                                    Icon(
-                                      isOverdue
-                                          ? Icons.warning_amber_rounded
-                                          : Icons.event_rounded,
-                                      size: 11,
-                                      color: isOverdue
-                                          ? kHighPriority
-                                          : kPrimary,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      formatDate(task.dueDate!),
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: isOverdue
-                                            ? kHighPriority
-                                            : kPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              // Row 4 — status · category · assignee
-                              Row(
-                                children: [
-                                  _StatusBadge(
-                                    label: isOverdue
-                                        ? 'Overdue'
-                                        : task.statusLabel,
-                                    color: statusColor,
-                                    isDark: isDark,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  _StatusBadge(
-                                    label: task.category,
-                                    color: statusColor,
-                                    isDark: isDark,
-                                  ),
-                                  const Spacer(),
-                                  if (task.acceptedBy != null) ...[
-                                    _AssigneeAvatar(name: task.acceptedBy!),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      task.acceptedBy!,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: mutedColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                  ],
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        // ── Progress strip (inProgress only) ──────
-                        if (task.status == TaskStatus.inProgress)
-                          SizedBox(
-                            height: 3,
-                            child: LinearProgressIndicator(
-                              value: progressValue,
-                              backgroundColor: isDark
-                                  ? Colors.white12
-                                  : kPrimary.withValues(alpha: 0.08),
-                              valueColor: AlwaysStoppedAnimation(
-                                progressValue >= 1.0 ? kLowPriority : kPrimary,
-                              ),
-                              borderRadius: BorderRadius.zero,
-                            ),
-                          ),
-                      ],
+                ),
+                const SizedBox(width: 8),
+                _StatusPill(
+                  label: task.status.name,
+                  color: statusColor,
+                  isDark: isDark,
+                ),
+                _CardMenu(
+                  onDelete: onDelete,
+                  isDark: isDark,
+                  mutedColor: mutedColor,
+                ),
+              ],
+            ),
+
+            // Row 2: description
+            if ((task.description ?? '').isNotEmpty) ...[
+              const SizedBox(height: 5),
+              Text(
+                task.description!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 12, color: mutedColor, height: 1.4),
+              ),
+            ],
+
+            const SizedBox(height: 10),
+
+            // Row 3: metadata
+            Row(
+              children: [
+                if (task.dueDate != null) ...[
+                  Icon(
+                    isOverdue
+                        ? Icons.warning_amber_rounded
+                        : Icons.calendar_today_rounded,
+                    size: 11,
+                    color: isOverdue ? kHighPriority : mutedColor,
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    _fmt(task.dueDate!),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isOverdue ? kHighPriority : mutedColor,
+                      fontWeight: isOverdue
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  _MetaDot(mutedColor),
+                ],
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: priorityColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  task.priority.name,
+                  style: TextStyle(fontSize: 11, color: mutedColor),
+                ),
+                if ((task.labelName ?? task.groupName) != null) ...[
+                  _MetaDot(mutedColor),
+                  Flexible(
+                    child: Text(
+                      task.labelName ?? task.groupName!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 11, color: mutedColor),
                     ),
                   ),
                 ],
-              ),
+                const Spacer(),
+                if (assignee != null) _Avatar(name: assignee, isDark: isDark),
+              ],
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
-// ── Sub-widgets ────────────────────────────────────────────────
-
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({
+// ── Status pill ────────────────────────────────────────────────
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({
     required this.label,
     required this.color,
     required this.isDark,
@@ -535,55 +356,89 @@ class _StatusBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.18 : 0.10),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: color,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 5,
+            height: 5,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Metadata separator dot ─────────────────────────────────────
+class _MetaDot extends StatelessWidget {
+  const _MetaDot(this.color);
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: Container(
+        width: 3,
+        height: 3,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.5),
+          shape: BoxShape.circle,
         ),
       ),
     );
   }
 }
 
-class _AssigneeAvatar extends StatelessWidget {
-  const _AssigneeAvatar({required this.name});
+// ── Assignee avatar ────────────────────────────────────────────
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.name, required this.isDark});
   final String name;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 20,
-      height: 20,
+      width: 22,
+      height: 22,
       decoration: BoxDecoration(
-        color: kPrimary.withValues(alpha: 0.15),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.12)
+            : Colors.black.withValues(alpha: 0.06),
         shape: BoxShape.circle,
-        border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
       ),
       alignment: Alignment.center,
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: const TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.w800,
-          color: kPrimary,
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.w700,
+          color: isDark ? Colors.white70 : const Color(0xFF374151),
         ),
       ),
     );
   }
 }
 
+// ── Card menu ──────────────────────────────────────────────────
 class _CardMenu extends StatelessWidget {
   const _CardMenu({
-    required this.onView,
     required this.onDelete,
     required this.isDark,
     required this.mutedColor,
   });
-  final VoidCallback? onView;
   final VoidCallback onDelete;
   final bool isDark;
   final Color mutedColor;
@@ -594,7 +449,7 @@ class _CardMenu extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () => _show(context),
       child: Padding(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
         child: Icon(Icons.more_horiz_rounded, size: 18, color: mutedColor),
       ),
     );
@@ -620,21 +475,6 @@ class _CardMenu extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            if (onView != null)
-              ListTile(
-                leading: Icon(
-                  Icons.visibility_outlined,
-                  color: isDark ? Colors.white70 : kTextDark,
-                ),
-                title: Text(
-                  'View Details',
-                  style: TextStyle(color: isDark ? Colors.white : kTextDark),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  onView!();
-                },
-              ),
             ListTile(
               leading: const Icon(
                 Icons.delete_outline_rounded,

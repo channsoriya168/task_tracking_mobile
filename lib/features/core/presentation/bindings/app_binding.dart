@@ -34,6 +34,12 @@ import 'package:task_tracking_mobile/features/admin/presentation/controllers/adm
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_label_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_priorities_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/delete_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
@@ -97,7 +103,18 @@ class AppBinding extends Bindings {
       ),
       fenix: true,
     );
-    Get.lazyPut<AdminTaskController>(() => AdminTaskController(), fenix: true);
+    Get.lazyPut<AdminTaskController>(
+      () => AdminTaskController(
+        FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
+        CreateTaskItemUsecase(Get.find<TaskItemRepository>()),
+        UpdateTaskItemUsecase(Get.find<TaskItemRepository>()),
+        DeleteTaskItemUsecase(Get.find<TaskItemRepository>()),
+        FetchTaskPrioritiesUsecase(Get.find<LookupRepository>()),
+        FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
+        GetAllLabelsUseCase(Get.find<LabelRepository>()),
+      ),
+      fenix: true,
+    );
     Get.lazyPut<AdminTaskGroupController>(
       () => AdminTaskGroupController(
         GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
