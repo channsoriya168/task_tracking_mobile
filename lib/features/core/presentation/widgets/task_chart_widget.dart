@@ -34,10 +34,11 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     return tasks.where((t) {
+      if (t.createdAt == null) return false;
       final created = DateTime(
-        t.createdAt.year,
-        t.createdAt.month,
-        t.createdAt.day,
+        t.createdAt!.year,
+        t.createdAt!.month,
+        t.createdAt!.day,
       );
       return switch (_filter) {
         _ChartFilter.day => created == today,
@@ -67,19 +68,31 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
 
     return Obx(() {
       final filtered = _applyFilter(widget.tasks);
-      final pending =
-          filtered.where((t) => t.status == TaskItemStatus.todo).length;
-      final inProgress =
-          filtered.where((t) => t.status == TaskItemStatus.inProgress).length;
-      final done =
-          filtered.where((t) => t.status == TaskItemStatus.done).length;
-      final fail =
-          filtered.where((t) => t.status == TaskItemStatus.fail).length;
-      final total = pending + inProgress + done + fail;
+      final assigned = filtered
+          .where((t) => t.status.name.toLowerCase() == 'assigned')
+          .length;
+      final inProgress = filtered
+          .where((t) => t.status.name.toLowerCase() == 'in progress')
+          .length;
+      final done = filtered
+          .where(
+            (t) =>
+                t.status.name.toLowerCase() == 'complete' ||
+                t.status.name.toLowerCase() == 'done',
+          )
+          .length;
+      final fail = filtered
+          .where(
+            (t) =>
+                t.status.name.toLowerCase() == 'fail' ||
+                t.status.name.toLowerCase() == 'failed',
+          )
+          .length;
+      final total = assigned + inProgress + done + fail;
       final data = [
-        _ChartData('Pending', pending, kMediumPriority),
+        _ChartData('Assigned', assigned, kMediumPriority),
         _ChartData('In Progress', inProgress, kPrimary),
-        _ChartData('Complete', done, kLowPriority),
+        _ChartData('Done', done, kLowPriority),
         _ChartData('Fail', fail, kHighPriority),
       ].where((d) => d.count > 0).toList();
 
@@ -226,8 +239,8 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _LegendItem(
-                        label: 'Pending',
-                        count: pending,
+                        label: 'Assigned',
+                        count: assigned,
                         color: kMediumPriority,
                         total: total,
                         isDark: isDark,
@@ -242,7 +255,7 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
                       ),
                       const SizedBox(height: 12),
                       _LegendItem(
-                        label: 'Complete',
+                        label: 'Done',
                         count: done,
                         color: kLowPriority,
                         total: total,

@@ -51,7 +51,8 @@ class ManagerTaskCardWidget extends StatelessWidget {
 
     return Dismissible(
       key: Key(task.id),
-      direction: task.status == TaskItemStatus.done
+      direction: (task.status.name.toLowerCase() == 'complete' ||
+              task.status.name.toLowerCase() == 'done')
           ? DismissDirection.none
           : DismissDirection.endToStart,
       confirmDismiss: (_) => showConfirmDeleteDialog(
@@ -60,7 +61,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
         message:
             'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
       ),
-      onDismissed: (_) => managerTaskController.deleteTask(task.id),
+      onDismissed: (_) => managerTaskController.deleteTask(task),
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
@@ -161,7 +162,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                       );
                                       if (ok == true) {
                                         managerTaskController.deleteTask(
-                                          task.id,
+                                          task,
                                         );
                                       }
                                     },
@@ -195,7 +196,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                _fmt(task.createdAt),
+                                _fmt(task.createdAt ?? DateTime.now()),
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: mutedColor,

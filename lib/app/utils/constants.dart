@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // ── Colors ──────────────────────────────────────────────
 const Color kPrimary = Color(0xFF6C63FF);
 const Color kHighPriority = Color(0xFFFF4757);
+const Color kCriticalPriority = Color(0xFF9B0000);
 const Color kMediumPriority = Color(0xFFFFA502);
 const Color kLowPriority = Color(0xFF2ED573);
 
@@ -92,6 +93,7 @@ const Map<String, Color> kStatusColors = {
 };
 
 const Map<String, Color> kPriorityColors = {
+  'Critical': kCriticalPriority,
   'High': kHighPriority,
   'Medium': kMediumPriority,
   'Low': kLowPriority,

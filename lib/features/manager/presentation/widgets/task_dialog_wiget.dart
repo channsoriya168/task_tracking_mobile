@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
@@ -203,7 +204,7 @@ Future<void> showTaskDetailSheet(
               label: 'Created',
               isDark: isDark,
               child: Text(
-                _formatDate(task.createdAt),
+                _formatDate(task.createdAt ?? DateTime.now()),
                 style: TextStyle(
                   fontSize: 14,
                   color: textColor,
@@ -284,24 +285,32 @@ Future<void> showTaskDialog(
   bool isDark, {
   TaskItem? task,
 }) async {
-  final managerTaskController = Get.find<ManagerTaskController>();
+  final ctrl = Get.find<ManagerTaskController>();
   final posCtrl = Get.find<TaskGroupController>();
   final groups = posCtrl.taskGroups;
-  final positionItems = groups.map((g) => g.name).toList();
   final isEditMode = task != null;
 
-  // Pre-populate form if editing
+  // Pre-populate form
   if (isEditMode) {
-    managerTaskController.titleTextEditor.text = task.title;
-    managerTaskController.descTextEditor.text = task.description ?? '';
-    managerTaskController.selectedCategory.value = task.groupName ?? '';
-    managerTaskController.selectedDueDate.value = task.dueDate;
-  }
-
-  // Keep dropdown value valid to avoid DropdownButton assertion failures.
-  if (positionItems.isNotEmpty &&
-      !positionItems.contains(managerTaskController.selectedCategory.value)) {
-    managerTaskController.selectedCategory.value = positionItems.first;
+    ctrl.titleTextEditor.text = task.title;
+    ctrl.descTextEditor.text = task.description ?? '';
+    ctrl.selectedGroupId.value = task.groupId;
+    ctrl.selectedCategory.value = task.groupName ?? '';
+    ctrl.selectedPriority.value = task.priority;
+    ctrl.selectedDueDate.value = task.dueDate;
+  } else {
+    ctrl.titleTextEditor.clear();
+    ctrl.descTextEditor.clear();
+    ctrl.selectedGroupId.value = groups.isNotEmpty ? groups.first.id : null;
+    ctrl.selectedCategory.value =
+        groups.isNotEmpty ? groups.first.name : '';
+    ctrl.selectedPriority.value = ctrl.availablePriorities.isNotEmpty
+        ? (ctrl.availablePriorities.firstWhereOrNull(
+              (p) => p.name.toLowerCase() == 'medium',
+            ) ??
+            ctrl.availablePriorities.first)
+        : null;
+    ctrl.selectedDueDate.value = null;
   }
 
   await showModalBottomSheet(
@@ -347,7 +356,7 @@ Future<void> showTaskDialog(
 
               // Title
               TextFieldWidget(
-                controller: managerTaskController.titleTextEditor,
+                controller: ctrl.titleTextEditor,
                 label: 'Title',
                 hint: 'Task title',
                 isDark: isDark,
@@ -356,7 +365,7 @@ Future<void> showTaskDialog(
 
               // Description
               TextFieldWidget(
-                controller: managerTaskController.descTextEditor,
+                controller: ctrl.descTextEditor,
                 label: 'Description',
                 hint: 'Optional description',
                 isDark: isDark,
@@ -368,7 +377,7 @@ Future<void> showTaskDialog(
               const SizedBox(height: 8),
               Obx(() {
                 final selected = groups.firstWhereOrNull(
-                  (g) => g.name == managerTaskController.selectedCategory.value,
+                  (g) => g.id == ctrl.selectedGroupId.value,
                 );
                 return DropdownWidget<TaskGroup>(
                   value: selected,
@@ -377,7 +386,8 @@ Future<void> showTaskDialog(
                   isDark: isDark,
                   onChanged: (g) {
                     if (g != null) {
-                      managerTaskController.selectedCategory.value = g.name;
+                      ctrl.selectedGroupId.value = g.id;
+                      ctrl.selectedCategory.value = g.name;
                     }
                   },
                   leadingBuilder: (g) => Container(
@@ -393,6 +403,29 @@ Future<void> showTaskDialog(
               }),
               const SizedBox(height: 16),
 
+              // Priority
+              _Label('Priority', isDark: isDark),
+              const SizedBox(height: 8),
+              Obx(() => DropdownWidget<TaskPriority>(
+                    value: ctrl.selectedPriority.value,
+                    items: ctrl.availablePriorities.toList(),
+                    label: (p) => p.name,
+                    isDark: isDark,
+                    onChanged: (p) {
+                      if (p != null) ctrl.selectedPriority.value = p;
+                    },
+                    leadingBuilder: (p) => Container(
+                      width: 10,
+                      height: 10,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: p.color,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  )),
+              const SizedBox(height: 16),
+
               // Due Date
               _Label('Due Date', isDark: isDark),
               const SizedBox(height: 8),
@@ -401,14 +434,11 @@ Future<void> showTaskDialog(
                   onTap: () async {
                     final picked = await showDatePicker(
                       context: context,
-                      initialDate:
-                          managerTaskController.selectedDueDate.value ??
-                          DateTime.now(),
+                      initialDate: ctrl.selectedDueDate.value ?? DateTime.now(),
                       firstDate: DateTime.now(),
                       lastDate: DateTime.now().add(const Duration(days: 365)),
                     );
-                    if (picked != null)
-                      managerTaskController.selectedDueDate.value = picked;
+                    if (picked != null) ctrl.selectedDueDate.value = picked;
                   },
                   child: Container(
                     height: 48,
@@ -429,26 +459,22 @@ Future<void> showTaskDialog(
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          managerTaskController.selectedDueDate.value == null
+                          ctrl.selectedDueDate.value == null
                               ? 'No due date'
-                              : _formatDate(
-                                  managerTaskController.selectedDueDate.value!,
-                                ),
+                              : _formatDate(ctrl.selectedDueDate.value!),
                           style: TextStyle(
                             fontSize: 14,
-                            color:
-                                managerTaskController.selectedDueDate.value ==
-                                    null
-                                ? (isDark ? Colors.grey[600] : Colors.grey[400])
+                            color: ctrl.selectedDueDate.value == null
+                                ? (isDark
+                                      ? Colors.grey[600]
+                                      : Colors.grey[400])
                                 : (isDark ? Colors.white : kTextDark),
                           ),
                         ),
                         const Spacer(),
-                        if (managerTaskController.selectedDueDate.value != null)
+                        if (ctrl.selectedDueDate.value != null)
                           GestureDetector(
-                            onTap: () =>
-                                managerTaskController.selectedDueDate.value =
-                                    null,
+                            onTap: () => ctrl.selectedDueDate.value = null,
                             child: Icon(
                               Icons.close_rounded,
                               size: 16,
@@ -462,40 +488,30 @@ Future<void> showTaskDialog(
               ),
               const SizedBox(height: 28),
 
-              // Create/Update button
+              // Create / Update button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    final title = managerTaskController.titleTextEditor.text
-                        .trim();
+                  onPressed: () async {
+                    final title = ctrl.titleTextEditor.text.trim();
                     if (title.isEmpty) return;
 
                     if (isEditMode) {
-                      // Update existing task
                       final updatedTask = task.copyWith(
                         title: title,
-                        description: managerTaskController.descTextEditor.text
-                            .trim(),
-                        groupName: managerTaskController.selectedCategory.value,
-                        dueDate: managerTaskController.selectedDueDate.value,
-                        clearDueDate:
-                            managerTaskController.selectedDueDate.value == null,
+                        description: ctrl.descTextEditor.text.trim(),
+                        groupId: ctrl.selectedGroupId.value,
+                        groupName: ctrl.selectedCategory.value,
+                        priority: ctrl.selectedPriority.value,
+                        dueDate: ctrl.selectedDueDate.value,
+                        clearDueDate: ctrl.selectedDueDate.value == null,
                       );
-                      managerTaskController.updateTask(updatedTask);
+                      await ctrl.updateTask(updatedTask);
                     } else {
-                      // Create new task
-                      managerTaskController.createTask();
+                      await ctrl.createTask();
                     }
 
-                    // Clear form
-                    managerTaskController.titleTextEditor.clear();
-                    managerTaskController.descTextEditor.clear();
-                    managerTaskController.selectedCategory.value =
-                        positionItems.first;
-                    managerTaskController.selectedDueDate.value = null;
-
-                    Navigator.pop(context);
+                    if (context.mounted) Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimary,

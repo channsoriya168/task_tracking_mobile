@@ -7,10 +7,16 @@ import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/splash_controller.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/employee_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_group_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/remote/lookup_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_item_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/repositories/employee_repository_impl.dart';
+import 'package:task_tracking_mobile/features/core/data/repositories/lookup_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/data/repositories/task_group_repository_impl.dart';
+import 'package:task_tracking_mobile/features/core/data/repositories/task_item_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/lookup_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/task_item_repository.dart';
 import 'package:task_tracking_mobile/features/core/presentation/bindings/image_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
@@ -31,6 +37,14 @@ class AppBinding extends Bindings {
     );
     Get.put<TaskGroupRepository>(
       TaskGroupRepositoryImpl(TaskGroupRemoteDatasource()),
+      permanent: true,
+    );
+    Get.put<TaskItemRepository>(
+      TaskItemRepositoryImpl(TaskItemRemoteDatasource()),
+      permanent: true,
+    );
+    Get.put<LookupRepository>(
+      LookupRepositoryImpl(LookupRemoteDatasource()),
       permanent: true,
     );
 

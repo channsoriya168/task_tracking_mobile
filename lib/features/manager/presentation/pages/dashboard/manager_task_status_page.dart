@@ -10,7 +10,7 @@ import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_
 class ManagerTaskStatusPage extends StatefulWidget {
   const ManagerTaskStatusPage({super.key, required this.filterStatus});
 
-  /// One of: 'All' | 'Pending' | 'In Progress' | 'Complete' | 'Fail'
+  /// One of: 'All' | 'Assigned' | 'In Progress' | 'Done' | 'Fail'
   final String filterStatus;
 
   @override
@@ -24,11 +24,11 @@ class _ManagerTaskStatusPageState extends State<ManagerTaskStatusPage> {
 
   Color get _statusColor {
     switch (widget.filterStatus) {
-      case 'Pending':
+      case 'Assigned':
         return kMediumPriority;
       case 'In Progress':
         return kPrimary;
-      case 'Complete':
+      case 'Done':
         return kLowPriority;
       case 'Fail':
         return kHighPriority;
@@ -41,17 +41,19 @@ class _ManagerTaskStatusPageState extends State<ManagerTaskStatusPage> {
     var result = all.where((t) {
       // Status filter
       switch (widget.filterStatus) {
-        case 'Pending':
-          if (t.status != TaskItemStatus.todo) return false;
+        case 'Assigned':
+          if (t.status.name.toLowerCase() != 'assigned') return false;
           break;
         case 'In Progress':
-          if (t.status != TaskItemStatus.inProgress) return false;
+          if (t.status.name.toLowerCase() != 'in progress') return false;
           break;
-        case 'Complete':
-          if (t.status != TaskItemStatus.done) return false;
+        case 'Done':
+          if (t.status.name.toLowerCase() != 'complete' &&
+              t.status.name.toLowerCase() != 'done') return false;
           break;
         case 'Fail':
-          if (t.status != TaskItemStatus.fail) return false;
+          if (t.status.name.toLowerCase() != 'fail' &&
+              t.status.name.toLowerCase() != 'failed') return false;
           break;
       }
 

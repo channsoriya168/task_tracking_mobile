@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/lookup_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/task_item_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_priorities_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_chart_widget.dart';
@@ -8,10 +15,31 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/week_cal
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
 
-class ManagerDashboardPage extends StatelessWidget {
+class ManagerDashboardPage extends StatefulWidget {
   const ManagerDashboardPage({super.key});
 
-  static const _filters = ['All', 'Pending', 'In Progress', 'Complete', 'Fail'];
+  @override
+  State<ManagerDashboardPage> createState() => _ManagerDashboardPageState();
+}
+
+class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
+  static const _filters = ['All', 'Assigned', 'In Progress', 'Done', 'Fail'];
+
+  @override
+  void initState() {
+    super.initState();
+    if (!Get.isRegistered<ManagerTaskController>()) {
+      Get.put<ManagerTaskController>(
+        ManagerTaskController(
+          FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
+          CreateTaskItemUsecase(Get.find<TaskItemRepository>()),
+          UpdateTaskItemUsecase(Get.find<TaskItemRepository>()),
+          DeleteTaskItemUsecase(Get.find<TaskItemRepository>()),
+          FetchTaskPrioritiesUsecase(Get.find<LookupRepository>()),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +55,6 @@ class ManagerDashboardPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () => showTaskDialog(context, isDark),
-      //   backgroundColor: kPrimary,
-      //   foregroundColor: Colors.white,
-      //   icon: const Icon(Icons.add_rounded),
-      //   label: const Text(
-      //     'New Task',
-      //     style: TextStyle(fontWeight: FontWeight.w600),
-      //   ),
-      // ),
       body: Obx(() {
         final filtered = managerTaskController.filteredTasks;
 
