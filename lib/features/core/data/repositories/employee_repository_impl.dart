@@ -13,4 +13,53 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   @override
   Future<Employee> fetchEmployeeById(String id) =>
       _remote.fetchEmployeeById(id);
+
+  @override
+  Future<Employee> createEmployee({
+    required String fullName,
+    required String email,
+    required String password,
+    required String confirmPassword,
+    String? phone,
+    String? placeOfBirth,
+    DateTime? dateOfBirth,
+    List<String>? groupIds,
+    String? profileImagePath,
+  }) => _remote.createEmployee(
+        fullName: fullName,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        phone: phone,
+        placeOfBirth: placeOfBirth,
+        dateOfBirth: dateOfBirth,
+        groupIds: groupIds,
+        profileImagePath: profileImagePath,
+      );
+
+  @override
+  Future<Employee> updateEmployee(
+    String id, {
+    required String fullName,
+    required String email,
+    String? phone,
+    String? placeOfBirth,
+    DateTime? dateOfBirth,
+    List<String>? groupIds,
+    String? profileImagePath,
+    bool removeProfileImage = false,
+  }) => _remote.updateEmployee(
+        id,
+        fullName: fullName,
+        email: email,
+        phone: phone,
+        placeOfBirth: placeOfBirth,
+        dateOfBirth: dateOfBirth,
+        groupIds: groupIds,
+        profileImagePath: profileImagePath,
+        removeProfileImage: removeProfileImage,
+      );
+
+  @override
+  Future<void> deleteEmployee(String id) => _remote.deleteEmployee(id);
 }

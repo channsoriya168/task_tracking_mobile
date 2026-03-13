@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/pages/label/admin_label_page.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_view_page.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
@@ -17,24 +18,42 @@ class AdminTaskHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            'Tasks',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : kTextDark,
-            ),
-          ),
-          Obx(
-            () => Text(
-              '${ctrl.filteredTasks.length} of ${ctrl.tasks.length} tasks',
-              style: TextStyle(
-                fontSize: 13,
-                color: isDark ? Colors.grey[500] : kTextMuted,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Tasks',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : kTextDark,
+                ),
               ),
+              Obx(
+                () => Text(
+                  '${ctrl.filteredTasks.length} of ${ctrl.tasks.length} tasks',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.grey[500] : kTextMuted,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          OutlinedButton.icon(
+            onPressed: () => Get.to(() => const AdminLabelPage()),
+            icon: const Icon(Icons.label_outline_rounded, size: 16),
+            label: const Text('Labels'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: kPrimary,
+              side: const BorderSide(color: kPrimary),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             ),
           ),
         ],
