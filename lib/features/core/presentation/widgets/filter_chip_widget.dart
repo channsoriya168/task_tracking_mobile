@@ -24,7 +24,7 @@ class FilterChipWidget extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: kButtonPaddingSmall,
         decoration: BoxDecoration(
-          color: selected ? kTextDark : (isDark ? kCardDark : Colors.white),
+          color: selected ? kPrimary : (isDark ? kCardDark : Colors.white),
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(

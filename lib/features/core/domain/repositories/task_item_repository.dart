@@ -4,6 +4,7 @@ abstract interface class TaskItemRepository {
   Future<List<TaskItem>> fetchTaskItems({
     String? search,
     int? statusId,
+    String? groupId,
     DateTime? dueDateFrom,
     DateTime? dueDateTo,
   });

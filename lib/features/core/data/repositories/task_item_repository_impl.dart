@@ -14,6 +14,7 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
   Future<List<TaskItem>> fetchTaskItems({
     String? search,
     int? statusId,
+    String? groupId,
     DateTime? dueDateFrom,
     DateTime? dueDateTo,
   }) async {
@@ -21,6 +22,7 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
       return await _remote.getAll(
         search: search,
         statusId: statusId,
+        groupId: groupId,
         dueDateFrom: dueDateFrom,
         dueDateTo: dueDateTo,
       );

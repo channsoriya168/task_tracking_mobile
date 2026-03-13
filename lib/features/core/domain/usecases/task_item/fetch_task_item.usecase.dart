@@ -9,12 +9,14 @@ class FetchTaskItemsUsecase {
   Future<List<TaskItem>> call({
     String? search,
     int? statusId,
+    String? groupId,
     DateTime? dueDateFrom,
     DateTime? dueDateTo,
   }) async {
     return await _repository.fetchTaskItems(
       search: search,
       statusId: statusId,
+      groupId: groupId,
       dueDateFrom: dueDateFrom,
       dueDateTo: dueDateTo,
     );

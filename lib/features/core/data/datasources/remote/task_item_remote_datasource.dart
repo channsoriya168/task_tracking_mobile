@@ -9,12 +9,14 @@ class TaskItemRemoteDatasource {
   Future<List<TaskItemModel>> getAll({
     String? search,
     int? statusId,
+    String? groupId,
     DateTime? dueDateFrom,
     DateTime? dueDateTo,
   }) async {
     final params = <String, dynamic>{};
     if (search != null && search.isNotEmpty) params['Search'] = search;
     if (statusId != null) params['Status'] = statusId;
+    if (groupId != null && groupId.isNotEmpty) params['GroupId'] = groupId;
     if (dueDateFrom != null) {
       params['DueDateFrom'] = dueDateFrom.toUtc().toIso8601String();
     }

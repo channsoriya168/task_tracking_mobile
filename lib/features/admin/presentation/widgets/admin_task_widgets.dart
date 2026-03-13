@@ -5,7 +5,6 @@ import 'package:task_tracking_mobile/features/admin/presentation/controllers/adm
 import 'package:task_tracking_mobile/features/admin/presentation/pages/label/admin_label_page.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
 
 // ── Header ─────────────────────────────────────────────────────
@@ -169,12 +168,18 @@ class AdminTaskCard extends StatelessWidget {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
-  String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]} ${dt.year}';
+  String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]}';
 
   @override
   Widget build(BuildContext context) {
     final cardBg = isDark ? kCardDark : Colors.white;
-    final mutedColor = isDark ? Colors.white54 : kTextMuted;
+    final titleColor = isDark ? Colors.white : const Color(0xFF111827);
+    final mutedColor = isDark
+        ? Colors.white.withValues(alpha: 0.4)
+        : const Color(0xFF9CA3AF);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.05);
 
     final statusColor = task.status.color;
     final priorityColor = task.priority.color;
@@ -184,6 +189,8 @@ class AdminTaskCard extends StatelessWidget {
         task.dueDate!.isBefore(DateTime.now()) &&
         task.status.name.toLowerCase() != 'completed' &&
         task.status.name.toLowerCase() != 'cancelled';
+
+    final assignee = task.assignedToName ?? task.createdByEmployeeName;
 
     return Dismissible(
       key: Key(task.id),
@@ -195,7 +202,6 @@ class AdminTaskCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: kHighPriority.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: kHighPriority.withValues(alpha: 0.2)),
         ),
         child: const Icon(
           Icons.delete_outline_rounded,
@@ -204,272 +210,224 @@ class AdminTaskCard extends StatelessWidget {
         ),
       ),
       child: Container(
+        padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
         decoration: BoxDecoration(
           color: cardBg,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : Colors.black.withValues(alpha: 0.07),
-          ),
+          border: Border.all(color: borderColor),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Row 1: title + status pill + menu ──────────
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Left accent strip ──
-                Container(
-                  width: 4,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        statusColor,
-                        statusColor.withValues(alpha: 0.4),
-                      ],
+                Expanded(
+                  child: Text(
+                    task.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: titleColor,
+                      height: 1.35,
                     ),
                   ),
                 ),
-                // ── Content ──
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Row 1 — title + menu
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                task.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: isDark ? Colors.white : kTextDark,
-                                  letterSpacing: -0.1,
-                                ),
-                              ),
-                            ),
-                            _CardMenu(
-                              onDelete: onDelete,
-                              isDark: isDark,
-                              mutedColor: mutedColor,
-                            ),
-                          ],
-                        ),
-                        // Row 2 — description
-                        if ((task.description ?? '').isNotEmpty) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            task.description!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: mutedColor,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 8),
-                        // Row 3 — start date → due date
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.today_rounded,
-                              size: 11,
-                              color: mutedColor,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _fmt(
-                                task.startDate ??
-                                    task.createdAt ??
-                                    DateTime.now(),
-                              ),
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: mutedColor,
-                              ),
-                            ),
-                            if (task.dueDate != null) ...[
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                ),
-                                child: Icon(
-                                  Icons.arrow_right_alt_rounded,
-                                  size: 13,
-                                  color: mutedColor,
-                                ),
-                              ),
-                              Icon(
-                                isOverdue
-                                    ? Icons.warning_amber_rounded
-                                    : Icons.event_rounded,
-                                size: 11,
-                                color: isOverdue ? kHighPriority : statusColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                _fmt(task.dueDate!),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: isOverdue
-                                      ? kHighPriority
-                                      : statusColor,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        // Row 4 — status · priority · label · assignee
-                        Row(
-                          children: [
-                            StatusBadgeWidget(
-                              label: task.status.name,
-                              color: statusColor,
-                              isDark: isDark,
-                            ),
-                            const SizedBox(width: 8),
-                            // Priority dot
-                            Container(
-                              width: 7,
-                              height: 7,
-                              decoration: BoxDecoration(
-                                color: priorityColor,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              task.priority.name,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: mutedColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            if ((task.labelName ?? task.groupName) != null) ...[
-                              const SizedBox(width: 8),
-                              _NeutralChip(
-                                label: task.labelName ?? task.groupName!,
-                                isDark: isDark,
-                              ),
-                            ],
-                            const Spacer(),
-                            if (task.assignedToName != null) ...[
-                              _SingleAvatar(name: task.assignedToName!),
-                              const SizedBox(width: 4),
-                              Text(
-                                task.assignedToName!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: mutedColor,
-                                ),
-                              ),
-                            ] else if (task.createdByEmployeeName != null) ...[
-                              _SingleAvatar(
-                                name: task.createdByEmployeeName!,
-                                color: mutedColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                task.createdByEmployeeName!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: mutedColor,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                const SizedBox(width: 8),
+                // Status pill — only colored element
+                _StatusPill(
+                  label: task.status.name,
+                  color: statusColor,
+                  isDark: isDark,
+                ),
+                _CardMenu(
+                  onDelete: onDelete,
+                  isDark: isDark,
+                  mutedColor: mutedColor,
                 ),
               ],
             ),
-          ),
+
+            // ── Row 2: description ──────────────────────────
+            if ((task.description ?? '').isNotEmpty) ...[
+              const SizedBox(height: 5),
+              Text(
+                task.description!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 12, color: mutedColor, height: 1.4),
+              ),
+            ],
+
+            const SizedBox(height: 10),
+
+            // ── Row 3: metadata ────────────────────────────
+            Row(
+              children: [
+                // Due date
+                if (task.dueDate != null) ...[
+                  Icon(
+                    isOverdue
+                        ? Icons.warning_amber_rounded
+                        : Icons.calendar_today_rounded,
+                    size: 11,
+                    color: isOverdue ? kHighPriority : mutedColor,
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    _fmt(task.dueDate!),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isOverdue ? kHighPriority : mutedColor,
+                      fontWeight: isOverdue
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  _MetaDot(mutedColor),
+                ],
+                // Priority dot + name
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: priorityColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  task.priority.name,
+                  style: TextStyle(fontSize: 11, color: mutedColor),
+                ),
+                // Label or group
+                if ((task.labelName ?? task.groupName) != null) ...[
+                  _MetaDot(mutedColor),
+                  Flexible(
+                    child: Text(
+                      task.labelName ?? task.groupName!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 11, color: mutedColor),
+                    ),
+                  ),
+                ],
+                const Spacer(),
+                // Assignee avatar (initials only, no name)
+                if (assignee != null) _Avatar(name: assignee, isDark: isDark),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// ── Neutral chip ───────────────────────────────────────────────
-class _NeutralChip extends StatelessWidget {
-  const _NeutralChip({required this.label, required this.isDark});
+// ── Status pill ────────────────────────────────────────────────
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
   final String label;
+  final Color color;
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : Colors.black.withValues(alpha: 0.05);
-    final fg = isDark ? Colors.white60 : kTextMuted;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: bg,
+        color: color.withValues(alpha: isDark ? 0.18 : 0.10),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        label,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: fg),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 5,
+            height: 5,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// ── Single avatar ──────────────────────────────────────────────
-class _SingleAvatar extends StatelessWidget {
-  const _SingleAvatar({required this.name, this.color});
-  final String name;
-  final Color? color;
+// ── Metadata separator dot ─────────────────────────────────────
+class _MetaDot extends StatelessWidget {
+  const _MetaDot(this.color);
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final c = color ?? kPrimary;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: Container(
+        width: 3,
+        height: 3,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.5),
+          shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+// ── Assignee avatar ────────────────────────────────────────────
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.name, required this.isDark});
+  final String name;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      width: 20,
-      height: 20,
+      width: 22,
+      height: 22,
       decoration: BoxDecoration(
-        color: c.withValues(alpha: 0.15),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.12)
+            : Colors.black.withValues(alpha: 0.06),
         shape: BoxShape.circle,
-        border: Border.all(color: c.withValues(alpha: 0.3)),
       ),
       alignment: Alignment.center,
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: c),
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.w700,
+          color: isDark ? Colors.white70 : const Color(0xFF374151),
+        ),
       ),
     );
   }
 }
 
-// ── Card Menu ─────────────────────────────────────────────────
+// ── Card menu ──────────────────────────────────────────────────
 class _CardMenu extends StatelessWidget {
   const _CardMenu({
     required this.onDelete,
@@ -486,7 +444,7 @@ class _CardMenu extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () => _show(context),
       child: Padding(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
         child: Icon(Icons.more_horiz_rounded, size: 18, color: mutedColor),
       ),
     );
