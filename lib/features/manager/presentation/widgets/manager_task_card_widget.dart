@@ -28,12 +28,6 @@ class ManagerTaskCardWidget extends StatelessWidget {
     final statusColor = task.status.color;
     final priorityColor = task.priority.color;
 
-    final isOverdue =
-        task.dueDate != null &&
-        task.dueDate!.isBefore(DateTime.now()) &&
-        task.status.name.toLowerCase() != 'completed' &&
-        task.status.name.toLowerCase() != 'cancelled';
-
     return Dismissible(
       key: Key(task.id),
       confirmDismiss: (_) => showConfirmDeleteDialog(
@@ -127,8 +121,11 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                   MenuSheetAction(
                                     label: 'Edit',
                                     icon: Icons.edit_outlined,
-                                    onTap: () =>
-                                        showTaskDialog(context, isDark, task: task),
+                                    onTap: () => showTaskDialog(
+                                      context,
+                                      isDark,
+                                      task: task,
+                                    ),
                                   ),
                                   MenuSheetAction(
                                     label: 'Delete',
@@ -174,17 +171,23 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                 color: mutedColor,
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                formatDate(
-                                  task.startDate ??
-                                      task.createdAt ??
-                                      DateTime.now(),
+                              if (task.startDate != null)
+                                Text(
+                                  formatDate(task.startDate!),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: mutedColor,
+                                  ),
                                 ),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: mutedColor,
+                              if (task.startDate == null)
+                                Text(
+                                  formatDate(task.createdAt!),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: mutedColor,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
-                              ),
                               if (task.dueDate != null) ...[
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -196,24 +199,13 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                     color: mutedColor,
                                   ),
                                 ),
-                                Icon(
-                                  isOverdue
-                                      ? Icons.warning_amber_rounded
-                                      : Icons.event_rounded,
-                                  size: 11,
-                                  color: isOverdue
-                                      ? kHighPriority
-                                      : statusColor,
-                                ),
+
                                 const SizedBox(width: 4),
                                 Text(
                                   formatDate(task.dueDate!),
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: isOverdue
-                                        ? kHighPriority
-                                        : statusColor,
                                   ),
                                 ),
                               ],

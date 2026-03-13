@@ -24,8 +24,9 @@ class ManagerBinding extends Bindings {
         GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
         CreateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
       ),
+      fenix: true,
     );
-    Get.lazyPut<EmployeeController>(() => EmployeeController());
+    Get.lazyPut<EmployeeController>(() => EmployeeController(), fenix: true);
     Get.lazyPut<ManagerTaskController>(
       () => ManagerTaskController(
         FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
@@ -36,6 +37,7 @@ class ManagerBinding extends Bindings {
         FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
         GetAllLabelsUseCase(Get.find<LabelRepository>()),
       ),
+      fenix: true,
     );
   }
 }

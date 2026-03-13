@@ -197,7 +197,7 @@ class ManagerTaskController extends GetxController {
         groupId: selectedGroupId.value,
         priority: priority,
         status: const TaskStatusLookup(id: 0, name: 'Pending'),
-        startDate: selectedStartDate.value,
+        startDate: DateTime.now(),
         dueDate: selectedDueDate.value,
       );
       await _createTaskItem(model);
