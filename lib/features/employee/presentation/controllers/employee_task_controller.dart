@@ -3,13 +3,23 @@ import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/assign_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
+import 'dart:developer' as developer;
 
 class EmployeeTaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
   final FetchTaskStatusesUsecase _fetchStatuses;
+  final AssignTaskItemUsecase _assignTask;
+  final UpdateTaskItemStatusUsecase _updateStatus;
 
-  EmployeeTaskController(this._fetchTaskItems, this._fetchStatuses);
+  EmployeeTaskController(
+    this._fetchTaskItems,
+    this._fetchStatuses,
+    this._assignTask,
+    this._updateStatus,
+  );
 
   /// Full unfiltered list — used for chip counts and client-side status filter.
   final RxList<TaskItem> allTasks = <TaskItem>[].obs;
@@ -140,5 +150,30 @@ class EmployeeTaskController extends GetxController {
       final result = await _fetchStatuses();
       if (result.isNotEmpty) taskStatus.assignAll(result);
     } catch (_) {}
+  }
+
+  String? get _employeeId =>
+      Get.find<AuthController>().profile.value?.employeeId;
+
+  /// Assigns the task to the current employee and sets status to InProgress.
+  Future<bool> acceptTask(TaskItem task) async {
+    
+    final employeeId = _employeeId;
+    if (employeeId == null) return false;
+
+    final inProgressId = taskStatus
+        .firstWhereOrNull((s) => s.name.toLowerCase() == 'assigned')
+        ?.id;
+    if (inProgressId == null) return false;
+
+    try {
+      await _assignTask(task.id, employeeId);
+      await _updateStatus(task.id, inProgressId);
+      await fetchTasks();
+      return true;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      return false;
+    }
   }
 }

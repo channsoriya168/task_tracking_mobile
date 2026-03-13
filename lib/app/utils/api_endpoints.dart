@@ -21,6 +21,8 @@ abstract class ApiEndpoints {
   // ── Task Items ────────────────────────────────────────────
   static const String taskItems = '/api/v1/task-items';
   static String taskItemById(String id) => '/api/v1/task-items/$id';
+  static String taskItemAssign(String id) => '/api/v1/task-items/$id/assign';
+  static String taskItemStatus(String id) => '/api/v1/task-items/$id/status';
 
   // ── Lookups ───────────────────────────────────────────────
   static const String lookupTaskPriorities = '/api/v1/lookups/task-priorities';
