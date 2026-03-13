@@ -143,11 +143,6 @@ class _DueDateLabel extends StatelessWidget {
   final TaskModel task;
   final bool isDark;
 
-  static String _fmt(DateTime d) {
-    const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return '${d.day} ${m[d.month - 1]} ${d.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final color = task.isOverdue
@@ -165,7 +160,7 @@ class _DueDateLabel extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          _fmt(task.dueDate!),
+          formatDate(task.dueDate!),
           style: TextStyle(
             fontSize: 12,
             fontWeight: task.isOverdue ? FontWeight.w600 : FontWeight.w500,

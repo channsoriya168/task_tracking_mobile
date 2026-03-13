@@ -51,10 +51,10 @@ class TaskItemModel extends TaskItem {
         json['status'] as Map<String, dynamic>,
       ),
       startDate: json['startDate'] != null
-          ? DateTime.parse(json['startDate'] as String)
+          ? DateTime.parse(json['startDate'] as String).toLocal()
           : null,
       dueDate: json['dueDate'] != null
-          ? DateTime.parse(json['dueDate'] as String)
+          ? DateTime.parse(json['dueDate'] as String).toLocal()
           : null,
       completedAt: json['completedAt'] != null
           ? DateTime.parse(json['completedAt'] as String)
@@ -66,10 +66,9 @@ class TaskItemModel extends TaskItem {
           ? DateTime.parse(json['updatedAt'] as String)
           : null,
       // Root-level allowedTransitions: [{id, name}, ...] — valid next statuses
-      allowedTransitions:
-          (json['allowedTransitions'] as List<dynamic>? ?? [])
-              .map((e) => TaskItemStatusModel.fromJson(e as Map<String, dynamic>))
-              .toList(),
+      allowedTransitions: (json['allowedTransitions'] as List<dynamic>? ?? [])
+          .map((e) => TaskItemStatusModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -82,8 +81,20 @@ class TaskItemModel extends TaskItem {
       if (labelId != null) 'labelId': labelId,
       if (assignedToId != null) 'assignedToId': assignedToId,
       'priority': priority.id,
-      if (startDate != null) 'startDate': startDate!.toUtc().toIso8601String(),
-      if (dueDate != null) 'dueDate': dueDate!.toUtc().toIso8601String(),
+      if (startDate != null)
+        'startDate': DateTime(
+          startDate!.year,
+          startDate!.month,
+          startDate!.day,
+          12,
+        ).toUtc().toIso8601String(),
+      if (dueDate != null)
+        'dueDate': DateTime(
+          dueDate!.year,
+          dueDate!.month,
+          dueDate!.day,
+          12,
+        ).toUtc().toIso8601String(),
     };
   }
 }

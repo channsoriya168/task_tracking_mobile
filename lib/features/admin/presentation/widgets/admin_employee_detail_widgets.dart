@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
@@ -405,7 +406,7 @@ class EmployeeDetailInfoList extends StatelessWidget {
         _InfoData(
           icon: Icons.cake_outlined,
           label: 'Date of Birth',
-          value: _formatDate(employee.dateOfBirth!),
+          value: formatDate(employee.dateOfBirth!),
         ),
       if (employee.placeOfBirth != null)
         _InfoData(
@@ -416,7 +417,7 @@ class EmployeeDetailInfoList extends StatelessWidget {
       _InfoData(
         icon: Icons.calendar_today_outlined,
         label: 'Joined',
-        value: _formatDate(employee.createdAt),
+        value: formatDate(employee.createdAt),
       ),
     ];
 
@@ -449,13 +450,6 @@ class EmployeeDetailInfoList extends StatelessWidget {
     );
   }
 
-  static String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${d.day} ${months[d.month - 1]} ${d.year}';
-  }
 }
 
 class _InfoData {

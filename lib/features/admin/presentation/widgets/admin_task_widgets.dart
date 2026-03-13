@@ -164,8 +164,18 @@ class AdminTaskCard extends StatelessWidget {
   final VoidCallback onDelete;
 
   static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]}';
@@ -226,7 +236,7 @@ class AdminTaskCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Row 1: title + status pill + menu ──────────
+            // Row 1: title + status pill + menu
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -244,7 +254,6 @@ class AdminTaskCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Status pill — only colored element
                 _StatusPill(
                   label: task.status.name,
                   color: statusColor,
@@ -258,7 +267,7 @@ class AdminTaskCard extends StatelessWidget {
               ],
             ),
 
-            // ── Row 2: description ──────────────────────────
+            // Row 2: description
             if ((task.description ?? '').isNotEmpty) ...[
               const SizedBox(height: 5),
               Text(
@@ -271,10 +280,9 @@ class AdminTaskCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // ── Row 3: metadata ────────────────────────────
+            // Row 3: metadata
             Row(
               children: [
-                // Due date
                 if (task.dueDate != null) ...[
                   Icon(
                     isOverdue
@@ -296,7 +304,6 @@ class AdminTaskCard extends StatelessWidget {
                   ),
                   _MetaDot(mutedColor),
                 ],
-                // Priority dot + name
                 Container(
                   width: 6,
                   height: 6,
@@ -310,7 +317,6 @@ class AdminTaskCard extends StatelessWidget {
                   task.priority.name,
                   style: TextStyle(fontSize: 11, color: mutedColor),
                 ),
-                // Label or group
                 if ((task.labelName ?? task.groupName) != null) ...[
                   _MetaDot(mutedColor),
                   Flexible(
@@ -323,7 +329,6 @@ class AdminTaskCard extends StatelessWidget {
                   ),
                 ],
                 const Spacer(),
-                // Assignee avatar (initials only, no name)
                 if (assignee != null) _Avatar(name: assignee, isDark: isDark),
               ],
             ),

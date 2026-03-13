@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_dialog_wiget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_header_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_list_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_dialog.dart';
 
 class ManagerTaskTabletPage extends StatelessWidget {
   const ManagerTaskTabletPage({super.key});

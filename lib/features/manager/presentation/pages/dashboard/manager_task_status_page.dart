@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_dialog_wiget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_dialog.dart';
 
 class ManagerTaskStatusPage extends StatefulWidget {
   const ManagerTaskStatusPage({super.key, required this.filterStatus});

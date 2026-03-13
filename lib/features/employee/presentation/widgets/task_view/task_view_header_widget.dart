@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
@@ -157,14 +158,6 @@ class _TaskViewDueDateLabel extends StatelessWidget {
   final TaskModel task;
   final bool isDark;
 
-  static String _fmt(DateTime d) {
-    const m = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    return '${d.day} ${m[d.month - 1]} ${d.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final color =
@@ -181,7 +174,7 @@ class _TaskViewDueDateLabel extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          _fmt(task.dueDate!),
+          formatDate(task.dueDate!),
           style: TextStyle(
             fontSize: 12,
             fontWeight:
