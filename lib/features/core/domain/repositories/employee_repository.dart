@@ -1,7 +1,7 @@
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 
 abstract class EmployeeRepository {
-  Future<List<Employee>> fetchEmployees();
+  Future<List<Employee>> fetchEmployees({String? name, String? groupId});
   Future<Employee> fetchEmployeeById(String id);
   Future<Employee> createEmployee({
     required String fullName,
