@@ -24,11 +24,11 @@ class EmployeeTaskCard extends StatelessWidget {
     final cardBg = isDark ? kCardDark : Colors.white;
     final titleColor = isDark ? Colors.white : const Color(0xFF111827);
     final mutedColor = isDark
-        ? Colors.white.withValues(alpha: 0.4)
-        : const Color(0xFF9CA3AF);
+        ? Colors.white.withValues(alpha: 0.55)
+        : const Color(0xFF6B7280);
     final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.black.withValues(alpha: 0.05);
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.black.withValues(alpha: 0.12);
 
     final statusColor = task.status.color;
     final priorityColor = task.priority.color;
@@ -42,16 +42,16 @@ class EmployeeTaskCard extends StatelessWidget {
     final assignee = task.assignedToName ?? task.createdByEmployeeName;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: borderColor),
+        border: Border.all(color: borderColor, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -100,55 +100,71 @@ class EmployeeTaskCard extends StatelessWidget {
           // ── Row 3: metadata ─────────────────────────────
           Row(
             children: [
-              // Due date
-              if (task.dueDate != null) ...[
-                Icon(
-                  isOverdue
-                      ? Icons.warning_amber_rounded
-                      : Icons.calendar_today_rounded,
-                  size: 11,
-                  color: isOverdue ? kHighPriority : mutedColor,
+              // Left: date · priority · label (takes available space)
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (task.dueDate != null) ...[
+                      Icon(
+                        isOverdue
+                            ? Icons.warning_amber_rounded
+                            : Icons.calendar_today_rounded,
+                        size: 11,
+                        color: isOverdue ? kHighPriority : mutedColor,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        _fmt(task.dueDate!),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isOverdue ? kHighPriority : mutedColor,
+                          fontWeight: isOverdue
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                      ),
+                      _MetaDot(mutedColor),
+                    ],
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: priorityColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      task.priority.name,
+                      style: TextStyle(fontSize: 11, color: mutedColor),
+                    ),
+                    if ((task.labelName ?? task.groupName) != null) ...[
+                      _MetaDot(mutedColor),
+                      Flexible(
+                        child: Text(
+                          task.labelName ?? task.groupName!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 11, color: mutedColor),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                const SizedBox(width: 3),
+              ),
+              // Right: assignee — snug, no extra space
+              if (assignee != null) ...[
+                const SizedBox(width: 8),
+                _Avatar(name: assignee, isDark: isDark),
+                const SizedBox(width: 5),
                 Text(
-                  _fmt(task.dueDate!),
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isOverdue ? kHighPriority : mutedColor,
-                    fontWeight:
-                        isOverdue ? FontWeight.w600 : FontWeight.normal,
-                  ),
-                ),
-                _MetaDot(mutedColor),
-              ],
-              // Priority dot + name
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: priorityColor,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                task.priority.name,
-                style: TextStyle(fontSize: 11, color: mutedColor),
-              ),
-              // Label or group
-              if ((task.labelName ?? task.groupName) != null) ...[
-                _MetaDot(mutedColor),
-                Flexible(
-                  child: Text(
-                    task.labelName ?? task.groupName!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 11, color: mutedColor),
-                  ),
+                  assignee,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, color: mutedColor),
                 ),
               ],
-              const Spacer(),
-              if (assignee != null) _Avatar(name: assignee, isDark: isDark),
             ],
           ),
         ],
