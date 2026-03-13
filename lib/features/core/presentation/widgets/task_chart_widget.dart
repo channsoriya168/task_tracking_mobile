@@ -72,21 +72,13 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
           .where((t) => t.status.name.toLowerCase() == 'assigned')
           .length;
       final inProgress = filtered
-          .where((t) => t.status.name.toLowerCase() == 'in progress')
+          .where((t) => t.status.name.toLowerCase() == 'inprogress')
           .length;
       final done = filtered
-          .where(
-            (t) =>
-                t.status.name.toLowerCase() == 'complete' ||
-                t.status.name.toLowerCase() == 'done',
-          )
+          .where((t) => t.status.name.toLowerCase() == 'completed')
           .length;
       final fail = filtered
-          .where(
-            (t) =>
-                t.status.name.toLowerCase() == 'fail' ||
-                t.status.name.toLowerCase() == 'failed',
-          )
+          .where((t) => t.status.name.toLowerCase() == 'cancelled')
           .length;
       final total = assigned + inProgress + done + fail;
       final data = [

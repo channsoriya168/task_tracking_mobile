@@ -20,13 +20,13 @@ class MenuSheetWidget extends StatelessWidget {
     super.key,
     required this.actions,
     required this.isDark,
-    required this.mutedColor,
+    this.mutedColor,
     this.triggerIcon = Icons.more_horiz_rounded,
     this.triggerSize = 18,
   });
   final List<MenuSheetAction> actions;
   final bool isDark;
-  final Color mutedColor;
+  final Color? mutedColor;
   final IconData triggerIcon;
   final double triggerSize;
 

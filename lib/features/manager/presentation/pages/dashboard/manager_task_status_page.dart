@@ -25,13 +25,17 @@ class _ManagerTaskStatusPageState extends State<ManagerTaskStatusPage> {
   Color get _statusColor {
     switch (widget.filterStatus) {
       case 'Assigned':
-        return kMediumPriority;
+        return const Color(0xFF6C63FF);
       case 'In Progress':
-        return kPrimary;
-      case 'Done':
-        return kLowPriority;
-      case 'Fail':
-        return kHighPriority;
+        return const Color(0xFF3B82F6);
+      case 'In Review':
+        return const Color(0xFF06B6D4);
+      case 'Completed':
+        return const Color(0xFF2ED573);
+      case 'Cancelled':
+        return const Color(0xFFFF4757);
+      case 'On Hold':
+        return const Color(0xFFFFB300);
       default:
         return kPrimary;
     }
@@ -45,15 +49,19 @@ class _ManagerTaskStatusPageState extends State<ManagerTaskStatusPage> {
           if (t.status.name.toLowerCase() != 'assigned') return false;
           break;
         case 'In Progress':
-          if (t.status.name.toLowerCase() != 'in progress') return false;
+          if (t.status.name.toLowerCase() != 'inprogress') return false;
           break;
-        case 'Done':
-          if (t.status.name.toLowerCase() != 'complete' &&
-              t.status.name.toLowerCase() != 'done') return false;
+        case 'In Review':
+          if (t.status.name.toLowerCase() != 'inreview') return false;
           break;
-        case 'Fail':
-          if (t.status.name.toLowerCase() != 'fail' &&
-              t.status.name.toLowerCase() != 'failed') return false;
+        case 'Completed':
+          if (t.status.name.toLowerCase() != 'completed') return false;
+          break;
+        case 'Cancelled':
+          if (t.status.name.toLowerCase() != 'cancelled') return false;
+          break;
+        case 'On Hold':
+          if (t.status.name.toLowerCase() != 'onhold') return false;
           break;
       }
 

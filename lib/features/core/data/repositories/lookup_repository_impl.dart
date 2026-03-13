@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/utils/dio_error_mapper.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/lookup_remote_datasource.dart';
@@ -25,6 +26,8 @@ class LookupRepositoryImpl implements LookupRepository {
       return await _datasource.getTaskStatuses();
     } on DioException catch (e) {
       throw Exception(mapDioError(e));
+    } catch (e) {
+      rethrow;
     }
   }
 }

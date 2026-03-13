@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 
-const _kFilters = ['All', 'Pending', 'In Progress', 'Complete', 'Fail'];
-
 class ManagerTaskFilterBarWidget extends StatelessWidget {
   const ManagerTaskFilterBarWidget({
     super.key,
@@ -21,24 +19,25 @@ class ManagerTaskFilterBarWidget extends StatelessWidget {
     return SizedBox(
       height: 52,
       child: Obx(() {
-        final currentFilter = ctrl.filterStatus.value;
-        final counts = {for (final f in _kFilters) f: ctrl.countByStatus(f)};
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
-          itemCount: _kFilters.length,
-          separatorBuilder: (_, _) => const SizedBox(width: 8),
+          itemCount: ctrl.taskStatus.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
-            final filter = _kFilters[i];
-            final selected = currentFilter == filter;
-            final count = counts[filter] ?? 0;
-            return FilterChipWidget(
-              isDark: isDark,
-              filter: filter,
-              count: count,
-              selected: selected,
-              onTap: () => ctrl.filterStatus.value = filter,
-            );
+            final f = ctrl.taskStatus[i];
+            final selected = ctrl.filterStatus.value == f.name;
+            final count = ctrl.countByStatus(f.name);
+            return Text(
+              f.name,
+            ); // Placeholder, replace with actual FilterChipWidget
+            // return FilterChipWidget(
+            //   isDark: isDark,
+            //   filter: f.name,
+            //   count: count,
+            //   selected: selected,
+            //   onTap: () => ctrl.filterStatus.value = f.name,
+            // );
           },
         );
       }),

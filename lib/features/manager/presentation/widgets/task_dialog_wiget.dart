@@ -60,37 +60,37 @@ Future<void> showTaskDetailSheet(
             // Status + priority row
             Row(
               children: [
-                _DetailBadge(
-                  label: task.statusLabel,
-                  color: task.statusColor,
-                  isDark: isDark,
-                ),
-                const SizedBox(width: 8),
-                _DetailBadge(
-                  label: task.priorityLabel,
-                  color: task.priorityColor,
-                  isDark: isDark,
-                ),
+                // _DetailBadge(
+                //   label: task.statusLabel,
+                //   color: task.statusColor,
+                //   isDark: isDark,
+                // ),
+                // const SizedBox(width: 8),
+                // _DetailBadge(
+                //   label: task.priorityLabel,
+                //   color: task.priorityColor,
+                //   isDark: isDark,
+                // ),
                 const Spacer(),
                 if (task.dueDate != null)
                   Row(
                     children: [
-                      Icon(
-                        task.isOverdue
-                            ? Icons.error_outline_rounded
-                            : Icons.calendar_today_rounded,
-                        size: 13,
-                        color: task.isOverdue ? kHighPriority : mutedColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _formatDate(task.dueDate!),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: task.isOverdue ? kHighPriority : mutedColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      // Icon(
+                      //   task.isOverdue
+                      //       ? Icons.error_outline_rounded
+                      //       : Icons.calendar_today_rounded,
+                      //   size: 13,
+                      //   color: task.isOverdue ? kHighPriority : mutedColor,
+                      // ),
+                      // const SizedBox(width: 4),
+                      // Text(
+                      //   _formatDate(task.dueDate!),
+                      //   style: TextStyle(
+                      //     fontSize: 12,
+                      //     color: task.isOverdue ? kHighPriority : mutedColor,
+                      //     fontWeight: FontWeight.w500,
+                      //   ),
+                      // ),
                     ],
                   ),
               ],
@@ -302,14 +302,13 @@ Future<void> showTaskDialog(
     ctrl.titleTextEditor.clear();
     ctrl.descTextEditor.clear();
     ctrl.selectedGroupId.value = groups.isNotEmpty ? groups.first.id : null;
-    ctrl.selectedCategory.value =
-        groups.isNotEmpty ? groups.first.name : '';
-    ctrl.selectedPriority.value = ctrl.availablePriorities.isNotEmpty
-        ? (ctrl.availablePriorities.firstWhereOrNull(
-              (p) => p.name.toLowerCase() == 'medium',
-            ) ??
-            ctrl.availablePriorities.first)
-        : null;
+    ctrl.selectedCategory.value = groups.isNotEmpty ? groups.first.name : '';
+    // ctrl.selectedPriority.value = ctrl.availablePriorities.isNotEmpty
+    //     ? (ctrl.availablePriorities.firstWhereOrNull(
+    //             (p) => p.name.toLowerCase() == 'medium',
+    //           ) ??
+    //           ctrl.availablePriorities.first)
+    //     : null;
     ctrl.selectedDueDate.value = null;
   }
 
@@ -406,24 +405,26 @@ Future<void> showTaskDialog(
               // Priority
               _Label('Priority', isDark: isDark),
               const SizedBox(height: 8),
-              Obx(() => DropdownWidget<TaskPriority>(
-                    value: ctrl.selectedPriority.value,
-                    items: ctrl.availablePriorities.toList(),
-                    label: (p) => p.name,
-                    isDark: isDark,
-                    onChanged: (p) {
-                      if (p != null) ctrl.selectedPriority.value = p;
-                    },
-                    leadingBuilder: (p) => Container(
-                      width: 10,
-                      height: 10,
-                      margin: const EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                        color: p.color,
-                        shape: BoxShape.circle,
-                      ),
+              Obx(
+                () => DropdownWidget<TaskPriority>(
+                  value: ctrl.selectedPriority.value,
+                  items: ctrl.taskPriority.toList(),
+                  label: (p) => p.name,
+                  isDark: isDark,
+                  onChanged: (p) {
+                    if (p != null) ctrl.selectedPriority.value = p;
+                  },
+                  leadingBuilder: (p) => Container(
+                    width: 10,
+                    height: 10,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: BoxDecoration(
+                      color: p.color,
+                      shape: BoxShape.circle,
                     ),
-                  )),
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
 
               // Due Date
@@ -465,9 +466,7 @@ Future<void> showTaskDialog(
                           style: TextStyle(
                             fontSize: 14,
                             color: ctrl.selectedDueDate.value == null
-                                ? (isDark
-                                      ? Colors.grey[600]
-                                      : Colors.grey[400])
+                                ? (isDark ? Colors.grey[600] : Colors.grey[400])
                                 : (isDark ? Colors.white : kTextDark),
                           ),
                         ),
@@ -497,16 +496,16 @@ Future<void> showTaskDialog(
                     if (title.isEmpty) return;
 
                     if (isEditMode) {
-                      final updatedTask = task.copyWith(
-                        title: title,
-                        description: ctrl.descTextEditor.text.trim(),
-                        groupId: ctrl.selectedGroupId.value,
-                        groupName: ctrl.selectedCategory.value,
-                        priority: ctrl.selectedPriority.value,
-                        dueDate: ctrl.selectedDueDate.value,
-                        clearDueDate: ctrl.selectedDueDate.value == null,
-                      );
-                      await ctrl.updateTask(updatedTask);
+                      // final updatedTask = task.copyWith(
+                      //   title: title,
+                      //   description: ctrl.descTextEditor.text.trim(),
+                      //   groupId: ctrl.selectedGroupId.value,
+                      //   groupName: ctrl.selectedCategory.value,
+                      //   priority: ctrl.selectedPriority.value,
+                      //   dueDate: ctrl.selectedDueDate.value,
+                      //   clearDueDate: ctrl.selectedDueDate.value == null,
+                      // );
+                      // await ctrl.updateTask(updatedTask);
                     } else {
                       await ctrl.createTask();
                     }

@@ -1,4 +1,3 @@
-// ── Manager Task Card ──────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
@@ -39,22 +38,19 @@ class ManagerTaskCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? kCardDark : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : const Color(0xFFE5E7EB);
-    final titleColor = isDark ? Colors.white : const Color(0xFF111827);
-    final mutedColor = isDark
-        ? Colors.white.withValues(alpha: 0.45)
-        : const Color(0xFF9CA3AF);
-    final isOverdue = task.isOverdue;
-    final statusColor = isOverdue ? kHighPriority : task.statusColor;
+    final mutedColor = isDark ? Colors.white54 : kTextMuted;
+
+    final statusColor = task.status.color;
+    final priorityColor = task.priority.color;
+
+    final isOverdue =
+        task.dueDate != null &&
+        task.dueDate!.isBefore(DateTime.now()) &&
+        task.status.name.toLowerCase() != 'completed' &&
+        task.status.name.toLowerCase() != 'cancelled';
 
     return Dismissible(
       key: Key(task.id),
-      direction: (task.status.name.toLowerCase() == 'complete' ||
-              task.status.name.toLowerCase() == 'done')
-          ? DismissDirection.none
-          : DismissDirection.endToStart,
       confirmDismiss: (_) => showConfirmDeleteDialog(
         context,
         title: 'Delete Task',
@@ -83,12 +79,16 @@ class ManagerTaskCardWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: cardBg,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.06)
+                  : Colors.black.withValues(alpha: 0.07),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -98,7 +98,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // ── Left accent strip ──
+                  // ── Left accent strip (status color) ──
                   Container(
                     width: 4,
                     decoration: BoxDecoration(
@@ -131,14 +131,13 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: titleColor,
+                                    color: isDark ? Colors.white : kTextDark,
                                     letterSpacing: -0.1,
                                   ),
                                 ),
                               ),
                               MenuSheetWidget(
                                 isDark: isDark,
-                                mutedColor: mutedColor,
                                 actions: [
                                   MenuSheetAction(
                                     label: 'Edit',
@@ -161,9 +160,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                             'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
                                       );
                                       if (ok == true) {
-                                        managerTaskController.deleteTask(
-                                          task,
-                                        );
+                                        managerTaskController.deleteTask(task);
                                       }
                                     },
                                   ),
@@ -186,7 +183,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                             ),
                           ],
                           const SizedBox(height: 8),
-                          // Row 3 — dates inline
+                          // Row 3 — start date → due date
                           Row(
                             children: [
                               Icon(
@@ -196,7 +193,11 @@ class ManagerTaskCardWidget extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                _fmt(task.createdAt ?? DateTime.now()),
+                                _fmt(
+                                  task.startDate ??
+                                      task.createdAt ??
+                                      DateTime.now(),
+                                ),
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: mutedColor,
@@ -220,7 +221,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                   size: 11,
                                   color: isOverdue
                                       ? kHighPriority
-                                      : kPrimary,
+                                      : statusColor,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
@@ -230,33 +231,50 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                     color: isOverdue
                                         ? kHighPriority
-                                        : kPrimary,
+                                        : statusColor,
                                   ),
                                 ),
                               ],
                             ],
                           ),
                           const SizedBox(height: 8),
-                          // Row 4 — status · category · assignee
+                          // Row 4 — status badge · priority dot · label · assignee
                           Row(
                             children: [
-                              // Status pill
+                              // Status — single colored badge
                               StatusBadgeWidget(
-                                label: isOverdue
-                                    ? 'Overdue'
-                                    : task.statusLabel,
+                                label: task.status.name,
                                 color: statusColor,
                                 isDark: isDark,
                               ),
                               const SizedBox(width: 8),
-                              // Category
-                              StatusBadgeWidget(
-                                label: task.groupName ?? task.labelName ?? '',
-                                color: statusColor,
-                                isDark: isDark,
+                              // Priority — colored dot + muted text
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  color: priorityColor,
+                                  shape: BoxShape.circle,
+                                ),
                               ),
+                              const SizedBox(width: 4),
+                              Text(
+                                task.priority.name,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: mutedColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              // Label or group — plain neutral chip
+                              if ((task.labelName ?? task.groupName) != null)
+                                _NeutralChip(
+                                  label: task.labelName ?? task.groupName!,
+                                  isDark: isDark,
+                                ),
                               const Spacer(),
-                              // Assigned to
+                              // Assignee or creator
                               if (task.assignedToName != null) ...[
                                 _SingleAvatar(name: task.assignedToName!),
                                 const SizedBox(width: 4),
@@ -269,7 +287,22 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                     color: mutedColor,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                              ] else if (task.createdByEmployeeName !=
+                                  null) ...[
+                                _SingleAvatar(
+                                  name: task.createdByEmployeeName!,
+                                  color: mutedColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  task.createdByEmployeeName!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: mutedColor,
+                                  ),
+                                ),
                               ],
                             ],
                           ),
@@ -287,29 +320,53 @@ class ManagerTaskCardWidget extends StatelessWidget {
   }
 }
 
-// ── Single avatar ─────────────────────────────────────────────
-class _SingleAvatar extends StatelessWidget {
-  const _SingleAvatar({required this.name});
-  final String name;
+// ── Neutral chip (no accent color) ────────────────────────────
+class _NeutralChip extends StatelessWidget {
+  const _NeutralChip({required this.label, required this.isDark});
+  final String label;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final bg = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.05);
+    final fg = isDark ? Colors.white60 : kTextMuted;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: fg),
+      ),
+    );
+  }
+}
+
+// ── Single avatar ─────────────────────────────────────────────
+class _SingleAvatar extends StatelessWidget {
+  const _SingleAvatar({required this.name, this.color});
+  final String name;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = color ?? kPrimary;
     return Container(
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: kPrimary.withValues(alpha: 0.15),
+        color: c.withValues(alpha: 0.15),
         shape: BoxShape.circle,
-        border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+        border: Border.all(color: c.withValues(alpha: 0.3)),
       ),
       alignment: Alignment.center,
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: const TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.w800,
-          color: kPrimary,
-        ),
+        style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: c),
       ),
     );
   }

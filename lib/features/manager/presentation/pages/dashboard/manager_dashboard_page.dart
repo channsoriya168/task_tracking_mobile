@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/domain/repositories/lookup_repository.dart';
-import 'package:task_tracking_mobile/features/core/domain/repositories/task_item_repository.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_priorities_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_chart_widget.dart';
@@ -15,36 +8,13 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/week_cal
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
 
-class ManagerDashboardPage extends StatefulWidget {
+class ManagerDashboardPage extends StatelessWidget {
   const ManagerDashboardPage({super.key});
-
-  @override
-  State<ManagerDashboardPage> createState() => _ManagerDashboardPageState();
-}
-
-class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
-  static const _filters = ['All', 'Assigned', 'In Progress', 'Done', 'Fail'];
-
-  @override
-  void initState() {
-    super.initState();
-    if (!Get.isRegistered<ManagerTaskController>()) {
-      Get.put<ManagerTaskController>(
-        ManagerTaskController(
-          FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
-          CreateTaskItemUsecase(Get.find<TaskItemRepository>()),
-          UpdateTaskItemUsecase(Get.find<TaskItemRepository>()),
-          DeleteTaskItemUsecase(Get.find<TaskItemRepository>()),
-          FetchTaskPrioritiesUsecase(Get.find<LookupRepository>()),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final themeCtrl = Get.find<ThemeController>();
-    final managerTaskController = Get.find<ManagerTaskController>();
+    final ctrl = Get.find<ManagerTaskController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : kTextDark;
     final mutedColor = isDark ? Colors.white38 : kTextMuted;
@@ -56,7 +26,14 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
       body: Obx(() {
-        final filtered = managerTaskController.filteredTasks;
+        // final filtered = ctrl.filteredTasks;
+        final statuses = ctrl.taskPriority;
+
+        // 'All' chip + one chip per API status
+        final filters = [
+          // _FilterEntry(key: 'All', label: 'All'),
+          // ...statuses.map((s) => _FilterEntry(key: s.name, label: s.displayName)),
+        ];
 
         return CustomScrollView(
           slivers: [
@@ -89,10 +66,7 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
             SliverPadding(
               padding: kPageSectionLargePadding,
               sliver: SliverToBoxAdapter(
-                child: TaskChartWidget(
-                  isDark: isDark,
-                  tasks: managerTaskController.tasks,
-                ),
+                child: TaskChartWidget(isDark: isDark, tasks: ctrl.tasks),
               ),
             ),
 
@@ -102,37 +76,32 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
               sliver: SliverToBoxAdapter(
                 child: WeekCalendarWidget(
                   isDark: isDark,
-                  selectedDate:
-                      managerTaskController.dashboardSelectedDate.value,
-                  onDateSelected: (d) =>
-                      managerTaskController.dashboardSelectedDate.value = d,
+                  selectedDate: ctrl.dashboardSelectedDate.value,
+                  onDateSelected: (d) => ctrl.dashboardSelectedDate.value = d,
                 ),
               ),
             ),
 
-            // ── Filter Chips ──────────────────────────────────
+            // ── Filter Chips (from API) ───────────────────────
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 52,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
-                  itemCount: _filters.length,
+                  itemCount: filters.length,
                   separatorBuilder: (_, __) => const SizedBox(width: 8),
                   itemBuilder: (_, i) {
-                    final f = _filters[i];
-                    final selected =
-                        managerTaskController.filterStatus.value == f;
-                    final color = isDark
-                        ? (selected
-                              ? kPrimary
-                              : Colors.white.withValues(alpha: 0.1))
-                        : (selected
-                              ? kPrimary
-                              : const Color.fromARGB(255, 112, 113, 116));
-                    final count = managerTaskController.countByStatus(f);
+                    final f = filters[i];
+                    final selected = ctrl.filterStatus.value == f.key;
+                    final color = selected
+                        ? kPrimary
+                        : (isDark
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : const Color(0xFF707172));
+                    // final count = ctrl.countByStatus(f.key);
                     return GestureDetector(
-                      onTap: () => managerTaskController.filterStatus.value = f,
+                      onTap: () => ctrl.filterStatus.value = f.key,
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 160),
                         padding: const EdgeInsets.symmetric(
@@ -141,12 +110,12 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
                         ),
                         decoration: BoxDecoration(
                           color: selected
-                              ? color
+                              ? kPrimary
                               : (isDark ? kCardDark : Colors.white),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: selected
-                                ? color
+                                ? kPrimary
                                 : (isDark
                                       ? Colors.white.withValues(alpha: 0.1)
                                       : const Color(0xFFE5E7EB)),
@@ -156,7 +125,7 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              f,
+                              f.label,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -179,14 +148,14 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
                                       ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Text(
-                                '$count',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: selected ? Colors.white : color,
-                                ),
-                              ),
+                              // child: Text(
+                              //   '$count',
+                              //   style: TextStyle(
+                              //     fontSize: 10,
+                              //     fontWeight: FontWeight.w700,
+                              //     color: selected ? Colors.white : color,
+                              //   ),
+                              // ),
                             ),
                           ],
                         ),
@@ -209,8 +178,7 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
                     border: Border.all(color: borderColor),
                   ),
                   child: TextField(
-                    onChanged: (v) =>
-                        managerTaskController.searchQuery.value = v,
+                    onChanged: (v) => ctrl.searchQuery.value = v,
                     style: TextStyle(fontSize: 14, color: textColor),
                     decoration: InputDecoration(
                       hintText: 'Search tasks…',
@@ -255,22 +223,19 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
                         color: kPrimary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(
-                        '${filtered.length}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
-                        ),
-                      ),
+                      // child: Text(
+                      //   '${filtered.length}',
+                      //   style: const TextStyle(
+                      //     fontSize: 11,
+                      //     fontWeight: FontWeight.w700,
+                      //     color: kPrimary,
+                      //   ),
+                      // ),
                     ),
-                    if (managerTaskController.dashboardSelectedDate.value !=
-                        null) ...[
+                    if (ctrl.dashboardSelectedDate.value != null) ...[
                       const Spacer(),
                       GestureDetector(
-                        onTap: () =>
-                            managerTaskController.dashboardSelectedDate.value =
-                                null,
+                        onTap: () => ctrl.dashboardSelectedDate.value = null,
                         child: Row(
                           children: [
                             Icon(
@@ -293,46 +258,51 @@ class _ManagerDashboardPageState extends State<ManagerDashboardPage> {
             ),
 
             // ── Task List ─────────────────────────────────────
-            filtered.isEmpty
-                ? SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 48, 20, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.inbox_rounded,
-                            size: 48,
-                            color: isDark ? Colors.grey[700] : Colors.grey[300],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'No tasks found',
-                            style: TextStyle(fontSize: 14, color: mutedColor),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) => Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: ManagerTaskCardWidget(
-                            task: filtered[i],
-                            managerTaskController: managerTaskController,
-                          ),
-                        ),
-                        childCount: filtered.length,
-                      ),
-                    ),
-                  ),
-
+            // filtered.isEmpty
+            //     ? SliverPadding(
+            //         padding: const EdgeInsets.fromLTRB(20, 48, 20, 0),
+            //         sliver: SliverToBoxAdapter(
+            //           child: Column(
+            //             children: [
+            //               Icon(
+            //                 Icons.inbox_rounded,
+            //                 size: 48,
+            //                 color: isDark ? Colors.grey[700] : Colors.grey[300],
+            //               ),
+            //               const SizedBox(height: 12),
+            //               Text(
+            //                 'No tasks found',
+            //                 style: TextStyle(fontSize: 14, color: mutedColor),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       )
+            //     : SliverPadding(
+            //         padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+            //         sliver: SliverList(
+            //           delegate: SliverChildBuilderDelegate(
+            //             (context, i) => Padding(
+            //               padding: const EdgeInsets.only(bottom: 10),
+            //               child: ManagerTaskCardWidget(
+            //                 task: filtered[i],
+            //                 managerTaskController: ctrl,
+            //               ),
+            //             ),
+            //             childCount: filtered.length,
+            //           ),
+            //         ),
+            //       ),
             const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
           ],
         );
       }),
     );
   }
+}
+
+class _FilterEntry {
+  const _FilterEntry({required this.key, required this.label});
+  final String key;
+  final String label;
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_priorities_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
@@ -14,6 +16,7 @@ class ManagerTaskController extends GetxController {
   final UpdateTaskItemUsecase _updateTaskItem;
   final DeleteTaskItemUsecase _deleteTaskItem;
   final FetchTaskPrioritiesUsecase _fetchPriorities;
+  final FetchTaskStatusesUsecase _fetchStatuses;
 
   ManagerTaskController(
     this._fetchTaskItems,
@@ -21,10 +24,14 @@ class ManagerTaskController extends GetxController {
     this._updateTaskItem,
     this._deleteTaskItem,
     this._fetchPriorities,
+    this._fetchStatuses,
   );
 
   final RxList<TaskItem> tasks = <TaskItem>[].obs;
-  final RxList<TaskPriority> availablePriorities = <TaskPriority>[].obs;
+  final RxList<TaskPriority> taskPriority = <TaskPriority>[].obs;
+  final RxList<TaskStatusLookup> taskStatus = <TaskStatusLookup>[].obs;
+
+  /// 'All' or a raw API status name e.g. 'InProgress'
   final RxString filterStatus = 'All'.obs;
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
@@ -44,8 +51,7 @@ class ManagerTaskController extends GetxController {
       result = result
           .where(
             (t) =>
-                t.status.name.toLowerCase() ==
-                filterStatus.value.toLowerCase(),
+                t.status.name.toLowerCase() == filterStatus.value.toLowerCase(),
           )
           .toList();
     }
@@ -63,13 +69,10 @@ class ManagerTaskController extends GetxController {
     return result;
   }
 
-  int countByStatus(String filter) {
-    if (filter == 'All') return tasks.length;
+  int countByStatus(String statusName) {
+    if (statusName == 'All') return tasks.length;
     return tasks
-        .where(
-          (t) =>
-              t.status.name.toLowerCase() == filter.toLowerCase(),
-        )
+        .where((t) => t.status.name.toLowerCase() == statusName.toLowerCase())
         .length;
   }
 
@@ -78,6 +81,7 @@ class ManagerTaskController extends GetxController {
     super.onInit();
     fetchTasks();
     fetchPriorities();
+    fetchStatuses();
   }
 
   Future<void> fetchTasks() async {
@@ -96,13 +100,21 @@ class ManagerTaskController extends GetxController {
   Future<void> fetchPriorities() async {
     try {
       final result = await _fetchPriorities();
-      availablePriorities.assignAll(result);
-      if (selectedPriority.value == null && result.isNotEmpty) {
-        selectedPriority.value =
-            result.firstWhereOrNull(
-              (p) => p.name.toLowerCase() == 'medium',
-            ) ??
-            result.first;
+      if (result.isEmpty) {
+        taskPriority.clear();
+      } else {
+        taskPriority.assignAll(result);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> fetchStatuses() async {
+    try {
+      final result = await _fetchStatuses();
+      if (result.isEmpty) {
+        taskStatus.clear();
+      } else {
+        taskStatus.assignAll(result);
       }
     } catch (_) {}
   }
@@ -141,11 +153,5 @@ class ManagerTaskController extends GetxController {
     selectedGroupId.value = null;
     selectedCategory.value = '';
     selectedDueDate.value = null;
-    selectedPriority.value = availablePriorities.isNotEmpty
-        ? (availablePriorities.firstWhereOrNull(
-              (p) => p.name.toLowerCase() == 'medium',
-            ) ??
-            availablePriorities.first)
-        : null;
   }
 }

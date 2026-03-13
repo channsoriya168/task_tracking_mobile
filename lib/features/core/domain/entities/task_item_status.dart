@@ -14,16 +14,19 @@ class TaskStatusLookup extends LookupItem {
   Color get color {
     switch (name.toLowerCase()) {
       case 'pending':
-      case 'assigned':
         return const Color(0xFFFFA502);
-      case 'in progress':
+      case 'assigned':
         return const Color(0xFF6C63FF);
-      case 'complete':
-      case 'done':
+      case 'inprogress':
+        return const Color(0xFF3B82F6);
+      case 'inreview':
+        return const Color(0xFF06B6D4);
+      case 'completed':
         return const Color(0xFF2ED573);
-      case 'fail':
-      case 'failed':
+      case 'cancelled':
         return const Color(0xFFFF4757);
+      case 'onhold':
+        return const Color(0xFFFFB300);
       default:
         return const Color(0xFF6C63FF);
     }
