@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/features/core/data/models/lookup_item_model.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 
-class TaskItemStatusModel extends TaskStatusLookup {
+class TaskItemStatusModel extends TaskStatusLookup implements LookupItemModel {
   const TaskItemStatusModel({
     required super.id,
     required super.name,
@@ -18,4 +20,9 @@ class TaskItemStatusModel extends TaskStatusLookup {
       allowedTransitions: transitions,
     );
   }
+
+  Map<String, dynamic> toJson() => LookupItemModel.toBaseJson(this);
+
+  @override
+  Color get color => super.color;
 }

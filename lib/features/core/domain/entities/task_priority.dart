@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/lookup_item.dart';
 
-class TaskPriority {
-  final int id;
-  final String name;
-
-  const TaskPriority({required this.id, required this.name});
+class TaskPriority extends LookupItem {
+  const TaskPriority({required super.id, required super.name});
 
   @override
-  bool operator ==(Object other) =>
-      other is TaskPriority && other.id == id;
+  bool operator ==(Object other) => other is TaskPriority && other.id == id;
 
   @override
   int get hashCode => id.hashCode;
 
+  @override
   Color get color {
     switch (name.toLowerCase()) {
       case 'critical':

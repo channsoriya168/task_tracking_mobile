@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/lookup_item.dart';
 
-class TaskStatusLookup {
-  final int id;
-  final String name;
+class TaskStatusLookup extends LookupItem {
   final List<TaskStatusLookup> allowedTransitions;
 
   const TaskStatusLookup({
-    required this.id,
-    required this.name,
+    required super.id,
+    required super.name,
     this.allowedTransitions = const [],
   });
 
+  @override
   Color get color {
     switch (name.toLowerCase()) {
       case 'pending':
-        return const Color(0xFFFFA502);
       case 'assigned':
         return const Color(0xFFFFA502);
       case 'in progress':
