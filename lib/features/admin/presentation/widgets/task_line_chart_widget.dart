@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
-import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 
 enum _Filter { day, week, month }
 
@@ -18,14 +18,15 @@ class TaskLineChartWidget extends StatefulWidget {
 class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
   _Filter _filter = _Filter.day;
 
-  List<TaskModel> _applyFilter(List<TaskModel> tasks) {
+  List<TaskItem> _applyFilter(List<TaskItem> tasks) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     return tasks.where((t) {
+      if (t.createdAt == null) return false;
       final created = DateTime(
-        t.createdAt.year,
-        t.createdAt.month,
-        t.createdAt.day,
+        t.createdAt!.year,
+        t.createdAt!.month,
+        t.createdAt!.day,
       );
       return switch (_filter) {
         _Filter.day => created == today,
@@ -51,12 +52,18 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
     return Obx(() {
       final taskCtrl = Get.find<AdminTaskController>();
       final filtered = _applyFilter(taskCtrl.tasks);
-      final pending = filtered.where((t) => t.status == TaskStatus.todo).length;
-      final inProgress = filtered
-          .where((t) => t.status == TaskStatus.inProgress)
+      final pending = filtered
+          .where((t) => t.status.name.toLowerCase() == 'pending')
           .length;
-      final done = filtered.where((t) => t.status == TaskStatus.done).length;
-      final fail = filtered.where((t) => t.status == TaskStatus.fail).length;
+      final inProgress = filtered
+          .where((t) => t.status.name.toLowerCase() == 'inprogress')
+          .length;
+      final done = filtered
+          .where((t) => t.status.name.toLowerCase() == 'completed')
+          .length;
+      final fail = filtered
+          .where((t) => t.status.name.toLowerCase() == 'cancelled')
+          .length;
       final total = pending + inProgress + done + fail;
 
       final data = [

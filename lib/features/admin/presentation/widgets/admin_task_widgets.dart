@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/label/admin_label_page.dart';
-import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_view_page.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
 
 // ── Header ─────────────────────────────────────────────────────
@@ -33,7 +34,7 @@ class AdminTaskHeader extends StatelessWidget {
               ),
               Obx(
                 () => Text(
-                  '${ctrl.filteredTasks.length} of ${ctrl.tasks.length} tasks',
+                  '${ctrl.tasks.length} tasks',
                   style: TextStyle(
                     fontSize: 13,
                     color: isDark ? Colors.grey[500] : kTextMuted,
@@ -63,8 +64,6 @@ class AdminTaskHeader extends StatelessWidget {
 }
 
 // ── Filter Bar ─────────────────────────────────────────────────
-const _kFilters = ['All', 'Pending', 'In Progress', 'Complete', 'Fail'];
-
 class AdminTaskFilterBar extends StatelessWidget {
   const AdminTaskFilterBar({
     super.key,
@@ -80,138 +79,40 @@ class AdminTaskFilterBar extends StatelessWidget {
     return SizedBox(
       height: 52,
       child: Obx(() {
-        final currentFilter = ctrl.filterStatus.value;
-        final counts = {for (final f in _kFilters) f: ctrl.countByStatus(f)};
+        final selected = ctrl.filterStatus.value;
+        final statusItems = [null, ...ctrl.taskStatus]; // null = "All"
+
+        final counts = <String, int>{
+          'All': ctrl.tasks.length,
+          for (final s in ctrl.taskStatus)
+            s.name: ctrl.tasks
+                .where(
+                  (t) => t.status.name.toLowerCase() == s.name.toLowerCase(),
+                )
+                .length,
+        };
+
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
-          itemCount: _kFilters.length,
+          itemCount: statusItems.length,
           separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
-            final filter = _kFilters[i];
-            final selected = currentFilter == filter;
-            final count = counts[filter] ?? 0;
-            return _FilterChip(
+            final status = statusItems[i];
+            final label = status?.name ?? 'All';
+            final isSelected = selected == label;
+            final count = counts[label] ?? 0;
+
+            return FilterChipWidget(
               isDark: isDark,
-              filter: filter,
+              filter: label,
               count: count,
-              selected: selected,
-              onTap: () => ctrl.filterStatus.value = filter,
+              selected: isSelected,
+              onTap: () => ctrl.selectStatus(status),
             );
           },
         );
       }),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.isDark,
-    required this.filter,
-    required this.count,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final bool isDark;
-  final String filter;
-  final int count;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: kButtonPaddingSmall,
-        decoration: BoxDecoration(
-          color: selected ? kTextDark : (isDark ? kCardDark : Colors.white),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              filter,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: selected
-                    ? Colors.white
-                    : (isDark ? Colors.white54 : kTextMuted),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Container(
-              padding: kItemSpacingSmall,
-              decoration: BoxDecoration(
-                color: selected
-                    ? Colors.white.withValues(alpha: 0.2)
-                    : kPrimary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: selected ? Colors.white : kPrimary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Search Bar ─────────────────────────────────────────────────
-class AdminTaskSearchBar extends StatelessWidget {
-  const AdminTaskSearchBar({
-    super.key,
-    required this.isDark,
-    required this.ctrl,
-  });
-
-  final bool isDark;
-  final AdminTaskController ctrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: kPageSectionPadding,
-      child: Container(
-        height: 44,
-        decoration: BoxDecoration(
-          color: isDark ? kCardDark : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: TextField(
-          onChanged: (v) => ctrl.searchQuery.value = v,
-          style: TextStyle(
-            fontSize: 14,
-            color: isDark ? Colors.white : kTextDark,
-          ),
-          decoration: InputDecoration(
-            hintText: 'Search tasks...',
-            hintStyle: TextStyle(
-              color: isDark ? Colors.grey[600] : kTextMuted,
-              fontSize: 14,
-            ),
-            prefixIcon: Icon(
-              Icons.search_rounded,
-              color: isDark ? Colors.grey[600] : kTextMuted,
-              size: 20,
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -226,6 +127,9 @@ class AdminTaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      if (ctrl.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
       final tasks = ctrl.filteredTasks;
       if (tasks.isEmpty) return TaskEmptyState(isDark: isDark);
       return ListView.builder(
@@ -233,17 +137,12 @@ class AdminTaskList extends StatelessWidget {
         itemCount: tasks.length,
         itemBuilder: (_, i) {
           final task = tasks[i];
-          final canView =
-              task.status == TaskStatus.inProgress ||
-              task.status == TaskStatus.done;
           return Padding(
             padding: kItemSpacing,
             child: AdminTaskCard(
               task: task,
-              onDelete: () => ctrl.deleteTask(task.id),
-              onTap: canView
-                  ? () => Get.to(() => TaskViewPage(task: task))
-                  : null,
+              isDark: isDark,
+              onDelete: () => ctrl.deleteTask(task),
             ),
           );
         },
@@ -253,72 +152,42 @@ class AdminTaskList extends StatelessWidget {
 }
 
 // ── Admin Task Card ────────────────────────────────────────────
-//
-// Matches the ManagerTaskCardWidget layout:
-//  ┌─┬──────────────────────────────────────────────┐
-//  │▌│ Title                                   ···  │
-//  │▌│ Description (1 line)                         │
-//  │▌│ 📅 Created → ⚠ Due date                     │
-//  │▌│ [Status] [Category]          [Avatar] Name   │
-//  │▌├══════════════════════════════════════════════╡ progress
-//  └─┴──────────────────────────────────────────────┘
-//
 class AdminTaskCard extends StatelessWidget {
   const AdminTaskCard({
     super.key,
     required this.task,
+    required this.isDark,
     required this.onDelete,
-    required this.onTap,
   });
 
-  final TaskModel task;
+  final TaskItem task;
+  final bool isDark;
   final VoidCallback onDelete;
-  final VoidCallback? onTap;
 
   static const _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
   String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]} ${dt.year}';
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? kCardDark : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : const Color(0xFFE5E7EB);
-    final titleColor = isDark ? Colors.white : const Color(0xFF111827);
-    final mutedColor = isDark
-        ? Colors.white.withValues(alpha: 0.45)
-        : const Color(0xFF9CA3AF);
-    final isOverdue = task.isOverdue;
-    final statusColor = isOverdue ? kHighPriority : task.statusColor;
+    final mutedColor = isDark ? Colors.white54 : kTextMuted;
 
-    final doneProg = task.progressItems
-        .where((s) => s.startsWith('[x]'))
-        .length;
-    final totalProg = task.progressItems.length;
-    final progressValue = totalProg == 0
-        ? 0.0
-        : (doneProg / totalProg).clamp(0.0, 1.0);
+    final statusColor = task.status.color;
+    final priorityColor = task.priority.color;
+
+    final isOverdue =
+        task.dueDate != null &&
+        task.dueDate!.isBefore(DateTime.now()) &&
+        task.status.name.toLowerCase() != 'completed' &&
+        task.status.name.toLowerCase() != 'cancelled';
 
     return Dismissible(
       key: Key(task.id),
-      direction: task.status == TaskStatus.done
-          ? DismissDirection.none
-          : DismissDirection.endToStart,
+      direction: DismissDirection.endToStart,
       onDismissed: (_) => onDelete(),
       background: Container(
         alignment: Alignment.centerRight,
@@ -334,197 +203,212 @@ class AdminTaskCard extends StatelessWidget {
           size: 22,
         ),
       ),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: cardBg,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
+      child: Container(
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.07),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // ── Left accent strip ──────────────────────────
-                  Container(
-                    width: 4,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          statusColor,
-                          statusColor.withValues(alpha: 0.4),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // ── Content ────────────────────────────────────
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Row 1 — title + menu
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      task.title,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: titleColor,
-                                        letterSpacing: -0.1,
-                                      ),
-                                    ),
-                                  ),
-                                  _CardMenu(
-                                    onView: onTap,
-                                    onDelete: onDelete,
-                                    isDark: isDark,
-                                    mutedColor: mutedColor,
-                                  ),
-                                ],
-                              ),
-                              // Row 2 — description
-                              if (task.description.isNotEmpty) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  task.description,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: mutedColor,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(height: 8),
-                              // Row 3 — dates
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.today_rounded,
-                                    size: 11,
-                                    color: mutedColor,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    _fmt(task.createdAt),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: mutedColor,
-                                    ),
-                                  ),
-                                  if (task.dueDate != null) ...[
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                      ),
-                                      child: Icon(
-                                        Icons.arrow_right_alt_rounded,
-                                        size: 13,
-                                        color: mutedColor,
-                                      ),
-                                    ),
-                                    Icon(
-                                      isOverdue
-                                          ? Icons.warning_amber_rounded
-                                          : Icons.event_rounded,
-                                      size: 11,
-                                      color: isOverdue
-                                          ? kHighPriority
-                                          : kPrimary,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      _fmt(task.dueDate!),
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: isOverdue
-                                            ? kHighPriority
-                                            : kPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              // Row 4 — status · category · assignee
-                              Row(
-                                children: [
-                                  _StatusBadge(
-                                    label: isOverdue
-                                        ? 'Overdue'
-                                        : task.statusLabel,
-                                    color: statusColor,
-                                    isDark: isDark,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  _StatusBadge(
-                                    label: task.category,
-                                    color: statusColor,
-                                    isDark: isDark,
-                                  ),
-                                  const Spacer(),
-                                  if (task.acceptedBy != null) ...[
-                                    _AssigneeAvatar(name: task.acceptedBy!),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      task.acceptedBy!,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: mutedColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                  ],
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        // ── Progress strip (inProgress only) ──────
-                        if (task.status == TaskStatus.inProgress)
-                          SizedBox(
-                            height: 3,
-                            child: LinearProgressIndicator(
-                              value: progressValue,
-                              backgroundColor: isDark
-                                  ? Colors.white12
-                                  : kPrimary.withValues(alpha: 0.08),
-                              valueColor: AlwaysStoppedAnimation(
-                                progressValue >= 1.0 ? kLowPriority : kPrimary,
-                              ),
-                              borderRadius: BorderRadius.zero,
-                            ),
-                          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Left accent strip ──
+                Container(
+                  width: 4,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        statusColor,
+                        statusColor.withValues(alpha: 0.4),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                // ── Content ──
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Row 1 — title + menu
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                task.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? Colors.white : kTextDark,
+                                  letterSpacing: -0.1,
+                                ),
+                              ),
+                            ),
+                            _CardMenu(
+                              onDelete: onDelete,
+                              isDark: isDark,
+                              mutedColor: mutedColor,
+                            ),
+                          ],
+                        ),
+                        // Row 2 — description
+                        if ((task.description ?? '').isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            task.description!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: mutedColor,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 8),
+                        // Row 3 — start date → due date
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.today_rounded,
+                              size: 11,
+                              color: mutedColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _fmt(
+                                task.startDate ??
+                                    task.createdAt ??
+                                    DateTime.now(),
+                              ),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: mutedColor,
+                              ),
+                            ),
+                            if (task.dueDate != null) ...[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                ),
+                                child: Icon(
+                                  Icons.arrow_right_alt_rounded,
+                                  size: 13,
+                                  color: mutedColor,
+                                ),
+                              ),
+                              Icon(
+                                isOverdue
+                                    ? Icons.warning_amber_rounded
+                                    : Icons.event_rounded,
+                                size: 11,
+                                color: isOverdue ? kHighPriority : statusColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _fmt(task.dueDate!),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isOverdue
+                                      ? kHighPriority
+                                      : statusColor,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // Row 4 — status · priority · label · assignee
+                        Row(
+                          children: [
+                            StatusBadgeWidget(
+                              label: task.status.name,
+                              color: statusColor,
+                              isDark: isDark,
+                            ),
+                            const SizedBox(width: 8),
+                            // Priority dot
+                            Container(
+                              width: 7,
+                              height: 7,
+                              decoration: BoxDecoration(
+                                color: priorityColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              task.priority.name,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: mutedColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            if ((task.labelName ?? task.groupName) != null) ...[
+                              const SizedBox(width: 8),
+                              _NeutralChip(
+                                label: task.labelName ?? task.groupName!,
+                                isDark: isDark,
+                              ),
+                            ],
+                            const Spacer(),
+                            if (task.assignedToName != null) ...[
+                              _SingleAvatar(name: task.assignedToName!),
+                              const SizedBox(width: 4),
+                              Text(
+                                task.assignedToName!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: mutedColor,
+                                ),
+                              ),
+                            ] else if (task.createdByEmployeeName != null) ...[
+                              _SingleAvatar(
+                                name: task.createdByEmployeeName!,
+                                color: mutedColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                task.createdByEmployeeName!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: mutedColor,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -533,73 +417,65 @@ class AdminTaskCard extends StatelessWidget {
   }
 }
 
-// ── Sub-widgets ────────────────────────────────────────────────
-
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({
-    required this.label,
-    required this.color,
-    required this.isDark,
-  });
+// ── Neutral chip ───────────────────────────────────────────────
+class _NeutralChip extends StatelessWidget {
+  const _NeutralChip({required this.label, required this.isDark});
   final String label;
-  final Color color;
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final bg = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.05);
+    final fg = isDark ? Colors.white60 : kTextMuted;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.18 : 0.10),
-        borderRadius: BorderRadius.circular(6),
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: fg),
       ),
     );
   }
 }
 
-class _AssigneeAvatar extends StatelessWidget {
-  const _AssigneeAvatar({required this.name});
+// ── Single avatar ──────────────────────────────────────────────
+class _SingleAvatar extends StatelessWidget {
+  const _SingleAvatar({required this.name, this.color});
   final String name;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final c = color ?? kPrimary;
     return Container(
       width: 20,
       height: 20,
       decoration: BoxDecoration(
-        color: kPrimary.withValues(alpha: 0.15),
+        color: c.withValues(alpha: 0.15),
         shape: BoxShape.circle,
-        border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+        border: Border.all(color: c.withValues(alpha: 0.3)),
       ),
       alignment: Alignment.center,
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: const TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.w800,
-          color: kPrimary,
-        ),
+        style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: c),
       ),
     );
   }
 }
 
+// ── Card Menu ─────────────────────────────────────────────────
 class _CardMenu extends StatelessWidget {
   const _CardMenu({
-    required this.onView,
     required this.onDelete,
     required this.isDark,
     required this.mutedColor,
   });
-  final VoidCallback? onView;
   final VoidCallback onDelete;
   final bool isDark;
   final Color mutedColor;
@@ -636,21 +512,6 @@ class _CardMenu extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            if (onView != null)
-              ListTile(
-                leading: Icon(
-                  Icons.visibility_outlined,
-                  color: isDark ? Colors.white70 : kTextDark,
-                ),
-                title: Text(
-                  'View Details',
-                  style: TextStyle(color: isDark ? Colors.white : kTextDark),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  onView!();
-                },
-              ),
             ListTile(
               leading: const Icon(
                 Icons.delete_outline_rounded,
