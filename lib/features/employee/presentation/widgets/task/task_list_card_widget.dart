@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
@@ -8,24 +9,6 @@ class TaskListCard extends StatelessWidget {
 
   final bool isDark;
   final TaskModel task;
-
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[d.month - 1]} ${d.day}, ${d.year}';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +90,7 @@ class TaskListCard extends StatelessWidget {
                         task.dueDate != null
                             ? (task.isOverdue
                                 ? 'Overdue'
-                                : _formatDate(task.dueDate!))
+                                : formatDate(task.dueDate!))
                             : 'No due date',
                         style: TextStyle(
                           fontSize: 11,

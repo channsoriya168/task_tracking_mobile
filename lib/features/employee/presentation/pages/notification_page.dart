@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
@@ -176,25 +177,6 @@ class _NotificationCard extends StatelessWidget {
   final int index;
   final TaskController taskCtrl;
 
-  String _formatDate(DateTime? d) {
-    if (d == null) return 'No date';
-    const m = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${m[d.month - 1]} ${d.day}, ${d.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final priorityColor = kPriorityColors[task.priorityLabel] ?? kTextMuted;
@@ -332,7 +314,7 @@ class _NotificationCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          'Due ${_formatDate(task.dueDate)}',
+                          'Due ${task.dueDate != null ? formatDate(task.dueDate!) : 'No date'}',
                           style: TextStyle(
                             fontSize: 12,
                             color: mutedColor,

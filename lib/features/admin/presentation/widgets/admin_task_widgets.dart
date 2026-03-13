@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/label/admin_label_page.dart';
@@ -275,23 +276,6 @@ class AdminTaskCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback? onTap;
 
-  static const _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]} ${dt.year}';
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -428,7 +412,7 @@ class AdminTaskCard extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    _fmt(task.createdAt),
+                                    formatDate(task.createdAt),
                                     style: TextStyle(
                                       fontSize: 11,
                                       color: mutedColor,
@@ -456,7 +440,7 @@ class AdminTaskCard extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      _fmt(task.dueDate!),
+                                      formatDate(task.dueDate!),
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,

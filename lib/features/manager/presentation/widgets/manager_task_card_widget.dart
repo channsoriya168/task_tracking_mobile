@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/menu_sheet_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_dialog_wiget.dart';
 
 class ManagerTaskCardWidget extends StatelessWidget {
@@ -16,23 +18,6 @@ class ManagerTaskCardWidget extends StatelessWidget {
 
   final TaskItem task;
   final ManagerTaskController managerTaskController;
-
-  static const _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  String _fmt(DateTime dt) => '${dt.day} ${_months[dt.month - 1]} ${dt.year}';
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +127,8 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                   MenuSheetAction(
                                     label: 'Edit',
                                     icon: Icons.edit_outlined,
-                                    onTap: () => showTaskDialog(
-                                      context,
-                                      isDark,
-                                      task: task,
-                                    ),
+                                    onTap: () =>
+                                        showTaskDialog(context, isDark, task: task),
                                   ),
                                   MenuSheetAction(
                                     label: 'Delete',
@@ -193,7 +175,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                _fmt(
+                                formatDate(
                                   task.startDate ??
                                       task.createdAt ??
                                       DateTime.now(),
@@ -225,7 +207,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  _fmt(task.dueDate!),
+                                  formatDate(task.dueDate!),
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,

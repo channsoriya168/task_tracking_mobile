@@ -31,12 +31,11 @@ class TaskItemRemoteDatasource {
         .toList();
   }
 
-  Future<TaskItemModel> create(TaskItemModel taskItem) async {
-    final response = await _dio.post(
+  Future<void> create(TaskItemModel taskItem) async {
+    await _dio.post(
       ApiEndpoints.taskItems,
       data: taskItem.toJson(),
     );
-    return TaskItemModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   Future<TaskItemModel> update(String id, TaskItemModel taskItem) async {
