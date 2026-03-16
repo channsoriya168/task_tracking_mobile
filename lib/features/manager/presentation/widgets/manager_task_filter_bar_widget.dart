@@ -23,11 +23,12 @@ class ManagerTaskFilterBarWidget extends StatelessWidget {
         final selected = ctrl.filterStatus.value;
         final statusItems = [null, ...ctrl.taskStatus]; // null = "All"
 
-        // Compute counts inside Obx so ctrl.tasks is tracked reactively.
+        // Compute counts from allTasks so they stay accurate even when a
+        // status filter is active.
         final counts = <String, int>{
-          'All': ctrl.tasks.length,
+          'All': ctrl.allTasks.length,
           for (final s in ctrl.taskStatus)
-            s.name: ctrl.tasks
+            s.name: ctrl.allTasks
                 .where(
                   (t) => t.status.name.toLowerCase() == s.name.toLowerCase(),
                 )
