@@ -190,100 +190,6 @@ class EmployeeDetailHeaderContent extends StatelessWidget {
   }
 }
 
-// ── Stats row ────────────────────────────────────────────────────
-
-class EmployeeDetailStats extends StatelessWidget {
-  const EmployeeDetailStats({
-    super.key,
-    required this.employee,
-    required this.isDark,
-  });
-
-  final Employee employee;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final textColor = isDark ? Colors.white : kTextDark;
-    final mutedColor = isDark ? Colors.white38 : kTextMuted;
-    final dividerColor = isDark ? Colors.white12 : const Color(0xFFE5E7EB);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: isDark ? kCardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            _StatItem(
-              label: 'Groups',
-              value: '${employee.taskGroups.length}',
-              valueColor: textColor,
-              labelColor: mutedColor,
-            ),
-            VerticalDivider(width: 1, color: dividerColor),
-            _StatItem(
-              label: 'Status',
-              value: employee.isActive ? 'Active' : 'Inactive',
-              valueColor: employee.isActive
-                  ? const Color(0xFF2ED573)
-                  : const Color(0xFFFF4757),
-              labelColor: mutedColor,
-            ),
-            VerticalDivider(width: 1, color: dividerColor),
-            _StatItem(
-              label: 'Since',
-              value: '${employee.createdAt.year}',
-              valueColor: textColor,
-              labelColor: mutedColor,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  const _StatItem({
-    required this.label,
-    required this.value,
-    required this.valueColor,
-    required this.labelColor,
-  });
-
-  final String label;
-  final String value;
-  final Color valueColor;
-  final Color labelColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: valueColor,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(fontSize: 12, color: labelColor),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ── Action buttons ────────────────────────────────────────────────
 
 class EmployeeDetailActions extends StatelessWidget {
@@ -400,7 +306,9 @@ class EmployeeDetailInfoList extends StatelessWidget {
         _InfoData(
           icon: Icons.phone_outlined,
           label: 'Phone',
-          value: employee.phone!,
+          value: employee.phone!.startsWith('+855')
+              ? '0${employee.phone!.substring(4)}'
+              : employee.phone!,
         ),
       if (employee.dateOfBirth != null)
         _InfoData(

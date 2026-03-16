@@ -23,6 +23,9 @@ abstract class ApiEndpoints {
   static String taskItemById(String id) => '/api/v1/task-items/$id';
   static String taskItemAssign(String id) => '/api/v1/task-items/$id/assign';
   static String taskItemStatus(String id) => '/api/v1/task-items/$id/status';
+  static String taskItemMembers(String taskItemId) => '/api/v1/task-items/$taskItemId/members';
+  static String taskItemMemberById(String taskItemId, String memberId) =>
+      '/api/v1/task-items/$taskItemId/members/$memberId';
 
   // ── Lookups ───────────────────────────────────────────────
   static const String lookupTaskPriorities = '/api/v1/lookups/task-priorities';
