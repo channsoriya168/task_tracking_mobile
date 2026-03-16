@@ -11,12 +11,12 @@ class RightEmployeePanelWidget extends StatelessWidget {
   const RightEmployeePanelWidget({
     required this.isDark,
     required this.ctrl,
-    required this.selectedPositionId,
+    required this.selectedTaskGroupId,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
-  final String? selectedPositionId;
+  final String? selectedTaskGroupId;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class RightEmployeePanelWidget extends StatelessWidget {
         PanelHeaderWidget(
           isDark: isDark,
           ctrl: ctrl,
-          selectedPositionId: selectedPositionId,
+          selectedTaskGroupId: selectedTaskGroupId,
         ),
         EmployeeSearchBar(
           isDark: isDark,
@@ -34,9 +34,9 @@ class RightEmployeePanelWidget extends StatelessWidget {
         ),
         Expanded(
           child: Obx(() {
-            final employees = selectedPositionId == null
+            final employees = selectedTaskGroupId == null
                 ? ctrl.filteredEmployees
-                : ctrl.employeesByPosition(selectedPositionId!);
+                : ctrl.employeesByTaskGroup(selectedTaskGroupId!);
 
             if (employees.isEmpty) {
               return Center(
@@ -74,12 +74,12 @@ class RightEmployeePanelWidget extends StatelessWidget {
               itemCount: employees.length,
               itemBuilder: (_, i) {
                 final emp = employees[i];
-                final pos = ctrl.findPosition(emp.positionId);
+                final taskGroup = ctrl.findTaskGroup(emp.positionId);
                 return EmployeeGridCardWidget(
                   isDark: isDark,
                   ctrl: ctrl,
                   employee: emp,
-                  position: pos,
+                  taskGroup: taskGroup,
                 );
               },
             );

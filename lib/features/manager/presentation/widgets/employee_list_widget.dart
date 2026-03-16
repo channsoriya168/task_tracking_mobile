@@ -1,12 +1,13 @@
-// ── Employee List grouped by position ─────────────────────────
+// ── Employee Flat List ─────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_section_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/employee_detail_page.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_card_widget.dart';
 
 class EmployeeListWidget extends StatelessWidget {
-  const EmployeeListWidget({required this.isDark, required this.ctrl});
+  const EmployeeListWidget({super.key, required this.isDark, required this.ctrl});
 
   final bool isDark;
   final EmployeeController ctrl;
@@ -14,32 +15,30 @@ class EmployeeListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final positions = ctrl.positions;
-      if (positions.isEmpty) {
+      final employees = ctrl.filteredEmployees;
+      if (employees.isEmpty) {
         return Center(
           child: Text(
-            'No task groups yet.\nTap "Positions" to add one.',
-            textAlign: TextAlign.center,
+            'No employees found.',
             style: TextStyle(color: isDark ? Colors.grey[500] : kTextMuted),
           ),
         );
       }
-
-      final sections = positions
-          .map((p) => (p, ctrl.employeesByPosition(p.id)))
-          .where((s) => s.$2.isNotEmpty || ctrl.searchQuery.value.isEmpty)
-          .toList();
-
-      return ListView.builder(
+      return ListView.separated(
         padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
-        itemCount: sections.length,
+        itemCount: employees.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 10),
         itemBuilder: (_, i) {
-          final (position, emps) = sections[i];
-          return TaskGroupSectionWidget(
-            isDark: isDark,
-            ctrl: ctrl,
-            position: position,
-            employees: emps,
+          final emp = employees[i];
+          final taskGroup = ctrl.findTaskGroup(emp.positionId);
+          return GestureDetector(
+            onTap: () => Get.to(() => EmployeeDetailPage(employeeId: emp.id)),
+            child: EmployeeCardWidget(
+              isDark: isDark,
+              ctrl: ctrl,
+              employee: emp,
+              taskGroup: taskGroup,
+            ),
           );
         },
       );

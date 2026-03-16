@@ -11,17 +11,17 @@ class EmployeeGridCardWidget extends StatelessWidget {
     required this.isDark,
     required this.ctrl,
     required this.employee,
-    required this.position,
+    required this.taskGroup,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
   final Employee employee;
-  final TaskGroup? position;
+  final TaskGroup? taskGroup;
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = position?.color ?? kPrimary;
+    final accentColor = taskGroup?.color ?? kPrimary;
     return GestureDetector(
       onTap: () => showEmployeeMenuSheet(
         context,
@@ -51,7 +51,7 @@ class EmployeeGridCardWidget extends StatelessWidget {
           nameFontSize: 13,
           emailFontSize: 11,
           trailingIcon: Icons.more_vert_rounded,
-          taskGroup: position,
+          taskGroup: taskGroup,
           clampText: true,
         ),
       ),

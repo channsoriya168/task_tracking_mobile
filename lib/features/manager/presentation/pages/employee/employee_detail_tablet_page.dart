@@ -18,8 +18,8 @@ class EmployeeDetailTabletPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pos = ctrl.findPosition(emp.positionId);
-    final accentColor = pos?.color ?? kPrimary;
+    final taskGroup = ctrl.findTaskGroup(emp.positionId);
+    final accentColor = taskGroup?.color ?? kPrimary;
     final tasks = ctrl.tasksForEmployee(emp.id);
 
     return Scaffold(
@@ -48,7 +48,7 @@ class EmployeeDetailTabletPage extends StatelessWidget {
                     emp: emp,
                     accentColor: accentColor,
                     isDark: isDark,
-                    pos: pos,
+                    taskGroup: taskGroup,
                   ),
                   const SizedBox(height: 28),
                   EmployeeDetailSectionLabel(
@@ -60,7 +60,7 @@ class EmployeeDetailTabletPage extends StatelessWidget {
                     emp: emp,
                     isDark: isDark,
                     accentColor: accentColor,
-                    pos: pos,
+                    taskGroup: taskGroup,
                   ),
                   const SizedBox(height: 28),
                   EmployeeDetailSectionLabel(

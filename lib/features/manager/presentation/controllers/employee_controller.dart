@@ -13,12 +13,13 @@ import 'package:task_tracking_mobile/features/employee/presentation/controllers/
 class EmployeeController extends GetxController {
   final RxList<Employee> employees = <Employee>[].obs;
   final RxString searchQuery = ''.obs;
+  final RxString selectedTaskGroupId = ''.obs;
   final PickAndCompressImageUseCase pickImage = Get.find();
 
   // Track the employee being edited
   Employee? existing;
 
-  RxList<TaskGroup> get positions => Get.find<TaskGroupController>().taskGroups;
+  RxList<TaskGroup> get taskGroups => Get.find<TaskGroupController>().taskGroups;
 
   @override
   void onInit() {
@@ -50,7 +51,7 @@ class EmployeeController extends GetxController {
     );
   }
 
-  Future<void> onOpenPositionDialog(BuildContext context) async {
+  Future<void> onOpenTaskGroupDialog(BuildContext context) async {
     final posCtrl = Get.find<TaskGroupController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final before = posCtrl.taskGroups.map((p) => p.id).toSet();
@@ -60,42 +61,54 @@ class EmployeeController extends GetxController {
     final added = posCtrl.taskGroups
         .where((p) => !before.contains(p.id))
         .toList();
-    if (added.isNotEmpty) formPositionId.value = added.first.id;
+    if (added.isNotEmpty) {
+      if (!formGroupIds.contains(added.first.id)) {
+        formGroupIds.add(added.first.id);
+      }
+    }
   }
 
   List<Employee> get filteredEmployees {
-    if (searchQuery.value.isEmpty) return employees.toList();
-    final q = searchQuery.value.toLowerCase();
-    return employees.where((e) {
-      return e.name.toLowerCase().contains(q) ||
-          e.email.toLowerCase().contains(q);
-    }).toList();
+    var list = employees.toList();
+    if (selectedTaskGroupId.value.isNotEmpty) {
+      list = list.where((e) => e.positionId == selectedTaskGroupId.value).toList();
+    }
+    if (searchQuery.value.isNotEmpty) {
+      final q = searchQuery.value.toLowerCase();
+      list = list.where((e) {
+        return e.name.toLowerCase().contains(q) ||
+            e.email.toLowerCase().contains(q);
+      }).toList();
+    }
+    return list;
   }
 
-  List<Employee> employeesByPosition(String positionId) {
+  List<Employee> employeesByTaskGroup(String positionId) {
     return filteredEmployees.where((e) => e.positionId == positionId).toList();
   }
 
-  TaskGroup? findPosition(String id) {
+  TaskGroup? findTaskGroup(String id) {
     try {
-      return positions.firstWhere((p) => p.id == id);
+      return taskGroups.firstWhere((p) => p.id == id);
     } catch (_) {
       return null;
     }
   }
 
-  int employeeCountByPosition(String positionId) =>
+  int employeeCountByTaskGroup(String positionId) =>
       employees.where((e) => e.positionId == positionId).length;
 
   // ── Dialog form state ──────────────────────────────────────────
   final Rx<String?> formImagePath = Rx(null);
-  final RxString formPositionId = ''.obs;
+  final RxList<String> formGroupIds = <String>[].obs;
   final Rx<DateTime?> formDob = Rx(null);
 
   final nameCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final phoneCtrl = TextEditingController();
   final placeCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  final confirmPasswordCtrl = TextEditingController();
 
   @override
   void onClose() {
@@ -103,30 +116,32 @@ class EmployeeController extends GetxController {
     emailCtrl.dispose();
     phoneCtrl.dispose();
     placeCtrl.dispose();
+    passwordCtrl.dispose();
+    confirmPasswordCtrl.dispose();
     super.onClose();
   }
 
-  void initDialogForm(Employee? existing, String? preselectedPositionId) {
+  void initDialogForm(Employee? existing, String? preselectedTaskGroupId) {
     this.existing = existing;
     formImagePath.value = existing?.imagePath;
-    formPositionId.value =
-        existing?.positionId ??
-        preselectedPositionId ??
-        positions.firstOrNull?.id ??
-        '';
+    formGroupIds.value = existing != null
+        ? [existing.positionId]
+        : (preselectedTaskGroupId != null ? [preselectedTaskGroupId] : []);
     formDob.value = existing?.dateOfBirth;
     nameCtrl.text = existing?.name ?? '';
     emailCtrl.text = existing?.email ?? '';
     phoneCtrl.text = existing?.phone ?? '';
     placeCtrl.text = existing?.placeOfBirth ?? '';
+    passwordCtrl.clear();
+    confirmPasswordCtrl.clear();
   }
 
   void showDialog(
     bool isDark, [
     Employee? existing,
-    String? preselectedPositionId,
+    String? preselectedTaskGroupId,
   ]) {
-    initDialogForm(existing, preselectedPositionId);
+    initDialogForm(existing, preselectedTaskGroupId);
     Get.bottomSheet(
       EmployeeDialogSheet(controller: this),
       isScrollControlled: true,
@@ -142,15 +157,19 @@ class EmployeeController extends GetxController {
         ? null
         : placeCtrl.text.trim();
 
-    if (name.isEmpty || email.isEmpty || formPositionId.value.isEmpty) return;
+    final positionId = formGroupIds.firstOrNull ?? '';
+    if (name.isEmpty || email.isEmpty || positionId.isEmpty) return;
 
     if (existing == null) {
+      final password = passwordCtrl.text.trim();
+      final confirmPassword = confirmPasswordCtrl.text.trim();
+      if (password.isEmpty || password != confirmPassword) return;
       addEmployee(
         Employee(
           id: generateId(),
           name: name,
           email: email,
-          positionId: formPositionId.value,
+          positionId: positionId,
           imagePath: formImagePath.value,
           dateOfBirth: formDob.value,
           placeOfBirth: placeOfBirth,
@@ -162,7 +181,7 @@ class EmployeeController extends GetxController {
         existing!.copyWith(
           name: name,
           email: email,
-          positionId: formPositionId.value,
+          positionId: positionId,
           imagePath: formImagePath.value,
           dateOfBirth: formDob.value,
           placeOfBirth: placeOfBirth,

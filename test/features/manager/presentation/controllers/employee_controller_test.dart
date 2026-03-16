@@ -178,34 +178,34 @@ void main() {
   });
 
   group('EmployeeController – helpers', () {
-    test('employeesByPosition returns matching employees', () {
+    test('employeesByTaskGroup returns matching employees', () {
       final ctrl = _buildController();
       final positionId = ctrl.employees.first.positionId;
-      final result = ctrl.employeesByPosition(positionId);
+      final result = ctrl.employeesByTaskGroup(positionId);
       expect(result.every((e) => e.positionId == positionId), isTrue);
     });
 
-    test('employeeCountByPosition counts correctly', () {
+    test('employeeCountByTaskGroup counts correctly', () {
       final ctrl = _buildController();
       final positionId = ctrl.employees.first.positionId;
       final expected = ctrl.employees
           .where((e) => e.positionId == positionId)
           .length;
-      expect(ctrl.employeeCountByPosition(positionId), expected);
+      expect(ctrl.employeeCountByTaskGroup(positionId), expected);
     });
 
-    test('findPosition returns position when it exists', () async {
+    test('findTaskGroup returns position when it exists', () async {
       final ctrl = _buildController();
       final posCtrl = Get.find<TaskGroupController>();
       await posCtrl.fetchTaskGroups(); // ensure task groups are loaded
       final pos = posCtrl.taskGroups.first;
-      expect(ctrl.findPosition(pos.id), isNotNull);
-      expect(ctrl.findPosition(pos.id)!.id, pos.id);
+      expect(ctrl.findTaskGroup(pos.id), isNotNull);
+      expect(ctrl.findTaskGroup(pos.id)!.id, pos.id);
     });
 
-    test('findPosition returns null for unknown id', () {
+    test('findTaskGroup returns null for unknown id', () {
       final ctrl = _buildController();
-      expect(ctrl.findPosition('no_such_position'), isNull);
+      expect(ctrl.findTaskGroup('no_such_position'), isNull);
     });
 
     test('generateId returns a non-empty string', () {
@@ -222,15 +222,15 @@ void main() {
 
       expect(ctrl.nameCtrl.text, emp.name);
       expect(ctrl.emailCtrl.text, emp.email);
-      expect(ctrl.formPositionId.value, emp.positionId);
+      expect(ctrl.formGroupIds, contains(emp.positionId));
     });
 
     test(
-      'initDialogForm uses preselectedPositionId when no existing employee',
+      'initDialogForm uses preselectedTaskGroupId when no existing employee',
       () {
         final ctrl = _buildController();
         ctrl.initDialogForm(null, 'p2');
-        expect(ctrl.formPositionId.value, 'p2');
+        expect(ctrl.formGroupIds, contains('p2'));
       },
     );
 
@@ -260,8 +260,22 @@ void main() {
       final before = ctrl.employees.length;
       ctrl.nameCtrl.text = 'Test Person';
       ctrl.emailCtrl.text = 'test@test.com';
+      ctrl.passwordCtrl.text = 'secret123';
+      ctrl.confirmPasswordCtrl.text = 'secret123';
       ctrl.saveEmployee();
       expect(ctrl.employees.length, before + 1);
+    });
+
+    test('saveEmployee does nothing when passwords do not match', () {
+      final ctrl = _buildController();
+      ctrl.initDialogForm(null, 'p1');
+      final before = ctrl.employees.length;
+      ctrl.nameCtrl.text = 'Test Person';
+      ctrl.emailCtrl.text = 'test@test.com';
+      ctrl.passwordCtrl.text = 'secret123';
+      ctrl.confirmPasswordCtrl.text = 'different';
+      ctrl.saveEmployee();
+      expect(ctrl.employees.length, before);
     });
 
     test('saveEmployee updates existing employee', () {

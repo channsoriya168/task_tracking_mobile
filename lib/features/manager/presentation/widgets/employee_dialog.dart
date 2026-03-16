@@ -141,15 +141,38 @@ class EmployeeDialogSheet extends StatelessWidget {
                       isDark: isDark,
                     ),
                     const SizedBox(height: 14),
-                    _PositionPicker(
+                    _TaskGroupPicker(
                       isDark: isDark,
-                      positions: controller.positions,
-                      formPositionId: controller.formPositionId,
-                      onAddPosition: () =>
-                          controller.onOpenPositionDialog(context),
-                      onSelectPosition: (id) =>
-                          controller.formPositionId.value = id,
+                      taskGroups: controller.taskGroups,
+                      formGroupIds: controller.formGroupIds,
+                      onAddTaskGroup: () =>
+                          controller.onOpenTaskGroupDialog(context),
+                      onToggleTaskGroup: (id) {
+                        if (controller.formGroupIds.contains(id)) {
+                          controller.formGroupIds.remove(id);
+                        } else {
+                          controller.formGroupIds.add(id);
+                        }
+                      },
                     ),
+                    if (controller.existing == null) ...[
+                      const SizedBox(height: 14),
+                      TextFieldWidget(
+                        controller: controller.passwordCtrl,
+                        label: 'Password',
+                        hint: 'Enter password',
+                        isDark: isDark,
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 14),
+                      TextFieldWidget(
+                        controller: controller.confirmPasswordCtrl,
+                        label: 'Confirm Password',
+                        hint: 'Re-enter password',
+                        isDark: isDark,
+                        obscureText: true,
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
@@ -185,21 +208,21 @@ class EmployeeDialogSheet extends StatelessWidget {
   }
 }
 
-// ── Position Picker ────────────────────────────────────────────
-class _PositionPicker extends StatelessWidget {
-  const _PositionPicker({
+// ── Task Group Picker ──────────────────────────────────────────
+class _TaskGroupPicker extends StatelessWidget {
+  const _TaskGroupPicker({
     required this.isDark,
-    required this.positions,
-    required this.formPositionId,
-    required this.onAddPosition,
-    required this.onSelectPosition,
+    required this.taskGroups,
+    required this.formGroupIds,
+    required this.onAddTaskGroup,
+    required this.onToggleTaskGroup,
   });
 
   final bool isDark;
-  final RxList<TaskGroup> positions;
-  final RxString formPositionId;
-  final VoidCallback onAddPosition;
-  final void Function(String id) onSelectPosition;
+  final RxList<TaskGroup> taskGroups;
+  final RxList<String> formGroupIds;
+  final VoidCallback onAddTaskGroup;
+  final void Function(String id) onToggleTaskGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +232,7 @@ class _PositionPicker extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Position',
+              'Task Group',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -218,13 +241,13 @@ class _PositionPicker extends StatelessWidget {
             ),
             const Spacer(),
             GestureDetector(
-              onTap: onAddPosition,
+              onTap: onAddTaskGroup,
               child: Row(
                 children: [
                   Icon(Icons.add_rounded, size: 15, color: kPrimary),
                   const SizedBox(width: 4),
                   Text(
-                    'New Position',
+                    'New Task Group',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -238,9 +261,9 @@ class _PositionPicker extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Obx(() {
-          if (positions.isEmpty) {
+          if (taskGroups.isEmpty) {
             return GestureDetector(
-              onTap: onAddPosition,
+              onTap: onAddTaskGroup,
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
@@ -277,10 +300,10 @@ class _PositionPicker extends StatelessWidget {
           return Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: positions.map((p) {
-              final selected = formPositionId.value == p.id;
+            children: taskGroups.map((p) {
+              final selected = formGroupIds.contains(p.id);
               return GestureDetector(
-                onTap: () => onSelectPosition(p.id),
+                onTap: () => onToggleTaskGroup(p.id),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.symmetric(

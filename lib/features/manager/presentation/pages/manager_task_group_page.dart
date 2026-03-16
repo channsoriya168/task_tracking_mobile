@@ -67,7 +67,7 @@ class ManageTaskGroupWidget extends StatelessWidget {
           itemCount: positions.length,
           itemBuilder: (_, i) {
             final pos = positions[i];
-            final count = employeeCtrl.employeeCountByPosition(pos.id);
+            final count = employeeCtrl.employeeCountByTaskGroup(pos.id);
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: TaskGroupCardWidget(

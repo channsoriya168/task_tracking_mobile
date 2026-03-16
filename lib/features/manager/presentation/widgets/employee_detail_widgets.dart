@@ -15,13 +15,13 @@ class EmployeeDetailHeader extends StatelessWidget {
     required this.emp,
     required this.accentColor,
     required this.isDark,
-    required this.pos,
+    required this.taskGroup,
   });
 
   final Employee emp;
   final Color accentColor;
   final bool isDark;
-  final TaskGroup? pos;
+  final TaskGroup? taskGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class EmployeeDetailHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          if (pos != null)
+          if (taskGroup != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
@@ -47,7 +47,7 @@ class EmployeeDetailHeader extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                pos!.name,
+                taskGroup!.name,
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -94,13 +94,13 @@ class EmployeeInfoSection extends StatelessWidget {
     required this.emp,
     required this.isDark,
     required this.accentColor,
-    required this.pos,
+    required this.taskGroup,
   });
 
   final Employee emp;
   final bool isDark;
   final Color accentColor;
-  final TaskGroup? pos;
+  final TaskGroup? taskGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -134,11 +134,11 @@ class EmployeeInfoSection extends StatelessWidget {
             value: emp.placeOfBirth!,
             isDark: isDark,
           ),
-        if (pos != null)
+        if (taskGroup != null)
           EmployeeInfoRow(
             icon: Icons.work_outline_rounded,
-            label: 'Position',
-            value: pos!.name,
+            label: 'Task Group',
+            value: taskGroup!.name,
             isDark: isDark,
             valueColor: accentColor,
           ),
