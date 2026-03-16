@@ -6,13 +6,12 @@ import 'package:task_tracking_mobile/app/routes/app_pages.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/app/themes/dark_theme.dart';
 import 'package:task_tracking_mobile/app/themes/light_theme.dart';
-import 'package:task_tracking_mobile/features/core/presentation/bindings/app_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-  AppBinding().dependencies();
+  Get.put<ThemeController>(ThemeController(), permanent: true);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color.fromARGB(0, 245, 16, 16),
