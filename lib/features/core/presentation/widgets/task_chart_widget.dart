@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
-
-enum _ChartFilter { day, week, month }
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 
 class _ChartData {
   _ChartData(this.label, this.count, this.color);
@@ -13,80 +12,41 @@ class _ChartData {
   final Color color;
 }
 
-class TaskChartWidget extends StatefulWidget {
+class TaskChartWidget extends StatelessWidget {
   const TaskChartWidget({
     super.key,
     required this.isDark,
     required this.tasks,
+    required this.taskStatus,
   });
 
   final bool isDark;
   final RxList<TaskItem> tasks;
-
-  @override
-  State<TaskChartWidget> createState() => _TaskChartWidgetState();
-}
-
-class _TaskChartWidgetState extends State<TaskChartWidget> {
-  _ChartFilter _filter = _ChartFilter.day;
-
-  List<TaskItem> _applyFilter(List<TaskItem> tasks) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    return tasks.where((t) {
-      if (t.createdAt == null) return false;
-      final created = DateTime(
-        t.createdAt!.year,
-        t.createdAt!.month,
-        t.createdAt!.day,
-      );
-      return switch (_filter) {
-        _ChartFilter.day => created == today,
-        _ChartFilter.week =>
-          !created.isBefore(today.subtract(const Duration(days: 6))) &&
-              !created.isAfter(today),
-        _ChartFilter.month =>
-          !created.isBefore(today.subtract(const Duration(days: 29))) &&
-              !created.isAfter(today),
-      };
-    }).toList();
-  }
+  final RxList<TaskStatusLookup> taskStatus;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = widget.isDark;
-
     final cardBg = isDark ? kCardDark : Colors.white;
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.07)
         : Colors.black.withValues(alpha: 0.06);
     final textColor = isDark ? Colors.white : kTextDark;
     final mutedColor = isDark ? Colors.grey[500]! : kTextMuted;
-    final chipBg = isDark
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.black.withValues(alpha: 0.04);
 
     return Obx(() {
-      final filtered = _applyFilter(widget.tasks);
-      final assigned = filtered
-          .where((t) => t.status.name.toLowerCase() == 'assigned')
-          .length;
-      final inProgress = filtered
-          .where((t) => t.status.name.toLowerCase() == 'inprogress')
-          .length;
-      final done = filtered
-          .where((t) => t.status.name.toLowerCase() == 'completed')
-          .length;
-      final fail = filtered
-          .where((t) => t.status.name.toLowerCase() == 'cancelled')
-          .length;
-      final total = assigned + inProgress + done + fail;
-      final data = [
-        _ChartData('Assigned', assigned, kMediumPriority),
-        _ChartData('In Progress', inProgress, kPrimary),
-        _ChartData('Done', done, kLowPriority),
-        _ChartData('Fail', fail, kHighPriority),
-      ].where((d) => d.count > 0).toList();
+      // Count tasks per status name
+      final Map<String, int> statusCounts = {};
+      for (final t in tasks) {
+        final name = t.status.name;
+        statusCounts[name] = (statusCounts[name] ?? 0) + 1;
+      }
+
+      final total = tasks.length;
+
+      // Build data from all statuses (show even those with 0 tasks)
+      final dataWithColor = taskStatus
+          .map((s) => _ChartData(s.name, statusCounts[s.name] ?? 0, s.color))
+          .toList();
 
       return Container(
         decoration: BoxDecoration(
@@ -98,70 +58,14 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Title row with filter dropdown ──────────────
-            Row(
-              children: [
-                Text(
-                  'Task Summary',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: chipBg,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : Colors.black.withValues(alpha: 0.08),
-                    ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<_ChartFilter>(
-                      value: _filter,
-                      isDense: true,
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: 16,
-                        color: mutedColor,
-                      ),
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
-                      ),
-                      dropdownColor:
-                          isDark ? const Color(0xFF2A2A3A) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      items: const [
-                        DropdownMenuItem(
-                          value: _ChartFilter.day,
-                          child: Text('Day'),
-                        ),
-                        DropdownMenuItem(
-                          value: _ChartFilter.week,
-                          child: Text('Week'),
-                        ),
-                        DropdownMenuItem(
-                          value: _ChartFilter.month,
-                          child: Text('Month'),
-                        ),
-                      ],
-                      onChanged: (f) {
-                        if (f != null) setState(() => _filter = f);
-                      },
-                    ),
-                  ),
-                ),
-              ],
+            // ── Title ────────────────────────────────────────
+            Text(
+              'Task Summary',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -187,7 +91,7 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
                           margin: EdgeInsets.zero,
                           series: [
                             DoughnutSeries<_ChartData, String>(
-                              dataSource: data,
+                              dataSource: dataWithColor.where((d) => d.count > 0).toList(),
                               xValueMapper: (d, _) => d.label,
                               yValueMapper: (d, _) => d.count,
                               pointColorMapper: (d, _) => d.color,
@@ -230,37 +134,16 @@ class _TaskChartWidgetState extends State<TaskChartWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _LegendItem(
-                        label: 'Assigned',
-                        count: assigned,
-                        color: kMediumPriority,
-                        total: total,
-                        isDark: isDark,
-                      ),
-                      const SizedBox(height: 12),
-                      _LegendItem(
-                        label: 'In Progress',
-                        count: inProgress,
-                        color: kPrimary,
-                        total: total,
-                        isDark: isDark,
-                      ),
-                      const SizedBox(height: 12),
-                      _LegendItem(
-                        label: 'Done',
-                        count: done,
-                        color: kLowPriority,
-                        total: total,
-                        isDark: isDark,
-                      ),
-                      const SizedBox(height: 12),
-                      _LegendItem(
-                        label: 'Fail',
-                        count: fail,
-                        color: kHighPriority,
-                        total: total,
-                        isDark: isDark,
-                      ),
+                      for (int i = 0; i < dataWithColor.length; i++) ...[
+                        if (i > 0) const SizedBox(height: 12),
+                        _LegendItem(
+                          label: dataWithColor[i].label,
+                          count: dataWithColor[i].count,
+                          color: dataWithColor[i].color,
+                          total: total,
+                          isDark: isDark,
+                        ),
+                      ],
                     ],
                   ),
                 ),
