@@ -13,6 +13,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_label
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
 
 class ManagerTaskController extends GetxController {
@@ -20,12 +21,14 @@ class ManagerTaskController extends GetxController {
   final CreateTaskItemUsecase _createTaskItem;
   final UpdateTaskItemUsecase _updateTaskItem;
   final DeleteTaskItemUsecase _deleteTaskItem;
+  final FetchTaskItemByIdUsecase _fetchTaskItemById;
   final FetchTaskPrioritiesUsecase _fetchPriorities;
   final FetchTaskStatusesUsecase _fetchStatuses;
   final GetAllLabelsUseCase _getAllLabels;
 
   ManagerTaskController(
     this._fetchTaskItems,
+    this._fetchTaskItemById,
     this._createTaskItem,
     this._updateTaskItem,
     this._deleteTaskItem,
@@ -35,6 +38,10 @@ class ManagerTaskController extends GetxController {
   );
 
   final RxList<TaskItem> tasks = <TaskItem>[].obs;
+
+  /// All tasks for the selected date, unfiltered by status — used for counts.
+  final RxList<TaskItem> allTasks = <TaskItem>[].obs;
+
   final RxList<TaskPriority> taskPriority = <TaskPriority>[].obs;
   final RxList<TaskStatusLookup> taskStatus = <TaskStatusLookup>[].obs;
   final RxList<Label> labels = <Label>[].obs;
@@ -70,8 +77,8 @@ class ManagerTaskController extends GetxController {
   List<TaskItem> get filteredTasks => tasks.toList();
 
   int countByStatus(String statusName) {
-    if (statusName == 'All') return tasks.length;
-    return tasks
+    if (statusName == 'All') return allTasks.length;
+    return allTasks
         .where((t) => t.status.name.toLowerCase() == statusName.toLowerCase())
         .length;
   }
@@ -94,8 +101,8 @@ class ManagerTaskController extends GetxController {
 
     titleTextEditor.addListener(() => titleText.value = titleTextEditor.text);
 
-    // Re-fetch when status filter changes.
-    ever(filterStatusId, (_) => fetchTasks());
+    // Re-apply client-side status filter when selection changes (no extra API call).
+    ever(filterStatusId, (_) => _applyStatusFilter());
 
     // Debounce search so we don't hit the API on every keystroke.
     debounce(
@@ -105,20 +112,38 @@ class ManagerTaskController extends GetxController {
     );
   }
 
+  Future<TaskItem?> fetchTaskById(String id) async {
+    try {
+      return await _fetchTaskItemById(id);
+    } catch (e) {
+      AppSnackbar.error('Error', AppSnackbar.parseApiError(e, fallback: 'Could not load task.'));
+      return null;
+    }
+  }
+
   Future<void> fetchTasks() async {
     isLoading.value = true;
     errorMessage.value = '';
     try {
       final result = await _fetchTaskItems(
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
-        statusId: filterStatusId.value,
         SelectedDate: taskSelectedDate.value,
       );
-      tasks.assignAll(result);
+      allTasks.assignAll(result);
+      _applyStatusFilter();
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void _applyStatusFilter() {
+    final id = filterStatusId.value;
+    if (id == null) {
+      tasks.assignAll(allTasks);
+    } else {
+      tasks.assignAll(allTasks.where((t) => t.status.id == id));
     }
   }
 
@@ -246,9 +271,16 @@ class ManagerTaskController extends GetxController {
   Future<void> deleteTask(TaskItem taskItem) async {
     try {
       await _deleteTaskItem(taskItem);
-      tasks.removeWhere((t) => t.id == taskItem.id);
+      await fetchTasks();
+      AppSnackbar.success(
+        'Task Deleted',
+        '"${taskItem.title}" has been deleted.',
+      );
     } catch (e) {
-      errorMessage.value = e.toString();
+      AppSnackbar.error(
+        'Delete Failed',
+        AppSnackbar.parseApiError(e, fallback: 'Could not delete task.'),
+      );
     }
   }
 

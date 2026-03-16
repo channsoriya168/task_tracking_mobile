@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_chart_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_dashboard_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashboard/dashboard_date_header_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashboard/dashboard_task_count_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
@@ -16,7 +19,7 @@ class ManagerDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCtrl = Get.find<ThemeController>();
-    final ctrl = Get.find<ManagerTaskController>();
+    final ctrl = Get.find<ManagerDashboardController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : kTextDark;
     final mutedColor = isDark ? Colors.white38 : kTextMuted;
@@ -28,7 +31,15 @@ class ManagerDashboardPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
       body: Obx(() {
-        final filtered = ctrl.filteredTasks;
+        final grouped = ctrl.groupedTasks;
+        final totalCount = ctrl.filteredTasks.length;
+
+        // Flatten into a mixed list: String = date header, TaskItem = card
+        final items = <Object>[];
+        for (final entry in grouped.entries) {
+          items.add(entry.key);
+          items.addAll(entry.value);
+        }
 
         return CustomScrollView(
           slivers: [
@@ -63,8 +74,8 @@ class ManagerDashboardPage extends StatelessWidget {
               sliver: SliverToBoxAdapter(
                 child: WeekCalendarWidget(
                   isDark: isDark,
-                  selectedDate: ctrl.taskSelectedDate.value,
-                  onDateSelected: ctrl.selectTaskDate,
+                  selectedDate: ctrl.selectedDate.value,
+                  onDateSelected: ctrl.selectDate,
                 ),
               ),
             ),
@@ -76,9 +87,18 @@ class ManagerDashboardPage extends StatelessWidget {
                 child: TaskChartWidget(isDark: isDark, tasks: ctrl.tasks),
               ),
             ),
+
+            // ── Filter Bar ────────────────────────────────────
             SliverToBoxAdapter(
-              child: ManagerTaskFilterBarWidget(isDark: isDark, ctrl: ctrl),
+              child: ManagerTaskFilterBarWidget(
+                isDark: isDark,
+                filterStatus: ctrl.filterStatus,
+                taskStatus: ctrl.taskStatus,
+                allTasks: ctrl.allTasks,
+                onSelectStatus: ctrl.selectStatus,
+              ),
             ),
+
             // ── Search Bar ────────────────────────────────────
             SliverPadding(
               padding: kPageSectionPadding,
@@ -112,57 +132,21 @@ class ManagerDashboardPage extends StatelessWidget {
               ),
             ),
 
-            // ── Task count + clear date ────────────────────────
+            // ── Task count ────────────────────────────────────
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               sliver: SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    Text(
-                      'Tasks',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: textColor,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: kPrimary.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    if (ctrl.dashboardSelectedDate.value != null) ...[
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () => ctrl.dashboardSelectedDate.value = null,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.close_rounded,
-                              size: 13,
-                              color: mutedColor,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              'Clear date',
-                              style: TextStyle(fontSize: 12, color: mutedColor),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
+                child: DashboardTaskCountWidget(
+                  count: totalCount,
+                  isDark: isDark,
+                  hasDateFilter: ctrl.dashboardDateFilter.value != null,
+                  onClearDate: () => ctrl.dashboardDateFilter.value = null,
                 ),
               ),
             ),
-            // ── Task List ─────────────────────────────────────
-            filtered.isEmpty
+
+            // ── Grouped Task List ─────────────────────────────
+            items.isEmpty
                 ? SliverPadding(
                     padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
                     sliver: SliverToBoxAdapter(
@@ -172,19 +156,24 @@ class ManagerDashboardPage extends StatelessWidget {
                 : SliverPadding(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) => Padding(
+                      delegate: SliverChildBuilderDelegate((context, i) {
+                        final item = items[i];
+                        if (item is String) {
+                          return DashboardDateHeaderWidget(
+                            label: item,
+                            isDark: isDark,
+                          );
+                        }
+                        return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: ManagerTaskCardWidget(
-                            task: filtered[i],
-                            managerTaskController: ctrl,
+                            task: item as TaskItem,
+                            fetchDetail: ctrl.fetchTaskById,
                           ),
-                        ),
-                        childCount: filtered.length,
-                      ),
+                        );
+                      }, childCount: items.length),
                     ),
                   ),
-            const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
           ],
         );
       }),

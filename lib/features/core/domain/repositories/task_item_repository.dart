@@ -7,6 +7,7 @@ abstract interface class TaskItemRepository {
     String? groupId,
     DateTime? SelectedDate,
   });
+  Future<TaskItem> fetchTaskItemById(String id);
   Future<void> addTaskItem(TaskItem taskItem);
   Future<void> updateTaskItem(TaskItem taskItem);
   Future<void> deleteTaskItem(TaskItem taskItem);

@@ -22,6 +22,9 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
   );
 
   @override
+  Future<TaskItem> fetchTaskItemById(String id) => _remote.getById(id);
+
+  @override
   Future<void> addTaskItem(TaskItem taskItem) =>
       _remote.create(taskItem as TaskItemModel);
 

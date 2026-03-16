@@ -36,7 +36,13 @@ class ManagerTaskMobilePage extends StatelessWidget {
             ),
           ),
 
-          ManagerTaskFilterBarWidget(isDark: isDark, ctrl: ctrl),
+          ManagerTaskFilterBarWidget(
+            isDark: isDark,
+            filterStatus: ctrl.filterStatus,
+            taskStatus: ctrl.taskStatus,
+            allTasks: ctrl.allTasks,
+            onSelectStatus: ctrl.selectStatus,
+          ),
           SearchBarWidget(
             isDark: isDark,
             onChanged: (value) => ctrl.searchQuery.value = value,

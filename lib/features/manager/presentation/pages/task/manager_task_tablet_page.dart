@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_header_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_list_widget.dart';
@@ -30,16 +31,29 @@ class ManagerTaskTabletPage extends StatelessWidget {
             width: 1,
             thickness: 1,
             color: isDark
-                ? Colors.white.withAlpha(15)
-                : Colors.black.withAlpha(10),
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.04),
           ),
 
-          // ── Right Panel: Task List ────────────────────────
+          // ── Right Panel: Calendar + Task List ─────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ManagerTaskHeaderWidget(isDark: isDark, ctrl: ctrl),
+                // ManagerTaskHeaderWidget(isDark: isDark, ctrl: ctrl),
+
+                // Week calendar
+                Padding(
+                  padding: kPageSectionPadding,
+                  child: Obx(
+                    () => WeekCalendarWidget(
+                      isDark: isDark,
+                      selectedDate: ctrl.taskSelectedDate.value,
+                      onDateSelected: ctrl.selectTaskDate,
+                    ),
+                  ),
+                ),
+
                 SearchBarWidget(
                   isDark: isDark,
                   onChanged: (value) => ctrl.searchQuery.value = value,
@@ -60,8 +74,6 @@ class ManagerTaskTabletPage extends StatelessWidget {
 }
 
 // ── Left Filter Panel ──────────────────────────────────────────
-const _kFilters = ['All', 'Pending', 'In Progress', 'Complete', 'Fail'];
-
 class _FilterPanel extends StatelessWidget {
   const _FilterPanel({required this.isDark, required this.ctrl});
 
@@ -74,33 +86,52 @@ class _FilterPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
           child: Text(
             'Filter',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : kTextDark,
             ),
           ),
         ),
-        Obx(() {
-          final current = ctrl.filterStatus.value;
-          return Column(
-            children: _kFilters.map((filter) {
-              final selected = current == filter;
-              final count = ctrl.countByStatus(filter);
-              return _FilterTile(
-                isDark: isDark,
-                filter: filter,
-                count: count,
-                selected: selected,
-                onTap: () => ctrl.filterStatus.value = filter,
-              );
-            }).toList(),
-          );
-        }),
-        const Spacer(),
+
+        // Dynamic status list from API — scrollable to prevent overflow
+        Expanded(
+          child: Obx(() {
+            final current = ctrl.filterStatus.value;
+            final statusItems = [null, ...ctrl.taskStatus];
+            final counts = <String, int>{
+              'All': ctrl.allTasks.length,
+              for (final s in ctrl.taskStatus)
+                s.name: ctrl.allTasks
+                    .where(
+                      (t) =>
+                          t.status.name.toLowerCase() == s.name.toLowerCase(),
+                    )
+                    .length,
+            };
+
+            return ListView(
+              padding: EdgeInsets.zero,
+              children: statusItems.map((status) {
+                final label = status?.name ?? 'All';
+                final selected = current == label;
+                final count = counts[label] ?? 0;
+                return _FilterTile(
+                  isDark: isDark,
+                  label: label,
+                  count: count,
+                  selected: selected,
+                  onTap: () => ctrl.selectStatus(status),
+                );
+              }).toList(),
+            );
+          }),
+        ),
+
+        // Create Task button
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           child: SizedBox(
@@ -128,17 +159,18 @@ class _FilterPanel extends StatelessWidget {
   }
 }
 
+// ── Filter tile ────────────────────────────────────────────────
 class _FilterTile extends StatelessWidget {
   const _FilterTile({
     required this.isDark,
-    required this.filter,
+    required this.label,
     required this.count,
     required this.selected,
     required this.onTap,
   });
 
   final bool isDark;
-  final String filter;
+  final String label;
   final int count;
   final bool selected;
   final VoidCallback onTap;
@@ -160,7 +192,7 @@ class _FilterTile extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              filter,
+              label,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
