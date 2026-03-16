@@ -10,18 +10,17 @@ class TaskItemRemoteDatasource {
     String? search,
     int? statusId,
     String? groupId,
-    DateTime? dueDateFrom,
-    DateTime? dueDateTo,
+    DateTime? SelectedDate,
   }) async {
     final params = <String, dynamic>{};
     if (search != null && search.isNotEmpty) params['Search'] = search;
     if (statusId != null) params['Status'] = statusId;
     if (groupId != null && groupId.isNotEmpty) params['GroupId'] = groupId;
-    if (dueDateFrom != null) {
-      params['DueDateFrom'] = dueDateFrom.toUtc().toIso8601String();
-    }
-    if (dueDateTo != null) {
-      params['DueDateTo'] = dueDateTo.toUtc().toIso8601String();
+    if (SelectedDate != null) {
+      params['SelectedDate'] =
+          '${SelectedDate.year.toString().padLeft(4, '0')}-'
+          '${SelectedDate.month.toString().padLeft(2, '0')}-'
+          '${SelectedDate.day.toString().padLeft(2, '0')}';
     }
 
     final response = await _dio.get(
@@ -34,10 +33,7 @@ class TaskItemRemoteDatasource {
   }
 
   Future<void> create(TaskItemModel taskItem) async {
-    await _dio.post(
-      ApiEndpoints.taskItems,
-      data: taskItem.toJson(),
-    );
+    await _dio.post(ApiEndpoints.taskItems, data: taskItem.toJson());
   }
 
   Future<TaskItemModel> update(String id, TaskItemModel taskItem) async {
@@ -60,9 +56,6 @@ class TaskItemRemoteDatasource {
   }
 
   Future<void> updateStatus(String id, int status) async {
-    await _dio.patch(
-      ApiEndpoints.taskItemStatus(id),
-      data: {'status': status},
-    );
+    await _dio.patch(ApiEndpoints.taskItemStatus(id), data: {'status': status});
   }
 }

@@ -5,8 +5,7 @@ abstract interface class TaskItemRepository {
     String? search,
     int? statusId,
     String? groupId,
-    DateTime? dueDateFrom,
-    DateTime? dueDateTo,
+    DateTime? SelectedDate,
   });
   Future<void> addTaskItem(TaskItem taskItem);
   Future<void> updateTaskItem(TaskItem taskItem);

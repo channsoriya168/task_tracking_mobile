@@ -44,9 +44,7 @@ class EmployeeTaskController extends GetxController {
   /// Status-filtered view of allTasks for the task list.
   List<TaskItem> get filteredTasks {
     if (filterStatusId.value == null) return allTasks.toList();
-    return allTasks
-        .where((t) => t.status.id == filterStatusId.value)
-        .toList();
+    return allTasks.where((t) => t.status.id == filterStatusId.value).toList();
   }
 
   /// Count for each chip — always from allTasks so all chips stay accurate.
@@ -104,8 +102,7 @@ class EmployeeTaskController extends GetxController {
       final result = await _fetchTaskItems(
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
         groupId: _employeeGroupId,
-        dueDateFrom: filterDueDateFrom.value,
-        dueDateTo: filterDueDateTo.value,
+        SelectedDate: filterDueDateFrom.value,
         // statusId intentionally omitted — filtered client-side
       );
       allTasks.assignAll(result);
@@ -157,7 +154,6 @@ class EmployeeTaskController extends GetxController {
 
   /// Assigns the task to the current employee and sets status to InProgress.
   Future<bool> acceptTask(TaskItem task) async {
-    
     final employeeId = _employeeId;
     if (employeeId == null) return false;
 

@@ -49,10 +49,7 @@ class ManagerTaskController extends GetxController {
 
   /// Selected single day from the week calendar (task page).
   final Rxn<DateTime> taskSelectedDate = Rxn<DateTime>();
-
-  /// Due-date range filter sent to the API.
-  final Rxn<DateTime> filterDueDateFrom = Rxn<DateTime>();
-  final Rxn<DateTime> filterDueDateTo = Rxn<DateTime>();
+  final Rxn<DateTime> currentDate = Rxn<DateTime>();
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -88,8 +85,7 @@ class ManagerTaskController extends GetxController {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     taskSelectedDate.value = today;
-    filterDueDateFrom.value = today;
-    filterDueDateTo.value = DateTime(now.year, now.month, now.day, 23, 59, 59);
+    currentDate.value = today;
 
     fetchTasks();
     fetchPriorities();
@@ -116,8 +112,7 @@ class ManagerTaskController extends GetxController {
       final result = await _fetchTaskItems(
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
         statusId: filterStatusId.value,
-        dueDateFrom: filterDueDateFrom.value,
-        dueDateTo: filterDueDateTo.value,
+        SelectedDate: taskSelectedDate.value,
       );
       tasks.assignAll(result);
     } catch (e) {
@@ -132,18 +127,6 @@ class ManagerTaskController extends GetxController {
     taskSelectedDate.value = date;
     if (date == null) {
       taskSelectedDate.value = DateTime.now();
-      filterDueDateFrom.value = null;
-      filterDueDateTo.value = null;
-    } else {
-      filterDueDateFrom.value = DateTime(date.year, date.month, date.day);
-      filterDueDateTo.value = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        23,
-        59,
-        59,
-      );
     }
     fetchTasks();
   }
@@ -188,6 +171,7 @@ class ManagerTaskController extends GetxController {
     if (title.isEmpty || priority == null || groupId == null) return false;
 
     try {
+      final now = DateTime.now();
       final model = TaskItemModel(
         id: '',
         title: title,
@@ -198,7 +182,7 @@ class ManagerTaskController extends GetxController {
         groupId: selectedGroupId.value,
         priority: priority,
         status: const TaskStatusLookup(id: 0, name: 'Pending'),
-        startDate: DateTime.now(),
+        startDate: DateTime(now.year, now.month, now.day),
         dueDate: selectedDueDate.value,
       );
       await _createTaskItem(model);
@@ -285,6 +269,7 @@ class ManagerTaskController extends GetxController {
 
   /// Resets the form to defaults before opening the create-task dialog.
   void resetForm(List<TaskGroup> groups) {
+    editingTask.value = null;
     titleTextEditor.clear();
     descTextEditor.clear();
     selectedLabel.value = null;

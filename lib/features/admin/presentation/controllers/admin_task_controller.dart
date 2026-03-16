@@ -78,12 +78,10 @@ class AdminTaskController extends GetxController {
   bool get hasDateFilter => taskSelectedDate.value != null;
 
   int get totalTasks => tasks.length;
-  int get inProgressTasks => tasks
-      .where((t) => t.status.name.toLowerCase() == 'inprogress')
-      .length;
-  int get completedTasks => tasks
-      .where((t) => t.status.name.toLowerCase() == 'completed')
-      .length;
+  int get inProgressTasks =>
+      tasks.where((t) => t.status.name.toLowerCase() == 'inprogress').length;
+  int get completedTasks =>
+      tasks.where((t) => t.status.name.toLowerCase() == 'completed').length;
 
   @override
   void onInit() {
@@ -118,8 +116,7 @@ class AdminTaskController extends GetxController {
       final result = await _fetchTaskItems(
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
         statusId: filterStatusId.value,
-        dueDateFrom: filterDueDateFrom.value,
-        dueDateTo: filterDueDateTo.value,
+        SelectedDate: filterDueDateFrom.value,
       );
       tasks.assignAll(result);
     } catch (e) {

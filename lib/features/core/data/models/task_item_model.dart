@@ -86,14 +86,14 @@ class TaskItemModel extends TaskItem {
           startDate!.year,
           startDate!.month,
           startDate!.day,
-          12,
+          0,
         ).toUtc().toIso8601String(),
       if (dueDate != null)
         'dueDate': DateTime(
           dueDate!.year,
           dueDate!.month,
           dueDate!.day,
-          12,
+          23,
         ).toUtc().toIso8601String(),
     };
   }

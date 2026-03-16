@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/helper/hex_color.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
@@ -27,11 +26,6 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isDark ? Colors.white : kTextDark;
-    final today = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
 
     return Padding(
       padding: EdgeInsets.only(
@@ -98,19 +92,10 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               Obx(
                 () => DropdownWidget<Label>(
                   value: ctrl.selectedLabel.value,
-                  items: ctrl.labels.value,
+                  items: ctrl.labels,
                   label: (l) => l.name,
                   isDark: isDark,
                   onChanged: (l) => ctrl.selectedLabel.value = l,
-                  leadingBuilder: (l) => Container(
-                    width: 10,
-                    height: 10,
-                    margin: const EdgeInsets.only(right: 6),
-                    decoration: BoxDecoration(
-                      color: l.color != null ? hexColor(l.color!) : kPrimary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -143,10 +128,11 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                       children: [
                         _FieldLabel('Group', isDark: isDark, isRequired: true),
                         const SizedBox(height: 8),
-                        Obx(
-                          () => DropdownWidget<TaskGroup>(
+                        Obx(() {
+                          final groupId = ctrl.selectedGroupId.value;
+                          return DropdownWidget<TaskGroup>(
                             value: groups.firstWhereOrNull(
-                              (g) => g.id == ctrl.selectedGroupId.value,
+                              (g) => g.id == groupId,
                             ),
                             items: groups,
                             label: (g) => g.name,
@@ -157,17 +143,8 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                                 ctrl.selectedCategory.value = g.name;
                               }
                             },
-                            leadingBuilder: (g) => Container(
-                              width: 10,
-                              height: 10,
-                              margin: const EdgeInsets.only(right: 6),
-                              decoration: BoxDecoration(
-                                color: g.color ?? kPrimary,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -185,21 +162,12 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                         Obx(
                           () => DropdownWidget<TaskPriority>(
                             value: ctrl.selectedPriority.value,
-                            items: ctrl.taskPriority.value,
+                            items: ctrl.taskPriority,
                             label: (p) => p.name,
                             isDark: isDark,
                             onChanged: (p) {
                               if (p != null) ctrl.selectedPriority.value = p;
                             },
-                            leadingBuilder: (p) => Container(
-                              width: 10,
-                              height: 10,
-                              margin: const EdgeInsets.only(right: 6),
-                              decoration: BoxDecoration(
-                                color: p.color,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
                           ),
                         ),
                       ],
@@ -217,7 +185,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                   isDark: isDark,
                   value: ctrl.selectedDueDate.value,
                   hint: 'Select due date',
-                  firstDate: today,
+                  firstDate: ctrl.currentDate.value ?? DateTime.now(),
                   onPick: (d) => ctrl.selectedDueDate.value = d,
                   onClear: () => ctrl.selectedDueDate.value = null,
                   context: outerContext,

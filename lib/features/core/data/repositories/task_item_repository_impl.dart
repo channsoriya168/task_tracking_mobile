@@ -13,16 +13,13 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
     String? search,
     int? statusId,
     String? groupId,
-    DateTime? dueDateFrom,
-    DateTime? dueDateTo,
-  }) =>
-      _remote.getAll(
-        search: search,
-        statusId: statusId,
-        groupId: groupId,
-        dueDateFrom: dueDateFrom,
-        dueDateTo: dueDateTo,
-      );
+    DateTime? SelectedDate,
+  }) => _remote.getAll(
+    search: search,
+    statusId: statusId,
+    groupId: groupId,
+    SelectedDate: SelectedDate,
+  );
 
   @override
   Future<void> addTaskItem(TaskItem taskItem) =>
@@ -34,8 +31,7 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
   }
 
   @override
-  Future<void> deleteTaskItem(TaskItem taskItem) =>
-      _remote.delete(taskItem.id);
+  Future<void> deleteTaskItem(TaskItem taskItem) => _remote.delete(taskItem.id);
 
   @override
   Future<void> assignTask(String id, String assignedToId) =>
