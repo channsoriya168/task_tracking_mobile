@@ -68,7 +68,24 @@ class EmployeeTaskCard extends StatelessWidget {
 
     if (confirmed == true && context.mounted) {
       final ctrl = Get.find<EmployeeTaskController>();
-      await ctrl.acceptTask(task);
+      final success = await ctrl.acceptTask(task);
+      if (success) {
+        Get.snackbar(
+          'Task Accepted',
+          'You have accepted the task successfully.',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+        );
+      } else {
+        Get.snackbar(
+          'Failed',
+          ctrl.errorMessage.value.isNotEmpty
+              ? ctrl.errorMessage.value
+              : 'Could not accept task. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 4),
+        );
+      }
     }
   }
 

@@ -6,7 +6,6 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_st
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/assign_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
-import 'dart:developer' as developer;
 
 class EmployeeTaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
@@ -33,10 +32,6 @@ class EmployeeTaskController extends GetxController {
 
   /// Selected day from the week calendar.
   final Rxn<DateTime> taskSelectedDate = Rxn<DateTime>();
-
-  /// Due-date range sent to the API.
-  final Rxn<DateTime> filterDueDateFrom = Rxn<DateTime>();
-  final Rxn<DateTime> filterDueDateTo = Rxn<DateTime>();
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -76,8 +71,6 @@ class EmployeeTaskController extends GetxController {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     taskSelectedDate.value = today;
-    filterDueDateFrom.value = today;
-    filterDueDateTo.value = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
     fetchTasks();
     fetchStatuses();
@@ -102,7 +95,7 @@ class EmployeeTaskController extends GetxController {
       final result = await _fetchTaskItems(
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
         groupId: _employeeGroupId,
-        SelectedDate: filterDueDateFrom.value,
+        SelectedDate: taskSelectedDate.value,
         // statusId intentionally omitted — filtered client-side
       );
       allTasks.assignAll(result);
@@ -114,21 +107,8 @@ class EmployeeTaskController extends GetxController {
   }
 
   void selectTaskDate(DateTime? date) {
-    taskSelectedDate.value = date;
-    if (date == null) {
-      filterDueDateFrom.value = null;
-      filterDueDateTo.value = null;
-    } else {
-      filterDueDateFrom.value = DateTime(date.year, date.month, date.day);
-      filterDueDateTo.value = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        23,
-        59,
-        59,
-      );
-    }
+    taskSelectedDate.value =
+        date != null ? DateTime(date.year, date.month, date.day) : null;
     fetchTasks();
   }
 
@@ -152,19 +132,24 @@ class EmployeeTaskController extends GetxController {
   String? get _employeeId =>
       Get.find<AuthController>().profile.value?.employeeId;
 
-  /// Assigns the task to the current employee and sets status to InProgress.
+  /// Accepts the task by assigning it to the current employee and setting status to Assigned.
   Future<bool> acceptTask(TaskItem task) async {
     final employeeId = _employeeId;
-    if (employeeId == null) return false;
+    if (employeeId == null || employeeId.isEmpty) {
+      errorMessage.value = 'Employee profile not found.';
+      return false;
+    }
 
-    final inProgressId = taskStatus
-        .firstWhereOrNull((s) => s.name.toLowerCase() == 'assigned')
-        ?.id;
-    if (inProgressId == null) return false;
+    final assignedStatus = taskStatus
+        .firstWhereOrNull((s) => s.name.toLowerCase() == 'assigned');
+    if (assignedStatus == null) {
+      errorMessage.value = 'Assigned status not found. Please try again.';
+      return false;
+    }
 
     try {
       await _assignTask(task.id, employeeId);
-      await _updateStatus(task.id, inProgressId);
+      await _updateStatus(task.id, assignedStatus.id);
       await fetchTasks();
       return true;
     } catch (e) {
