@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/date_picker_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 
 // ── Sheet ──────────────────────────────────────────────────────
@@ -109,6 +109,7 @@ class EmployeeDialogSheet extends StatelessWidget {
                       label: 'Full Name',
                       hint: 'e.g. Alice Johnson',
                       isDark: isDark,
+                      isRequired: true,
                     ),
                     const SizedBox(height: 14),
                     TextFieldWidget(
@@ -125,13 +126,68 @@ class EmployeeDialogSheet extends StatelessWidget {
                       hint: 'e.g. +855 12 345 678',
                       isDark: isDark,
                       keyboardType: TextInputType.phone,
+                      isRequired: true,
                     ),
+                    if (controller.existing == null) ...[
+                      const SizedBox(height: 14),
+                      Obx(() {
+                        final visible = controller.formPasswordVisible.value;
+                        return TextFieldWidget(
+                          controller: controller.passwordCtrl,
+                          label: 'Password',
+                          hint: 'Enter password',
+                          isDark: isDark,
+                          obscureText: !visible,
+                          isRequired: true,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              visible
+                                  ? Icons.visibility_off_rounded
+                                  : Icons.visibility_rounded,
+                              size: 20,
+                              color: isDark
+                                  ? Colors.grey[500]
+                                  : Colors.grey[400],
+                            ),
+                            onPressed: () => controller
+                                .formPasswordVisible.value = !visible,
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 14),
+                      Obx(() {
+                        final visible =
+                            controller.formConfirmPasswordVisible.value;
+                        return TextFieldWidget(
+                          controller: controller.confirmPasswordCtrl,
+                          label: 'Confirm Password',
+                          hint: 'Re-enter password',
+                          isDark: isDark,
+                          obscureText: !visible,
+                          isRequired: true,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              visible
+                                  ? Icons.visibility_off_rounded
+                                  : Icons.visibility_rounded,
+                              size: 20,
+                              color: isDark
+                                  ? Colors.grey[500]
+                                  : Colors.grey[400],
+                            ),
+                            onPressed: () => controller
+                                .formConfirmPasswordVisible.value = !visible,
+                          ),
+                        );
+                      }),
+                    ],
                     const SizedBox(height: 14),
                     DatePickerWidget(
                       isDark: isDark,
                       value: controller.formDob,
                       onPicked: (d) => controller.formDob.value = d,
                       label: 'Select date of birth',
+                      isRequired: true,
                     ),
                     const SizedBox(height: 14),
                     TextFieldWidget(
@@ -154,49 +210,40 @@ class EmployeeDialogSheet extends StatelessWidget {
                           controller.formGroupIds.add(id);
                         }
                       },
+                      isRequired: true,
                     ),
-                    if (controller.existing == null) ...[
-                      const SizedBox(height: 14),
-                      TextFieldWidget(
-                        controller: controller.passwordCtrl,
-                        label: 'Password',
-                        hint: 'Enter password',
-                        isDark: isDark,
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 14),
-                      TextFieldWidget(
-                        controller: controller.confirmPasswordCtrl,
-                        label: 'Confirm Password',
-                        hint: 'Re-enter password',
-                        isDark: isDark,
-                        obscureText: true,
-                      ),
-                    ],
                     const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: controller.saveEmployee,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    Obx(() {
+                      final enabled = controller.isFormValid;
+                      return SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: enabled
+                              ? () => controller.saveEmployee()
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimary,
+                            foregroundColor: Colors.white,
+                            disabledBackgroundColor: kPrimary.withAlpha(80),
+                            disabledForegroundColor:
+                                Colors.white.withAlpha(120),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            controller.existing == null
+                                ? 'Add Employee'
+                                : 'Save Changes',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
-                        child: Text(
-                          controller.existing == null
-                              ? 'Add Employee'
-                              : 'Save Changes',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -216,6 +263,7 @@ class _TaskGroupPicker extends StatelessWidget {
     required this.formGroupIds,
     required this.onAddTaskGroup,
     required this.onToggleTaskGroup,
+    this.isRequired = false,
   });
 
   final bool isDark;
@@ -223,6 +271,7 @@ class _TaskGroupPicker extends StatelessWidget {
   final RxList<String> formGroupIds;
   final VoidCallback onAddTaskGroup;
   final void Function(String id) onToggleTaskGroup;
+  final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
@@ -231,12 +280,21 @@ class _TaskGroupPicker extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              'Task Group',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.grey[400] : kTextMuted,
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.grey[400] : kTextMuted,
+                ),
+                children: [
+                  const TextSpan(text: 'Task Group'),
+                  if (isRequired)
+                    const TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                ],
               ),
             ),
             const Spacer(),

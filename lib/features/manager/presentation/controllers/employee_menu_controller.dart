@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/employee_detail_page.dart';
@@ -17,9 +17,6 @@ class EmployeeMenuController extends GetxController {
   Employee? get employee =>
       _empCtrl.employees.firstWhereOrNull((e) => e.id == employeeId);
 
-  bool get hasQr => employee?.hasQr ?? false;
-  bool get isQrExpired => employee?.isQrExpired ?? false;
-
   // ── Menu items ─────────────────────────────────────────────────
   List<EmployeeMenuItem> get menuItems => [
     const EmployeeMenuItem(
@@ -32,20 +29,6 @@ class EmployeeMenuController extends GetxController {
       icon: Icons.edit_rounded,
       label: 'Edit Employee',
     ),
-    if (!hasQr || isQrExpired)
-      EmployeeMenuItem(
-        action: EmployeeMenuAction.generateQr,
-        icon: Icons.qr_code_rounded,
-        label: isQrExpired ? 'Regenerate QR Code' : 'Generate QR Code',
-        isPrimary: true,
-      ),
-    if (hasQr && !isQrExpired)
-      const EmployeeMenuItem(
-        action: EmployeeMenuAction.resetQr,
-        icon: Icons.refresh_rounded,
-        label: 'Reset QR Code',
-        isWarning: true,
-      ),
     const EmployeeMenuItem(
       action: EmployeeMenuAction.delete,
       icon: Icons.delete_rounded,
@@ -54,7 +37,7 @@ class EmployeeMenuController extends GetxController {
     ),
   ];
 
-  // ── Actions (pure business logic — no widgets) ─────────────────
+  // ── Actions ────────────────────────────────────────────────────
 
   void openDetail() {
     Get.back();
@@ -71,7 +54,6 @@ class EmployeeMenuController extends GetxController {
   }
 
   void generateQr() {
-    _empCtrl.generateQrCode(employeeId);
     Get.back();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Get.to(() => EmployeeDetailPage(employeeId: employeeId)),
@@ -79,7 +61,6 @@ class EmployeeMenuController extends GetxController {
   }
 
   void resetQr() {
-    _empCtrl.resetQrCode(employeeId);
     Get.back();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Get.to(() => EmployeeDetailPage(employeeId: employeeId)),

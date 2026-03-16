@@ -31,7 +31,7 @@ class EmployeeRemoteDatasource {
 
   Future<Employee> createEmployee({
     required String fullName,
-    required String email,
+    String? email,
     required String password,
     required String confirmPassword,
     String? phone,
@@ -45,7 +45,7 @@ class EmployeeRemoteDatasource {
     // ── Text fields ───────────────────────────────────────────
     formData.fields.addAll([
       MapEntry('fullName', fullName),
-      MapEntry('email', email),
+      if (email != null && email.isNotEmpty) MapEntry('email', email),
       MapEntry('password', password),
       MapEntry('confirmPassword', confirmPassword),
       if (phone != null && phone.isNotEmpty) MapEntry('phone', phone),
@@ -86,7 +86,7 @@ class EmployeeRemoteDatasource {
   Future<Employee> updateEmployee(
     String id, {
     required String fullName,
-    required String email,
+    String? email,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,
@@ -98,7 +98,7 @@ class EmployeeRemoteDatasource {
 
     formData.fields.addAll([
       MapEntry('fullName', fullName),
-      MapEntry('email', email),
+      if (email != null && email.isNotEmpty) MapEntry('email', email),
       MapEntry('removeProfileImage', removeProfileImage.toString()),
       if (phone != null && phone.isNotEmpty) MapEntry('phone', phone),
       if (placeOfBirth != null && placeOfBirth.isNotEmpty)

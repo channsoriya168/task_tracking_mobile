@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
@@ -31,7 +29,7 @@ class EmployeeDetailHeader extends StatelessWidget {
           _buildAvatar(),
           const SizedBox(height: 14),
           Text(
-            emp.name,
+            emp.fullName,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -61,21 +59,17 @@ class EmployeeDetailHeader extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    final path = emp.imagePath;
-    final isLocal = path != null && path.isNotEmpty && !path.startsWith('http');
-    final isNetwork = path != null && path.startsWith('http');
+    final url = emp.profileImageUrl;
 
     return CircleAvatar(
       radius: 48,
       backgroundColor: accentColor.withAlpha(40),
-      backgroundImage: isLocal
-          ? FileImage(File(path))
-          : isNetwork
-          ? NetworkImage(path) as ImageProvider
+      backgroundImage: url != null && url.isNotEmpty
+          ? NetworkImage(url) as ImageProvider
           : null,
-      child: (path == null || path.isEmpty)
+      child: (url == null || url.isEmpty)
           ? Text(
-              employeeInitials(emp.name),
+              employeeInitials(emp.fullName),
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
@@ -295,147 +289,7 @@ class EmployeeQrSection extends StatelessWidget {
           ),
         ],
       ),
-      child: emp.hasQr
-          ? _QrDisplay(emp: emp, isDark: isDark)
-          : _QrNone(isDark: isDark),
-    );
-  }
-}
-
-// ── QR Display ─────────────────────────────────────────────────
-class _QrDisplay extends StatelessWidget {
-  const _QrDisplay({required this.emp, required this.isDark});
-
-  final Employee emp;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final isExpired = emp.isQrExpired;
-    final expiresAt = emp.qrExpiresAt;
-
-    return Column(
-      children: [
-        // QR image — grayscale + EXPIRED label when expired
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            if (isExpired)
-              ColorFiltered(
-                colorFilter: const ColorFilter.matrix([
-                  0.2126,
-                  0.7152,
-                  0.0722,
-                  0,
-                  0,
-                  0.2126,
-                  0.7152,
-                  0.0722,
-                  0,
-                  0,
-                  0.2126,
-                  0.7152,
-                  0.0722,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1,
-                  0,
-                ]),
-                child: QrImageView(
-                  data: emp.qrCode!,
-                  version: QrVersions.auto,
-                  size: 200,
-                  backgroundColor: Colors.white,
-                  errorCorrectionLevel: QrErrorCorrectLevel.M,
-                ),
-              )
-            else
-              QrImageView(
-                data: emp.qrCode!,
-                version: QrVersions.auto,
-                size: 200,
-                backgroundColor: Colors.white,
-                errorCorrectionLevel: QrErrorCorrectLevel.M,
-              ),
-            if (isExpired)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: kHighPriority,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  'EXPIRED',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Status + expiry info
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: isExpired ? kHighPriority : kLowPriority,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              isExpired ? 'Expired' : 'Active',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isExpired ? kHighPriority : kLowPriority,
-              ),
-            ),
-            if (expiresAt != null) ...[
-              Text(
-                '  ·  ',
-                style: TextStyle(
-                  color: isDark ? Colors.grey[600] : Colors.grey[400],
-                ),
-              ),
-              Text(
-                isExpired
-                    ? 'Expired ${DateFormat('dd MMM yyyy').format(expiresAt)}'
-                    : 'Expires ${DateFormat('dd MMM yyyy').format(expiresAt)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isDark ? Colors.grey[500] : kTextMuted,
-                ),
-              ),
-            ],
-          ],
-        ),
-
-        if (isExpired) ...[
-          const SizedBox(height: 10),
-          Text(
-            'Go back and use the menu to reset.',
-            style: TextStyle(
-              fontSize: 12,
-              color: isDark ? Colors.grey[600] : Colors.grey[400],
-            ),
-          ),
-        ],
-      ],
+      child: _QrNone(isDark: isDark),
     );
   }
 }

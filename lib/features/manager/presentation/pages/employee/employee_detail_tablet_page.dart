@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_detail_widgets.dart';
 
@@ -18,7 +18,7 @@ class EmployeeDetailTabletPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final taskGroup = ctrl.findTaskGroup(emp.positionId);
+    final taskGroup = ctrl.taskGroupForEmployee(emp);
     final accentColor = taskGroup?.color ?? kPrimary;
     final tasks = ctrl.tasksForEmployee(emp.id);
 
@@ -29,7 +29,7 @@ class EmployeeDetailTabletPage extends StatelessWidget {
         foregroundColor: isDark ? Colors.white : kTextDark,
         elevation: 0,
         title: Text(
-          emp.name,
+          emp.fullName,
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
       ),

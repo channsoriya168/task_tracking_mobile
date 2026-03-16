@@ -5,7 +5,7 @@ abstract class EmployeeRepository {
   Future<Employee> fetchEmployeeById(String id);
   Future<Employee> createEmployee({
     required String fullName,
-    required String email,
+    String? email,
     required String password,
     required String confirmPassword,
     String? phone,
@@ -18,7 +18,7 @@ abstract class EmployeeRepository {
   Future<Employee> updateEmployee(
     String id, {
     required String fullName,
-    required String email,
+    String? email,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,

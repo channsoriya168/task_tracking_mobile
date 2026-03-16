@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 
 // ── Avatar ─────────────────────────────────────────────────────
@@ -122,10 +123,10 @@ class EmployeeCardContent extends StatelessWidget {
     return Row(
       children: [
         EmployeeAvatar(
-          name: employee.name,
+          name: employee.fullName,
           color: accentColor,
           radius: avatarRadius,
-          imagePath: employee.imagePath,
+          imagePath: employee.profileImageUrl,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -134,7 +135,7 @@ class EmployeeCardContent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                employee.name,
+                employee.fullName,
                 maxLines: clampText ? 1 : null,
                 overflow: clampText ? TextOverflow.ellipsis : null,
                 style: TextStyle(

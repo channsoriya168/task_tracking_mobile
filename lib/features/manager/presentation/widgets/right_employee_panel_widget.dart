@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_grid_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_shimmer_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/panel_header_widget.dart';
 
@@ -34,6 +35,11 @@ class RightEmployeePanelWidget extends StatelessWidget {
         ),
         Expanded(
           child: Obx(() {
+            // Show shimmer while loading
+            if (ctrl.isLoading.value) {
+              return EmployeeGridShimmer(isDark: isDark);
+            }
+
             final employees = selectedTaskGroupId == null
                 ? ctrl.filteredEmployees
                 : ctrl.employeesByTaskGroup(selectedTaskGroupId!);
@@ -74,7 +80,7 @@ class RightEmployeePanelWidget extends StatelessWidget {
               itemCount: employees.length,
               itemBuilder: (_, i) {
                 final emp = employees[i];
-                final taskGroup = ctrl.findTaskGroup(emp.positionId);
+                final taskGroup = ctrl.taskGroupForEmployee(emp);
                 return EmployeeGridCardWidget(
                   isDark: isDark,
                   ctrl: ctrl,

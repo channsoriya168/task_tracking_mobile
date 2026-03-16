@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/image_service.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/remote/employee_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/data/repositories/employee_repository_impl.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
@@ -23,6 +26,13 @@ class ManagerEmployeeBinding extends Bindings {
       ),
       fenix: true,
     );
-    Get.lazyPut<EmployeeController>(() => EmployeeController(), fenix: true);
+    Get.lazyPut<EmployeeRepository>(
+      () => EmployeeRepositoryImpl(EmployeeRemoteDatasource()),
+      fenix: true,
+    );
+    Get.lazyPut<EmployeeController>(
+      () => EmployeeController(Get.find<EmployeeRepository>()),
+      fenix: true,
+    );
   }
 }

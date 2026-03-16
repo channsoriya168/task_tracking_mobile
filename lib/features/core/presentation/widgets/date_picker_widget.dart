@@ -8,24 +8,35 @@ class DatePickerWidget extends StatelessWidget {
     required this.value,
     required this.onPicked,
     required this.label,
+    this.isRequired = false,
   });
 
   final bool isDark;
   final Rx<DateTime?> value;
   final ValueChanged<DateTime> onPicked;
   final String label;
+  final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Date of Birth',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.grey[400] : kTextMuted,
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.grey[400] : kTextMuted,
+            ),
+            children: [
+              const TextSpan(text: 'Date of Birth'),
+              if (isRequired)
+                const TextSpan(
+                  text: ' *',
+                  style: TextStyle(color: Colors.red),
+                ),
+            ],
           ),
         ),
         const SizedBox(height: 8),
