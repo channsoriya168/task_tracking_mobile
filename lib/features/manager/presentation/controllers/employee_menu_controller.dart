@@ -53,20 +53,6 @@ class EmployeeMenuController extends GetxController {
     _empCtrl.showDialog(isDark, emp);
   }
 
-  void generateQr() {
-    Get.back();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => Get.to(() => EmployeeDetailPage(employeeId: employeeId)),
-    );
-  }
-
-  void resetQr() {
-    Get.back();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => Get.to(() => EmployeeDetailPage(employeeId: employeeId)),
-    );
-  }
-
   void deleteEmployee() {
     _empCtrl.deleteEmployee(employeeId);
     Get.back();

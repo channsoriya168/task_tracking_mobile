@@ -95,10 +95,6 @@ class _EmployeeMenuSheet extends StatelessWidget {
         menuCtrl.openDetail();
       case EmployeeMenuAction.edit:
         menuCtrl.edit();
-      case EmployeeMenuAction.generateQr:
-        menuCtrl.generateQr();
-      case EmployeeMenuAction.resetQr:
-        if (await _confirmResetQr()) menuCtrl.resetQr();
       case EmployeeMenuAction.delete:
         final name = menuCtrl.employee?.fullName ?? '';
         if (await _confirmDelete(name)) menuCtrl.deleteEmployee();

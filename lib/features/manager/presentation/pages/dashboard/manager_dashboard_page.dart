@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_chart_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_dashboard_controller.dart';
@@ -12,13 +10,13 @@ import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashb
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashboard/task_card_shimmer_widget.dart';
 
 class ManagerDashboardPage extends StatelessWidget {
   const ManagerDashboardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final themeCtrl = Get.find<ThemeController>();
     final ctrl = Get.find<ManagerDashboardController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : kTextDark;
@@ -46,7 +44,7 @@ class ManagerDashboardPage extends StatelessWidget {
             // ── App Bar ───────────────────────────────────────
             SliverAppBar(
               backgroundColor: isDark ? kBgDark : kBgLight,
-              floating: true,
+              pinned: true,
               title: Text(
                 'Dashboard',
                 style: TextStyle(
@@ -56,13 +54,36 @@ class ManagerDashboardPage extends StatelessWidget {
                 ),
               ),
               actions: [
-                Obx(
-                  () => CircularIconButton(
-                    icon: themeCtrl.isDark
-                        ? Icons.wb_sunny_rounded
-                        : Icons.nightlight_round,
-                    isDark: isDark,
-                    onTap: themeCtrl.toggle,
+                Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: isDark ? kCardDark : Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.10)
+                              : Colors.black.withValues(alpha: 0.08),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black
+                                .withValues(alpha: isDark ? 0.25 : 0.08),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.notifications_outlined,
+                        size: 22,
+                        color: isDark ? Colors.white : kTextDark,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -150,34 +171,48 @@ class ManagerDashboardPage extends StatelessWidget {
             ),
 
             // ── Grouped Task List ─────────────────────────────
-            items.isEmpty
-                ? SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: TaskEmptyState(isDark: isDark),
+            if (ctrl.isLoading.value)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, __) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: TaskCardShimmerWidget(isDark: isDark),
                     ),
-                  )
-                : SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, i) {
-                        final item = items[i];
-                        if (item is String) {
-                          return DashboardDateHeaderWidget(
-                            label: item,
-                            isDark: isDark,
-                          );
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: ManagerTaskCardWidget(
-                            task: item as TaskItem,
-                            fetchDetail: ctrl.fetchTaskById,
-                          ),
-                        );
-                      }, childCount: items.length),
-                    ),
+                    childCount: 5,
                   ),
+                ),
+              )
+            else if (items.isEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: TaskEmptyState(isDark: isDark),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, i) {
+                    final item = items[i];
+                    if (item is String) {
+                      return DashboardDateHeaderWidget(
+                        label: item,
+                        isDark: isDark,
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: ManagerTaskCardWidget(
+                        task: item as TaskItem,
+                        fetchDetail: ctrl.fetchTaskById,
+                      ),
+                    );
+                  }, childCount: items.length),
+                ),
+              ),
           ],
         );
       }),
