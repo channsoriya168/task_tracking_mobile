@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/services/storage_service.dart';
 import 'package:task_tracking_mobile/app/utils/dio_error_mapper.dart';
@@ -106,6 +108,16 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e.response?.statusCode == 400) {
         throw 'Current password is incorrect.';
       }
+      throw mapDioError(e);
+    }
+  }
+
+  // ── Update profile ────────────────────────────────────────
+  @override
+  Future<void> updateProfile({File? image, bool removeImage = false}) async {
+    try {
+      await _remote.updateProfile(image: image, removeImage: removeImage);
+    } on DioException catch (e) {
       throw mapDioError(e);
     }
   }

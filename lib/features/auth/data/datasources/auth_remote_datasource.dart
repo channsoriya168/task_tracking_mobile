@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
@@ -37,6 +39,26 @@ class AuthRemoteDatasource {
     }
 
     return auth;
+  }
+
+  Future<void> updateProfile({File? image, bool removeImage = false}) async {
+    final formData = FormData.fromMap({
+      if (image != null)
+        'ProfileImage': await MultipartFile.fromFile(
+          image.path,
+          filename: image.path.split('/').last,
+        ),
+      'RemoveProfileImage': removeImage.toString(),
+    });
+    final response = await _dio.patch(ApiEndpoints.profile, data: formData);
+    final statusCode = response.statusCode ?? 0;
+    if (statusCode < 200 || statusCode >= 300) {
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        type: DioExceptionType.badResponse,
+      );
+    }
   }
 
   Future<EmployeeProfile?> fetchProfile() async {

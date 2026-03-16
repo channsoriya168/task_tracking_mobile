@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
@@ -10,8 +13,10 @@ import 'package:task_tracking_mobile/features/auth/domain/usecases/fetch_profile
 import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/app/utils/validators.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 
 class AuthController extends GetxController {
@@ -21,6 +26,7 @@ class AuthController extends GetxController {
   late final CheckAuthUsecase _checkAuthUsecase;
   late final RefreshTokenUsecase _refreshTokenUsecase;
   late final ChangePasswordUsecase _changePasswordUsecase;
+  late final UpdateProfileUsecase _updateProfileUsecase;
 
   final Rx<Auth?> currentAuth = Rx<Auth?>(null);
   final Rx<EmployeeProfile?> profile = Rx<EmployeeProfile?>(null);
@@ -39,6 +45,7 @@ class AuthController extends GetxController {
   final RxBool obscureConfirm = true.obs;
   final RxBool isChangingPassword = false.obs;
   final RxString changePasswordError = ''.obs;
+  final RxBool isUploadingImage = false.obs;
 
   bool get isAuthenticated => currentAuth.value != null;
 
@@ -61,6 +68,7 @@ class AuthController extends GetxController {
     _checkAuthUsecase = CheckAuthUsecase(repo);
     _refreshTokenUsecase = RefreshTokenUsecase(repo);
     _changePasswordUsecase = ChangePasswordUsecase(repo);
+    _updateProfileUsecase = UpdateProfileUsecase(repo);
     _initChangePasswordListeners();
   }
 
@@ -202,6 +210,60 @@ class AuthController extends GetxController {
     obscureNew.value = true;
     obscureConfirm.value = true;
     changePasswordError.value = '';
+  }
+
+  // ── Update profile image ──────────────────────────────────
+  Future<void> pickAndUploadProfileImage(ImageSource source) async {
+    final pickImage = Get.find<PickAndCompressImageUseCase>();
+    final File? file = await pickImage(source);
+    if (file == null) return;
+    isUploadingImage.value = true;
+    try {
+      await _updateProfileUsecase(image: file);
+      await fetchProfile();
+      Get.snackbar(
+        'Success',
+        'Profile photo updated.',
+        backgroundColor: const Color(0xFF2ED573),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: const Color(0xFFFF4757),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } finally {
+      isUploadingImage.value = false;
+    }
+  }
+
+  Future<void> removeProfileImage() async {
+    isUploadingImage.value = true;
+    try {
+      await _updateProfileUsecase(removeImage: true);
+      await fetchProfile();
+      Get.snackbar(
+        'Success',
+        'Profile photo removed.',
+        backgroundColor: const Color(0xFF2ED573),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: const Color(0xFFFF4757),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } finally {
+      isUploadingImage.value = false;
+    }
   }
 
   // ── Logout ───────────────────────────────────────────────
