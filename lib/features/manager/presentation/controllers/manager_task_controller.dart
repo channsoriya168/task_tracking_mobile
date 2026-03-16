@@ -13,6 +13,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_label
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
 
 class ManagerTaskController extends GetxController {
@@ -20,12 +21,14 @@ class ManagerTaskController extends GetxController {
   final CreateTaskItemUsecase _createTaskItem;
   final UpdateTaskItemUsecase _updateTaskItem;
   final DeleteTaskItemUsecase _deleteTaskItem;
+  final FetchTaskItemByIdUsecase _fetchTaskItemById;
   final FetchTaskPrioritiesUsecase _fetchPriorities;
   final FetchTaskStatusesUsecase _fetchStatuses;
   final GetAllLabelsUseCase _getAllLabels;
 
   ManagerTaskController(
     this._fetchTaskItems,
+    this._fetchTaskItemById,
     this._createTaskItem,
     this._updateTaskItem,
     this._deleteTaskItem,
@@ -107,6 +110,15 @@ class ManagerTaskController extends GetxController {
       (_) => fetchTasks(),
       time: const Duration(milliseconds: 500),
     );
+  }
+
+  Future<TaskItem?> fetchTaskById(String id) async {
+    try {
+      return await _fetchTaskItemById(id);
+    } catch (e) {
+      AppSnackbar.error('Error', AppSnackbar.parseApiError(e, fallback: 'Could not load task.'));
+      return null;
+    }
   }
 
   Future<void> fetchTasks() async {

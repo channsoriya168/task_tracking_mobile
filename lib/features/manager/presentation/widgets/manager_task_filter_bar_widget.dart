@@ -1,34 +1,38 @@
-// ── Filter Bar ─────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 
 class ManagerTaskFilterBarWidget extends StatelessWidget {
   const ManagerTaskFilterBarWidget({
     super.key,
     required this.isDark,
-    required this.ctrl,
+    required this.filterStatus,
+    required this.taskStatus,
+    required this.allTasks,
+    required this.onSelectStatus,
   });
 
   final bool isDark;
-  final ManagerTaskController ctrl;
+  final RxString filterStatus;
+  final RxList<TaskStatusLookup> taskStatus;
+  final RxList<TaskItem> allTasks;
+  final void Function(TaskStatusLookup?) onSelectStatus;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 52,
       child: Obx(() {
-        final selected = ctrl.filterStatus.value;
-        final statusItems = [null, ...ctrl.taskStatus]; // null = "All"
+        final selected = filterStatus.value;
+        final statusItems = [null, ...taskStatus];
 
-        // Compute counts from allTasks so they stay accurate even when a
-        // status filter is active.
         final counts = <String, int>{
-          'All': ctrl.allTasks.length,
-          for (final s in ctrl.taskStatus)
-            s.name: ctrl.allTasks
+          'All': allTasks.length,
+          for (final s in taskStatus)
+            s.name: allTasks
                 .where(
                   (t) => t.status.name.toLowerCase() == s.name.toLowerCase(),
                 )
@@ -53,7 +57,7 @@ class ManagerTaskFilterBarWidget extends StatelessWidget {
                 filter: label,
                 count: count,
                 selected: isSelected,
-                onTap: () => ctrl.selectStatus(status),
+                onTap: () => onSelectStatus(status),
               );
             },
           ),

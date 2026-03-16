@@ -48,6 +48,11 @@ class TaskItemRemoteDatasource {
     await _dio.delete(ApiEndpoints.taskItemById(id));
   }
 
+  Future<TaskItemModel> getById(String id) async {
+    final response = await _dio.get(ApiEndpoints.taskItemById(id));
+    return TaskItemModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
   Future<void> assignTask(String id, String assignedToId) async {
     await _dio.patch(
       ApiEndpoints.taskItemAssign(id),
