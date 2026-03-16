@@ -17,7 +17,7 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   @override
   Future<Employee> createEmployee({
     required String fullName,
-    required String email,
+    String? email,
     required String password,
     required String confirmPassword,
     String? phone,
@@ -41,7 +41,7 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   Future<Employee> updateEmployee(
     String id, {
     required String fullName,
-    required String email,
+    String? email,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,

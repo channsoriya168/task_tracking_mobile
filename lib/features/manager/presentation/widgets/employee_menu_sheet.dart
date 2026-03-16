@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_menu_controller.dart';
@@ -95,12 +95,8 @@ class _EmployeeMenuSheet extends StatelessWidget {
         menuCtrl.openDetail();
       case EmployeeMenuAction.edit:
         menuCtrl.edit();
-      case EmployeeMenuAction.generateQr:
-        menuCtrl.generateQr();
-      case EmployeeMenuAction.resetQr:
-        if (await _confirmResetQr()) menuCtrl.resetQr();
       case EmployeeMenuAction.delete:
-        final name = menuCtrl.employee?.name ?? '';
+        final name = menuCtrl.employee?.fullName ?? '';
         if (await _confirmDelete(name)) menuCtrl.deleteEmployee();
     }
   }

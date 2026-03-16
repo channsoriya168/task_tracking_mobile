@@ -90,9 +90,7 @@ class TaskGroupController extends GetxController {
     final taskGroup = findPosition(id);
     if (taskGroup == null) return;
     taskGroups.removeWhere((p) => p.id == id);
-    Get.find<EmployeeController>().employees.removeWhere(
-      (e) => e.positionId == id,
-    );
+    Get.find<EmployeeController>().fetchEmployees();
     AppSnackbar.delete(
       'Task Group Deleted',
       '"${taskGroup.name}" has been removed.',

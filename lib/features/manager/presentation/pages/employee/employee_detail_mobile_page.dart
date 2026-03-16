@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_detail_widgets.dart';
 
 class EmployeeDetailMobilePage extends StatelessWidget {
@@ -10,85 +13,127 @@ class EmployeeDetailMobilePage extends StatelessWidget {
     required this.emp,
     required this.ctrl,
     required this.isDark,
+    required this.onRefresh,
   });
 
   final Employee emp;
   final EmployeeController ctrl;
   final bool isDark;
+  final VoidCallback onRefresh;
 
   @override
   Widget build(BuildContext context) {
-    final pos = ctrl.findPosition(emp.positionId);
-    final accentColor = pos?.color ?? kPrimary;
+    final accent =
+        emp.taskGroups.isNotEmpty ? emp.taskGroups.first.groupColor : kPrimary;
     final tasks = ctrl.tasksForEmployee(emp.id);
 
     return Scaffold(
-      backgroundColor: isDark ? kBgDark : kBgLight,
-      appBar: AppBar(
-        backgroundColor: isDark ? kCardDark : Colors.white,
-        foregroundColor: isDark ? Colors.white : kTextDark,
-        elevation: 0,
-        title: Text(
-          emp.name,
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            EmployeeDetailHeader(
-              emp: emp,
-              accentColor: accentColor,
-              isDark: isDark,
-              pos: pos,
-            ),
-            const SizedBox(height: 28),
-            EmployeeDetailSectionLabel(
-              label: 'Personal Information',
-              isDark: isDark,
-            ),
-            const SizedBox(height: 12),
-            EmployeeInfoSection(
-              emp: emp,
-              isDark: isDark,
-              accentColor: accentColor,
-              pos: pos,
-            ),
-            const SizedBox(height: 28),
-            EmployeeDetailSectionLabel(label: 'Login QR Code', isDark: isDark),
-            const SizedBox(height: 12),
-            EmployeeQrSection(emp: emp, isDark: isDark),
-            const SizedBox(height: 28),
-            Row(
-              children: [
-                EmployeeDetailSectionLabel(label: 'Tasks', isDark: isDark),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
+      backgroundColor: isDark ? kBgDark : const Color(0xFFF9FAFB),
+      body: CustomScrollView(
+        slivers: [
+          // ── Hero header ──────────────────────────────────────
+          SliverAppBar(
+            expandedHeight: 290,
+            pinned: true,
+            backgroundColor: accent,
+            elevation: 0,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: GestureDetector(
+                onTap: Get.back,
+                child: Container(
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
-                    color: kPrimary.withAlpha(25),
+                    color: Colors.white.withValues(alpha: 0.20),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Text(
-                    '${tasks.length}',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: kPrimary,
-                    ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 16,
+                    color: Colors.white,
                   ),
                 ),
-              ],
+              ),
             ),
-            const SizedBox(height: 12),
-            EmployeeTasksSection(tasks: tasks, isDark: isDark),
-          ],
-        ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: EmployeeDetailHeroHeader(employee: emp, accent: accent),
+            ),
+          ),
+
+          // ── Content ──────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 48),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Stats
+                  EmployeeDetailStats(employee: emp, isDark: isDark),
+                  const SizedBox(height: 20),
+
+                  // Edit + Delete
+                  EmployeeDetailActions(
+                    isDark: isDark,
+                    onEdit: () async {
+                      await Get.find<EmployeeController>()
+                          .showEditDialog(emp);
+                      onRefresh();
+                    },
+                    onDelete: () async {
+                      final confirmed = await showConfirmDeleteDialog(
+                        context,
+                        title: 'Delete Employee',
+                        content:
+                            'Are you sure you want to delete this employee?',
+                      );
+                      if (confirmed == true) {
+                        await ctrl.deleteEmployee(emp.id);
+                        Get.back();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Info list
+                  EmployeeDetailInfoList(employee: emp, isDark: isDark),
+                  const SizedBox(height: 28),
+
+                  // Tasks
+                  Row(
+                    children: [
+                      EmployeeDetailSectionLabel(
+                        label: 'Tasks',
+                        isDark: isDark,
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: kPrimary.withAlpha(25),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${tasks.length}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: kPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  EmployeeTasksSection(tasks: tasks, isDark: isDark),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

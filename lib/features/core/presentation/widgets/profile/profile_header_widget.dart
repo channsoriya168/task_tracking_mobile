@@ -9,6 +9,9 @@ class ProfileHeaderWidget extends StatelessWidget {
     required this.role,
     required this.email,
     required this.avatarLetter,
+    this.profileImageUrl,
+    this.isUploadingImage = false,
+    this.onEditTap,
   });
 
   final bool isDark;
@@ -16,6 +19,9 @@ class ProfileHeaderWidget extends StatelessWidget {
   final String role;
   final String email;
   final String avatarLetter;
+  final String? profileImageUrl;
+  final bool isUploadingImage;
+  final VoidCallback? onEditTap;
 
   @override
   Widget build(BuildContext context) {
@@ -34,42 +40,73 @@ class ProfileHeaderWidget extends StatelessWidget {
       padding: kContentPaddingLarge,
       child: Column(
         children: [
-          Stack(
-            alignment: Alignment.bottomRight,
-            children: [
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: kPrimary.withAlpha(30),
-                  border: Border.all(color: kPrimary.withAlpha(80), width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    avatarLetter,
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: kPrimary,
-                    ),
+          GestureDetector(
+            onTap: isUploadingImage ? null : onEditTap,
+            child: Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                Container(
+                  width: 88,
+                  height: 88,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: kPrimary.withAlpha(30),
+                    border: Border.all(color: kPrimary.withAlpha(80), width: 2),
+                  ),
+                  child: ClipOval(
+                    child: isUploadingImage
+                        ? const Center(
+                            child: SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: kPrimary,
+                              ),
+                            ),
+                          )
+                        : profileImageUrl != null && profileImageUrl!.isNotEmpty
+                            ? Image.network(
+                                profileImageUrl!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Center(
+                                  child: Text(
+                                    avatarLetter,
+                                    style: const TextStyle(
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.bold,
+                                      color: kPrimary,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: Text(
+                                  avatarLetter,
+                                  style: const TextStyle(
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.bold,
+                                    color: kPrimary,
+                                  ),
+                                ),
+                              ),
                   ),
                 ),
-              ),
-              Container(
-                width: 28,
-                height: 28,
-                decoration: const BoxDecoration(
-                  color: kPrimary,
-                  shape: BoxShape.circle,
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: const BoxDecoration(
+                    color: kPrimary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.edit_rounded,
+                    size: 14,
+                    color: Colors.white,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.edit_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           Text(

@@ -15,6 +15,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/del
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_dashboard_controller.dart';
 
 class ManagerTaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
@@ -212,6 +213,7 @@ class ManagerTaskController extends GetxController {
       );
       await _createTaskItem(model);
       await fetchTasks();
+      _refreshDashboard();
       _clearForm();
       AppSnackbar.success('Task Created', '"$title" has been created.');
       return true;
@@ -256,6 +258,7 @@ class ManagerTaskController extends GetxController {
       final i = tasks.indexWhere((t) => t.id == original.id);
       if (i != -1) tasks[i] = updated;
       await fetchTasks();
+      _refreshDashboard();
       _clearForm();
       AppSnackbar.success('Task Updated', '"$title" has been updated.');
       return true;
@@ -272,6 +275,7 @@ class ManagerTaskController extends GetxController {
     try {
       await _deleteTaskItem(taskItem);
       await fetchTasks();
+      _refreshDashboard();
       AppSnackbar.success(
         'Task Deleted',
         '"${taskItem.title}" has been deleted.',
@@ -316,6 +320,12 @@ class ManagerTaskController extends GetxController {
     final now = DateTime.now();
     selectedDueDate.value = DateTime(now.year, now.month, now.day);
     selectedStartDate.value = null;
+  }
+
+  void _refreshDashboard() {
+    try {
+      Get.find<ManagerDashboardController>().fetchTasks();
+    } catch (_) {}
   }
 
   void _clearForm() {

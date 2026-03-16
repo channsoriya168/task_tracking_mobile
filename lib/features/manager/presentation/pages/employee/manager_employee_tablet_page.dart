@@ -15,7 +15,7 @@ class ManagerEmployeeTabletPage extends StatefulWidget {
 }
 
 class _ManagerEmployeeTabletPageState extends State<ManagerEmployeeTabletPage> {
-  String? _selectedPositionId;
+  String? _selectedTaskGroupId;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +34,8 @@ class _ManagerEmployeeTabletPageState extends State<ManagerEmployeeTabletPage> {
               isDark: isDark,
               ctrl: ctrl,
               posCtrl: posCtrl,
-              selectedId: _selectedPositionId,
-              onSelect: (id) => setState(() => _selectedPositionId = id),
+              selectedId: _selectedTaskGroupId,
+              onSelect: (id) => setState(() => _selectedTaskGroupId = id),
             ),
           ),
 
@@ -52,7 +52,7 @@ class _ManagerEmployeeTabletPageState extends State<ManagerEmployeeTabletPage> {
             child: RightEmployeePanelWidget(
               isDark: isDark,
               ctrl: ctrl,
-              selectedPositionId: _selectedPositionId,
+              selectedTaskGroupId: _selectedTaskGroupId,
             ),
           ),
         ],

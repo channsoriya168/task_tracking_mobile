@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
@@ -82,6 +83,51 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const Spacer(),
+                  Obx(() {
+                    final authCtrl = Get.find<AuthController>();
+                    final profile = authCtrl.profile.value;
+                    final auth = authCtrl.currentAuth.value;
+                    final name = profile?.fullName ?? auth?.fullName ?? '';
+                    final imageUrl = profile?.profileImageUrl;
+                    final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
+                    return Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: kPrimary.withAlpha(30),
+                        border: Border.all(color: kPrimary.withAlpha(80), width: 2),
+                      ),
+                      child: ClipOval(
+                        child: imageUrl != null && imageUrl.isNotEmpty
+                            ? Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Center(
+                                  child: Text(
+                                    letter,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: kPrimary,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: Text(
+                                  letter,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: kPrimary,
+                                  ),
+                                ),
+                              ),
+                      ),
+                    );
+                  }),
                 ],
               ),
               const SizedBox(height: 20),

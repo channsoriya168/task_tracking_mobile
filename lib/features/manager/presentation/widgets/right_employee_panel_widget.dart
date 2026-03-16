@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_grid_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_shimmer_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/panel_header_widget.dart';
 
@@ -11,12 +12,12 @@ class RightEmployeePanelWidget extends StatelessWidget {
   const RightEmployeePanelWidget({
     required this.isDark,
     required this.ctrl,
-    required this.selectedPositionId,
+    required this.selectedTaskGroupId,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
-  final String? selectedPositionId;
+  final String? selectedTaskGroupId;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class RightEmployeePanelWidget extends StatelessWidget {
         PanelHeaderWidget(
           isDark: isDark,
           ctrl: ctrl,
-          selectedPositionId: selectedPositionId,
+          selectedTaskGroupId: selectedTaskGroupId,
         ),
         EmployeeSearchBar(
           isDark: isDark,
@@ -34,9 +35,14 @@ class RightEmployeePanelWidget extends StatelessWidget {
         ),
         Expanded(
           child: Obx(() {
-            final employees = selectedPositionId == null
+            // Show shimmer while loading
+            if (ctrl.isLoading.value) {
+              return EmployeeGridShimmer(isDark: isDark);
+            }
+
+            final employees = selectedTaskGroupId == null
                 ? ctrl.filteredEmployees
-                : ctrl.employeesByPosition(selectedPositionId!);
+                : ctrl.employeesByTaskGroup(selectedTaskGroupId!);
 
             if (employees.isEmpty) {
               return Center(
@@ -74,12 +80,12 @@ class RightEmployeePanelWidget extends StatelessWidget {
               itemCount: employees.length,
               itemBuilder: (_, i) {
                 final emp = employees[i];
-                final pos = ctrl.findPosition(emp.positionId);
+                final taskGroup = ctrl.taskGroupForEmployee(emp);
                 return EmployeeGridCardWidget(
                   isDark: isDark,
                   ctrl: ctrl,
                   employee: emp,
-                  position: pos,
+                  taskGroup: taskGroup,
                 );
               },
             );

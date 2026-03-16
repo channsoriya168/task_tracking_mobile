@@ -4,27 +4,28 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 
+
 class PanelHeaderWidget extends StatelessWidget {
   const PanelHeaderWidget({
     required this.isDark,
     required this.ctrl,
-    required this.selectedPositionId,
+    required this.selectedTaskGroupId,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
-  final String? selectedPositionId;
+  final String? selectedTaskGroupId;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final pos = selectedPositionId != null
-          ? ctrl.findPosition(selectedPositionId!)
+      final pos = selectedTaskGroupId != null
+          ? ctrl.findTaskGroup(selectedTaskGroupId!)
           : null;
       final title = pos?.name ?? 'All Employees';
-      final count = selectedPositionId == null
+      final count = selectedTaskGroupId == null
           ? ctrl.employees.length
-          : ctrl.employeeCountByPosition(selectedPositionId!);
+          : ctrl.employeeCountByTaskGroup(selectedTaskGroupId!);
 
       return Padding(
         padding: const EdgeInsets.fromLTRB(24, 20, 16, 4),
@@ -52,7 +53,8 @@ class PanelHeaderWidget extends StatelessWidget {
             ),
             const Spacer(),
             ElevatedButton.icon(
-              onPressed: () => ctrl.showDialog(isDark, null, selectedPositionId),
+              onPressed: () => Get.find<EmployeeController>()
+                  .showCreateDialog(selectedTaskGroupId),
               icon: const Icon(Icons.person_add_rounded, size: 16),
               label: const Text('Add Employee'),
               style: ElevatedButton.styleFrom(

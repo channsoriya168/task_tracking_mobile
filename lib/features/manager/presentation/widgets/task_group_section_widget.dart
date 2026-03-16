@@ -1,7 +1,8 @@
 // ── Position Section ──────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_card_widget.dart';
 
@@ -9,13 +10,13 @@ class TaskGroupSectionWidget extends StatefulWidget {
   const TaskGroupSectionWidget({
     required this.isDark,
     required this.ctrl,
-    required this.position,
+    required this.taskGroup,
     required this.employees,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
-  final TaskGroup position;
+  final TaskGroup taskGroup;
   final List<Employee> employees;
 
   @override
@@ -29,7 +30,7 @@ class _TaskGroupSectionState extends State<TaskGroupSectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final p = widget.position;
+    final p = widget.taskGroup;
     final emps = widget.employees;
 
     return Column(
@@ -101,7 +102,7 @@ class _TaskGroupSectionState extends State<TaskGroupSectionWidget> {
                 isDark: isDark,
                 ctrl: widget.ctrl,
                 employee: e,
-                position: p,
+                taskGroup: p,
               ),
             ),
           ),

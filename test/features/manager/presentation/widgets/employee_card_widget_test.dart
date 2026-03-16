@@ -77,7 +77,7 @@ void main() {
           isDark: isDark,
           ctrl: ctrl,
           employee: employee,
-          position: taskGroup,
+          taskGroup: taskGroup,
         ),
       ),
     );

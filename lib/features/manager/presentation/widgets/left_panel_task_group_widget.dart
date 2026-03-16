@@ -37,7 +37,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Positions',
+                  'Task Groups',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
                   onPressed: () =>
                       showTaskGroupDialog(context, posCtrl, isDark),
                   icon: Icon(Icons.add_rounded, color: kPrimary, size: 22),
-                  tooltip: 'Add Position',
+                  tooltip: 'Add Task Group',
                 ),
               ],
             ),
@@ -86,7 +86,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
           // Position list
           Expanded(
             child: Obx(() {
-              final positions = ctrl.positions;
+              final positions = ctrl.taskGroups;
               if (positions.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(20),
@@ -104,7 +104,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
                 itemCount: positions.length,
                 itemBuilder: (_, i) {
                   final pos = positions[i];
-                  final count = ctrl.employeeCountByPosition(pos.id);
+                  final count = ctrl.employeeCountByTaskGroup(pos.id);
                   return PositionTitleWidget(
                     isDark: isDark,
                     label: pos.name,
@@ -139,10 +139,10 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
   Future<bool?> _confirmDelete(BuildContext context, TaskGroup pos, int count) {
     return showConfirmDeleteDialog(
       context,
-      title: 'Delete Position',
+      title: 'Delete Task Group',
       content: count > 0
           ? 'This removes $count ${count == 1 ? 'employee' : 'employees'} in "${pos.name}". Continue?'
-          : 'Delete position "${pos.name}"?',
+          : 'Delete task group "${pos.name}"?',
     );
   }
 }

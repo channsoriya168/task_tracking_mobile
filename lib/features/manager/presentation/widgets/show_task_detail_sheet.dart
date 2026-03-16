@@ -86,8 +86,9 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
     try {
       posCtrl = Get.find<TaskGroupController>();
     } catch (_) {}
-    final taskGroup =
-        _task.groupId != null ? posCtrl?.findPosition(_task.groupId!) : null;
+    final taskGroup = _task.groupId != null
+        ? posCtrl?.findPosition(_task.groupId!)
+        : null;
     final groupColor = taskGroup?.color ?? kPrimary;
 
     return Container(
@@ -159,8 +160,7 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          _StatusPriorityRow(
-                              task: _task, isDark: isDark),
+                          _StatusPriorityRow(task: _task, isDark: isDark),
                         ],
                       ),
                     ),
@@ -173,7 +173,10 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                   Text(
                     _task.description!,
                     style: TextStyle(
-                        fontSize: 14, color: mutedColor, height: 1.6),
+                      fontSize: 14,
+                      color: mutedColor,
+                      height: 1.6,
+                    ),
                   ),
                 ],
 
@@ -192,8 +195,10 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                           color: groupColor,
                           isDark: isDark,
                         )
-                      : Text('—',
-                          style: TextStyle(fontSize: 14, color: mutedColor)),
+                      : Text(
+                          '—',
+                          style: TextStyle(fontSize: 14, color: mutedColor),
+                        ),
                 ),
                 const SizedBox(height: 14),
 
@@ -223,9 +228,10 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                     child: Text(
                       formatDate(_task.startDate!),
                       style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: textColor),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -240,9 +246,10 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                     child: Text(
                       formatDate(_task.dueDate!),
                       style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: textColor),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -257,9 +264,10 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                     child: Text(
                       formatDate(_task.completedAt!),
                       style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: textColor),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -276,8 +284,10 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                           color: kPrimary,
                           textColor: textColor,
                         )
-                      : Text('Not assigned',
-                          style: TextStyle(fontSize: 14, color: mutedColor)),
+                      : Text(
+                          'Not assigned',
+                          style: TextStyle(fontSize: 14, color: mutedColor),
+                        ),
                 ),
                 const SizedBox(height: 14),
 
@@ -294,61 +304,6 @@ class _TaskDetailSheetContentState extends State<_TaskDetailSheetContent> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                ],
-
-                // Created at
-                _DetailRow(
-                  icon: Icons.access_time_rounded,
-                  label: 'Created',
-                  isDark: isDark,
-                  child: Text(
-                    formatDate(_task.createdAt ?? DateTime.now()),
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: textColor),
-                  ),
-                ),
-
-                // Updated at
-                if (_task.updatedAt != null) ...[
-                  const SizedBox(height: 14),
-                  _DetailRow(
-                    icon: Icons.update_rounded,
-                    label: 'Updated',
-                    isDark: isDark,
-                    child: Text(
-                      formatDate(_task.updatedAt!),
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: textColor),
-                    ),
-                  ),
-                ],
-
-                // Allowed transitions
-                if (_task.allowedTransitions.isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  Divider(height: 1, color: divColor),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Move to',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: mutedColor,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _task.allowedTransitions
-                        .map((s) => _TransitionChip(
-                            status: s, isDark: isDark))
-                        .toList(),
-                  ),
                 ],
               ],
             ),
@@ -391,7 +346,10 @@ class _StatusPriorityRow extends StatelessWidget {
         Container(
           width: 7,
           height: 7,
-          decoration: BoxDecoration(color: priorityColor, shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: priorityColor,
+            shape: BoxShape.circle,
+          ),
         ),
         const SizedBox(width: 4),
         Text(
@@ -407,38 +365,13 @@ class _StatusPriorityRow extends StatelessWidget {
   }
 }
 
-// ── Transition chip ────────────────────────────────────────────
-class _TransitionChip extends StatelessWidget {
-  const _TransitionChip({required this.status, required this.isDark});
-  final TaskStatusLookup status;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = status.color;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.15 : 0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.35)),
-      ),
-      child: Text(
-        status.name,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
-  }
-}
-
 // ── Colored chip ───────────────────────────────────────────────
 class _ColoredChip extends StatelessWidget {
-  const _ColoredChip(
-      {required this.label, required this.color, required this.isDark});
+  const _ColoredChip({
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
   final String label;
   final Color color;
   final bool isDark;
@@ -466,8 +399,11 @@ class _ColoredChip extends StatelessWidget {
 
 // ── Avatar + name ──────────────────────────────────────────────
 class _AvatarName extends StatelessWidget {
-  const _AvatarName(
-      {required this.name, required this.color, required this.textColor});
+  const _AvatarName({
+    required this.name,
+    required this.color,
+    required this.textColor,
+  });
   final String name;
   final Color color;
   final Color textColor;
@@ -534,10 +470,7 @@ class _DetailRow extends StatelessWidget {
         const SizedBox(width: 8),
         SizedBox(
           width: 90,
-          child: Text(
-            label,
-            style: TextStyle(fontSize: 13, color: mutedColor),
-          ),
+          child: Text(label, style: TextStyle(fontSize: 13, color: mutedColor)),
         ),
         Expanded(child: child),
       ],

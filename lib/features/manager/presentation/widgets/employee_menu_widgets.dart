@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
@@ -43,10 +43,10 @@ class EmployeeMenuSummary extends StatelessWidget {
     return Row(
       children: [
         EmployeeAvatar(
-          name: emp.name,
+          name: emp.fullName,
           color: accentColor,
           radius: 24,
-          imagePath: emp.imagePath,
+          imagePath: emp.profileImageUrl,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -54,7 +54,7 @@ class EmployeeMenuSummary extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                emp.name,
+                emp.fullName,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -71,7 +71,6 @@ class EmployeeMenuSummary extends StatelessWidget {
             ],
           ),
         ),
-        if (emp.hasQr) EmployeeMenuQrBadge(isExpired: emp.isQrExpired),
       ],
     );
   }

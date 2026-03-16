@@ -36,12 +36,8 @@ class ManagerTaskCardWidget extends StatelessWidget {
     final priorityColor = task.priority.color;
 
     final cardContent = GestureDetector(
-      onTap: () => showTaskDetailSheet(
-        context,
-        isDark,
-        task,
-        fetchDetail: fetchDetail,
-      ),
+      onTap: () =>
+          showTaskDetailSheet(context, isDark, task, fetchDetail: fetchDetail),
       child: Container(
         decoration: BoxDecoration(
           color: cardBg,
@@ -72,10 +68,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        statusColor,
-                        statusColor.withValues(alpha: 0.4),
-                      ],
+                      colors: [statusColor, statusColor.withValues(alpha: 0.4)],
                     ),
                   ),
                 ),
@@ -231,28 +224,13 @@ class ManagerTaskCardWidget extends StatelessWidget {
                                 isDark: isDark,
                               ),
                             const Spacer(),
-                            if (task.assignedToName != null) ...[
+                            if (task.assignedToName != null)
                               _SingleAvatar(name: task.assignedToName!),
-                              const SizedBox(width: 4),
-                              Text(
-                                task.assignedToName!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 11, color: mutedColor),
-                              ),
-                            ] else if (task.createdByEmployeeName != null) ...[
+                            if (task.createdByEmployeeName != null)
                               _SingleAvatar(
                                 name: task.createdByEmployeeName!,
                                 color: mutedColor,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                task.createdByEmployeeName!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 11, color: mutedColor),
-                              ),
-                            ],
                           ],
                         ),
                       ],
