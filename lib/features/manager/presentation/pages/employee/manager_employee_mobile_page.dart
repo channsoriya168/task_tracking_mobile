@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_header_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_list_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
@@ -33,7 +34,8 @@ class ManagerEmployeeMobilePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
-        onPressed: () => ctrl.showDialog(isDark),
+        onPressed: () =>
+            Get.find<EmployeeController>().showCreateDialog(),
         child: const Icon(Icons.person_add_rounded),
       ),
     );

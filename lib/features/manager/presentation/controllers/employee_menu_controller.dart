@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+
 import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/employee_detail_page.dart';
 
 class EmployeeMenuController extends GetxController {
@@ -50,7 +51,7 @@ class EmployeeMenuController extends GetxController {
     final emp = employee;
     if (emp == null) return;
     Get.back();
-    _empCtrl.showDialog(isDark, emp);
+    Get.find<EmployeeController>().showEditDialog(emp);
   }
 
   void deleteEmployee() {

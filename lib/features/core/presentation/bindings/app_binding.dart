@@ -65,7 +65,9 @@ class AppBinding extends Bindings {
     );
 
     // ── Core controllers ──────────────────────────────────────
-    Get.put<NavigationController>(NavigationController(), permanent: true);
+    if (!Get.isRegistered<NavigationController>()) {
+      Get.put<NavigationController>(NavigationController(), permanent: true);
+    }
 
     // ── Feature bindings ──────────────────────────────────────
     ManagerTaskBinding().dependencies();

@@ -8,7 +8,7 @@ class CreateEmployeeUsecase {
 
   Future<Employee> call({
     required String fullName,
-    required String email,
+    String? email,
     required String password,
     required String confirmPassword,
     String? phone,

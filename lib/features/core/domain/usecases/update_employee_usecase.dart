@@ -9,7 +9,7 @@ class UpdateEmployeeUsecase {
   Future<Employee> call(
     String id, {
     required String fullName,
-    required String email,
+    String? email,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,

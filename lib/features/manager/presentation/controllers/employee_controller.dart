@@ -1,30 +1,36 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/app/utils/validators.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/image_picker_bottom_sheet.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_dialog.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_form_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_dialog.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 class EmployeeController extends GetxController {
-  EmployeeController(this._repository);
+  EmployeeController(
+    this._repository,
+    this._createEmployee,
+    this._updateEmployee,
+  );
 
   final EmployeeRepository _repository;
+  final CreateEmployeeUsecase _createEmployee;
+  final UpdateEmployeeUsecase _updateEmployee;
 
+  // ── List state ────────────────────────────────────────────────
   final RxList<Employee> employees = <Employee>[].obs;
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
   final RxString selectedTaskGroupId = ''.obs;
-  final PickAndCompressImageUseCase pickImage = Get.find();
-
-  // Track the employee being edited
-  Employee? existing;
 
   RxList<TaskGroup> get taskGroups =>
       Get.find<TaskGroupController>().taskGroups;
@@ -38,47 +44,11 @@ class EmployeeController extends GetxController {
   Future<void> fetchEmployees() async {
     try {
       isLoading.value = true;
-      final list = await _repository.fetchEmployees();
-      employees.value = list;
+      employees.value = await _repository.fetchEmployees();
     } catch (_) {
-      Get.snackbar('Error', 'Failed to load employees');
+      AppSnackbar.error('Error', 'Failed to load employees.');
     } finally {
       isLoading.value = false;
-    }
-  }
-
-  Future<void> pickFromGallery() async {
-    final result = await pickImage(ImageSource.gallery);
-    if (result != null) formImagePath.value = result.path;
-  }
-
-  Future<void> pickFromCamera() async {
-    final result = await pickImage(ImageSource.camera);
-    if (result != null) formImagePath.value = result.path;
-  }
-
-  void showImagePickerOptions([bool isDark = false]) {
-    ImagePickerBottomSheet.show(
-      isDark: isDark,
-      onCameraTap: pickFromCamera,
-      onGalleryTap: pickFromGallery,
-    );
-  }
-
-  Future<void> onOpenTaskGroupDialog(BuildContext context) async {
-    final posCtrl = Get.find<TaskGroupController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final before = posCtrl.taskGroups.map((p) => p.id).toSet();
-
-    await showTaskGroupDialog(context, posCtrl, isDark);
-
-    final added = posCtrl.taskGroups
-        .where((p) => !before.contains(p.id))
-        .toList();
-    if (added.isNotEmpty) {
-      if (!formGroupIds.contains(added.first.id)) {
-        formGroupIds.add(added.first.id);
-      }
     }
   }
 
@@ -116,8 +86,6 @@ class EmployeeController extends GetxController {
     }
   }
 
-  /// Returns a [TaskGroup] built from the employee's first inline task group,
-  /// falling back to the TaskGroupController lookup.
   TaskGroup? taskGroupForEmployee(Employee emp) {
     if (emp.taskGroups.isEmpty) return null;
     final g = emp.taskGroups.first;
@@ -129,167 +97,16 @@ class EmployeeController extends GetxController {
       .where((e) => e.taskGroups.any((g) => g.groupId == groupId))
       .length;
 
-  // ── Dialog form state ──────────────────────────────────────────
-  final Rx<String?> formImagePath = Rx(null);
-  final RxList<String> formGroupIds = <String>[].obs;
-  final Rx<DateTime?> formDob = Rx(null);
-
-  final nameCtrl = TextEditingController();
-  final emailCtrl = TextEditingController();
-  final phoneCtrl = TextEditingController();
-  final placeCtrl = TextEditingController();
-  final passwordCtrl = TextEditingController();
-  final confirmPasswordCtrl = TextEditingController();
-
-  // Password visibility toggles
-  final formPasswordVisible = false.obs;
-  final formConfirmPasswordVisible = false.obs;
-
-  // Reactive mirrors used solely for form-valid computation
-  final _rName = ''.obs;
-  final _rPhone = ''.obs;
-  final _rPassword = ''.obs;
-  final _rConfirmPassword = ''.obs;
-
-  bool get isFormValid {
-    final base = _rName.value.isNotEmpty &&
-        _rPhone.value.isNotEmpty &&
-        formDob.value != null &&
-        formGroupIds.isNotEmpty;
-    if (existing == null) {
-      return base &&
-          _rPassword.value.isNotEmpty &&
-          _rConfirmPassword.value.isNotEmpty;
-    }
-    return base;
-  }
-
-  @override
-  void onClose() {
-    nameCtrl.dispose();
-    emailCtrl.dispose();
-    phoneCtrl.dispose();
-    placeCtrl.dispose();
-    passwordCtrl.dispose();
-    confirmPasswordCtrl.dispose();
-    super.onClose();
-  }
-
-  void initDialogForm(Employee? existing, String? preselectedTaskGroupId) {
-    this.existing = existing;
-    formImagePath.value = existing?.profileImageUrl;
-    formGroupIds.value = existing != null
-        ? existing.taskGroups.map((g) => g.groupId).toList()
-        : (preselectedTaskGroupId != null ? [preselectedTaskGroupId] : []);
-    formDob.value = existing?.dateOfBirth;
-    nameCtrl.text = existing?.fullName ?? '';
-    emailCtrl.text = existing?.email ?? '';
-    phoneCtrl.text = existing?.phone ?? '';
-    placeCtrl.text = existing?.placeOfBirth ?? '';
-    passwordCtrl.clear();
-    confirmPasswordCtrl.clear();
-    formPasswordVisible.value = false;
-    formConfirmPasswordVisible.value = false;
-
-    // Sync reactive mirrors and attach listeners
-    _rName.value = nameCtrl.text.trim();
-    _rPhone.value = phoneCtrl.text.trim();
-    _rPassword.value = '';
-    _rConfirmPassword.value = '';
-
-    nameCtrl.addListener(() => _rName.value = nameCtrl.text.trim());
-    phoneCtrl.addListener(() => _rPhone.value = phoneCtrl.text.trim());
-    passwordCtrl.addListener(() => _rPassword.value = passwordCtrl.text.trim());
-    confirmPasswordCtrl.addListener(
-      () => _rConfirmPassword.value = confirmPasswordCtrl.text.trim(),
-    );
-  }
-
-  void showDialog(
-    bool isDark, [
-    Employee? existing,
-    String? preselectedTaskGroupId,
-  ]) {
-    initDialogForm(existing, preselectedTaskGroupId);
-    Get.bottomSheet(
-      EmployeeDialogSheet(controller: this),
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-    );
-  }
-
-  Future<void> saveEmployee() async {
-    final name = nameCtrl.text.trim();
-    final email = emailCtrl.text.trim().isEmpty ? null : emailCtrl.text.trim();
-    final phone = phoneCtrl.text.trim().isEmpty ? null : phoneCtrl.text.trim();
-    final placeOfBirth = placeCtrl.text.trim().isEmpty
-        ? null
-        : placeCtrl.text.trim();
-    final groupIds = formGroupIds.toList();
-
-    if (name.isEmpty ||
-        phoneCtrl.text.trim().isEmpty ||
-        formDob.value == null ||
-        groupIds.isEmpty) return;
-
-    final imagePath = formImagePath.value;
-    final isLocalPath = imagePath != null && !imagePath.startsWith('http');
-
-    try {
-      isLoading.value = true;
-      if (existing == null) {
-        final password = passwordCtrl.text.trim();
-        final confirmPassword = confirmPasswordCtrl.text.trim();
-        if (password.isEmpty || password != confirmPassword) return;
-
-        final created = await _repository.createEmployee(
-          fullName: name,
-          email: email,
-          password: password,
-          confirmPassword: confirmPassword,
-          phone: phone,
-          placeOfBirth: placeOfBirth,
-          dateOfBirth: formDob.value,
-          groupIds: groupIds,
-          profileImagePath: isLocalPath ? imagePath : null,
-        );
-        employees.add(created);
-      } else {
-        final hadImage = existing!.profileImageUrl != null;
-        final removeImage = hadImage && imagePath == null;
-
-        final updated = await _repository.updateEmployee(
-          existing!.id,
-          fullName: name,
-          email: email,
-          phone: phone,
-          placeOfBirth: placeOfBirth,
-          dateOfBirth: formDob.value,
-          groupIds: groupIds,
-          profileImagePath: isLocalPath ? imagePath : null,
-          removeProfileImage: removeImage,
-        );
-        final i = employees.indexWhere((e) => e.id == updated.id);
-        if (i != -1) employees[i] = updated;
-      }
-      Get.back();
-    } catch (e) {
-      Get.snackbar('Error', e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
   Future<void> deleteEmployee(String id) async {
     try {
       await _repository.deleteEmployee(id);
       employees.removeWhere((e) => e.id == id);
+      AppSnackbar.delete('Employee Deleted', 'Employee has been removed.');
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      AppSnackbar.error('Error', e.toString());
     }
   }
 
-  // ── Tasks ──────────────────────────────────────────────────────
   List<TaskModel> tasksForEmployee(String employeeId) {
     try {
       final taskCtrl = Get.find<TaskController>();
@@ -297,5 +114,301 @@ class EmployeeController extends GetxController {
     } catch (_) {
       return [];
     }
+  }
+
+  // ── Form state ────────────────────────────────────────────────
+  final nameCtrl = TextEditingController();
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  final confirmPasswordCtrl = TextEditingController();
+  final phoneCtrl = TextEditingController();
+  final placeCtrl = TextEditingController();
+
+  final Rx<DateTime?> formDob = Rx(null);
+  final Rxn<String> selectedGroupId = Rxn<String>();
+  final Rxn<XFile> profileImage = Rxn<XFile>();
+  final RxBool isSaving = false.obs;
+  final RxBool showPassword = false.obs;
+  final RxBool showConfirmPassword = false.obs;
+  final RxMap<String, String> fieldErrors = <String, String>{}.obs;
+
+  final RxBool isEditMode = false.obs;
+  String? _editingId;
+  String? existingImageUrl;
+  final RxBool removeProfileImage = false.obs;
+
+  // ── Image ─────────────────────────────────────────────────────
+  Future<void> pickImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (picked != null) profileImage.value = picked;
+  }
+
+  // ── Form validity (reactive) ──────────────────────────────────
+  bool get canSave =>
+      formDob.value != null && selectedGroupId.value != null;
+
+  // ── Task Group dialog ─────────────────────────────────────────
+  Future<void> openTaskGroupDialog(BuildContext context) async {
+    final tgCtrl = Get.find<TaskGroupController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final before = tgCtrl.taskGroups.map((g) => g.id).toSet();
+
+    await showTaskGroupDialog(context, tgCtrl, isDark);
+
+    final added =
+        tgCtrl.taskGroups.where((g) => !before.contains(g.id)).toList();
+    if (added.isNotEmpty) {
+      selectedGroupId.value = added.first.id;
+    }
+  }
+
+  // ── Dialog ────────────────────────────────────────────────────
+  Future<void> showCreateDialog([String? preselectedGroupId]) async {
+    _resetForm();
+    selectedGroupId.value = preselectedGroupId;
+    await Get.bottomSheet(
+      ManagerEmployeeFormDialog(controller: this),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Future<void> showEditDialog(Employee employee) async {
+    _resetForm();
+    isEditMode.value = true;
+    _editingId = employee.id;
+    existingImageUrl = employee.profileImageUrl;
+    nameCtrl.text = employee.fullName;
+    emailCtrl.text = employee.email;
+    phoneCtrl.text = employee.phone ?? '';
+    placeCtrl.text = employee.placeOfBirth ?? '';
+    formDob.value = employee.dateOfBirth;
+    selectedGroupId.value =
+        employee.taskGroups.isNotEmpty ? employee.taskGroups.first.groupId : null;
+    await Get.bottomSheet(
+      ManagerEmployeeFormDialog(controller: this),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  void _resetForm() {
+    nameCtrl.clear();
+    emailCtrl.clear();
+    passwordCtrl.clear();
+    confirmPasswordCtrl.clear();
+    phoneCtrl.clear();
+    placeCtrl.clear();
+    formDob.value = null;
+    selectedGroupId.value = null;
+    profileImage.value = null;
+    showPassword.value = false;
+    showConfirmPassword.value = false;
+    fieldErrors.clear();
+    isEditMode.value = false;
+    _editingId = null;
+    existingImageUrl = null;
+    removeProfileImage.value = false;
+  }
+
+  void selectGroup(String groupId) {
+    selectedGroupId.value =
+        selectedGroupId.value == groupId ? null : groupId;
+    if (selectedGroupId.value != null) {
+      fieldErrors.remove('taskGroup');
+    }
+  }
+
+  // ── Save ──────────────────────────────────────────────────────
+  Future<void> save() async {
+    if (isEditMode.value) {
+      await _saveEdit();
+    } else {
+      await _saveCreate();
+    }
+  }
+
+  Future<void> _saveCreate() async {
+    fieldErrors.clear();
+    final name = nameCtrl.text.trim();
+    final email = emailCtrl.text.trim();
+    final phone = phoneCtrl.text.trim();
+    final password = passwordCtrl.text;
+    final confirmPassword = confirmPasswordCtrl.text;
+
+    if (!_validateCreate(
+      name: name,
+      email: email,
+      phone: phone,
+      password: password,
+      confirmPassword: confirmPassword,
+    )) return;
+
+    isSaving.value = true;
+    try {
+      await _createEmployee(
+        fullName: name,
+        email: email.isEmpty ? null : email,
+        password: password,
+        confirmPassword: confirmPassword,
+        phone: phone.isEmpty ? null : Validators.toE164(phone),
+        placeOfBirth:
+            placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
+        dateOfBirth: formDob.value,
+        groupIds:
+            selectedGroupId.value != null ? [selectedGroupId.value!] : null,
+        profileImagePath: profileImage.value?.path,
+      );
+      Get.back();
+      AppSnackbar.success('Employee Added', 'New employee has been created.');
+      await fetchEmployees();
+    } catch (e) {
+      _handleApiError(e, label: 'Create Employee');
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
+  Future<void> _saveEdit() async {
+    fieldErrors.clear();
+    final name = nameCtrl.text.trim();
+    final email = emailCtrl.text.trim();
+    final phone = phoneCtrl.text.trim();
+
+    if (!_validateEdit(name: name, email: email, phone: phone)) return;
+
+    isSaving.value = true;
+    try {
+      await _updateEmployee(
+        _editingId!,
+        fullName: name,
+        email: email.isEmpty ? null : email,
+        phone: phone.isEmpty ? null : Validators.toE164(phone),
+        placeOfBirth:
+            placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
+        dateOfBirth: formDob.value,
+        groupIds:
+            selectedGroupId.value != null ? [selectedGroupId.value!] : null,
+        profileImagePath: profileImage.value?.path,
+        removeProfileImage: removeProfileImage.value,
+      );
+      Get.back();
+      await fetchEmployees();
+      AppSnackbar.update('Employee Updated', 'Changes have been saved.');
+    } catch (e) {
+      _handleApiError(e, label: 'Edit Employee');
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
+  // ── Validation ────────────────────────────────────────────────
+  bool _validateEdit({
+    required String name,
+    required String email,
+    required String phone,
+  }) {
+    final errors = <String, String>{};
+    if (Validators.required(name, label: 'Full name') != null) {
+      errors['fullName'] = Validators.required(name, label: 'Full name')!;
+    }
+    if (email.isNotEmpty && !GetUtils.isEmail(email)) {
+      errors['email'] = 'Enter a valid email address.';
+    }
+    if (phone.isNotEmpty) {
+      final phoneErr = Validators.phone(phone);
+      if (phoneErr != null) errors['phone'] = phoneErr;
+    }
+    if (formDob.value == null) {
+      errors['dob'] = 'Date of birth is required.';
+    }
+    if (selectedGroupId.value == null) {
+      errors['taskGroup'] = 'Please select a task group.';
+    }
+    if (errors.isNotEmpty) {
+      fieldErrors.assignAll(errors);
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateCreate({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required String confirmPassword,
+  }) {
+    final errors = <String, String>{};
+    if (Validators.required(name, label: 'Full name') != null) {
+      errors['fullName'] = Validators.required(name, label: 'Full name')!;
+    }
+    if (email.isNotEmpty && !GetUtils.isEmail(email)) {
+      errors['email'] = 'Enter a valid email address.';
+    }
+    final phoneErr = Validators.phone(phone);
+    if (phoneErr != null) errors['phone'] = phoneErr;
+    final pwErr = Validators.strongPassword(password);
+    if (pwErr != null) errors['password'] = pwErr;
+    if (confirmPassword.isEmpty) {
+      errors['confirmPassword'] = 'Please confirm your password.';
+    } else if (password != confirmPassword) {
+      errors['confirmPassword'] = 'Passwords do not match.';
+    }
+    if (formDob.value == null) {
+      errors['dob'] = 'Date of birth is required.';
+    }
+    if (selectedGroupId.value == null) {
+      errors['taskGroup'] = 'Please select a task group.';
+    }
+    if (errors.isNotEmpty) {
+      fieldErrors.assignAll(errors);
+      return false;
+    }
+    return true;
+  }
+
+  // ── API error mapping ─────────────────────────────────────────
+  static const _fieldKeyMap = {
+    'FullName': 'fullName',
+    'Email': 'email',
+    'Phone': 'phone',
+    'Password': 'password',
+    'ConfirmPassword': 'confirmPassword',
+    'PlaceOfBirth': 'placeOfBirth',
+    'DateOfBirth': 'dateOfBirth',
+  };
+
+  void _handleApiError(Object e, {String label = 'Employee'}) {
+    if (e is DioException) {
+      final data = e.response?.data;
+      if (data is Map && data['errors'] is Map) {
+        final mapped = <String, String>{};
+        (data['errors'] as Map).forEach((key, value) {
+          final localKey = _fieldKeyMap[key] ?? key.toString();
+          final msgs = value is List ? value : [value];
+          if (msgs.isNotEmpty) mapped[localKey] = msgs.first.toString();
+        });
+        if (mapped.isNotEmpty) {
+          fieldErrors.assignAll(mapped);
+          return;
+        }
+      }
+    }
+    AppSnackbar.error(label, AppSnackbar.parseApiError(e));
+  }
+
+  @override
+  void onClose() {
+    nameCtrl.dispose();
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    confirmPasswordCtrl.dispose();
+    phoneCtrl.dispose();
+    placeCtrl.dispose();
+    super.onClose();
   }
 }

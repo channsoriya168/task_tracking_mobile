@@ -31,7 +31,7 @@ class EmployeeModel extends Employee {
     return EmployeeModel(
       id: json['id'] as String,
       fullName: json['fullName'] as String,
-      email: json['email'] as String,
+      email: json['email'] as String? ?? '',
       phone: json['phone'] as String?,
       isActive: json['isActive'] as bool? ?? true,
       profileImageUrl: json['profileImageUrl'] as String?,
