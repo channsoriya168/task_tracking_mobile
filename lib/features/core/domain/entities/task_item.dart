@@ -19,6 +19,7 @@ class TaskItem {
 
   final String? assignedToId;
   final String? assignedToName;
+  final String? assignedToProfileImageUrl;
   final String? createdById;
   final String? createdByEmployeeName;
 
@@ -47,6 +48,7 @@ class TaskItem {
     this.labelColor,
     this.assignedToId,
     this.assignedToName,
+    this.assignedToProfileImageUrl,
     this.createdById,
     this.createdByEmployeeName,
     required this.priority,

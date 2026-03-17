@@ -303,7 +303,11 @@ class _TaskDetailSheet extends StatelessWidget {
           label: 'Assigned to',
           isDark: isDark,
           child: task.assignedToName != null
-              ? TaskAssigneeRow(name: task.assignedToName!, isDark: isDark)
+              ? TaskAssigneeRow(
+                  name: task.assignedToName!,
+                  isDark: isDark,
+                  imageUrl: task.assignedToProfileImageUrl,
+                )
               : Text('Not assigned yet',
                   style: TextStyle(fontSize: 14, color: mutedColor)),
         ),
@@ -325,6 +329,7 @@ class _TaskDetailSheet extends StatelessWidget {
             isDark: isDark,
             textColor: textColor,
             mutedColor: mutedColor,
+            canEdit: !readOnly && task.assignedToId == ctrl.currentEmployeeId,
             onAdd: (members) => _onAddMember(context, members),
             onRemove: (member) => _onRemoveMember(context, member),
           ),

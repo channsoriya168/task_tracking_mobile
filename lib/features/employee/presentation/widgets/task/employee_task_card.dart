@@ -134,9 +134,9 @@ class EmployeeTaskCard extends StatelessWidget {
                               isDark: isDark,
                               muted: true,
                               onTap: () {
-                                ctrl.prepareTaskDetail(task.id);
+                                ctrl.prepareTaskDetail(task.id, showMembers: true);
                                 showEmployeeTaskDetailSheet(context, isDark, task,
-                                    readOnly: true);
+                                    showMembers: true, readOnly: true);
                               },
                             ),
                           if (isInProgress)
@@ -155,8 +155,11 @@ class EmployeeTaskCard extends StatelessWidget {
                               isDark: isDark,
                               muted: true,
                               onTap: () {
-                                ctrl.prepareTaskDetail(task.id);
+                                ctrl.prepareTaskDetail(task.id,
+                                    showMembers: true, showProgress: true);
                                 showEmployeeTaskDetailSheet(context, isDark, task,
+                                    showMembers: true,
+                                    showProgress: true,
                                     readOnly: true);
                               },
                             ),

@@ -14,6 +14,7 @@ class TaskItemModel extends TaskItem {
     super.labelColor,
     super.assignedToId,
     super.assignedToName,
+    super.assignedToProfileImageUrl,
     super.createdById,
     super.createdByEmployeeName,
     required super.priority,
@@ -40,6 +41,7 @@ class TaskItemModel extends TaskItem {
       labelColor: json['labelColor'] as String?,
       assignedToId: json['assignedToId'] as String?,
       assignedToName: json['assignedToName'] as String?,
+      assignedToProfileImageUrl: json['assignedToProfileImageUrl'] as String?,
       createdById: json['createdById'] as String?,
       createdByEmployeeName: json['createdByEmployeeName'] as String?,
       // Priority: {id, name}
