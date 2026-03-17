@@ -17,7 +17,8 @@ class EmployeeTaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final mutedColor = isDark ? Colors.white54 : kTextMuted;
     final statusColor = task.status.color;
-    final currentId = Get.find<EmployeeTaskController>().currentEmployeeId;
+    final ctrl = Get.find<EmployeeTaskController>();
+    final currentId = ctrl.currentEmployeeId;
     final statusLower = task.status.name.toLowerCase();
 
     final isPending = task.assignedToName == null;
@@ -25,6 +26,12 @@ class EmployeeTaskCard extends StatelessWidget {
         task.assignedToId != null &&
         task.assignedToId == currentId;
     final isAssignedOther = statusLower == 'assigned' &&
+        task.assignedToId != null &&
+        task.assignedToId != currentId;
+    final isInProgress = statusLower == 'inprogress' &&
+        task.assignedToId != null &&
+        task.assignedToId == currentId;
+    final isInProgressOther = statusLower == 'inprogress' &&
         task.assignedToId != null &&
         task.assignedToId != currentId;
 
@@ -106,28 +113,52 @@ class EmployeeTaskCard extends StatelessWidget {
                             _CardActionChip(
                               label: 'Accept',
                               isDark: isDark,
-                              onTap: () => showEmployeeTaskDetailSheet(
-                                context, isDark, task,
-                              ),
+                              onTap: () {
+                                ctrl.prepareTaskDetail(task.id);
+                                showEmployeeTaskDetailSheet(context, isDark, task);
+                              },
                             ),
                           if (isAssigned)
                             _CardActionChip(
                               label: 'In Progress',
                               isDark: isDark,
-                              onTap: () => showEmployeeTaskDetailSheet(
-                                context, isDark, task,
-                                showMembers: true,
-                              ),
+                              onTap: () {
+                                ctrl.prepareTaskDetail(task.id, showMembers: true);
+                                showEmployeeTaskDetailSheet(context, isDark, task,
+                                    showMembers: true);
+                              },
                             ),
                           if (isAssignedOther)
                             _CardActionChip(
                               label: 'View',
                               isDark: isDark,
                               muted: true,
-                              onTap: () => showEmployeeTaskDetailSheet(
-                                context, isDark, task,
-                                readOnly: true,
-                              ),
+                              onTap: () {
+                                ctrl.prepareTaskDetail(task.id);
+                                showEmployeeTaskDetailSheet(context, isDark, task,
+                                    readOnly: true);
+                              },
+                            ),
+                          if (isInProgress)
+                            _CardActionChip(
+                              label: 'Review',
+                              isDark: isDark,
+                              onTap: () {
+                                ctrl.prepareTaskDetail(task.id, showProgress: true);
+                                showEmployeeTaskDetailSheet(context, isDark, task,
+                                    showProgress: true);
+                              },
+                            ),
+                          if (isInProgressOther)
+                            _CardActionChip(
+                              label: 'View',
+                              isDark: isDark,
+                              muted: true,
+                              onTap: () {
+                                ctrl.prepareTaskDetail(task.id);
+                                showEmployeeTaskDetailSheet(context, isDark, task,
+                                    readOnly: true);
+                              },
                             ),
                         ],
                       ),

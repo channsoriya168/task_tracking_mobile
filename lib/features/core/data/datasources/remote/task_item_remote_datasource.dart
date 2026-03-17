@@ -3,6 +3,7 @@ import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_member_model.dart';
+import 'package:task_tracking_mobile/features/core/data/models/task_progress_model.dart';
 
 class TaskItemRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;
@@ -81,5 +82,73 @@ class TaskItemRemoteDatasource {
 
   Future<void> removeTaskMember(String taskItemId, String memberId) async {
     await _dio.delete(ApiEndpoints.taskItemMemberById(taskItemId, memberId));
+  }
+
+  // ── Progress ──────────────────────────────────────────────────────────────
+
+  Future<List<TaskProgressModel>> getTaskProgresses(String taskItemId) async {
+    final response =
+        await _dio.get(ApiEndpoints.taskItemProgresses(taskItemId));
+    final raw = response.data;
+    // Guard: API may return null or a wrapped object instead of a plain array
+    final List dataList;
+    if (raw is List) {
+      dataList = raw;
+    } else if (raw is Map) {
+      final inner = raw['items'] ?? raw['data'] ?? raw['progresses'];
+      dataList = inner is List ? inner : [];
+    } else {
+      dataList = [];
+    }
+    return dataList
+        .map((e) => TaskProgressModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> createTaskProgress(
+    String taskItemId, {
+    required int progressPercentage,
+    required DateTime loggedAt,
+    String? notes,
+    double? hoursWorked,
+    int? status,
+  }) async {
+    final body = CreateProgressBody(
+      progressPercentage: progressPercentage,
+      loggedAt: loggedAt,
+      notes: notes,
+      hoursWorked: hoursWorked,
+      status: status,
+    );
+    await _dio.post(ApiEndpoints.taskItemProgresses(taskItemId),
+        data: body.toJson());
+  }
+
+  Future<void> updateTaskProgress(
+    String taskItemId,
+    String progressId, {
+    required int progressPercentage,
+    required DateTime loggedAt,
+    required String notes,
+    double? hoursWorked,
+    int? status,
+  }) async {
+    final body = CreateProgressBody(
+      progressPercentage: progressPercentage,
+      loggedAt: loggedAt,
+      notes: notes,
+      hoursWorked: hoursWorked,
+      status: status,
+    );
+    await _dio.put(
+      ApiEndpoints.taskItemProgressById(taskItemId, progressId),
+      data: body.toJson(),
+    );
+  }
+
+  Future<void> deleteTaskProgress(
+      String taskItemId, String progressId) async {
+    await _dio
+        .delete(ApiEndpoints.taskItemProgressById(taskItemId, progressId));
   }
 }

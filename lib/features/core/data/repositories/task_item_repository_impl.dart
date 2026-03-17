@@ -2,6 +2,7 @@ import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_progress.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_item_repository.dart';
 
 class TaskItemRepositoryImpl implements TaskItemRepository {
@@ -56,4 +57,50 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
   @override
   Future<void> removeTaskMember(String taskItemId, String memberId) =>
       _remote.removeTaskMember(taskItemId, memberId);
+
+  @override
+  Future<List<TaskProgress>> fetchTaskProgresses(String taskItemId) =>
+      _remote.getTaskProgresses(taskItemId);
+
+  @override
+  Future<void> createTaskProgress(
+    String taskItemId, {
+    required int progressPercentage,
+    required DateTime loggedAt,
+    String? notes,
+    double? hoursWorked,
+    int? status,
+  }) =>
+      _remote.createTaskProgress(
+        taskItemId,
+        progressPercentage: progressPercentage,
+        loggedAt: loggedAt,
+        notes: notes,
+        hoursWorked: hoursWorked,
+        status: status,
+      );
+
+  @override
+  Future<void> updateTaskProgress(
+    String taskItemId,
+    String progressId, {
+    required int progressPercentage,
+    required DateTime loggedAt,
+    required String notes,
+    double? hoursWorked,
+    int? status,
+  }) =>
+      _remote.updateTaskProgress(
+        taskItemId,
+        progressId,
+        progressPercentage: progressPercentage,
+        loggedAt: loggedAt,
+        notes: notes,
+        hoursWorked: hoursWorked,
+        status: status,
+      );
+
+  @override
+  Future<void> deleteTaskProgress(String taskItemId, String progressId) =>
+      _remote.deleteTaskProgress(taskItemId, progressId);
 }

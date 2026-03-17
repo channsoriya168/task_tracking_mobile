@@ -6,8 +6,12 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employe
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/add_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/assign_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_progress_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_progress_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_progress_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_members_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_progresses_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/remove_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
@@ -27,6 +31,10 @@ class EmployeeBinding extends Bindings {
         FetchTaskMembersUsecase(Get.find<TaskItemRepository>()),
         AddTaskMemberUsecase(Get.find<TaskItemRepository>()),
         RemoveTaskMemberUsecase(Get.find<TaskItemRepository>()),
+        FetchTaskProgressesUsecase(Get.find<TaskItemRepository>()),
+        CreateTaskProgressUsecase(Get.find<TaskItemRepository>()),
+        UpdateTaskProgressUsecase(Get.find<TaskItemRepository>()),
+        DeleteTaskProgressUsecase(Get.find<TaskItemRepository>()),
       ),
     );
   }
