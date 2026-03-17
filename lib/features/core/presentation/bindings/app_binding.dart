@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/image_service.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_group_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/lookup_remote_datasource.dart';
@@ -13,19 +14,15 @@ import 'package:task_tracking_mobile/features/core/domain/repositories/lookup_re
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_item_repository.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/employee_remote_datasource.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/delete_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/label_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/repositories/label_repository_impl.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/label_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_labels_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_label_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employee_password_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_label_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/delete_label_usecase.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_form_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_label_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
@@ -39,10 +36,11 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_g
 import 'package:task_tracking_mobile/features/core/domain/usecases/delete_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_task_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/bindings/manager_task_binding.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/bindings/manager_employee_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/bindings/employee_binding.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -77,24 +75,28 @@ class AppBinding extends Bindings {
 
     // ── Feature bindings ──────────────────────────────────────
     ManagerTaskBinding().dependencies();
-    ManagerEmployeeBinding().dependencies();
-    EmployeeBinding().dependencies();
-
-    // ── Admin controllers ─────────────────────────────────────
-    Get.lazyPut<AdminEmployeeController>(
-      () => AdminEmployeeController(
-        FetchEmployeesUsecase(Get.find<EmployeeRepository>()),
-        DeleteEmployeeUsecase(Get.find<EmployeeRepository>()),
+    Get.lazyPut<TaskGroupController>(
+      () => TaskGroupController(
+        GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
+        CreateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
       ),
       fenix: true,
     );
-    Get.lazyPut<AdminEmployeeFormController>(
-      () => AdminEmployeeFormController(
+    Get.lazyPut<EmployeeRepository>(
+      () => EmployeeRepositoryImpl(EmployeeRemoteDatasource()),
+      fenix: true,
+    );
+    Get.lazyPut<EmployeeController>(
+      () => EmployeeController(
+        Get.find<EmployeeRepository>(),
         CreateEmployeeUsecase(Get.find<EmployeeRepository>()),
         UpdateEmployeeUsecase(Get.find<EmployeeRepository>()),
+        ResetEmployeePasswordUsecase(Get.find<EmployeeRepository>()),
       ),
       fenix: true,
     );
+    EmployeeBinding().dependencies();
+
     Get.lazyPut<AdminTaskController>(
       () => AdminTaskController(
         FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),

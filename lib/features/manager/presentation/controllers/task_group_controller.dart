@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 
 class TaskGroupController extends GetxController {
   final RxList<TaskGroup> taskGroups = <TaskGroup>[].obs;

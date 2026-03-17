@@ -4,9 +4,9 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/dashboard/dashboard_activity_card.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/dashboard/dashboard_summary_card.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/task_line_chart_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 
 class AdminDashboardTabletPage extends StatelessWidget {
