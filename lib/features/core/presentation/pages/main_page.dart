@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/pages/home/admin_dashboard_page.dart';
+import 'package:task_tracking_mobile/features/admin/presentation/pages/task/admin_task_page.dart';
 import 'package:task_tracking_mobile/features/core/data/models/nav_item.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/manager_employee_page.dart';
+import 'package:task_tracking_mobile/features/core/presentation/pages/employee/employee_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
 import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_page.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/pages/admin_nav_items.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/home_page.dart';
 import 'package:task_tracking_mobile/features/core/presentation/pages/profile_page.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_page.dart';
@@ -33,7 +34,7 @@ class MainPage extends StatelessWidget {
           NavItem(
             icon: Icons.people_rounded,
             label: 'Employees',
-            page: ManagerEmployeePage(),
+            page: EmployeePage(),
           ),
           NavItem(
             icon: Icons.person_rounded,
@@ -42,7 +43,28 @@ class MainPage extends StatelessWidget {
           ),
         ];
       case UserRole.Admin:
-        return adminNavItems;
+        return const [
+          NavItem(
+            icon: Icons.analytics_rounded,
+            label: 'Dashboard',
+            page: AdminDashboardPage(),
+          ),
+          NavItem(
+            icon: Icons.list_alt_rounded,
+            label: 'Tasks',
+            page: AdminTaskPage(),
+          ),
+          NavItem(
+            icon: Icons.people_rounded,
+            label: 'Employee',
+            page: EmployeePage(),
+          ),
+          NavItem(
+            icon: Icons.person_rounded,
+            label: 'Profile',
+            page: ProfilePage(),
+          ),
+        ];
       case UserRole.Employee:
         return const [
           NavItem(icon: Icons.home, label: 'Home', page: HomePage()),

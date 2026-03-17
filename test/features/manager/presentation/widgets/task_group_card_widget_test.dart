@@ -13,7 +13,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_comp
 import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_card_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_card_widget.dart';
 
 // ── Stubs ──────────────────────────────────────────────────────
 
@@ -37,8 +37,7 @@ class _StubTaskGroupRepository implements TaskGroupRepository {
     required String name,
     String? color,
     String? description,
-  }) async =>
-      TaskGroup(id: 'new', name: name);
+  }) async => TaskGroup(id: 'new', name: name);
 
   @override
   Future<TaskGroup> update(
@@ -46,8 +45,7 @@ class _StubTaskGroupRepository implements TaskGroupRepository {
     required String name,
     String? color,
     String? description,
-  }) async =>
-      TaskGroup(id: id, name: name);
+  }) async => TaskGroup(id: id, name: name);
 
   @override
   Future<void> delete(String id) async {}
