@@ -55,15 +55,7 @@ class ProfileInfoRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: iconColor.withAlpha(25),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 18, color: iconColor),
-              ),
+              Icon(icon, size: 20, color: iconColor),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -95,7 +87,7 @@ class ProfileInfoRow extends StatelessWidget {
         if (showDivider)
           Divider(
             height: 1,
-            indent: 66,
+            indent: 48,
             color: isDark
                 ? Colors.white.withAlpha(15)
                 : Colors.black.withAlpha(10),
@@ -137,15 +129,7 @@ class ProfileActionRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: iconColor.withAlpha(25),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(icon, size: 18, color: iconColor),
-                ),
+                Icon(icon, size: 20, color: iconColor),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
@@ -169,7 +153,7 @@ class ProfileActionRow extends StatelessWidget {
         if (showDivider)
           Divider(
             height: 1,
-            indent: 66,
+            indent: 48,
             color: isDark
                 ? Colors.white.withAlpha(15)
                 : Colors.black.withAlpha(10),

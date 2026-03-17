@@ -125,6 +125,39 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
 
+            // ── My Groups ──────────────────────────────────────────
+            SliverPadding(
+              padding: kPageSectionLargePadding,
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  'My Groups',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: kPageSectionPadding,
+              sliver: SliverToBoxAdapter(
+                child: Obx(() {
+                  final profile = Get.find<AuthController>().profile.value;
+                  final groups = profile?.taskGroups ?? [];
+                  if (groups.isEmpty) {
+                    return _GroupEmptyState(isDark: isDark);
+                  }
+                  return Column(
+                    children: groups.map((g) {
+                      final map = g as Map<String, dynamic>? ?? {};
+                      return _GroupCard(isDark: isDark, group: map);
+                    }).toList(),
+                  );
+                }),
+              ),
+            ),
+
             // ── Personal Info ──────────────────────────────────────
             SliverPadding(
               padding: kPageSectionLargePadding,
@@ -147,6 +180,8 @@ class ProfilePage extends StatelessWidget {
                   final profile = Get.find<AuthController>().profile.value;
                   return ProfileInfoCardWidget(
                     isDark: isDark,
+                    fullName: profile?.fullName ?? auth?.fullName ?? '',
+                    email: profile?.email ?? '',
                     phone: profile?.phoneNumber ?? auth?.phoneNumber ?? '',
                     placeOfBirth: profile?.placeOfBirth ?? '',
                     dateOfBirth: profile?.dateOfBirth,
@@ -198,6 +233,172 @@ class ProfilePage extends StatelessWidget {
             ),
 
             const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Group Card ─────────────────────────────────────────────────────
+class _GroupCard extends StatelessWidget {
+  const _GroupCard({required this.isDark, required this.group});
+
+  final bool isDark;
+  final Map<String, dynamic> group;
+
+  Color _parseColor(String? hex) {
+    if (hex == null || hex.isEmpty) return kPrimary;
+    try {
+      return Color(int.parse(hex.replaceFirst('#', '0xFF')));
+    } catch (_) {
+      return kPrimary;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final groupName = group['groupName'] as String? ?? '—';
+    final groupColor = _parseColor(group['groupColor'] as String?);
+    final roleMap = group['role'] as Map<String, dynamic>? ?? {};
+    final roleName = roleMap['name'] as String? ?? '—';
+    final joinedAt = group['joinedAt'] as String?;
+    final joinedDate = joinedAt != null ? DateTime.tryParse(joinedAt) : null;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: isDark ? kCardDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(isDark ? 50 : 12),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Color accent strip
+              Container(
+                width: 5,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [groupColor, groupColor.withValues(alpha: 0.4)],
+                  ),
+                ),
+              ),
+              // Content
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                  child: Row(
+                    children: [
+                      // Group info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              groupName,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? Colors.white : kTextDark,
+                                letterSpacing: -0.2,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            if (joinedDate != null)
+                              Text(
+                                'Joined ${joinedDate.day.toString().padLeft(2, '0')}/${joinedDate.month.toString().padLeft(2, '0')}/${joinedDate.year}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: isDark ? Colors.white38 : kTextMuted,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      // Role chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: groupColor.withAlpha(20),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: groupColor.withAlpha(60),
+                          ),
+                        ),
+                        child: Text(
+                          roleName,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: groupColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Group Empty State ──────────────────────────────────────────────
+class _GroupEmptyState extends StatelessWidget {
+  const _GroupEmptyState({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 28),
+      decoration: BoxDecoration(
+        color: isDark ? kCardDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(isDark ? 50 : 12),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              Icons.group_off_rounded,
+              size: 36,
+              color: isDark ? Colors.white24 : Colors.black26,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'No groups assigned',
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? Colors.white38 : kTextMuted,
+              ),
+            ),
           ],
         ),
       ),
