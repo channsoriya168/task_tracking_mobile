@@ -2,60 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/left_panel_task_group_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/right_employee_panel_widget.dart';
 
-class ManagerEmployeeTabletPage extends StatefulWidget {
+import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_filter_task_group_dropdown_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_header_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_list_widget.dart';
+
+class ManagerEmployeeTabletPage extends StatelessWidget {
   const ManagerEmployeeTabletPage({super.key});
-
-  @override
-  State<ManagerEmployeeTabletPage> createState() =>
-      _ManagerEmployeeTabletPageState();
-}
-
-class _ManagerEmployeeTabletPageState extends State<ManagerEmployeeTabletPage> {
-  String? _selectedTaskGroupId;
 
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<EmployeeController>();
-    final posCtrl = Get.find<TaskGroupController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return ColoredBox(
-      color: isDark ? kBgDark : kBgLight,
-      child: Row(
+    return Scaffold(
+      backgroundColor: isDark ? kBgDark : kBgLight,
+      body: Column(
         children: [
-          // ── Left Panel: Positions ─────────────────────────
-          SizedBox(
-            width: 260,
-            child: LeftPanelTaskGroupWidget(
-              isDark: isDark,
-              ctrl: ctrl,
-              posCtrl: posCtrl,
-              selectedId: _selectedTaskGroupId,
-              onSelect: (id) => setState(() => _selectedTaskGroupId = id),
-            ),
+          EmployeeHeaderWidget(isDark: isDark, ctrl: ctrl),
+          EmployeeFilterTaskGroupDropdownWidget(isDark: isDark, ctrl: ctrl),
+          SearchBarWidget(
+            isDark: isDark,
+            onChanged: (v) => ctrl.searchQuery.value = v,
+            hintText: 'Search employees...',
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
           ),
-
-          VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: isDark
-                ? Colors.white.withAlpha(15)
-                : Colors.black.withAlpha(10),
-          ),
-
-          // ── Right Panel: Employees ────────────────────────
           Expanded(
-            child: RightEmployeePanelWidget(
-              isDark: isDark,
-              ctrl: ctrl,
-              selectedTaskGroupId: _selectedTaskGroupId,
-            ),
+            child: EmployeeListWidget(isDark: isDark, ctrl: ctrl),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: kPrimary,
+        foregroundColor: Colors.white,
+        onPressed: () => Get.find<EmployeeController>().showCreateDialog(),
+        child: const Icon(Icons.person_add_rounded),
       ),
     );
   }

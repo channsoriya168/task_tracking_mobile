@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_avatar_widget.dart';
 
 // ── Header (FlexibleSpaceBar background) ─────────────────────────
 
@@ -69,7 +69,7 @@ class EmployeeDetailHeaderContent extends StatelessWidget {
                             shape: BoxShape.circle,
                             color: Colors.white.withValues(alpha: 0.25),
                           ),
-                          child: EmployeeAvatar(
+                          child: EmployeeAvatarWidget(
                             name: employee.fullName,
                             color: Colors.white,
                             radius: 44,
@@ -87,7 +87,10 @@ class EmployeeDetailHeaderContent extends StatelessWidget {
                               color: employee.isActive
                                   ? const Color(0xFF2ED573)
                                   : const Color(0xFFFF4757),
-                              border: Border.all(color: Colors.white, width: 2.5),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2.5,
+                              ),
                             ),
                           ),
                         ),
@@ -160,7 +163,9 @@ class EmployeeDetailHeaderContent extends StatelessWidget {
                                       vertical: 1,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.25),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.25,
+                                      ),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: const Text(
@@ -184,6 +189,97 @@ class EmployeeDetailHeaderContent extends StatelessWidget {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Stats row ────────────────────────────────────────────────────
+
+class EmployeeDetailStats extends StatelessWidget {
+  const EmployeeDetailStats({
+    super.key,
+    required this.employee,
+    required this.isDark,
+  });
+
+  final Employee employee;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final textColor = isDark ? Colors.white : kTextDark;
+    final mutedColor = isDark ? Colors.white38 : kTextMuted;
+    final dividerColor = isDark ? Colors.white12 : const Color(0xFFE5E7EB);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: isDark ? kCardDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            _StatItem(
+              label: 'Groups',
+              value: '${employee.taskGroups.length}',
+              valueColor: textColor,
+              labelColor: mutedColor,
+            ),
+            VerticalDivider(width: 1, color: dividerColor),
+            _StatItem(
+              label: 'Status',
+              value: employee.isActive ? 'Active' : 'Inactive',
+              valueColor: employee.isActive
+                  ? const Color(0xFF2ED573)
+                  : const Color(0xFFFF4757),
+              labelColor: mutedColor,
+            ),
+            VerticalDivider(width: 1, color: dividerColor),
+            _StatItem(
+              label: 'Since',
+              value: '${employee.createdAt.year}',
+              valueColor: textColor,
+              labelColor: mutedColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  const _StatItem({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+    required this.labelColor,
+  });
+
+  final String label;
+  final String value;
+  final Color valueColor;
+  final Color labelColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: valueColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: TextStyle(fontSize: 12, color: labelColor)),
         ],
       ),
     );
@@ -349,22 +445,24 @@ class EmployeeDetailInfoList extends StatelessWidget {
                 textColor: textColor,
                 mutedColor: mutedColor,
               ),
-              if (i < rows.length - 1)
-                Divider(height: 1, color: dividerColor),
+              if (i < rows.length - 1) Divider(height: 1, color: dividerColor),
             ],
           );
         }),
       ],
     );
   }
-
 }
 
 class _InfoData {
   final IconData icon;
   final String label;
   final String value;
-  const _InfoData({required this.icon, required this.label, required this.value});
+  const _InfoData({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 }
 
 class _InfoRow extends StatelessWidget {

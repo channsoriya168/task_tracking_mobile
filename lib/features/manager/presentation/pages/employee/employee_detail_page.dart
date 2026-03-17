@@ -9,9 +9,14 @@ import 'package:task_tracking_mobile/features/manager/presentation/pages/employe
 import 'package:task_tracking_mobile/features/manager/presentation/pages/employee/employee_detail_tablet_page.dart';
 
 class EmployeeDetailPage extends StatefulWidget {
-  const EmployeeDetailPage({super.key, required this.employeeId});
+  const EmployeeDetailPage({
+    super.key,
+    required this.employeeId,
+    this.viewOnly = false,
+  });
 
   final String employeeId;
+  final bool viewOnly;
 
   @override
   State<EmployeeDetailPage> createState() => _EmployeeDetailPageState();
@@ -64,6 +69,7 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
             ctrl: ctrl,
             isDark: isDark,
             onRefresh: _refresh,
+            viewOnly: widget.viewOnly,
           );
         }
         return EmployeeDetailTabletPage(
@@ -71,6 +77,7 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
           ctrl: ctrl,
           isDark: isDark,
           onRefresh: _refresh,
+          viewOnly: widget.viewOnly,
         );
       },
     );

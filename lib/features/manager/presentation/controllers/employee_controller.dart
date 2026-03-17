@@ -9,8 +9,9 @@ import 'package:task_tracking_mobile/features/core/domain/entities/task_group.da
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employee_password_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_form_dialog.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_form_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_dialog.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
@@ -20,11 +21,13 @@ class EmployeeController extends GetxController {
     this._repository,
     this._createEmployee,
     this._updateEmployee,
+    this._resetPasswordUsecase,
   );
 
   final EmployeeRepository _repository;
   final CreateEmployeeUsecase _createEmployee;
   final UpdateEmployeeUsecase _updateEmployee;
+  final ResetEmployeePasswordUsecase _resetPasswordUsecase;
 
   // ── List state ────────────────────────────────────────────────
   final RxList<Employee> employees = <Employee>[].obs;
@@ -137,6 +140,14 @@ class EmployeeController extends GetxController {
   String? existingImageUrl;
   final RxBool removeProfileImage = false.obs;
 
+  // ── Reset password form ───────────────────────────────────────
+  final resetPasswordCtrl = TextEditingController();
+  final resetConfirmPasswordCtrl = TextEditingController();
+  final RxBool showResetPassword = false.obs;
+  final RxBool showResetConfirmPassword = false.obs;
+  final RxBool isResettingPassword = false.obs;
+  final RxMap<String, String> resetPasswordErrors = <String, String>{}.obs;
+
   // ── Image ─────────────────────────────────────────────────────
   Future<void> pickImage() async {
     final picked = await ImagePicker().pickImage(
@@ -147,8 +158,7 @@ class EmployeeController extends GetxController {
   }
 
   // ── Form validity (reactive) ──────────────────────────────────
-  bool get canSave =>
-      formDob.value != null && selectedGroupId.value != null;
+  bool get canSave => formDob.value != null && selectedGroupId.value != null;
 
   // ── Task Group dialog ─────────────────────────────────────────
   Future<void> openTaskGroupDialog(BuildContext context) async {
@@ -158,8 +168,9 @@ class EmployeeController extends GetxController {
 
     await showTaskGroupDialog(context, tgCtrl, isDark);
 
-    final added =
-        tgCtrl.taskGroups.where((g) => !before.contains(g.id)).toList();
+    final added = tgCtrl.taskGroups
+        .where((g) => !before.contains(g.id))
+        .toList();
     if (added.isNotEmpty) {
       selectedGroupId.value = added.first.id;
     }
@@ -183,11 +194,12 @@ class EmployeeController extends GetxController {
     existingImageUrl = employee.profileImageUrl;
     nameCtrl.text = employee.fullName;
     emailCtrl.text = employee.email;
-    phoneCtrl.text = employee.phone ?? '';
+    phoneCtrl.text = _toLocalDigits(employee.phone ?? '');
     placeCtrl.text = employee.placeOfBirth ?? '';
     formDob.value = employee.dateOfBirth;
-    selectedGroupId.value =
-        employee.taskGroups.isNotEmpty ? employee.taskGroups.first.groupId : null;
+    selectedGroupId.value = employee.taskGroups.isNotEmpty
+        ? employee.taskGroups.first.groupId
+        : null;
     await Get.bottomSheet(
       ManagerEmployeeFormDialog(controller: this),
       isScrollControlled: true,
@@ -214,11 +226,66 @@ class EmployeeController extends GetxController {
     removeProfileImage.value = false;
   }
 
+  /// Strips +855 / 855 / leading 0 so only local digits are shown in the field.
+  static String _toLocalDigits(String phone) {
+    if (phone.startsWith('+855')) return phone.substring(4);
+    if (phone.startsWith('855')) return phone.substring(3);
+    if (phone.startsWith('0')) return phone.substring(1);
+    return phone;
+  }
+
   void selectGroup(String groupId) {
-    selectedGroupId.value =
-        selectedGroupId.value == groupId ? null : groupId;
+    selectedGroupId.value = selectedGroupId.value == groupId ? null : groupId;
     if (selectedGroupId.value != null) {
       fieldErrors.remove('taskGroup');
+    }
+  }
+
+  // ── Reset Password ────────────────────────────────────────────
+  void openResetPasswordForm() {
+    resetPasswordCtrl.clear();
+    resetConfirmPasswordCtrl.clear();
+    showResetPassword.value = false;
+    showResetConfirmPassword.value = false;
+    resetPasswordErrors.clear();
+  }
+
+  Future<void> resetPasswordForEmployee(String employeeId) async {
+    resetPasswordErrors.clear();
+    final newPass = resetPasswordCtrl.text;
+    final confirmPass = resetConfirmPasswordCtrl.text;
+
+    final errors = <String, String>{};
+    final pwErr = Validators.strongPassword(newPass);
+    if (pwErr != null) errors['newPassword'] = pwErr;
+    if (confirmPass.isEmpty) {
+      errors['confirmPassword'] = 'Please confirm the password.';
+    } else if (newPass != confirmPass) {
+      errors['confirmPassword'] = 'Passwords do not match.';
+    }
+    if (errors.isNotEmpty) {
+      resetPasswordErrors.assignAll(errors);
+      return;
+    }
+
+    isResettingPassword.value = true;
+    try {
+      await _resetPasswordUsecase(
+        employeeId: employeeId,
+        newPassword: newPass,
+        confirmNewPassword: confirmPass,
+      );
+      resetPasswordCtrl.clear();
+      resetConfirmPasswordCtrl.clear();
+      Get.back();
+      AppSnackbar.success(
+        'Password Reset',
+        'Password has been reset successfully.',
+      );
+    } catch (e) {
+      AppSnackbar.error('Reset Password', AppSnackbar.parseApiError(e));
+    } finally {
+      isResettingPassword.value = false;
     }
   }
 
@@ -245,7 +312,8 @@ class EmployeeController extends GetxController {
       phone: phone,
       password: password,
       confirmPassword: confirmPassword,
-    )) return;
+    ))
+      return;
 
     isSaving.value = true;
     try {
@@ -255,11 +323,13 @@ class EmployeeController extends GetxController {
         password: password,
         confirmPassword: confirmPassword,
         phone: phone.isEmpty ? null : Validators.toE164(phone),
-        placeOfBirth:
-            placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
+        placeOfBirth: placeCtrl.text.trim().isEmpty
+            ? null
+            : placeCtrl.text.trim(),
         dateOfBirth: formDob.value,
-        groupIds:
-            selectedGroupId.value != null ? [selectedGroupId.value!] : null,
+        groupIds: selectedGroupId.value != null
+            ? [selectedGroupId.value!]
+            : null,
         profileImagePath: profileImage.value?.path,
       );
       Get.back();
@@ -287,11 +357,13 @@ class EmployeeController extends GetxController {
         fullName: name,
         email: email.isEmpty ? null : email,
         phone: phone.isEmpty ? null : Validators.toE164(phone),
-        placeOfBirth:
-            placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
+        placeOfBirth: placeCtrl.text.trim().isEmpty
+            ? null
+            : placeCtrl.text.trim(),
         dateOfBirth: formDob.value,
-        groupIds:
-            selectedGroupId.value != null ? [selectedGroupId.value!] : null,
+        groupIds: selectedGroupId.value != null
+            ? [selectedGroupId.value!]
+            : null,
         profileImagePath: profileImage.value?.path,
         removeProfileImage: removeProfileImage.value,
       );
@@ -409,6 +481,8 @@ class EmployeeController extends GetxController {
     confirmPasswordCtrl.dispose();
     phoneCtrl.dispose();
     placeCtrl.dispose();
+    resetPasswordCtrl.dispose();
+    resetConfirmPasswordCtrl.dispose();
     super.onClose();
   }
 }

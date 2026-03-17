@@ -28,4 +28,10 @@ abstract class EmployeeRepository {
   });
 
   Future<void> deleteEmployee(String id);
+
+  Future<void> resetPassword({
+    required String employeeId,
+    required String newPassword,
+    required String confirmNewPassword,
+  });
 }

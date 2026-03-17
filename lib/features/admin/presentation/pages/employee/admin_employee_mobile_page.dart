@@ -4,6 +4,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_form_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_employee_widgets.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 
 class AdminEmployeeMobilePage extends StatelessWidget {
   const AdminEmployeeMobilePage({super.key});
@@ -20,7 +21,12 @@ class AdminEmployeeMobilePage extends StatelessWidget {
         children: [
           AdminEmployeeHeader(isDark: isDark, ctrl: ctrl),
           AdminEmployeeGroupDropdown(isDark: isDark, ctrl: ctrl),
-          AdminEmployeeSearchBar(isDark: isDark, ctrl: ctrl),
+          SearchBarWidget(
+            isDark: isDark,
+            onChanged: (v) => ctrl.searchQuery.value = v,
+            hintText: 'Search employees...',
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+          ),
           Expanded(
             child: AdminEmployeeList(isDark: isDark, ctrl: ctrl),
           ),

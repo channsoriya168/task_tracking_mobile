@@ -8,17 +8,19 @@ class SearchBarWidget extends StatelessWidget {
     required this.onChanged,
     this.controller,
     this.hintText = 'Search',
+    this.padding,
   });
 
   final bool isDark;
   final ValueChanged<String> onChanged;
   final TextEditingController? controller;
   final String hintText;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: kPageSectionPadding,
+      padding: padding ?? kPageSectionPadding,
       child: Container(
         height: 44,
         decoration: BoxDecoration(

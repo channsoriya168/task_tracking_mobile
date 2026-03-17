@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/date_picker_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/password_input_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_employee_form_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
@@ -201,56 +202,23 @@ class AdminEmployeeFormDialog extends StatelessWidget {
                         : Column(
                             children: [
                               const SizedBox(height: 12),
-                              Obx(() => TextFieldWidget(
+                              Obx(() => PasswordInputWidget(
                                     controller: controller.passwordCtrl,
                                     label: 'Password',
                                     hint: 'e.g. MyPass@123',
                                     isDark: isDark,
                                     isRequired: true,
-                                    obscureText:
-                                        !controller.showPassword.value,
-                                    prefixIcon: Icons.lock_outline_rounded,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        controller.showPassword.value
-                                            ? Icons.visibility_off_outlined
-                                            : Icons.visibility_outlined,
-                                        size: 18,
-                                        color: isDark
-                                            ? Colors.grey[500]
-                                            : Colors.grey[500],
-                                      ),
-                                      onPressed: () =>
-                                          controller.showPassword.toggle(),
-                                    ),
                                     errorText:
                                         controller.fieldErrors['password'],
                                   )),
                               const SizedBox(height: 12),
-                              Obx(() => TextFieldWidget(
+                              Obx(() => PasswordInputWidget(
                                     controller:
                                         controller.confirmPasswordCtrl,
                                     label: 'Confirm Password',
                                     hint: 'Re-enter password',
                                     isDark: isDark,
                                     isRequired: true,
-                                    obscureText: !controller
-                                        .showConfirmPassword.value,
-                                    prefixIcon: Icons.lock_outline_rounded,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        controller.showConfirmPassword.value
-                                            ? Icons.visibility_off_outlined
-                                            : Icons.visibility_outlined,
-                                        size: 18,
-                                        color: isDark
-                                            ? Colors.grey[500]
-                                            : Colors.grey[500],
-                                      ),
-                                      onPressed: () => controller
-                                          .showConfirmPassword
-                                          .toggle(),
-                                    ),
                                     errorText: controller
                                         .fieldErrors['confirmPassword'],
                                   )),

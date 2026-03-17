@@ -4,8 +4,8 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_menu_sheet.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_avatar_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_menu_sheet.dart';
 
 class EmployeeCardWidget extends StatelessWidget {
   const EmployeeCardWidget({
@@ -26,7 +26,7 @@ class EmployeeCardWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => showEmployeeMenuSheet(
         context,
-        employee: employee,
+        employeeId: employee.id,
         ctrl: ctrl,
         isDark: isDark,
         accentColor: accent,
@@ -46,7 +46,7 @@ class EmployeeCardWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            EmployeeAvatar(
+            EmployeeAvatarWidget(
               name: employee.fullName,
               color: accent,
               radius: 24,

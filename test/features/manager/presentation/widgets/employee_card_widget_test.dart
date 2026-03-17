@@ -10,10 +10,9 @@ import 'package:task_tracking_mobile/features/core/domain/repositories/task_grou
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
-import 'package:task_tracking_mobile/features/manager/data/models/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_card_widget.dart';
 
 class _StubImageService extends ImageService {
   @override
@@ -29,11 +28,18 @@ class _StubTaskGroupRepository implements TaskGroupRepository {
   @override
   Future<TaskGroup> getById(String id) async => TaskGroup(id: id, name: 'Stub');
   @override
-  Future<TaskGroup> create({required String name, String? color, String? description}) async =>
-      TaskGroup(id: 'new', name: name);
+  Future<TaskGroup> create({
+    required String name,
+    String? color,
+    String? description,
+  }) async => TaskGroup(id: 'new', name: name);
   @override
-  Future<TaskGroup> update(String id, {required String name, String? color, String? description}) async =>
-      TaskGroup(id: id, name: name);
+  Future<TaskGroup> update(
+    String id, {
+    required String name,
+    String? color,
+    String? description,
+  }) async => TaskGroup(id: id, name: name);
   @override
   Future<void> delete(String id) async {}
 }
@@ -51,7 +57,10 @@ void main() {
       PickAndCompressImageUseCase(_StubImageService()),
     );
     Get.put<TaskGroupController>(
-      TaskGroupController(GetAllTaskGroupsUseCase(stub), CreateTaskGroupUseCase(stub)),
+      TaskGroupController(
+        GetAllTaskGroupsUseCase(stub),
+        CreateTaskGroupUseCase(stub),
+      ),
     );
     ctrl = Get.put<EmployeeController>(EmployeeController());
 
