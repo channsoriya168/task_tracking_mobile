@@ -5,6 +5,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_grid_card_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_shimmer_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/panel_header_widget.dart';
 
@@ -28,9 +29,10 @@ class RightEmployeePanelWidget extends StatelessWidget {
           ctrl: ctrl,
           selectedTaskGroupId: selectedTaskGroupId,
         ),
-        EmployeeSearchBar(
+        SearchBarWidget(
           isDark: isDark,
-          ctrl: ctrl,
+          onChanged: (v) => ctrl.searchQuery.value = v,
+          hintText: 'Search employees...',
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
         ),
         Expanded(

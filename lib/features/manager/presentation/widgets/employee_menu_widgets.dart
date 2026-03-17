@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 // ── Sheet Handle ───────────────────────────────────────────────
@@ -42,7 +43,7 @@ class EmployeeMenuSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        EmployeeAvatar(
+        EmployeeAvatarWidget(
           name: emp.fullName,
           color: accentColor,
           radius: 24,
@@ -76,44 +77,6 @@ class EmployeeMenuSummary extends StatelessWidget {
   }
 }
 
-// ── QR Status Badge ────────────────────────────────────────────
-class EmployeeMenuQrBadge extends StatelessWidget {
-  const EmployeeMenuQrBadge({super.key, required this.isExpired});
-
-  final bool isExpired;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isExpired ? kHighPriority : kLowPriority;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withAlpha(25),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            isExpired ? 'QR Expired' : 'QR Active',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ── Menu Item Tile ─────────────────────────────────────────────
 class EmployeeMenuItemTile extends StatelessWidget {
   const EmployeeMenuItemTile({
@@ -137,30 +100,38 @@ class EmployeeMenuItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = _resolveColor();
+
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         child: Row(
           children: [
             Container(
-              width: 38,
-              height: 38,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: color.withAlpha(18),
+                color: color.withAlpha(15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(item.icon, size: 20, color: color),
+              child: Icon(item.icon, size: 18, color: color),
             ),
             const SizedBox(width: 14),
-            Text(
-              item.label,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: color,
+            Expanded(
+              child: Text(
+                item.label,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: color,
+                ),
               ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: color.withAlpha(100),
             ),
           ],
         ),

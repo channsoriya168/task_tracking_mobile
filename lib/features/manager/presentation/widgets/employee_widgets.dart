@@ -1,91 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_avatar_widget.dart';
 
 // ── Avatar ─────────────────────────────────────────────────────
 /// Circular avatar that shows [imagePath] when available,
 /// falling back to the employee's initials.
-class EmployeeAvatar extends StatelessWidget {
-  const EmployeeAvatar({
-    super.key,
-    required this.name,
-    required this.color,
-    required this.radius,
-    this.imagePath,
-  });
 
-  final String name;
-  final Color color;
-  final double radius;
-  final String? imagePath;
-
-  @override
-  Widget build(BuildContext context) {
-    final hasImage = imagePath != null && imagePath!.isNotEmpty;
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: color.withAlpha(40),
-      backgroundImage: hasImage ? NetworkImage(imagePath!) : null,
-      child: hasImage
-          ? null
-          : Text(
-              employeeInitials(name),
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w700,
-                fontSize: radius * 0.65,
-              ),
-            ),
-    );
-  }
-}
-
-// ── Search Bar ─────────────────────────────────────────────────
-/// Shared employee search bar used on both mobile and tablet layouts.
-class EmployeeSearchBar extends StatelessWidget {
-  const EmployeeSearchBar({
-    super.key,
-    required this.isDark,
-    required this.ctrl,
-    this.padding = const EdgeInsets.fromLTRB(20, 12, 20, 8),
-  });
-
-  final bool isDark;
-  final EmployeeController ctrl;
-  final EdgeInsets padding;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: TextField(
-        onChanged: (v) => ctrl.searchQuery.value = v,
-        style: TextStyle(color: isDark ? Colors.white : kTextDark),
-        decoration: InputDecoration(
-          hintText: 'Search employees...',
-          hintStyle: TextStyle(
-            color: isDark ? Colors.grey[600] : kTextMuted,
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(
-            Icons.search_rounded,
-            color: isDark ? Colors.grey[600] : kTextMuted,
-            size: 20,
-          ),
-          filled: true,
-          fillColor: isDark ? kCardDark : Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // ── Card Content Row ───────────────────────────────────────────
 /// Shared inner row layout for employee cards (avatar + info + trailing icon).
@@ -122,7 +46,7 @@ class EmployeeCardContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        EmployeeAvatar(
+        EmployeeAvatarWidget(
           name: employee.fullName,
           color: accentColor,
           radius: avatarRadius,
@@ -184,6 +108,94 @@ class EmployeeCardContent extends StatelessWidget {
           color: isDark ? Colors.grey[600] : Colors.grey[400],
         ),
       ],
+    );
+  }
+}
+
+// ── Task Group Filter Dropdown ─────────────────────────────────
+/// Filter dropdown shared by the mobile and tablet employee pages.
+/// Shows an "All Task Groups" sentinel item followed by each group
+/// with a colored circle indicator.
+class EmployeeTaskGroupDropdown extends StatelessWidget {
+  const EmployeeTaskGroupDropdown({
+    super.key,
+    required this.isDark,
+    required this.ctrl,
+  });
+
+  final bool isDark;
+  final EmployeeController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+      child: Obx(() {
+        final groups = ctrl.taskGroups.toList();
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: isDark ? kCardDark : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: ctrl.selectedTaskGroupId.value,
+              dropdownColor: isDark ? kCardDark : Colors.white,
+              icon: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: isDark ? Colors.grey[500] : kTextMuted,
+              ),
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white : kTextDark,
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: '',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.people_outline_rounded,
+                        size: 18,
+                        color: isDark ? Colors.grey[500] : kTextMuted,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'All Task Groups',
+                        style: TextStyle(
+                          color: isDark ? Colors.grey[400] : kTextMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ...groups.map(
+                  (g) => DropdownMenuItem(
+                    value: g.id,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: g.color ?? kPrimary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(g.name),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              onChanged: (val) => ctrl.selectedTaskGroupId.value = val ?? '',
+            ),
+          ),
+        );
+      }),
     );
   }
 }

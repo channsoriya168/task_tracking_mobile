@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_menu_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_menu_dialogs.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_menu_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_reset_password_sheet.dart';
 
-// ── Entry point ────────────────────────────────────────────────
 void showEmployeeMenuSheet(
   BuildContext context, {
-  required Employee employee,
   required EmployeeController ctrl,
   required bool isDark,
   required Color accentColor,
+  required String employeeId,
 }) {
   final menuCtrl = Get.put(
-    EmployeeMenuController(employeeId: employee.id, isDark: isDark),
-    tag: employee.id,
+    EmployeeMenuController(employeeId: employeeId, isDark: isDark),
+    tag: employeeId,
   );
 
   Get.bottomSheet(
@@ -28,56 +28,9 @@ void showEmployeeMenuSheet(
     ),
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-  ).then((_) => Get.delete<EmployeeMenuController>(tag: employee.id));
+  ).then((_) => Get.delete<EmployeeMenuController>(tag: employeeId));
 }
 
-// ── Confirmation dialogs (view layer — no business logic) ──────
-Future<bool> _confirmResetQr() async {
-  final result = await Get.dialog<bool>(
-    AlertDialog(
-      title: const Text('Reset QR Code'),
-      content: const Text(
-        'This will invalidate the current QR code and generate a new one. '
-        'The employee must use the new QR code to log in.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Get.back(result: false),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () => Get.back(result: true),
-          style: TextButton.styleFrom(foregroundColor: kHighPriority),
-          child: const Text('Reset'),
-        ),
-      ],
-    ),
-  );
-  return result == true;
-}
-
-Future<bool> _confirmDelete(String name) async {
-  final result = await Get.dialog<bool>(
-    AlertDialog(
-      title: const Text('Delete Employee'),
-      content: Text('Remove "$name" from the team?'),
-      actions: [
-        TextButton(
-          onPressed: () => Get.back(result: false),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () => Get.back(result: true),
-          style: TextButton.styleFrom(foregroundColor: kHighPriority),
-          child: const Text('Delete'),
-        ),
-      ],
-    ),
-  );
-  return result == true;
-}
-
-// ── Sheet ──────────────────────────────────────────────────────
 class _EmployeeMenuSheet extends StatelessWidget {
   const _EmployeeMenuSheet({
     required this.menuCtrl,
@@ -89,15 +42,30 @@ class _EmployeeMenuSheet extends StatelessWidget {
   final bool isDark;
   final Color accentColor;
 
-  Future<void> _handleAction(EmployeeMenuAction action) async {
+  Future<void> _handleAction(
+    BuildContext context,
+    EmployeeMenuAction action,
+  ) async {
     switch (action) {
       case EmployeeMenuAction.viewDetail:
         menuCtrl.openDetail();
       case EmployeeMenuAction.edit:
         menuCtrl.edit();
+      case EmployeeMenuAction.changePassword:
+        final emp = menuCtrl.employee;
+        if (emp == null) return;
+        Get.back();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showResetPasswordSheet(
+            context,
+            employee: emp,
+            ctrl: Get.find<EmployeeController>(),
+            isDark: isDark,
+          );
+        });
       case EmployeeMenuAction.delete:
         final name = menuCtrl.employee?.fullName ?? '';
-        if (await _confirmDelete(name)) menuCtrl.deleteEmployee();
+        if (await confirmDeleteEmployee(name)) menuCtrl.deleteEmployee();
     }
   }
 
@@ -111,34 +79,91 @@ class _EmployeeMenuSheet extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
+      final dividerColor = isDark
+          ? Colors.white.withAlpha(10)
+          : Colors.black.withAlpha(8);
+
       return Container(
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            EmployeeMenuHandle(isDark: isDark),
-            const SizedBox(height: 16),
-            EmployeeMenuSummary(
-              emp: emp,
-              accentColor: accentColor,
-              isDark: isDark,
+            // Handle
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white24 : Colors.black12,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
-            Divider(
-              color: isDark
-                  ? Colors.white.withAlpha(12)
-                  : Colors.black.withAlpha(8),
+
+            // Employee row
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: accentColor.withAlpha(40),
+                  backgroundImage: emp.profileImageUrl != null
+                      ? NetworkImage(emp.profileImageUrl!)
+                      : null,
+                  child: emp.profileImageUrl == null
+                      ? Text(
+                          emp.fullName.isNotEmpty
+                              ? emp.fullName[0].toUpperCase()
+                              : '?',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: accentColor,
+                          ),
+                        )
+                      : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        emp.fullName,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.white : kTextDark,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        emp.email,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.grey[500] : kTextMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 16),
+
+            Divider(height: 1, color: dividerColor),
             const SizedBox(height: 4),
+
+            // Menu items
             ...menuCtrl.menuItems.map(
               (item) => EmployeeMenuItemTile(
                 item: item,
                 isDark: isDark,
-                onTap: () => _handleAction(item.action),
+                onTap: () => _handleAction(context, item.action),
               ),
             ),
           ],

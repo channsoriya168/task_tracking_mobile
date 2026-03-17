@@ -31,6 +31,12 @@ class EmployeeMenuController extends GetxController {
       label: 'Edit Employee',
     ),
     const EmployeeMenuItem(
+      action: EmployeeMenuAction.changePassword,
+      icon: Icons.lock_reset_rounded,
+      label: 'Change Password',
+      isWarning: true,
+    ),
+    const EmployeeMenuItem(
       action: EmployeeMenuAction.delete,
       icon: Icons.delete_rounded,
       label: 'Delete Employee',
@@ -43,7 +49,9 @@ class EmployeeMenuController extends GetxController {
   void openDetail() {
     Get.back();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => Get.to(() => EmployeeDetailPage(employeeId: employeeId)),
+      (_) => Get.to(
+        () => EmployeeDetailPage(employeeId: employeeId, viewOnly: true),
+      ),
     );
   }
 

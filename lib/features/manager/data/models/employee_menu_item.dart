@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum EmployeeMenuAction { viewDetail, edit, delete }
+enum EmployeeMenuAction { viewDetail, edit, changePassword, delete }
 
 class EmployeeMenuItem {
   const EmployeeMenuItem({

@@ -14,18 +14,20 @@ class EmployeeDetailMobilePage extends StatelessWidget {
     required this.ctrl,
     required this.isDark,
     required this.onRefresh,
+    this.viewOnly = false,
   });
 
   final Employee emp;
   final EmployeeController ctrl;
   final bool isDark;
   final VoidCallback onRefresh;
+  final bool viewOnly;
 
   @override
   Widget build(BuildContext context) {
-    final accent =
-        emp.taskGroups.isNotEmpty ? emp.taskGroups.first.groupColor : kPrimary;
-    final tasks = ctrl.tasksForEmployee(emp.id);
+    final accent = emp.taskGroups.isNotEmpty
+        ? emp.taskGroups.first.groupColor
+        : kPrimary;
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : const Color(0xFFF9FAFB),
@@ -57,7 +59,10 @@ class EmployeeDetailMobilePage extends StatelessWidget {
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: EmployeeDetailHeroHeader(employee: emp, accent: accent),
+              background: EmployeeDetailHeroHeader(
+                employee: emp,
+                accent: accent,
+              ),
             ),
           ),
 
@@ -68,67 +73,34 @@ class EmployeeDetailMobilePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Stats
-                  EmployeeDetailStats(employee: emp, isDark: isDark),
-                  const SizedBox(height: 20),
-
-                  // Edit + Delete
-                  EmployeeDetailActions(
-                    isDark: isDark,
-                    onEdit: () async {
-                      await Get.find<EmployeeController>()
-                          .showEditDialog(emp);
-                      onRefresh();
-                    },
-                    onDelete: () async {
-                      final confirmed = await showConfirmDeleteDialog(
-                        context,
-                        title: 'Delete Employee',
-                        content:
-                            'Are you sure you want to delete this employee?',
-                      );
-                      if (confirmed == true) {
-                        await ctrl.deleteEmployee(emp.id);
-                        Get.back();
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 28),
+                  // Edit + Delete (hidden in view-only mode)
+                  if (!viewOnly) ...[
+                    EmployeeDetailActions(
+                      isDark: isDark,
+                      onEdit: () async {
+                        await Get.find<EmployeeController>().showEditDialog(
+                          emp,
+                        );
+                        onRefresh();
+                      },
+                      onDelete: () async {
+                        final confirmed = await showConfirmDeleteDialog(
+                          context,
+                          title: 'Delete Employee',
+                          content:
+                              'Are you sure you want to delete this employee?',
+                        );
+                        if (confirmed == true) {
+                          await ctrl.deleteEmployee(emp.id);
+                          Get.back();
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 28),
+                  ],
 
                   // Info list
                   EmployeeDetailInfoList(employee: emp, isDark: isDark),
-                  const SizedBox(height: 28),
-
-                  // Tasks
-                  Row(
-                    children: [
-                      EmployeeDetailSectionLabel(
-                        label: 'Tasks',
-                        isDark: isDark,
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: kPrimary.withAlpha(25),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          '${tasks.length}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: kPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  EmployeeTasksSection(tasks: tasks, isDark: isDark),
                 ],
               ),
             ),

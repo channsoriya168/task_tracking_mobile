@@ -75,14 +75,6 @@ class DatePickerWidget extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.cake_outlined,
-                        size: 18,
-                        color: hasError
-                            ? Colors.red
-                            : (isDark ? Colors.grey[500] : kTextMuted),
-                      ),
-                      const SizedBox(width: 10),
                       Text(
                         date != null
                             ? '${date.day.toString().padLeft(2, '0')}/'

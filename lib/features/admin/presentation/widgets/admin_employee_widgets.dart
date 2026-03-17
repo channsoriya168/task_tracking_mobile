@@ -6,6 +6,7 @@ import 'package:task_tracking_mobile/features/admin/presentation/controllers/adm
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/employee/admin_employee_detail_page.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/task_group/admin_task_group_page.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 // ── Header ─────────────────────────────────────────────────────
@@ -153,47 +154,6 @@ class AdminEmployeeGroupDropdown extends StatelessWidget {
   }
 }
 
-// ── Search Bar ─────────────────────────────────────────────────
-class AdminEmployeeSearchBar extends StatelessWidget {
-  const AdminEmployeeSearchBar({
-    super.key,
-    required this.isDark,
-    required this.ctrl,
-  });
-
-  final bool isDark;
-  final AdminEmployeeController ctrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
-      child: TextField(
-        onChanged: (v) => ctrl.searchQuery.value = v,
-        style: TextStyle(color: isDark ? Colors.white : kTextDark),
-        decoration: InputDecoration(
-          hintText: 'Search employees...',
-          hintStyle: TextStyle(
-            color: isDark ? Colors.grey[600] : kTextMuted,
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(
-            Icons.search_rounded,
-            color: isDark ? Colors.grey[600] : kTextMuted,
-            size: 20,
-          ),
-          filled: true,
-          fillColor: isDark ? kCardDark : Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // ── Employee List ──────────────────────────────────────────────
 class AdminEmployeeList extends StatelessWidget {
@@ -219,9 +179,7 @@ class AdminEmployeeList extends StatelessWidget {
             children: [
               Text(
                 ctrl.errorMessage.value,
-                style: TextStyle(
-                  color: isDark ? Colors.grey[500] : kTextMuted,
-                ),
+                style: TextStyle(color: isDark ? Colors.grey[500] : kTextMuted),
               ),
               const SizedBox(height: 12),
               TextButton(
@@ -247,14 +205,12 @@ class AdminEmployeeList extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (_, i) {
           final employee = employees[i];
-          final accentColor =
-              employee.taskGroups.isNotEmpty
-                  ? employee.taskGroups.first.groupColor
-                  : kPrimary;
+          final accentColor = employee.taskGroups.isNotEmpty
+              ? employee.taskGroups.first.groupColor
+              : kPrimary;
           return GestureDetector(
-            onTap: () => Get.to(
-              () => AdminEmployeeDetailPage(employeeId: employee.id),
-            ),
+            onTap: () =>
+                Get.to(() => AdminEmployeeDetailPage(employeeId: employee.id)),
             child: AdminEmployeeCard(
               isDark: isDark,
               employee: employee,
@@ -299,7 +255,7 @@ class AdminEmployeeCard extends StatelessWidget {
         children: [
           Stack(
             children: [
-              EmployeeAvatar(
+              EmployeeAvatarWidget(
                 name: employee.fullName,
                 color: accentColor,
                 radius: 22,
@@ -354,8 +310,9 @@ class AdminEmployeeCard extends StatelessWidget {
                       spacing: 4,
                       runSpacing: 4,
                       children: employee.taskGroups.map((g) {
-                        final live = tgCtrl.taskGroups
-                            .firstWhereOrNull((t) => t.id == g.groupId);
+                        final live = tgCtrl.taskGroups.firstWhereOrNull(
+                          (t) => t.id == g.groupId,
+                        );
                         final name = live?.name ?? g.groupName;
                         final color = live?.color ?? g.groupColor;
                         return Container(

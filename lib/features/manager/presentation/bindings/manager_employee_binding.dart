@@ -6,6 +6,7 @@ import 'package:task_tracking_mobile/features/core/domain/repositories/task_grou
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employee_password_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
@@ -29,6 +30,7 @@ class ManagerEmployeeBinding extends Bindings {
         Get.find<EmployeeRepository>(),
         CreateEmployeeUsecase(Get.find<EmployeeRepository>()),
         UpdateEmployeeUsecase(Get.find<EmployeeRepository>()),
+        ResetEmployeePasswordUsecase(Get.find<EmployeeRepository>()),
       ),
       fenix: true,
     );

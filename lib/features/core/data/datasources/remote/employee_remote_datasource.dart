@@ -7,10 +7,7 @@ import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart
 class EmployeeRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;
 
-  Future<List<Employee>> fetchEmployees({
-    String? name,
-    String? groupId,
-  }) async {
+  Future<List<Employee>> fetchEmployees({String? name, String? groupId}) async {
     final params = <String, dynamic>{};
     if (name != null && name.isNotEmpty) params['Name'] = name;
     if (groupId != null && groupId.isNotEmpty) params['GroupId'] = groupId;
@@ -69,14 +66,16 @@ class EmployeeRemoteDatasource {
       final mime = ext == 'png'
           ? DioMediaType('image', 'png')
           : DioMediaType('image', 'jpeg');
-      formData.files.add(MapEntry(
-        'profileImage',
-        await MultipartFile.fromFile(
-          profileImagePath,
-          filename: filename,
-          contentType: mime,
+      formData.files.add(
+        MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(
+            profileImagePath,
+            filename: filename,
+            contentType: mime,
+          ),
         ),
-      ));
+      );
     }
 
     final response = await _dio.post(ApiEndpoints.employees, data: formData);
@@ -119,14 +118,16 @@ class EmployeeRemoteDatasource {
       final mime = ext == 'png'
           ? DioMediaType('image', 'png')
           : DioMediaType('image', 'jpeg');
-      formData.files.add(MapEntry(
-        'profileImage',
-        await MultipartFile.fromFile(
-          profileImagePath,
-          filename: filename,
-          contentType: mime,
+      formData.files.add(
+        MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(
+            profileImagePath,
+            filename: filename,
+            contentType: mime,
+          ),
         ),
-      ));
+      );
     }
 
     final response = await _dio.put(
@@ -138,5 +139,20 @@ class EmployeeRemoteDatasource {
 
   Future<void> deleteEmployee(String id) async {
     await _dio.delete(ApiEndpoints.employeeById(id));
+  }
+
+  Future<void> resetPassword({
+    required String employeeId,
+    required String newPassword,
+    required String confirmNewPassword,
+  }) async {
+    await _dio.post(
+      ApiEndpoints.resetPassword,
+      data: {
+        'employeeId': employeeId,
+        'newPassword': newPassword,
+        'confirmNewPassword': confirmNewPassword,
+      },
+    );
   }
 }

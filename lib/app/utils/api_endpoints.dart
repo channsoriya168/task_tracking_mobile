@@ -9,6 +9,7 @@ abstract class ApiEndpoints {
   static const String refreshToken = '/api/v1/Auth/refresh-token';
   static const String profile = '/api/v1/Auth/profile';
   static const String changePassword = '/api/v1/Auth/change-password';
+  static const String resetPassword = '/api/v1/Auth/reset-password';
 
   // ── Task Groups ───────────────────────────────────────────
   static const String taskGroups = '/api/v1/task-groups';
