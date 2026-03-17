@@ -1,4 +1,4 @@
-// ── Employee Card ─────────────────────────────────────────────
+// ── Employee Card + Role Badge ────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
@@ -81,27 +81,35 @@ class EmployeeCardWidget extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if (taskGroup != null) ...[
-                    const SizedBox(height: 5),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: accent.withAlpha(28),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text(
-                        taskGroup!.name,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: accent,
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      if (employee.role != null &&
+                          employee.role!.isNotEmpty) ...[
+                        _RoleBadge(role: employee.role!),
+                        const SizedBox(width: 6),
+                      ],
+                      if (taskGroup != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: accent.withAlpha(28),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            taskGroup!.name,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: accent,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -112,6 +120,50 @@ class EmployeeCardWidget extends StatelessWidget {
               color: isDark ? Colors.grey[600] : Colors.grey[350],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RoleBadge extends StatelessWidget {
+  const _RoleBadge({required this.role});
+
+  final String role;
+
+  static Color _badgeColor(String role) {
+    switch (role.toLowerCase()) {
+      case 'admin':
+        return const Color(0xFFEF4444);
+      case 'manager':
+        return const Color(0xFF8B5CF6);
+      default:
+        return const Color(0xFF10B981);
+    }
+  }
+
+  static String _label(String role) {
+    final r = role.toLowerCase();
+    if (r == 'admin') return 'Admin';
+    if (r == 'manager') return 'Manager';
+    return 'Employee';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _badgeColor(role);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withAlpha(28),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        _label(role),
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: color,
         ),
       ),
     );

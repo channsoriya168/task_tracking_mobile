@@ -59,20 +59,6 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               // Header
               Row(
                 children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: kPrimary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.add_task_rounded,
-                      size: 20,
-                      color: kPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
                   Obx(
                     () => Text(
                       ctrl.editingTask.value != null ? 'Edit Task' : 'New Task',
@@ -84,55 +70,23 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  Obx(() {
-                    final authCtrl = Get.find<AuthController>();
-                    final profile = authCtrl.profile.value;
-                    final auth = authCtrl.currentAuth.value;
-                    final name = profile?.fullName ?? auth?.fullName ?? '';
-                    final imageUrl = profile?.profileImageUrl;
-                    final letter = name.isNotEmpty
-                        ? name[0].toUpperCase()
-                        : '?';
-                    return Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: kPrimary.withAlpha(30),
-                        border: Border.all(
-                          color: kPrimary.withAlpha(80),
-                          width: 2,
-                        ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(outerContext),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: isDark
+                          ? Colors.grey[800]
+                          : Colors.grey[100],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: ClipOval(
-                        child: imageUrl != null && imageUrl.isNotEmpty
-                            ? Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Center(
-                                  child: Text(
-                                    letter,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: kPrimary,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Center(
-                                child: Text(
-                                  letter,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: kPrimary,
-                                  ),
-                                ),
-                              ),
-                      ),
-                    );
-                  }),
+                      padding: const EdgeInsets.all(6),
+                      minimumSize: const Size(36, 36),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),

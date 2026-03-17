@@ -48,6 +48,8 @@ class EmployeeValidator {
     required String phone,
     required DateTime? dob,
     required String? groupId,
+    String password = '',
+    String confirmPassword = '',
   }) {
     final errors = <String, String>{};
 
@@ -61,6 +63,16 @@ class EmployeeValidator {
     if (phone.isNotEmpty) {
       final phoneErr = Validators.phone(phone);
       if (phoneErr != null) errors['phone'] = phoneErr;
+    }
+
+    if (password.isNotEmpty) {
+      final pwErr = Validators.strongPassword(password);
+      if (pwErr != null) errors['password'] = pwErr;
+      if (confirmPassword.isEmpty) {
+        errors['confirmPassword'] = 'Please confirm your password.';
+      } else if (password != confirmPassword) {
+        errors['confirmPassword'] = 'Passwords do not match.';
+      }
     }
 
     if (dob == null) errors['dob'] = 'Date of birth is required.';

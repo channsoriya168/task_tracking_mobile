@@ -16,6 +16,9 @@ class UpdateEmployeeUsecase {
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
+    String? password,
+    String? confirmPassword,
+    String? role,
   }) => _repository.updateEmployee(
         id,
         fullName: fullName,
@@ -26,5 +29,8 @@ class UpdateEmployeeUsecase {
         groupIds: groupIds,
         profileImagePath: profileImagePath,
         removeProfileImage: removeProfileImage,
+        password: password,
+        confirmPassword: confirmPassword,
+        role: role,
       );
 }

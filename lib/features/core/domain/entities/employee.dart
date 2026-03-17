@@ -22,6 +22,7 @@ class Employee {
   final String email;
   final String? phone;
   final bool isActive;
+  final String? role;
   final String? profileImageUrl;
   final String? placeOfBirth;
   final DateTime? dateOfBirth;
@@ -35,6 +36,7 @@ class Employee {
     required this.email,
     this.phone,
     required this.isActive,
+    this.role,
     this.profileImageUrl,
     this.placeOfBirth,
     this.dateOfBirth,

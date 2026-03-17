@@ -36,6 +36,7 @@ class EmployeeRemoteDatasource {
     DateTime? dateOfBirth,
     List<String>? groupIds,
     String? profileImagePath,
+    String? role,
   }) async {
     final formData = FormData();
 
@@ -50,6 +51,7 @@ class EmployeeRemoteDatasource {
         MapEntry('placeOfBirth', placeOfBirth),
       if (dateOfBirth != null)
         MapEntry('dateOfBirth', dateOfBirth.toIso8601String().split('T').first),
+      if (role != null && role.isNotEmpty) MapEntry('role', role),
     ]);
 
     // ── Group IDs — repeated field names (ASP.NET array binding) ──
@@ -92,6 +94,9 @@ class EmployeeRemoteDatasource {
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
+    String? password,
+    String? confirmPassword,
+    String? role,
   }) async {
     final formData = FormData();
 
@@ -104,6 +109,11 @@ class EmployeeRemoteDatasource {
         MapEntry('placeOfBirth', placeOfBirth),
       if (dateOfBirth != null)
         MapEntry('dateOfBirth', dateOfBirth.toIso8601String().split('T').first),
+      if (password != null && password.isNotEmpty)
+        MapEntry('password', password),
+      if (confirmPassword != null && confirmPassword.isNotEmpty)
+        MapEntry('confirmPassword', confirmPassword),
+      if (role != null && role.isNotEmpty) MapEntry('role', role),
     ]);
 
     if (groupIds != null) {

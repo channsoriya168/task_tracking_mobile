@@ -8,7 +8,8 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   EmployeeRepositoryImpl(this._remote);
 
   @override
-  Future<List<Employee>> fetchEmployees({String? name, String? groupId}) => _remote.fetchEmployees(name: name, groupId: groupId);
+  Future<List<Employee>> fetchEmployees({String? name, String? groupId}) =>
+      _remote.fetchEmployees(name: name, groupId: groupId);
 
   @override
   Future<Employee> fetchEmployeeById(String id) =>
@@ -25,17 +26,19 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     DateTime? dateOfBirth,
     List<String>? groupIds,
     String? profileImagePath,
+    String? role,
   }) => _remote.createEmployee(
-        fullName: fullName,
-        email: email,
-        password: password,
-        confirmPassword: confirmPassword,
-        phone: phone,
-        placeOfBirth: placeOfBirth,
-        dateOfBirth: dateOfBirth,
-        groupIds: groupIds,
-        profileImagePath: profileImagePath,
-      );
+    fullName: fullName,
+    email: email,
+    password: password,
+    confirmPassword: confirmPassword,
+    phone: phone,
+    placeOfBirth: placeOfBirth,
+    dateOfBirth: dateOfBirth,
+    groupIds: groupIds,
+    profileImagePath: profileImagePath,
+    role: role,
+  );
 
   @override
   Future<Employee> updateEmployee(
@@ -48,17 +51,23 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
+    String? password,
+    String? confirmPassword,
+    String? role,
   }) => _remote.updateEmployee(
-        id,
-        fullName: fullName,
-        email: email,
-        phone: phone,
-        placeOfBirth: placeOfBirth,
-        dateOfBirth: dateOfBirth,
-        groupIds: groupIds,
-        profileImagePath: profileImagePath,
-        removeProfileImage: removeProfileImage,
-      );
+    id,
+    fullName: fullName,
+    email: email,
+    phone: phone,
+    placeOfBirth: placeOfBirth,
+    dateOfBirth: dateOfBirth,
+    groupIds: groupIds,
+    profileImagePath: profileImagePath,
+    removeProfileImage: removeProfileImage,
+    password: password,
+    confirmPassword: confirmPassword,
+    role: role,
+  );
 
   @override
   Future<void> deleteEmployee(String id) => _remote.deleteEmployee(id);
@@ -69,8 +78,8 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     required String newPassword,
     required String confirmNewPassword,
   }) => _remote.resetPassword(
-        employeeId: employeeId,
-        newPassword: newPassword,
-        confirmNewPassword: confirmNewPassword,
-      );
+    employeeId: employeeId,
+    newPassword: newPassword,
+    confirmNewPassword: confirmNewPassword,
+  );
 }

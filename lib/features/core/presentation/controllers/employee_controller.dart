@@ -103,6 +103,8 @@ class EmployeeController extends GetxController {
   final phoneCtrl = TextEditingController();
   final placeCtrl = TextEditingController();
 
+  final RxString selectedRole = 'Employee'.obs;
+
   final Rx<DateTime?> formDob = Rx(null);
   final Rxn<String> selectedGroupId = Rxn<String>();
   final Rxn<XFile> profileImage = Rxn<XFile>();
@@ -172,6 +174,7 @@ class EmployeeController extends GetxController {
     emailCtrl.text = employee.email;
     phoneCtrl.text = _toLocalDigits(employee.phone ?? '');
     placeCtrl.text = employee.placeOfBirth ?? '';
+    selectedRole.value = employee.role ?? 'Employee';
     formDob.value = employee.dateOfBirth;
     selectedGroupId.value = employee.taskGroups.isNotEmpty
         ? employee.taskGroups.first.groupId
@@ -192,6 +195,7 @@ class EmployeeController extends GetxController {
     placeCtrl.clear();
     formDob.value = null;
     selectedGroupId.value = null;
+    selectedRole.value = 'Employee';
     profileImage.value = null;
     showPassword.value = false;
     showConfirmPassword.value = false;
@@ -312,6 +316,7 @@ class EmployeeController extends GetxController {
             ? [selectedGroupId.value!]
             : null,
         profileImagePath: profileImage.value?.path,
+        role: selectedRole.value,
       );
       Get.back();
       AppSnackbar.success('Employee Added', 'New employee has been created.');
@@ -328,6 +333,9 @@ class EmployeeController extends GetxController {
     final name = nameCtrl.text.trim();
     final email = emailCtrl.text.trim();
     final phone = phoneCtrl.text.trim();
+    final password = passwordCtrl.text;
+    final confirmPassword = confirmPasswordCtrl.text;
+    final role = selectedRole.value;
 
     final errors = EmployeeValidator.validateEdit(
       name: name,
@@ -335,6 +343,8 @@ class EmployeeController extends GetxController {
       phone: phone,
       dob: formDob.value,
       groupId: selectedGroupId.value,
+      password: password,
+      confirmPassword: confirmPassword,
     );
     if (errors.isNotEmpty) {
       fieldErrors.assignAll(errors);
@@ -357,6 +367,9 @@ class EmployeeController extends GetxController {
             : null,
         profileImagePath: profileImage.value?.path,
         removeProfileImage: removeProfileImage.value,
+        password: password.isEmpty ? null : password,
+        confirmPassword: confirmPassword.isEmpty ? null : confirmPassword,
+        role: role,
       );
       Get.back();
       await fetchEmployees();
@@ -377,6 +390,7 @@ class EmployeeController extends GetxController {
     'ConfirmPassword': 'confirmPassword',
     'PlaceOfBirth': 'placeOfBirth',
     'DateOfBirth': 'dateOfBirth',
+    'Role': 'role',
   };
 
   void _handleApiError(Object e, {String label = 'Employee'}) {

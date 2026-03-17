@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/date_picker_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/password_input_widget.dart';
@@ -152,7 +154,7 @@ class ManagerEmployeeFormDialog extends StatelessWidget {
                         errorText: controller.fieldErrors['email'],
                       ),
                     ),
-                    // Password fields — create mode only
+                    // Password fields — required on create, optional on edit
                     Obx(
                       () => controller.isEditMode.value
                           ? const SizedBox.shrink()
@@ -208,6 +210,7 @@ class ManagerEmployeeFormDialog extends StatelessWidget {
                       hint: 'e.g. Phnom Penh',
                       isDark: isDark,
                     ),
+                    _RoleSelector(controller: controller, isDark: isDark),
                     const SizedBox(height: 24),
 
                     // ── Assignment ────────────────────────────────
@@ -282,6 +285,116 @@ class ManagerEmployeeFormDialog extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Role selector (Admin only) ──────────────────────────────────────────────
+
+class _RoleSelector extends StatelessWidget {
+  const _RoleSelector({required this.controller, required this.isDark});
+
+  final EmployeeController controller;
+  final bool isDark;
+
+  static const _roles = ['Employee', 'Manager'];
+
+  @override
+  Widget build(BuildContext context) {
+    final authCtrl = Get.find<AuthController>();
+    // Manager users cannot assign roles — role is always "Employee"
+    if (authCtrl.role != UserRole.Admin) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Text(
+              'Role',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.grey[300] : Colors.grey[700],
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '*',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.red[400],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Obx(
+          () => Row(
+            children: _roles.map((role) {
+              final isSelected = controller.selectedRole.value == role;
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: GestureDetector(
+                  onTap: () => controller.selectedRole.value = role,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? kPrimary.withValues(alpha: 0.12)
+                          : (isDark
+                                ? Colors.white.withValues(alpha: 0.06)
+                                : Colors.grey[100]),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isSelected
+                            ? kPrimary
+                            : (isDark
+                                  ? Colors.white.withValues(alpha: 0.15)
+                                  : Colors.grey[300]!),
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isSelected) ...[
+                          Icon(
+                            Icons.check_circle_rounded,
+                            size: 14,
+                            color: kPrimary,
+                          ),
+                          const SizedBox(width: 6),
+                        ],
+                        Text(
+                          role,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? kPrimary
+                                : (isDark
+                                      ? Colors.grey[300]
+                                      : Colors.grey[700]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -13,6 +13,7 @@ abstract class EmployeeRepository {
     DateTime? dateOfBirth,
     List<String>? groupIds,
     String? profileImagePath,
+    String? role,
   });
 
   Future<Employee> updateEmployee(
@@ -25,6 +26,9 @@ abstract class EmployeeRepository {
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
+    String? password,
+    String? confirmPassword,
+    String? role,
   });
 
   Future<void> deleteEmployee(String id);

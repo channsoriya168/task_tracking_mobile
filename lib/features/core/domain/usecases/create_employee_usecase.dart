@@ -16,6 +16,7 @@ class CreateEmployeeUsecase {
     DateTime? dateOfBirth,
     List<String>? groupIds,
     String? profileImagePath,
+    String? role,
   }) => _repo.createEmployee(
         fullName: fullName,
         email: email,
@@ -26,5 +27,6 @@ class CreateEmployeeUsecase {
         dateOfBirth: dateOfBirth,
         groupIds: groupIds,
         profileImagePath: profileImagePath,
+        role: role,
       );
 }

@@ -8,6 +8,7 @@ class EmployeeModel extends Employee {
     required super.email,
     super.phone,
     required super.isActive,
+    super.role,
     super.profileImageUrl,
     super.placeOfBirth,
     super.dateOfBirth,
@@ -39,6 +40,7 @@ class EmployeeModel extends Employee {
       email: json['email'] as String? ?? '',
       phone: json['phone'] as String?,
       isActive: json['isActive'] as bool? ?? true,
+      role: json['role'] as String?,
       profileImageUrl: json['profileImageUrl'] as String?,
       placeOfBirth: json['placeOfBirth'] as String?,
       dateOfBirth: json['dateOfBirth'] != null
