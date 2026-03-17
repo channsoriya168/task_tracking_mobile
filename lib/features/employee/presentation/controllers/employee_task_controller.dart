@@ -6,10 +6,15 @@ import 'package:task_tracking_mobile/features/core/domain/entities/task_item_sta
 import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_progress.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/add_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/assign_task_item_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_progress_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_progress_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_progress_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_members_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_progresses_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/remove_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
 
@@ -22,6 +27,10 @@ class EmployeeTaskController extends GetxController {
   final FetchTaskMembersUsecase _fetchTaskMembers;
   final AddTaskMemberUsecase _addTaskMember;
   final RemoveTaskMemberUsecase _removeTaskMember;
+  final FetchTaskProgressesUsecase _fetchTaskProgresses;
+  final CreateTaskProgressUsecase _createTaskProgress;
+  final UpdateTaskProgressUsecase _updateTaskProgress;
+  final DeleteTaskProgressUsecase _deleteTaskProgress;
 
   EmployeeTaskController(
     this._fetchTaskItems,
@@ -32,6 +41,10 @@ class EmployeeTaskController extends GetxController {
     this._fetchTaskMembers,
     this._addTaskMember,
     this._removeTaskMember,
+    this._fetchTaskProgresses,
+    this._createTaskProgress,
+    this._updateTaskProgress,
+    this._deleteTaskProgress,
   );
 
   /// Full unfiltered list — used for chip counts and client-side status filter.
@@ -56,6 +69,30 @@ class EmployeeTaskController extends GetxController {
 
   /// Employees in the current group (for the add-member picker).
   final RxList<Employee> groupEmployees = <Employee>[].obs;
+
+  /// Progresses of the currently-open task.
+  final RxList<TaskProgress> currentTaskProgresses = <TaskProgress>[].obs;
+  final RxBool progressLoading = false.obs;
+  final RxString progressError = ''.obs;
+
+  /// Loading state for the detail-sheet primary action button.
+  final RxBool actionLoading = false.obs;
+
+  /// Call before opening the task detail sheet to reset state and pre-fetch data.
+  void prepareTaskDetail(
+    String taskId, {
+    bool showMembers = false,
+    bool showProgress = false,
+  }) {
+    actionLoading.value = false;
+    if (showMembers || showProgress) {
+      fetchTaskMembers(taskId);
+      fetchGroupEmployees();
+    }
+    if (showProgress) {
+      fetchTaskProgresses(taskId);
+    }
+  }
 
   /// Status-filtered view of allTasks for the task list.
   List<TaskItem> get filteredTasks {
@@ -240,6 +277,101 @@ class EmployeeTaskController extends GetxController {
     try {
       await _removeTaskMember(taskItemId, memberId);
       await fetchTaskMembers(taskItemId);
+      return true;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      return false;
+    }
+  }
+
+  // ── Progress management ──────────────────────────────────────────────────
+
+  Future<void> fetchTaskProgresses(String taskItemId) async {
+    progressLoading.value = true;
+    progressError.value = '';
+    try {
+      final result = await _fetchTaskProgresses(taskItemId);
+      currentTaskProgresses.assignAll(result);
+    } catch (e) {
+      progressError.value = e.toString();
+    } finally {
+      progressLoading.value = false;
+    }
+  }
+
+  Future<bool> createProgress(
+    String taskItemId, {
+    required int progressPercentage,
+    required DateTime loggedAt,
+    String? notes,
+    double? hoursWorked,
+  }) async {
+    try {
+      await _createTaskProgress(
+        taskItemId,
+        progressPercentage: progressPercentage,
+        loggedAt: loggedAt,
+        notes: notes,
+        hoursWorked: hoursWorked,
+      );
+      await fetchTaskProgresses(taskItemId);
+      return true;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      return false;
+    }
+  }
+
+  Future<bool> updateProgress(
+    String taskItemId,
+    String progressId, {
+    required int progressPercentage,
+    required DateTime loggedAt,
+    required String notes,
+    double? hoursWorked,
+  }) async {
+    try {
+      await _updateTaskProgress(
+        taskItemId,
+        progressId,
+        progressPercentage: progressPercentage,
+        loggedAt: loggedAt,
+        notes: notes,
+        hoursWorked: hoursWorked,
+      );
+      await fetchTaskProgresses(taskItemId);
+      return true;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      return false;
+    }
+  }
+
+  Future<bool> deleteProgress(String taskItemId, String progressId) async {
+    try {
+      await _deleteTaskProgress(taskItemId, progressId);
+      await fetchTaskProgresses(taskItemId);
+      return true;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      return false;
+    }
+  }
+
+  /// Moves the task to "In Review" status.
+  Future<bool> setInReview(TaskItem task) async {
+    final inReviewStatus = taskStatus.firstWhereOrNull((s) {
+      final n = s.name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
+      return n == 'inreview';
+    });
+    if (inReviewStatus == null) {
+      errorMessage.value = 'In Review status not found. Please try again.';
+      return false;
+    }
+    try {
+      await _updateStatus(task.id, inReviewStatus.id);
+      selectStatus(inReviewStatus);
+      await fetchTasks();
       return true;
     } catch (e) {
       errorMessage.value = e.toString();

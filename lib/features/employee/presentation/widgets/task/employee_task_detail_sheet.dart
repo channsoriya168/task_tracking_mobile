@@ -9,6 +9,7 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/status_b
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_picker_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_members_section.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_progress_section.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_sheet_widgets.dart';
 
 Future<void> showEmployeeTaskDetailSheet(
@@ -16,54 +17,40 @@ Future<void> showEmployeeTaskDetailSheet(
   bool isDark,
   TaskItem task, {
   bool showMembers = false,
+  bool showProgress = false,
   bool readOnly = false,
-}) async {
-  final ctrl = Get.find<EmployeeTaskController>();
-  if (showMembers) {
-    ctrl.fetchTaskMembers(task.id);
-    ctrl.fetchGroupEmployees();
-  }
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => _TaskDetailSheet(
-      task: task,
-      isDark: isDark,
-      ctrl: ctrl,
-      showMembers: showMembers,
-      readOnly: readOnly,
-    ),
-  );
-}
+}) =>
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _TaskDetailSheet(
+        task: task,
+        isDark: isDark,
+        showMembers: showMembers,
+        showProgress: showProgress,
+        readOnly: readOnly,
+      ),
+    );
 
 // ── Sheet widget ──────────────────────────────────────────────────────────────
 
-class _TaskDetailSheet extends StatefulWidget {
+class _TaskDetailSheet extends StatelessWidget {
   const _TaskDetailSheet({
     required this.task,
     required this.isDark,
-    required this.ctrl,
     required this.showMembers,
+    required this.showProgress,
     required this.readOnly,
   });
 
   final TaskItem task;
   final bool isDark;
-  final EmployeeTaskController ctrl;
   final bool showMembers;
+  final bool showProgress;
   final bool readOnly;
 
-  @override
-  State<_TaskDetailSheet> createState() => _TaskDetailSheetState();
-}
-
-class _TaskDetailSheetState extends State<_TaskDetailSheet> {
-  bool _loading = false;
-
-  TaskItem get task => widget.task;
-  bool get isDark => widget.isDark;
-  EmployeeTaskController get ctrl => widget.ctrl;
+  EmployeeTaskController get ctrl => Get.find<EmployeeTaskController>();
 
   Color get textColor => isDark ? Colors.white : kTextDark;
   Color get mutedColor => isDark ? Colors.white38 : kTextMuted;
@@ -73,7 +60,8 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
 
   // ── Dialogs ───────────────────────────────────────────────────────────────
 
-  Future<bool?> _confirm({
+  Future<bool?> _confirm(
+    BuildContext context, {
     required String title,
     required String content,
     required String confirmLabel,
@@ -120,7 +108,8 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
 
   // ── Member actions ────────────────────────────────────────────────────────
 
-  Future<void> _onAddMember(List<TaskMember> currentMembers) async {
+  Future<void> _onAddMember(
+      BuildContext context, List<TaskMember> currentMembers) async {
     if (ctrl.groupEmployees.isEmpty) await ctrl.fetchGroupEmployees();
 
     final addedIds = currentMembers.map((m) => m.employeeId).toSet();
@@ -128,7 +117,7 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
         .where((e) => !addedIds.contains(e.id) && e.id != ctrl.currentEmployeeId)
         .toList();
 
-    if (!mounted) return;
+    if (!context.mounted) return;
 
     final selected = await showModalBottomSheet<Employee>(
       context: context,
@@ -137,37 +126,44 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
       builder: (_) =>
           EmployeePickerSheet(employees: available, isDark: isDark),
     );
-    if (selected == null || !mounted) return;
+    if (selected == null || !context.mounted) return;
 
     final ok = await _confirm(
+      context,
       title: 'Add Member',
       content: 'Add ${selected.fullName} to this task?',
       confirmLabel: 'Add',
     );
-    if (ok == true && mounted) await ctrl.addMember(task.id, selected.id);
+    if (ok == true) await ctrl.addMember(task.id, selected.id);
   }
 
-  Future<void> _onRemoveMember(TaskMember member) async {
+  Future<void> _onRemoveMember(
+      BuildContext context, TaskMember member) async {
     final ok = await _confirm(
+      context,
       title: 'Remove Member',
       content: 'Remove ${member.employeeName} from this task?',
       confirmLabel: 'Remove',
       confirmColor: Colors.red,
     );
-    if (ok == true && mounted) await ctrl.removeMember(task.id, member.id);
+    if (ok == true) await ctrl.removeMember(task.id, member.id);
   }
 
-  // ── Primary action (Accept / In Progress) ─────────────────────────────────
+  // ── Primary action ────────────────────────────────────────────────────────
 
-  Future<void> _handleAction() async {
-    if (_loading) return;
-    setState(() => _loading = true);
-    final success = widget.showMembers
-        ? await ctrl.setInProgress(task)
-        : await ctrl.acceptTask(task);
-    if (!mounted) return;
-    setState(() => _loading = false);
-    if (success) Navigator.pop(context);
+  Future<void> _handleAction(BuildContext context) async {
+    if (ctrl.actionLoading.value) return;
+    ctrl.actionLoading.value = true;
+    final bool success;
+    if (showProgress) {
+      success = await ctrl.setInReview(task);
+    } else if (showMembers) {
+      success = await ctrl.setInProgress(task);
+    } else {
+      success = await ctrl.acceptTask(task);
+    }
+    ctrl.actionLoading.value = false;
+    if (success && context.mounted) Navigator.pop(context);
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
@@ -187,7 +183,7 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
         ),
         child: Column(
           children: [
-            Expanded(child: _buildContent(scrollController)),
+            Expanded(child: _buildContent(context, scrollController)),
             _buildBottomBar(context),
           ],
         ),
@@ -195,7 +191,7 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
     );
   }
 
-  Widget _buildContent(ScrollController scrollController) {
+  Widget _buildContent(BuildContext context, ScrollController scrollController) {
     return ListView(
       controller: scrollController,
       padding: EdgeInsets.fromLTRB(
@@ -319,8 +315,8 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
           child: _dateText(formatDate(task.createdAt ?? DateTime.now())),
         ),
 
-        // Members section (assigned tasks only)
-        if (widget.showMembers) ...[
+        // Members section
+        if (showMembers || showProgress) ...[
           const SizedBox(height: 24),
           Divider(height: 1, color: divColor),
           const SizedBox(height: 16),
@@ -329,8 +325,23 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
             isDark: isDark,
             textColor: textColor,
             mutedColor: mutedColor,
-            onAdd: _onAddMember,
-            onRemove: _onRemoveMember,
+            onAdd: (members) => _onAddMember(context, members),
+            onRemove: (member) => _onRemoveMember(context, member),
+          ),
+        ],
+
+        // Progress section
+        if (showProgress) ...[
+          const SizedBox(height: 24),
+          Divider(height: 1, color: divColor),
+          const SizedBox(height: 16),
+          TaskProgressSection(
+            ctrl: ctrl,
+            taskId: task.id,
+            isDark: isDark,
+            textColor: textColor,
+            mutedColor: mutedColor,
+            canEdit: task.assignedToId == ctrl.currentEmployeeId,
           ),
         ],
 
@@ -357,37 +368,44 @@ class _TaskDetailSheetState extends State<_TaskDetailSheet> {
         children: [
           Expanded(
             child: TaskSheetButton(
-              label: widget.readOnly ? 'Close' : 'Cancel',
+              label: readOnly ? 'Close' : 'Cancel',
               isDark: isDark,
               onPressed: () => Navigator.pop(context),
             ),
           ),
-          if (!widget.readOnly) ...[
+          if (!readOnly) ...[
             const SizedBox(width: 12),
             Expanded(
-              child: ElevatedButton(
-                onPressed: _loading ? null : _handleAction,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                child: _loading
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : Text(
-                        widget.showMembers ? 'In Progress' : 'Accept',
-                        style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600),
-                      ),
-              ),
+              child: Obx(() {
+                final loading = ctrl.actionLoading.value;
+                return ElevatedButton(
+                  onPressed: loading ? null : () => _handleAction(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: loading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text(
+                          showProgress
+                              ? 'Mark as Review'
+                              : showMembers
+                                  ? 'In Progress'
+                                  : 'Accept',
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                );
+              }),
             ),
           ],
         ],
