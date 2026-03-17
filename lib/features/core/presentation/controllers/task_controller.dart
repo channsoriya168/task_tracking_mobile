@@ -17,7 +17,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fet
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_dashboard_controller.dart';
 
-class ManagerTaskController extends GetxController {
+class TaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
   final CreateTaskItemUsecase _createTaskItem;
   final UpdateTaskItemUsecase _updateTaskItem;
@@ -27,7 +27,7 @@ class ManagerTaskController extends GetxController {
   final FetchTaskStatusesUsecase _fetchStatuses;
   final GetAllLabelsUseCase _getAllLabels;
 
-  ManagerTaskController(
+  TaskController(
     this._fetchTaskItems,
     this._fetchTaskItemById,
     this._createTaskItem,

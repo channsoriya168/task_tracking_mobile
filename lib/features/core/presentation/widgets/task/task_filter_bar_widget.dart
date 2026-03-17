@@ -5,8 +5,8 @@ import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dar
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
 
-class ManagerTaskFilterBarWidget extends StatelessWidget {
-  const ManagerTaskFilterBarWidget({
+class TaskFilterBarWidget extends StatelessWidget {
+  const TaskFilterBarWidget({
     super.key,
     required this.isDark,
     required this.filterStatus,

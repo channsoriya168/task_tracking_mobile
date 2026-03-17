@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_label_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_label_dialog.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/action_button.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
 
 class AdminLabelPage extends StatelessWidget {
   const AdminLabelPage({super.key});
@@ -113,8 +113,9 @@ class AdminLabelPage extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black
-                            .withValues(alpha: isDark ? 0.2 : 0.04),
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.2 : 0.04,
+                        ),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -174,12 +175,8 @@ class AdminLabelPage extends StatelessWidget {
                       ActionButton(
                         icon: Icons.edit_rounded,
                         color: kMediumPriority,
-                        onTap: () => showAdminLabelDialog(
-                          context,
-                          ctrl,
-                          isDark,
-                          label,
-                        ),
+                        onTap: () =>
+                            showAdminLabelDialog(context, ctrl, isDark, label),
                       ),
                       const SizedBox(width: 6),
                       ActionButton(

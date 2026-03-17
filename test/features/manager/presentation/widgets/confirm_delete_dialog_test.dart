@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
 
 Widget _testApp(Widget child) => MaterialApp(home: child);
 
@@ -52,7 +52,9 @@ void main() {
       expect(find.text('Delete'), findsOneWidget);
     });
 
-    testWidgets('Cancel button closes dialog and returns false', (tester) async {
+    testWidgets('Cancel button closes dialog and returns false', (
+      tester,
+    ) async {
       bool? result;
       await tester.pumpWidget(
         _testApp(

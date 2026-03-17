@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_header_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_list_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_dialog.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_list_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/show_task_dialog.dart';
 
-class ManagerTaskTabletPage extends StatelessWidget {
-  const ManagerTaskTabletPage({super.key});
+class TaskTabletPage extends StatelessWidget {
+  const TaskTabletPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<ManagerTaskController>();
+    final ctrl = Get.find<TaskController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ColoredBox(
@@ -59,10 +58,7 @@ class ManagerTaskTabletPage extends StatelessWidget {
                   onChanged: (value) => ctrl.searchQuery.value = value,
                 ),
                 Expanded(
-                  child: ManagerTaskList(
-                    isDark: isDark,
-                    managerTaskController: ctrl,
-                  ),
+                  child: TaskListWidget(isDark: isDark, taskController: ctrl),
                 ),
               ],
             ),
@@ -78,7 +74,7 @@ class _FilterPanel extends StatelessWidget {
   const _FilterPanel({required this.isDark, required this.ctrl});
 
   final bool isDark;
-  final ManagerTaskController ctrl;
+  final TaskController ctrl;
 
   @override
   Widget build(BuildContext context) {

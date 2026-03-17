@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
 
 // Subclass that skips FlutterSecureStorage in onInit
@@ -56,10 +56,7 @@ void main() {
   });
 
   // Pump widget and flush all pending animation timers (e.g. Syncfusion charts).
-  Future<void> _pumpDashboard(
-    WidgetTester tester,
-    Size size,
-  ) async {
+  Future<void> _pumpDashboard(WidgetTester tester, Size size) async {
     _ignoreOverflowErrors();
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;

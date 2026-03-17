@@ -6,7 +6,7 @@ import 'package:task_tracking_mobile/features/core/domain/entities/task_group.da
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_title_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_dialog.dart';
 
 class LeftPanelTaskGroupWidget extends StatelessWidget {

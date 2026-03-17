@@ -4,16 +4,17 @@ import 'package:shimmer/shimmer.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 // ── Single task card skeleton ─────────────────────────────────
-class ManagerTaskCardShimmer extends StatelessWidget {
-  const ManagerTaskCardShimmer({super.key, required this.isDark});
+class TaskShimmerWidget extends StatelessWidget {
+  const TaskShimmerWidget({super.key, required this.isDark});
 
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     final base = isDark ? const Color(0xFF2A2A3A) : const Color(0xFFE8E8EE);
-    final highlight =
-        isDark ? const Color(0xFF3A3A4E) : const Color(0xFFF5F5FA);
+    final highlight = isDark
+        ? const Color(0xFF3A3A4E)
+        : const Color(0xFFF5F5FA);
     final cardBg = isDark ? kCardDark : Colors.white;
 
     return Shimmer.fromColors(
@@ -49,7 +50,12 @@ class ManagerTaskCardShimmer extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: _Box(w: double.infinity, h: 14, r: 6, color: base),
+                              child: _Box(
+                                w: double.infinity,
+                                h: 14,
+                                r: 6,
+                                color: base,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             _Box(w: 22, h: 22, r: 6, color: base),
@@ -118,7 +124,7 @@ class ManagerTaskListShimmer extends StatelessWidget {
       itemCount: 6,
       itemBuilder: (_, __) => Padding(
         padding: kItemSpacing,
-        child: ManagerTaskCardShimmer(isDark: isDark),
+        child: TaskShimmerWidget(isDark: isDark),
       ),
     );
   }

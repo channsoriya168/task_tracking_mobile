@@ -9,13 +9,7 @@ import 'package:task_tracking_mobile/features/core/domain/entities/task_group.da
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_mobile_page.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_page.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_tablet_page.dart';
 
 // ── Stubs ──────────────────────────────────────────────────────
 
@@ -32,16 +26,14 @@ class _StubTaskGroupRepository implements TaskGroupRepository {
   Future<List<TaskGroup>> getAll() async => [];
 
   @override
-  Future<TaskGroup> getById(String id) async =>
-      TaskGroup(id: id, name: 'Stub');
+  Future<TaskGroup> getById(String id) async => TaskGroup(id: id, name: 'Stub');
 
   @override
   Future<TaskGroup> create({
     required String name,
     String? color,
     String? description,
-  }) async =>
-      TaskGroup(id: 'new', name: name);
+  }) async => TaskGroup(id: 'new', name: name);
 
   @override
   Future<TaskGroup> update(
@@ -49,8 +41,7 @@ class _StubTaskGroupRepository implements TaskGroupRepository {
     required String name,
     String? color,
     String? description,
-  }) async =>
-      TaskGroup(id: id, name: name);
+  }) async => TaskGroup(id: id, name: name);
 
   @override
   Future<void> delete(String id) async {}
@@ -94,13 +85,13 @@ void _setupControllers() {
 }
 
 Widget _buildApp(Size size, Widget child) => GetMaterialApp(
-      home: Scaffold(
-        body: MediaQuery(
-          data: MediaQueryData(size: size),
-          child: child,
-        ),
-      ),
-    );
+  home: Scaffold(
+    body: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: child,
+    ),
+  ),
+);
 
 const _mobileSize = Size(500, 900);
 const _tabletSize = Size(800, 1024);

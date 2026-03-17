@@ -5,9 +5,9 @@ import 'package:task_tracking_mobile/features/admin/presentation/widgets/dashboa
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/dashboard/dashboard_summary_card.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/task_line_chart_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 
 class AdminDashboardTabletPage extends StatelessWidget {
   const AdminDashboardTabletPage({super.key});
@@ -15,7 +15,7 @@ class AdminDashboardTabletPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCtrl = Get.find<ThemeController>();
-    final taskCtrl = Get.find<AdminTaskController>();
+    final taskCtrl = Get.find<TaskController>();
     final empCtrl = Get.find<EmployeeController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -96,38 +96,6 @@ class AdminDashboardTabletPage extends StatelessWidget {
               ),
             ),
           ),
-
-          // ── Summary Grid (4 columns) ───────────────────────
-          SliverPadding(
-            padding: kPageSectionLargePadding,
-            sliver: Obx(() {
-              final stats = buildDashboardStats(
-                taskCtrl.totalTasks,
-                empCtrl.employees.length,
-                taskCtrl.inProgressTasks,
-                taskCtrl.completedTasks,
-              );
-              return SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) => DashboardSummaryCard(
-                    isDark: isDark,
-                    label: stats[i].$1,
-                    count: stats[i].$2,
-                    icon: stats[i].$3,
-                    color: stats[i].$4,
-                  ),
-                  childCount: stats.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 14,
-                  childAspectRatio: 1.5,
-                ),
-              );
-            }),
-          ),
-
           // ── Recent Activity Header ────────────────────────
           SliverPadding(
             padding: kPageSectionLargePadding,

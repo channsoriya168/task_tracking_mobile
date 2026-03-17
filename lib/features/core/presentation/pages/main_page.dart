@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/home/admin_dashboard_page.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/pages/task/admin_task_page.dart';
 import 'package:task_tracking_mobile/features/core/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/pages/employee/employee_page.dart';
+import 'package:task_tracking_mobile/features/core/presentation/pages/task/task_page.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
 import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_page.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/home_page.dart';
 import 'package:task_tracking_mobile/features/core/presentation/pages/profile_page.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -29,7 +28,7 @@ class MainPage extends StatelessWidget {
           NavItem(
             icon: Icons.list_alt_rounded,
             label: 'Tasks',
-            page: ManagerTaskPage(),
+            page: TaskPage(),
           ),
           NavItem(
             icon: Icons.people_rounded,
@@ -52,7 +51,7 @@ class MainPage extends StatelessWidget {
           NavItem(
             icon: Icons.list_alt_rounded,
             label: 'Tasks',
-            page: AdminTaskPage(),
+            page: TaskPage(),
           ),
           NavItem(
             icon: Icons.people_rounded,

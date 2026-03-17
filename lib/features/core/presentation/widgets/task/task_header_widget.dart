@@ -1,18 +1,13 @@
-// ── Header ─────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 
-class ManagerTaskHeaderWidget extends StatelessWidget {
-  const ManagerTaskHeaderWidget({
-    super.key,
-    required this.isDark,
-    required this.ctrl,
-  });
+class TaskHeaderWidget extends StatelessWidget {
+  const TaskHeaderWidget({super.key, required this.isDark, required this.ctrl});
 
   final bool isDark;
-  final ManagerTaskController ctrl;
+  final TaskController ctrl;
 
   @override
   Widget build(BuildContext context) {

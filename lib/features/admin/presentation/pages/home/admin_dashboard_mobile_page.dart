@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/widgets/admin_task_widgets.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/widgets/task_line_chart_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 
 class AdminDashboardMobilePage extends StatelessWidget {
@@ -16,7 +16,7 @@ class AdminDashboardMobilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCtrl = Get.find<ThemeController>();
-    final adminTaskCtrl = Get.find<AdminTaskController>();
+    final adminTaskCtrl = Get.find<TaskController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : kTextDark;
     final mutedColor = isDark ? Colors.white38 : kTextMuted;
@@ -99,23 +99,32 @@ class AdminDashboardMobilePage extends StatelessWidget {
                     final f = _filters[i];
                     final selected = adminTaskCtrl.filterStatus.value == f;
                     final color = isDark
-                        ? (selected ? kPrimary : Colors.white.withValues(alpha: 0.1))
-                        : (selected ? kPrimary : const Color.fromARGB(255, 112, 113, 116));
+                        ? (selected
+                              ? kPrimary
+                              : Colors.white.withValues(alpha: 0.1))
+                        : (selected
+                              ? kPrimary
+                              : const Color.fromARGB(255, 112, 113, 116));
                     final count = adminTaskCtrl.countByStatus(f);
                     return GestureDetector(
                       onTap: () => adminTaskCtrl.filterStatus.value = f,
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 160),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
-                          color: selected ? color : (isDark ? kCardDark : Colors.white),
+                          color: selected
+                              ? color
+                              : (isDark ? kCardDark : Colors.white),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: selected
                                 ? color
                                 : (isDark
-                                    ? Colors.white.withValues(alpha: 0.1)
-                                    : const Color(0xFFE5E7EB)),
+                                      ? Colors.white.withValues(alpha: 0.1)
+                                      : const Color(0xFFE5E7EB)),
                           ),
                         ),
                         child: Row(
@@ -133,11 +142,16 @@ class AdminDashboardMobilePage extends StatelessWidget {
                             ),
                             const SizedBox(width: 5),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 1,
+                              ),
                               decoration: BoxDecoration(
                                 color: selected
                                     ? Colors.white.withValues(alpha: 0.25)
-                                    : color.withValues(alpha: isDark ? 0.2 : 0.12),
+                                    : color.withValues(
+                                        alpha: isDark ? 0.2 : 0.12,
+                                      ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
@@ -175,9 +189,16 @@ class AdminDashboardMobilePage extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'Search tasks…',
                       hintStyle: TextStyle(fontSize: 14, color: mutedColor),
-                      prefixIcon: Icon(Icons.search_rounded, size: 18, color: mutedColor),
+                      prefixIcon: Icon(
+                        Icons.search_rounded,
+                        size: 18,
+                        color: mutedColor,
+                      ),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -267,20 +288,13 @@ class AdminDashboardMobilePage extends StatelessWidget {
                 : SliverPadding(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) {
-                          final task = filtered[i];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: AdminTaskCard(
-                              task: task,
-                              isDark: isDark,
-                              onDelete: () => adminTaskCtrl.deleteTask(task),
-                            ),
-                          );
-                        },
-                        childCount: filtered.length,
-                      ),
+                      delegate: SliverChildBuilderDelegate((context, i) {
+                        final task = filtered[i];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: TaskCardWidget(task: task),
+                        );
+                      }, childCount: filtered.length),
                     ),
                   ),
 

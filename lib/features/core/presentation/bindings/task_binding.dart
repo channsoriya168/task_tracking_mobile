@@ -8,15 +8,29 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_label
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_usecase.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_dashboard_controller.dart';
 
-class AdminBinding extends Bindings {
+class ManagerTaskBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AdminTaskController>(
-      () => AdminTaskController(
+    // ── Dashboard: own fetch/filter state, no CRUD ────────────
+    Get.lazyPut<ManagerDashboardController>(
+      () => ManagerDashboardController(
         FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
+        FetchTaskItemByIdUsecase(Get.find<TaskItemRepository>()),
+        FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
+      ),
+      fenix: true,
+    );
+
+    // ── Task page: full CRUD + filter state ───────────────────
+    Get.lazyPut<TaskController>(
+      () => TaskController(
+        FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
+        FetchTaskItemByIdUsecase(Get.find<TaskItemRepository>()),
         CreateTaskItemUsecase(Get.find<TaskItemRepository>()),
         UpdateTaskItemUsecase(Get.find<TaskItemRepository>()),
         DeleteTaskItemUsecase(Get.find<TaskItemRepository>()),
@@ -24,6 +38,7 @@ class AdminBinding extends Bindings {
         FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
         GetAllLabelsUseCase(Get.find<LabelRepository>()),
       ),
+      fenix: true,
     );
   }
 }

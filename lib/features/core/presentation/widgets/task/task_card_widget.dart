@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/menu_sheet_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_dialog.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/show_task_detail_sheet.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/show_task_dialog.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/show_task_detail_sheet.dart';
 
-class ManagerTaskCardWidget extends StatelessWidget {
-  const ManagerTaskCardWidget({
+class TaskCardWidget extends StatelessWidget {
+  const TaskCardWidget({
     super.key,
     required this.task,
     this.managerTaskController,
@@ -20,7 +20,7 @@ class ManagerTaskCardWidget extends StatelessWidget {
   final TaskItem task;
 
   /// When null the card is read-only (no swipe-to-delete, no edit/delete menu).
-  final ManagerTaskController? managerTaskController;
+  final TaskController? managerTaskController;
 
   /// When provided, the detail sheet fetches fresh data from the API on open.
   final Future<TaskItem?> Function(String id)? fetchDetail;

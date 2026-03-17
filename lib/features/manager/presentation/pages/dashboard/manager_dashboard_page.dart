@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_chart_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_dashboard_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashboard/dashboard_date_header_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashboard/dashboard_task_count_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_card_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/manager_task_filter_bar_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashboard/task_card_shimmer_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_shimmer_widget.dart';
 
 class ManagerDashboardPage extends StatelessWidget {
   const ManagerDashboardPage({super.key});
@@ -71,8 +71,9 @@ class ManagerDashboardPage extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black
-                                .withValues(alpha: isDark ? 0.25 : 0.08),
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.25 : 0.08,
+                            ),
                             blurRadius: 10,
                             offset: const Offset(0, 3),
                           ),
@@ -115,7 +116,7 @@ class ManagerDashboardPage extends StatelessWidget {
 
             // ── Filter Bar ────────────────────────────────────
             SliverToBoxAdapter(
-              child: ManagerTaskFilterBarWidget(
+              child: TaskFilterBarWidget(
                 isDark: isDark,
                 filterStatus: ctrl.filterStatus,
                 taskStatus: ctrl.taskStatus,
@@ -205,7 +206,7 @@ class ManagerDashboardPage extends StatelessWidget {
                     }
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: ManagerTaskCardWidget(
+                      child: TaskCardWidget(
                         task: item as TaskItem,
                         fetchDetail: ctrl.fetchTaskById,
                       ),

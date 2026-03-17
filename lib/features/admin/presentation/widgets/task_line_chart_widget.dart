@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 
 enum _Filter { day, week, month }
 
@@ -50,7 +50,7 @@ class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
         : Colors.black.withValues(alpha: 0.04);
 
     return Obx(() {
-      final taskCtrl = Get.find<AdminTaskController>();
+      final taskCtrl = Get.find<TaskController>();
       final filtered = _applyFilter(taskCtrl.tasks);
       final pending = filtered
           .where((t) => t.status.name.toLowerCase() == 'pending')

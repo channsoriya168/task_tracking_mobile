@@ -5,10 +5,10 @@ import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth
 import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/date_pickerField_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/date_pickerField_widget.dart';
 
 class TaskItemDialogSheetWidget extends StatelessWidget {
   const TaskItemDialogSheetWidget({
@@ -20,7 +20,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
   });
 
   final bool isDark;
-  final ManagerTaskController ctrl;
+  final TaskController ctrl;
   final List<TaskGroup> groups;
   final BuildContext outerContext;
 
@@ -90,14 +90,19 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                     final auth = authCtrl.currentAuth.value;
                     final name = profile?.fullName ?? auth?.fullName ?? '';
                     final imageUrl = profile?.profileImageUrl;
-                    final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
+                    final letter = name.isNotEmpty
+                        ? name[0].toUpperCase()
+                        : '?';
                     return Container(
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: kPrimary.withAlpha(30),
-                        border: Border.all(color: kPrimary.withAlpha(80), width: 2),
+                        border: Border.all(
+                          color: kPrimary.withAlpha(80),
+                          width: 2,
+                        ),
                       ),
                       child: ClipOval(
                         child: imageUrl != null && imageUrl.isNotEmpty
