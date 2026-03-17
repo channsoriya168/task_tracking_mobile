@@ -3,7 +3,8 @@
     "allow": [
       "mcp__ide__getDiagnostics",
       "Bash(flutter pub get)",
-      "Bash(flutter analyze lib/features/admin/)"
+      "Bash(flutter analyze lib/features/admin/)",
+      "Bash(flutter test:*)"
     ]
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/auth/data/models/auth_model.dart';
@@ -9,7 +10,13 @@ import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
 
 class AuthRemoteDatasource {
-  final Dio _dio = ApiClient.instance.dio;
+  final Dio _dio;
+
+  AuthRemoteDatasource() : _dio = ApiClient.instance.dio;
+
+  /// Named constructor for tests — inject any [Dio] instance directly.
+  @visibleForTesting
+  AuthRemoteDatasource.withDio(this._dio);
 
   Future<Auth> login(String phoneNumber, String password) async {
     final response = await _dio.post(
