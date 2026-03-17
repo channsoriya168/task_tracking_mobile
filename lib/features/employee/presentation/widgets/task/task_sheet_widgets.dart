@@ -29,28 +29,32 @@ class TaskLabelChip extends StatelessWidget {
 // ── Assignee row ──────────────────────────────────────────────────────────────
 
 class TaskAssigneeRow extends StatelessWidget {
-  const TaskAssigneeRow({super.key, required this.name, required this.isDark});
+  const TaskAssigneeRow({
+    super.key,
+    required this.name,
+    required this.isDark,
+    this.imageUrl,
+  });
   final String name;
   final bool isDark;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: kPrimary.withValues(alpha: isDark ? 0.25 : 0.12),
-            shape: BoxShape.circle,
-            border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
-          ),
-          alignment: Alignment.center,
-          child: Text(name[0].toUpperCase(),
-              style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  color: kPrimary)),
+        CircleAvatar(
+          radius: 14,
+          backgroundColor: kPrimary.withValues(alpha: isDark ? 0.25 : 0.12),
+          backgroundImage:
+              imageUrl != null ? NetworkImage(imageUrl!) : null,
+          child: imageUrl == null
+              ? Text(name[0].toUpperCase(),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: kPrimary))
+              : null,
         ),
         const SizedBox(width: 8),
         Text(name,

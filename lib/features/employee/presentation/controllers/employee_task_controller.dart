@@ -358,6 +358,27 @@ class EmployeeTaskController extends GetxController {
     }
   }
 
+  /// Moves the task to "Completed" status.
+  Future<bool> setCompleted(TaskItem task) async {
+    final completedStatus = taskStatus.firstWhereOrNull((s) {
+      final n = s.name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
+      return n == 'completed' || n == 'complete' || n == 'done';
+    });
+    if (completedStatus == null) {
+      errorMessage.value = 'Completed status not found. Please try again.';
+      return false;
+    }
+    try {
+      await _updateStatus(task.id, completedStatus.id);
+      selectStatus(completedStatus);
+      await fetchTasks();
+      return true;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      return false;
+    }
+  }
+
   /// Moves the task to "In Review" status.
   Future<bool> setInReview(TaskItem task) async {
     final inReviewStatus = taskStatus.firstWhereOrNull((s) {

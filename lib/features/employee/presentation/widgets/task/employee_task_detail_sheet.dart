@@ -18,6 +18,7 @@ Future<void> showEmployeeTaskDetailSheet(
   TaskItem task, {
   bool showMembers = false,
   bool showProgress = false,
+  bool showComplete = false,
   bool readOnly = false,
 }) =>
     showModalBottomSheet(
@@ -29,6 +30,7 @@ Future<void> showEmployeeTaskDetailSheet(
         isDark: isDark,
         showMembers: showMembers,
         showProgress: showProgress,
+        showComplete: showComplete,
         readOnly: readOnly,
       ),
     );
@@ -41,6 +43,7 @@ class _TaskDetailSheet extends StatelessWidget {
     required this.isDark,
     required this.showMembers,
     required this.showProgress,
+    required this.showComplete,
     required this.readOnly,
   });
 
@@ -48,6 +51,7 @@ class _TaskDetailSheet extends StatelessWidget {
   final bool isDark;
   final bool showMembers;
   final bool showProgress;
+  final bool showComplete;
   final bool readOnly;
 
   EmployeeTaskController get ctrl => Get.find<EmployeeTaskController>();
@@ -155,7 +159,9 @@ class _TaskDetailSheet extends StatelessWidget {
     if (ctrl.actionLoading.value) return;
     ctrl.actionLoading.value = true;
     final bool success;
-    if (showProgress) {
+    if (showComplete) {
+      success = await ctrl.setCompleted(task);
+    } else if (showProgress) {
       success = await ctrl.setInReview(task);
     } else if (showMembers) {
       success = await ctrl.setInProgress(task);
@@ -164,6 +170,49 @@ class _TaskDetailSheet extends StatelessWidget {
     }
     ctrl.actionLoading.value = false;
     if (success && context.mounted) Navigator.pop(context);
+  }
+
+  Future<void> _confirmComplete(BuildContext context) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: isDark ? kCardDark : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Mark as Completed?',
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: isDark ? Colors.white : kTextDark),
+        ),
+        content: Text(
+          'This will mark "${task.title}" as completed. This action cannot be undone.',
+          style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white70 : kTextMuted,
+              height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel',
+                style:
+                    TextStyle(color: isDark ? Colors.white54 : kTextMuted)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('Complete'),
+          ),
+        ],
+      ),
+    );
+    if (ok == true && context.mounted) _handleAction(context);
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
@@ -303,7 +352,11 @@ class _TaskDetailSheet extends StatelessWidget {
           label: 'Assigned to',
           isDark: isDark,
           child: task.assignedToName != null
-              ? TaskAssigneeRow(name: task.assignedToName!, isDark: isDark)
+              ? TaskAssigneeRow(
+                  name: task.assignedToName!,
+                  isDark: isDark,
+                  imageUrl: task.assignedToProfileImageUrl,
+                )
               : Text('Not assigned yet',
                   style: TextStyle(fontSize: 14, color: mutedColor)),
         ),
@@ -325,6 +378,7 @@ class _TaskDetailSheet extends StatelessWidget {
             isDark: isDark,
             textColor: textColor,
             mutedColor: mutedColor,
+            canEdit: !readOnly && task.assignedToId == ctrl.currentEmployeeId,
             onAdd: (members) => _onAddMember(context, members),
             onRemove: (member) => _onRemoveMember(context, member),
           ),
@@ -378,10 +432,15 @@ class _TaskDetailSheet extends StatelessWidget {
             Expanded(
               child: Obx(() {
                 final loading = ctrl.actionLoading.value;
+                final isComplete = showComplete;
                 return ElevatedButton(
-                  onPressed: loading ? null : () => _handleAction(context),
+                  onPressed: loading
+                      ? null
+                      : () => isComplete
+                          ? _confirmComplete(context)
+                          : _handleAction(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimary,
+                    backgroundColor: isComplete ? Colors.green : kPrimary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -396,11 +455,13 @@ class _TaskDetailSheet extends StatelessWidget {
                               strokeWidth: 2, color: Colors.white),
                         )
                       : Text(
-                          showProgress
-                              ? 'Mark as Review'
-                              : showMembers
-                                  ? 'In Progress'
-                                  : 'Accept',
+                          isComplete
+                              ? 'Complete'
+                              : showProgress
+                                  ? 'Mark as Review'
+                                  : showMembers
+                                      ? 'In Progress'
+                                      : 'Accept',
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600),
                         ),
