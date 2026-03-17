@@ -15,24 +15,16 @@ class ProfileSettingsCardWidget extends StatelessWidget {
     return ProfileCard(
       isDark: isDark,
       child: Obx(
-        () => Padding(
+        () {
+          final dark = themeCtrl.isDark;
+          return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Row(
             children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: kPrimary.withAlpha(25),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  themeCtrl.isDark
-                      ? Icons.wb_sunny_rounded
-                      : Icons.nightlight_round,
-                  color: kPrimary,
-                  size: 18,
-                ),
+              Icon(
+                dark ? Icons.wb_sunny_rounded : Icons.nightlight_round,
+                color: kPrimary,
+                size: 20,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -52,7 +44,8 @@ class ProfileSettingsCardWidget extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        );
+        },
       ),
     );
   }

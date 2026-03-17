@@ -8,10 +8,16 @@ import 'package:task_tracking_mobile/features/employee/presentation/controllers/
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_task_detail_sheet.dart';
 
 class EmployeeTaskCard extends StatelessWidget {
-  const EmployeeTaskCard({super.key, required this.task, required this.isDark});
+  const EmployeeTaskCard({
+    super.key,
+    required this.task,
+    required this.isDark,
+    this.onAccept,
+  });
 
   final TaskItem task;
   final bool isDark;
+  final VoidCallback? onAccept;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +126,7 @@ class EmployeeTaskCard extends StatelessWidget {
                             _CardActionChip(
                               label: 'Accept',
                               isDark: isDark,
-                              onTap: () {
+                              onTap: onAccept ?? () {
                                 ctrl.prepareTaskDetail(task.id);
                                 showEmployeeTaskDetailSheet(context, isDark, task);
                               },
