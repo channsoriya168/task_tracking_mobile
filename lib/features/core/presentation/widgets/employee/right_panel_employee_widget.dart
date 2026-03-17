@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/panel_header_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_grid_card_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_shimmer_widget.dart';
@@ -43,7 +44,7 @@ class RightPanelEmployeeWidget extends StatelessWidget {
 
             final employees = selectedTaskGroupId == null
                 ? ctrl.filteredEmployees
-                : ctrl.employeesByTaskGroup(selectedTaskGroupId!);
+                : Get.find<TaskGroupController>().employeesByTaskGroup(selectedTaskGroupId!);
 
             if (employees.isEmpty) {
               return Center(
@@ -81,7 +82,7 @@ class RightPanelEmployeeWidget extends StatelessWidget {
               itemCount: employees.length,
               itemBuilder: (_, i) {
                 final emp = employees[i];
-                final taskGroup = ctrl.taskGroupForEmployee(emp);
+                final taskGroup = Get.find<TaskGroupController>().taskGroupForEmployee(emp);
                 return EmployeeGridCardWidget(
                   isDark: isDark,
                   ctrl: ctrl,

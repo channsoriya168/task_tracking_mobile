@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_card_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_dialog.dart';
 
@@ -12,7 +11,6 @@ class ManageTaskGroupWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<TaskGroupController>();
-    final employeeCtrl = Get.find<EmployeeController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -67,7 +65,7 @@ class ManageTaskGroupWidget extends StatelessWidget {
           itemCount: positions.length,
           itemBuilder: (_, i) {
             final pos = positions[i];
-            final count = employeeCtrl.employeeCountByTaskGroup(pos.id);
+            final count = ctrl.employeeCountByTaskGroup(pos.id);
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: TaskGroupCardWidget(

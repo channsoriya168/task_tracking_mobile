@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';
 
 Future<void> showAdminTaskDialog(BuildContext context, bool isDark) async {
   final ctrl = Get.find<AdminTaskController>();
-  final groupCtrl = Get.find<AdminTaskGroupController>();
+  final groupCtrl = Get.find<TaskGroupController>();
   final groups = groupCtrl.taskGroups;
 
   // Reset form state
@@ -200,12 +200,12 @@ Future<void> showAdminTaskDialog(BuildContext context, bool isDark) async {
                   child: ElevatedButton(
                     onPressed:
                         (ctrl.selectedLabel.value == null ||
-                                ctrl.selectedPriority.value == null)
-                            ? null
-                            : () async {
-                                await ctrl.createTask();
-                                if (context.mounted) Navigator.pop(context);
-                              },
+                            ctrl.selectedPriority.value == null)
+                        ? null
+                        : () async {
+                            await ctrl.createTask();
+                            if (context.mounted) Navigator.pop(context);
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kPrimary,
                       foregroundColor: Colors.white,
@@ -242,8 +242,18 @@ Color _hexColor(String hex) {
 
 String _formatDate(DateTime d) {
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return '${d.day} ${months[d.month - 1]} ${d.year}';
 }
