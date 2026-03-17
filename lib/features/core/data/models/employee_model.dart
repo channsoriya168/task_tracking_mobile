@@ -18,15 +18,20 @@ class EmployeeModel extends Employee {
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
     final groupsJson = json['taskGroups'] as List<dynamic>? ?? [];
-    final taskGroups = groupsJson.map((g) {
-      return EmployeeTaskGroup(
-        groupId: g['groupId'] as String,
-        groupName: g['groupName'] as String,
-        groupColor: _hexToColor(g['groupColor'] as String? ?? '#3B82F6'),
-        role: _extractRole(g['role']),
-        joinedAt: DateTime.parse(g['joinedAt'] as String),
-      );
-    }).toList();
+    final taskGroups = groupsJson
+        .where((g) => g['groupId'] != null)
+        .map((g) {
+          return EmployeeTaskGroup(
+            groupId: g['groupId'] as String,
+            groupName: g['groupName'] as String? ?? '',
+            groupColor: _hexToColor(g['groupColor'] as String? ?? '#3B82F6'),
+            role: _extractRole(g['role']),
+            joinedAt: g['joinedAt'] != null
+                ? DateTime.parse(g['joinedAt'] as String)
+                : DateTime.now(),
+          );
+        })
+        .toList();
 
     return EmployeeModel(
       id: json['id'] as String,

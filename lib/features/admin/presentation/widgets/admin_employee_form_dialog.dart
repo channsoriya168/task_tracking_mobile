@@ -175,7 +175,7 @@ class AdminEmployeeFormDialog extends StatelessWidget {
                     Obx(() => TextFieldWidget(
                           controller: controller.phoneCtrl,
                           label: 'Phone',
-                          hint: 'e.g. +85512345678',
+                          hint: 'e.g. 099888888 or +85599888888',
                           isDark: isDark,
                           keyboardType: TextInputType.phone,
                           isRequired: true,

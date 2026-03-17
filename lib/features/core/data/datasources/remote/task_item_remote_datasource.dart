@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
+import 'package:task_tracking_mobile/features/core/data/models/task_member_model.dart';
 
 class TaskItemRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;
@@ -62,5 +63,23 @@ class TaskItemRemoteDatasource {
 
   Future<void> updateStatus(String id, int status) async {
     await _dio.patch(ApiEndpoints.taskItemStatus(id), data: {'status': status});
+  }
+
+  Future<List<TaskMemberModel>> getTaskMembers(String taskItemId) async {
+    final response = await _dio.get(ApiEndpoints.taskItemMembers(taskItemId));
+    return (response.data as List)
+        .map((e) => TaskMemberModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> addTaskMember(String taskItemId, String employeeId) async {
+    await _dio.post(
+      ApiEndpoints.taskItemMembers(taskItemId),
+      data: {'employeeId': employeeId},
+    );
+  }
+
+  Future<void> removeTaskMember(String taskItemId, String memberId) async {
+    await _dio.delete(ApiEndpoints.taskItemMemberById(taskItemId, memberId));
   }
 }

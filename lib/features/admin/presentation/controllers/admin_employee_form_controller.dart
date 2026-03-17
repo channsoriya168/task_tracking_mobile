@@ -37,6 +37,12 @@ class AdminEmployeeFormController extends GetxController {
   String? existingImageUrl;
   final RxBool removeProfileImage = false.obs;
 
+  /// Converts local Khmer format (0XXXXXXXX) to +855 for the API body.
+  String _toE164(String phone) {
+    if (phone.startsWith('0')) return '+855${phone.substring(1)}';
+    return phone;
+  }
+
   // ── Image ─────────────────────────────────────────────────────
   Future<void> pickImage() async {
     final picked = await ImagePicker().pickImage(
@@ -63,10 +69,13 @@ class AdminEmployeeFormController extends GetxController {
     existingImageUrl = employee.profileImageUrl;
     nameCtrl.text = employee.fullName;
     emailCtrl.text = employee.email;
-    phoneCtrl.text = employee.phone ?? '';
+    final p = employee.phone ?? '';
+    phoneCtrl.text = p.startsWith('+855') ? '0${p.substring(4)}' : p;
     placeCtrl.text = employee.placeOfBirth ?? '';
     formDob.value = employee.dateOfBirth;
-    selectedGroupIds.assignAll(employee.taskGroups.map((g) => g.groupId));
+    if (employee.taskGroups.isNotEmpty) {
+      selectedGroupIds.assignAll([employee.taskGroups.first.groupId]);
+    }
     await Get.bottomSheet(
       AdminEmployeeFormDialog(controller: this),
       isScrollControlled: true,
@@ -97,7 +106,9 @@ class AdminEmployeeFormController extends GetxController {
     if (selectedGroupIds.contains(groupId)) {
       selectedGroupIds.remove(groupId);
     } else {
-      selectedGroupIds.add(groupId);
+      selectedGroupIds
+        ..clear()
+        ..add(groupId);
     }
   }
 
@@ -136,7 +147,7 @@ class AdminEmployeeFormController extends GetxController {
         email: email,
         password: password,
         confirmPassword: confirmPassword,
-        phone: phone,
+        phone: _toE164(phone),
         placeOfBirth:
             placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
         dateOfBirth: formDob.value,
@@ -167,7 +178,7 @@ class AdminEmployeeFormController extends GetxController {
         _editingId!,
         fullName: name,
         email: email,
-        phone: phone.isEmpty ? null : phone,
+        phone: phone.isEmpty ? null : _toE164(phone),
         placeOfBirth:
             placeCtrl.text.trim().isEmpty ? null : placeCtrl.text.trim(),
         dateOfBirth: formDob.value,
@@ -176,7 +187,7 @@ class AdminEmployeeFormController extends GetxController {
         removeProfileImage: removeProfileImage.value,
       );
       Get.back();
-      Get.find<AdminEmployeeController>().fetchEmployees();
+      await Get.find<AdminEmployeeController>().fetchEmployees();
       AppSnackbar.update('Employee Updated', 'Changes have been saved.');
     } catch (e) {
       _handleApiError(e, label: 'Edit Employee');
@@ -198,8 +209,8 @@ class AdminEmployeeFormController extends GetxController {
     } else if (!GetUtils.isEmail(email)) {
       errors['email'] = 'Enter a valid email address.';
     }
-    if (phone.isNotEmpty && !RegExp(r'^\+855\d{8,9}$').hasMatch(phone)) {
-      errors['phone'] = 'Must use +855 format (e.g. +85512345678).';
+    if (phone.isNotEmpty && !RegExp(r'^(0\d{8,9}|\+855\d{8,9})$').hasMatch(phone)) {
+      errors['phone'] = 'Invalid number. e.g. 010111111 or +85510111111';
     }
     if (errors.isNotEmpty) {
       fieldErrors.assignAll(errors);
@@ -227,8 +238,8 @@ class AdminEmployeeFormController extends GetxController {
 
     if (phone.isEmpty) {
       errors['phone'] = 'Phone is required.';
-    } else if (!RegExp(r'^\+855\d{8,9}$').hasMatch(phone)) {
-      errors['phone'] = 'Must use +855 format (e.g. +85512345678).';
+    } else if (!RegExp(r'^(0\d{8,9}|\+855\d{8,9})$').hasMatch(phone)) {
+      errors['phone'] = 'Invalid number. e.g. 010111111 or +85510111111';
     }
 
     if (password.isEmpty) {

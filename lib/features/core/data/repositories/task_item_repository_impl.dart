@@ -1,6 +1,7 @@
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_item_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_item_repository.dart';
 
 class TaskItemRepositoryImpl implements TaskItemRepository {
@@ -43,4 +44,16 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
   @override
   Future<void> updateTaskStatus(String id, int status) =>
       _remote.updateStatus(id, status);
+
+  @override
+  Future<List<TaskMember>> fetchTaskMembers(String taskItemId) =>
+      _remote.getTaskMembers(taskItemId);
+
+  @override
+  Future<void> addTaskMember(String taskItemId, String employeeId) =>
+      _remote.addTaskMember(taskItemId, employeeId);
+
+  @override
+  Future<void> removeTaskMember(String taskItemId, String memberId) =>
+      _remote.removeTaskMember(taskItemId, memberId);
 }

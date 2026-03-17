@@ -109,10 +109,6 @@ class _AdminEmployeeDetailPageState extends State<AdminEmployeeDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Stats
-                      EmployeeDetailStats(employee: employee, isDark: isDark),
-                      const SizedBox(height: 20),
-
                       // Edit + Delete buttons
                       EmployeeDetailActions(
                         isDark: isDark,

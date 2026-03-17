@@ -403,7 +403,9 @@ class EmployeeDetailInfoList extends StatelessWidget {
         _InfoData(
           icon: Icons.phone_outlined,
           label: 'Phone',
-          value: employee.phone!,
+          value: employee.phone!.startsWith('+855')
+              ? '0${employee.phone!.substring(4)}'
+              : employee.phone!,
         ),
       if (employee.dateOfBirth != null)
         _InfoData(
