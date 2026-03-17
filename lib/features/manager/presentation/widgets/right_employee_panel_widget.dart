@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_grid_card_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_shimmer_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_grid_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_shimmer_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/panel_header_widget.dart';
 
 class RightEmployeePanelWidget extends StatelessWidget {

@@ -3,9 +3,8 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_detail_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_detail_hero_header_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_detail_info_widget.dart';
 
 class EmployeeDetailMobilePage extends StatelessWidget {
   const EmployeeDetailMobilePage({
@@ -59,7 +58,7 @@ class EmployeeDetailMobilePage extends StatelessWidget {
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: EmployeeDetailHeroHeader(
+              background: EmployeeDetailHeroHeaderWidget(
                 employee: emp,
                 accent: accent,
               ),
@@ -73,34 +72,8 @@ class EmployeeDetailMobilePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Edit + Delete (hidden in view-only mode)
-                  if (!viewOnly) ...[
-                    EmployeeDetailActions(
-                      isDark: isDark,
-                      onEdit: () async {
-                        await Get.find<EmployeeController>().showEditDialog(
-                          emp,
-                        );
-                        onRefresh();
-                      },
-                      onDelete: () async {
-                        final confirmed = await showConfirmDeleteDialog(
-                          context,
-                          title: 'Delete Employee',
-                          content:
-                              'Are you sure you want to delete this employee?',
-                        );
-                        if (confirmed == true) {
-                          await ctrl.deleteEmployee(emp.id);
-                          Get.back();
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 28),
-                  ],
-
                   // Info list
-                  EmployeeDetailInfoList(employee: emp, isDark: isDark),
+                  EmployeeDetailInfoListWidget(employee: emp, isDark: isDark),
                 ],
               ),
             ),

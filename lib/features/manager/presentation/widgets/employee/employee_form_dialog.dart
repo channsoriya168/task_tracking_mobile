@@ -5,8 +5,8 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/date_pic
 import 'package:task_tracking_mobile/features/core/presentation/widgets/password_input_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_form_avatar_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_form_group_picker.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_form_avatar_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_form_group_picker.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/phone_field_widget.dart';
 
 class ManagerEmployeeFormDialog extends StatelessWidget {

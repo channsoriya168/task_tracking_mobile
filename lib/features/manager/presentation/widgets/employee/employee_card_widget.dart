@@ -5,8 +5,7 @@ import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_avatar_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_menu_sheet.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_menu_sheet.dart';
 
 class EmployeeCardWidget extends StatelessWidget {
   const EmployeeCardWidget({

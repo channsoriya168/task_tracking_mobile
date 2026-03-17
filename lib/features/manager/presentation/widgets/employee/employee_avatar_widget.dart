@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 class EmployeeAvatarWidget extends StatelessWidget {
   const EmployeeAvatarWidget({
@@ -34,4 +33,10 @@ class EmployeeAvatarWidget extends StatelessWidget {
             ),
     );
   }
+}
+
+String employeeInitials(String name) {
+  final parts = name.trim().split(' ');
+  if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+  return name.isNotEmpty ? name[0].toUpperCase() : '?';
 }

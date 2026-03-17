@@ -11,7 +11,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/create_employ
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employee_password_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_form_dialog.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_form_dialog.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/task_group_dialog.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';

@@ -3,7 +3,6 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_avatar_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_widgets.dart';
 
 // ── Sheet Handle ───────────────────────────────────────────────
 class EmployeeMenuHandle extends StatelessWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_card_widget.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_shimmer_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_shimmer_widget.dart';
 
 class EmployeeListWidget extends StatelessWidget {
   const EmployeeListWidget({

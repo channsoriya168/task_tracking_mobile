@@ -4,9 +4,9 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/manager/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_menu_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_menu_dialogs.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_menu_widgets.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_reset_password_sheet.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_menu_dialogs.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_menu_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_reset_password_sheet.dart';
 
 void showEmployeeMenuSheet(
   BuildContext context, {

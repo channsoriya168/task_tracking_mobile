@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_card_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_card_widget.dart';
 
 class TaskGroupSectionWidget extends StatefulWidget {
   const TaskGroupSectionWidget({

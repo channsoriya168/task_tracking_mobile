@@ -3,9 +3,8 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
-
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/confirm_delete_dialog.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee_detail_widgets.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_detail_hero_header_widget.dart';
+import 'package:task_tracking_mobile/features/manager/presentation/widgets/employee/employee_detail_info_widget.dart';
 
 class EmployeeDetailTabletPage extends StatelessWidget {
   const EmployeeDetailTabletPage({
@@ -25,8 +24,9 @@ class EmployeeDetailTabletPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent =
-        emp.taskGroups.isNotEmpty ? emp.taskGroups.first.groupColor : kPrimary;
+    final accent = emp.taskGroups.isNotEmpty
+        ? emp.taskGroups.first.groupColor
+        : kPrimary;
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : const Color(0xFFF9FAFB),
@@ -58,7 +58,10 @@ class EmployeeDetailTabletPage extends StatelessWidget {
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: EmployeeDetailHeroHeader(employee: emp, accent: accent),
+              background: EmployeeDetailHeroHeaderWidget(
+                employee: emp,
+                accent: accent,
+              ),
             ),
           ),
 
@@ -69,30 +72,7 @@ class EmployeeDetailTabletPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (!viewOnly) ...[
-                    EmployeeDetailActions(
-                      isDark: isDark,
-                      onEdit: () async {
-                        await Get.find<EmployeeController>()
-                            .showEditDialog(emp);
-                        onRefresh();
-                      },
-                      onDelete: () async {
-                        final confirmed = await showConfirmDeleteDialog(
-                          context,
-                          title: 'Delete Employee',
-                          content:
-                              'Are you sure you want to delete this employee?',
-                        );
-                        if (confirmed == true) {
-                          await ctrl.deleteEmployee(emp.id);
-                          Get.back();
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 28),
-                  ],
-                  EmployeeDetailInfoList(employee: emp, isDark: isDark),
+                  EmployeeDetailInfoListWidget(employee: emp, isDark: isDark),
                 ],
               ),
             ),
