@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/app/utils/validators.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_validator.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employee_password_usecase.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_form_dialog.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_dialog.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
@@ -74,31 +75,6 @@ class EmployeeController extends GetxController {
     }
     return list;
   }
-
-  List<Employee> employeesByTaskGroup(String groupId) {
-    return filteredEmployees
-        .where((e) => e.taskGroups.any((g) => g.groupId == groupId))
-        .toList();
-  }
-
-  TaskGroup? findTaskGroup(String id) {
-    try {
-      return taskGroups.firstWhere((p) => p.id == id);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  TaskGroup? taskGroupForEmployee(Employee emp) {
-    if (emp.taskGroups.isEmpty) return null;
-    final g = emp.taskGroups.first;
-    return findTaskGroup(g.groupId) ??
-        TaskGroup(id: g.groupId, name: g.groupName, color: g.groupColor);
-  }
-
-  int employeeCountByTaskGroup(String groupId) => employees
-      .where((e) => e.taskGroups.any((g) => g.groupId == groupId))
-      .length;
 
   Future<void> deleteEmployee(String id) async {
     try {
@@ -306,14 +282,19 @@ class EmployeeController extends GetxController {
     final password = passwordCtrl.text;
     final confirmPassword = confirmPasswordCtrl.text;
 
-    if (!_validateCreate(
+    final errors = EmployeeValidator.validateCreate(
       name: name,
       email: email,
       phone: phone,
       password: password,
       confirmPassword: confirmPassword,
-    ))
+      dob: formDob.value,
+      groupId: selectedGroupId.value,
+    );
+    if (errors.isNotEmpty) {
+      fieldErrors.assignAll(errors);
       return;
+    }
 
     isSaving.value = true;
     try {
@@ -348,7 +329,17 @@ class EmployeeController extends GetxController {
     final email = emailCtrl.text.trim();
     final phone = phoneCtrl.text.trim();
 
-    if (!_validateEdit(name: name, email: email, phone: phone)) return;
+    final errors = EmployeeValidator.validateEdit(
+      name: name,
+      email: email,
+      phone: phone,
+      dob: formDob.value,
+      groupId: selectedGroupId.value,
+    );
+    if (errors.isNotEmpty) {
+      fieldErrors.assignAll(errors);
+      return;
+    }
 
     isSaving.value = true;
     try {
@@ -375,72 +366,6 @@ class EmployeeController extends GetxController {
     } finally {
       isSaving.value = false;
     }
-  }
-
-  // ── Validation ────────────────────────────────────────────────
-  bool _validateEdit({
-    required String name,
-    required String email,
-    required String phone,
-  }) {
-    final errors = <String, String>{};
-    if (Validators.required(name, label: 'Full name') != null) {
-      errors['fullName'] = Validators.required(name, label: 'Full name')!;
-    }
-    if (email.isNotEmpty && !GetUtils.isEmail(email)) {
-      errors['email'] = 'Enter a valid email address.';
-    }
-    if (phone.isNotEmpty) {
-      final phoneErr = Validators.phone(phone);
-      if (phoneErr != null) errors['phone'] = phoneErr;
-    }
-    if (formDob.value == null) {
-      errors['dob'] = 'Date of birth is required.';
-    }
-    if (selectedGroupId.value == null) {
-      errors['taskGroup'] = 'Please select a task group.';
-    }
-    if (errors.isNotEmpty) {
-      fieldErrors.assignAll(errors);
-      return false;
-    }
-    return true;
-  }
-
-  bool _validateCreate({
-    required String name,
-    required String email,
-    required String phone,
-    required String password,
-    required String confirmPassword,
-  }) {
-    final errors = <String, String>{};
-    if (Validators.required(name, label: 'Full name') != null) {
-      errors['fullName'] = Validators.required(name, label: 'Full name')!;
-    }
-    if (email.isNotEmpty && !GetUtils.isEmail(email)) {
-      errors['email'] = 'Enter a valid email address.';
-    }
-    final phoneErr = Validators.phone(phone);
-    if (phoneErr != null) errors['phone'] = phoneErr;
-    final pwErr = Validators.strongPassword(password);
-    if (pwErr != null) errors['password'] = pwErr;
-    if (confirmPassword.isEmpty) {
-      errors['confirmPassword'] = 'Please confirm your password.';
-    } else if (password != confirmPassword) {
-      errors['confirmPassword'] = 'Passwords do not match.';
-    }
-    if (formDob.value == null) {
-      errors['dob'] = 'Date of birth is required.';
-    }
-    if (selectedGroupId.value == null) {
-      errors['taskGroup'] = 'Please select a task group.';
-    }
-    if (errors.isNotEmpty) {
-      fieldErrors.assignAll(errors);
-      return false;
-    }
-    return true;
   }
 
   // ── API error mapping ─────────────────────────────────────────

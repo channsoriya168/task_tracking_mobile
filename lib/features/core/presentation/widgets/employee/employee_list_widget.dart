@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_card_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_shimmer_widget.dart';
 
@@ -38,7 +39,7 @@ class EmployeeListWidget extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: 10),
         itemBuilder: (_, i) {
           final emp = employees[i];
-          final taskGroup = ctrl.taskGroupForEmployee(emp);
+          final taskGroup = Get.find<TaskGroupController>().taskGroupForEmployee(emp);
           return EmployeeCardWidget(
             isDark: isDark,
             ctrl: ctrl,

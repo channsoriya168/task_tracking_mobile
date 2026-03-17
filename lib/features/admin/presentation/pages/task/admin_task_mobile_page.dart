@@ -39,7 +39,9 @@ class AdminTaskMobilePage extends StatelessWidget {
             isDark: isDark,
             onChanged: (value) => ctrl.searchQuery.value = value,
           ),
-          Expanded(child: AdminTaskList(isDark: isDark, ctrl: ctrl)),
+          Expanded(
+            child: AdminTaskList(isDark: isDark, ctrl: ctrl),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

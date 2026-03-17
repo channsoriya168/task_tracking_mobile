@@ -25,7 +25,6 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/update_label_
 import 'package:task_tracking_mobile/features/core/domain/usecases/delete_label_usecase.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_label_controller.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_controller.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/controllers/admin_task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_priorities_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_item_usecase.dart';
@@ -40,7 +39,7 @@ import 'package:task_tracking_mobile/features/core/presentation/controllers/empl
 import 'package:task_tracking_mobile/features/manager/presentation/bindings/manager_task_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/bindings/employee_binding.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -106,15 +105,6 @@ class AppBinding extends Bindings {
         FetchTaskPrioritiesUsecase(Get.find<LookupRepository>()),
         FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
         GetAllLabelsUseCase(Get.find<LabelRepository>()),
-      ),
-      fenix: true,
-    );
-    Get.lazyPut<AdminTaskGroupController>(
-      () => AdminTaskGroupController(
-        GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
-        CreateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
-        UpdateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
-        DeleteTaskGroupUseCase(Get.find<TaskGroupRepository>()),
       ),
       fenix: true,
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
@@ -95,6 +96,26 @@ class TaskGroupController extends GetxController {
       'Task Group Deleted',
       '"${taskGroup.name}" has been removed.',
     );
+  }
+
+  // ── Employee helpers ──────────────────────────────────────────
+  List<Employee> employeesByTaskGroup(String groupId) {
+    return Get.find<EmployeeController>()
+        .filteredEmployees
+        .where((e) => e.taskGroups.any((g) => g.groupId == groupId))
+        .toList();
+  }
+
+  int employeeCountByTaskGroup(String groupId) => Get.find<EmployeeController>()
+      .employees
+      .where((e) => e.taskGroups.any((g) => g.groupId == groupId))
+      .length;
+
+  TaskGroup? taskGroupForEmployee(Employee emp) {
+    if (emp.taskGroups.isEmpty) return null;
+    final g = emp.taskGroups.first;
+    return findPosition(g.groupId) ??
+        TaskGroup(id: g.groupId, name: g.groupName, color: g.groupColor);
   }
 
   String generateId() => DateTime.now().millisecondsSinceEpoch.toString();

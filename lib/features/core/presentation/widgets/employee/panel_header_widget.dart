@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 
 class PanelHeaderWidget extends StatelessWidget {
   const PanelHeaderWidget({
@@ -18,13 +19,14 @@ class PanelHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final tgCtrl = Get.find<TaskGroupController>();
       final pos = selectedTaskGroupId != null
-          ? ctrl.findTaskGroup(selectedTaskGroupId!)
+          ? tgCtrl.findPosition(selectedTaskGroupId!)
           : null;
       final title = pos?.name ?? 'All Employees';
       final count = selectedTaskGroupId == null
           ? ctrl.employees.length
-          : ctrl.employeeCountByTaskGroup(selectedTaskGroupId!);
+          : tgCtrl.employeeCountByTaskGroup(selectedTaskGroupId!);
 
       return Padding(
         padding: const EdgeInsets.fromLTRB(24, 20, 16, 4),

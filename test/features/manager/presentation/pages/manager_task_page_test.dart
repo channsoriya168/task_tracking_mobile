@@ -12,7 +12,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/controllers/manager_task_controller.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_mobile_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_page.dart';
 import 'package:task_tracking_mobile/features/manager/presentation/pages/task/manager_task_tablet_page.dart';
