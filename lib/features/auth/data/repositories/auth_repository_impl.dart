@@ -12,9 +12,10 @@ import 'dart:developer' as developer;
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource _remote;
-  final _storage = StorageService();
+  final StorageService _storage;
 
-  AuthRepositoryImpl(this._remote);
+  AuthRepositoryImpl(this._remote, [StorageService? storage])
+      : _storage = storage ?? StorageService();
 
   // ── Login ────────────────────────────────────────────────
   @override
