@@ -1,118 +1,97 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_progress.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/add_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/assign_task_item_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/create_task_progress_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/delete_task_progress_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_progress_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_members_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_progresses_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/remove_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_comment_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_member_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_progress_controller.dart';
 
 class EmployeeTaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
   final FetchTaskStatusesUsecase _fetchStatuses;
   final AssignTaskItemUsecase _assignTask;
   final UpdateTaskItemStatusUsecase _updateStatus;
-  final FetchEmployeesUsecase _fetchEmployees;
-  final FetchTaskMembersUsecase _fetchTaskMembers;
-  final AddTaskMemberUsecase _addTaskMember;
-  final RemoveTaskMemberUsecase _removeTaskMember;
-  final FetchTaskProgressesUsecase _fetchTaskProgresses;
-  final CreateTaskProgressUsecase _createTaskProgress;
-  final UpdateTaskProgressUsecase _updateTaskProgress;
-  final DeleteTaskProgressUsecase _deleteTaskProgress;
 
   EmployeeTaskController(
     this._fetchTaskItems,
     this._fetchStatuses,
     this._assignTask,
     this._updateStatus,
-    this._fetchEmployees,
-    this._fetchTaskMembers,
-    this._addTaskMember,
-    this._removeTaskMember,
-    this._fetchTaskProgresses,
-    this._createTaskProgress,
-    this._updateTaskProgress,
-    this._deleteTaskProgress,
   );
 
-  /// Full unfiltered list — used for chip counts and client-side status filter.
+  // ── State ────────────────────────────────────────────────────────────────
+
+  /// Raw API result — full group task list.
   final RxList<TaskItem> allTasks = <TaskItem>[].obs;
+
+  /// My tasks only — excludes pending and tasks not assigned to me.
+  /// Passed to the filter bar so chip counts reflect only my tasks.
+  final RxList<TaskItem> myTasks = <TaskItem>[].obs;
+
   final RxList<TaskStatusLookup> taskStatus = <TaskStatusLookup>[].obs;
 
-  /// Status filter — applied client-side so counts stay correct.
+  /// Active status filter chip.
   final RxString filterStatus = 'All'.obs;
   final Rxn<int> filterStatusId = Rxn<int>();
 
   final RxString searchQuery = ''.obs;
-
-  /// Selected day from the week calendar.
   final Rxn<DateTime> taskSelectedDate = Rxn<DateTime>();
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
-  /// Members of the currently-open task.
-  final RxList<TaskMember> currentTaskMembers = <TaskMember>[].obs;
-  final RxBool membersLoading = false.obs;
-
-  /// Employees in the current group (for the add-member picker).
-  final RxList<Employee> groupEmployees = <Employee>[].obs;
-
-  /// Progresses of the currently-open task.
-  final RxList<TaskProgress> currentTaskProgresses = <TaskProgress>[].obs;
-  final RxBool progressLoading = false.obs;
-  final RxString progressError = ''.obs;
-
   /// Loading state for the detail-sheet primary action button.
   final RxBool actionLoading = false.obs;
 
-  /// Call before opening the task detail sheet to reset state and pre-fetch data.
-  void prepareTaskDetail(
-    String taskId, {
-    bool showMembers = false,
-    bool showProgress = false,
-  }) {
-    actionLoading.value = false;
-    if (showMembers || showProgress) {
-      fetchTaskMembers(taskId);
-      fetchGroupEmployees();
-    }
-    if (showProgress) {
-      fetchTaskProgresses(taskId);
-    }
-  }
+  // ── Computed ─────────────────────────────────────────────────────────────
 
-  /// Status-filtered view of allTasks for the task list.
-  List<TaskItem> get filteredTasks {
-    if (filterStatusId.value == null) return allTasks.toList();
-    return allTasks.where((t) => t.status.id == filterStatusId.value).toList();
-  }
-
-  /// Count for each chip — always from allTasks so all chips stay accurate.
-  int countByStatus(String statusName) {
-    if (statusName == 'All') return allTasks.length;
-    return allTasks
-        .where((t) => t.status.name.toLowerCase() == statusName.toLowerCase())
-        .length;
-  }
-
-  /// The logged-in employee's ID — used to gate the "In Progress" button.
   String? get currentEmployeeId =>
       Get.find<AuthController>().profile.value?.employeeId;
 
-  /// Extract the first task-group ID from the logged-in employee's profile.
+  /// Tasks shown in the list — my tasks with optional status filter applied.
+  List<TaskItem> get filteredTasks {
+    if (filterStatusId.value == null) return myTasks.toList();
+    return myTasks.where((t) => t.status.id == filterStatusId.value).toList();
+  }
+
+  // ── Lifecycle ────────────────────────────────────────────────────────────
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    final now = DateTime.now();
+    taskSelectedDate.value = DateTime(now.year, now.month, now.day);
+
+    fetchTasks();
+    fetchStatuses();
+
+    // Rebuild myTasks whenever allTasks changes.
+    ever(allTasks, (_) => _refreshMyTasks());
+
+    // Status chip change → re-filter client-side.
+    ever(filterStatusId, (_) => myTasks.refresh());
+
+    // Search input → debounced API call.
+    debounce(
+      searchQuery,
+      (_) => fetchTasks(),
+      time: const Duration(milliseconds: 500),
+    );
+
+    // Re-fetch when navigating back to My Tasks tab (index 1).
+    ever(Get.find<NavigationController>().selectedIndex, (int idx) {
+      if (idx == 1) fetchTasks();
+    });
+  }
+
+  // ── Private helpers ──────────────────────────────────────────────────────
+
   String? get _employeeGroupId {
     final profile = Get.find<AuthController>().profile.value;
     if (profile == null || profile.taskGroups.isEmpty) return null;
@@ -126,30 +105,18 @@ class EmployeeTaskController extends GetxController {
     return null;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Default date filter to today.
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    taskSelectedDate.value = today;
+  bool _isPending(TaskItem t) =>
+      t.status.name.toLowerCase().replaceAll(' ', '') == 'pending';
 
-    fetchTasks();
-    fetchStatuses();
-
-    // Status change → just re-filter client-side (no API call needed).
-    ever(filterStatusId, (_) => allTasks.refresh());
-
-    // Date/search change → re-fetch from API.
-    debounce(
-      searchQuery,
-      (_) => fetchTasks(),
-      time: const Duration(milliseconds: 500),
+  void _refreshMyTasks() {
+    final myId = currentEmployeeId;
+    myTasks.assignAll(
+      allTasks.where((t) => !_isPending(t) && t.assignedToId == myId),
     );
   }
 
-  /// Fetches all tasks for the current group/date/search — NO status filter
-  /// so that every chip always has the correct count.
+  // ── Data fetching ────────────────────────────────────────────────────────
+
   Future<void> fetchTasks() async {
     isLoading.value = true;
     errorMessage.value = '';
@@ -158,7 +125,6 @@ class EmployeeTaskController extends GetxController {
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
         groupId: _employeeGroupId,
         SelectedDate: taskSelectedDate.value,
-        // statusId intentionally omitted — filtered client-side
       );
       allTasks.assignAll(result);
     } catch (e) {
@@ -168,9 +134,19 @@ class EmployeeTaskController extends GetxController {
     }
   }
 
+  Future<void> fetchStatuses() async {
+    try {
+      final result = await _fetchStatuses();
+      if (result.isNotEmpty) taskStatus.assignAll(result);
+    } catch (_) {}
+  }
+
+  // ── Selection ────────────────────────────────────────────────────────────
+
   void selectTaskDate(DateTime? date) {
-    taskSelectedDate.value =
-        date != null ? DateTime(date.year, date.month, date.day) : null;
+    taskSelectedDate.value = date != null
+        ? DateTime(date.year, date.month, date.day)
+        : null;
     fetchTasks();
   }
 
@@ -184,77 +160,32 @@ class EmployeeTaskController extends GetxController {
     }
   }
 
-  Future<void> fetchStatuses() async {
-    try {
-      final result = await _fetchStatuses();
-      if (result.isNotEmpty) taskStatus.assignAll(result);
-    } catch (_) {}
+  // ── Detail sheet ─────────────────────────────────────────────────────────
+
+  void prepareTaskDetail(String taskId) {
+    actionLoading.value = false;
+    final memberCtrl = Get.find<TaskMemberController>();
+    final commentCtrl = Get.find<TaskCommentController>();
+    final progressCtrl = Get.find<TaskProgressController>();
+    memberCtrl.currentTaskMembers.clear();
+    commentCtrl.currentTaskComments.clear();
+    progressCtrl.currentTaskProgresses.clear();
+    memberCtrl.fetchTaskMembers(taskId);
+    memberCtrl.fetchGroupEmployees();
+    commentCtrl.fetchTaskComments(taskId);
+    progressCtrl.fetchTaskProgresses(taskId);
   }
 
-  // ── Transition helpers ───────────────────────────────────────────────────
+  // ── Status transitions ───────────────────────────────────────────────────
 
-  /// Replaces the task at [taskId] inside [allTasks] with a copy that has
-  /// [newStatus] (and optionally a new assignee).  Returns the updated copy,
-  /// or null if the task was not found in the list.
-  TaskItem? _locallyUpdateStatus(
-    String taskId,
-    TaskStatusLookup newStatus, {
-    String? newAssignedToId,
-    String? newAssignedToName,
-  }) {
-    final idx = allTasks.indexWhere((t) => t.id == taskId);
-    if (idx == -1) return null;
-    final t = allTasks[idx];
-    final updated = TaskItem(
-      id: t.id,
-      title: t.title,
-      description: t.description,
-      groupId: t.groupId,
-      groupName: t.groupName,
-      labelId: t.labelId,
-      labelName: t.labelName,
-      labelColor: t.labelColor,
-      assignedToId: newAssignedToId ?? t.assignedToId,
-      assignedToName: newAssignedToName ?? t.assignedToName,
-      assignedToProfileImageUrl: t.assignedToProfileImageUrl,
-      createdById: t.createdById,
-      createdByEmployeeName: t.createdByEmployeeName,
-      priority: t.priority,
-      status: newStatus,
-      startDate: t.startDate,
-      dueDate: t.dueDate,
-      completedAt: t.completedAt,
-      createdAt: t.createdAt,
-      updatedAt: DateTime.now(),
-      allowedTransitions: t.allowedTransitions,
-    );
-    allTasks[idx] = updated;
-    return updated;
-  }
-
-  /// Shared execution path for every status transition:
-  /// 1. Runs [apiWork] (the API calls).
-  /// 2. Immediately updates the task in [allTasks] so the UI never loses it.
-  /// 3. Switches the filter to [newStatus] so the user lands on the right tab.
-  ///
-  /// No re-fetch is done here — [allTasks] already holds the full list from
-  /// the last calendar/search fetch, so every task in the new status is
-  /// already present and will appear correctly after the local update.
   Future<bool> _runTransition(
     TaskItem task,
     TaskStatusLookup newStatus,
-    Future<void> Function() apiWork, {
-    String? newAssignedToId,
-    String? newAssignedToName,
-  }) async {
+    Future<void> Function() apiWork,
+  ) async {
     try {
       await apiWork();
-      _locallyUpdateStatus(
-        task.id,
-        newStatus,
-        newAssignedToId: newAssignedToId,
-        newAssignedToName: newAssignedToName,
-      );
+      await fetchTasks();
       selectStatus(newStatus);
       return true;
     } catch (e) {
@@ -263,200 +194,29 @@ class EmployeeTaskController extends GetxController {
     }
   }
 
-  /// Sets the task status to "In Progress".
-  Future<bool> setInProgress(TaskItem task) async {
-    final inProgressStatus = taskStatus.firstWhereOrNull((s) {
-      final n = s.name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
-      return n == 'inprogress';
-    });
-    if (inProgressStatus == null) {
-      errorMessage.value = 'In Progress status not found. Please try again.';
-      return false;
-    }
-    return _runTransition(
-      task,
-      inProgressStatus,
-      () => _updateStatus(task.id, inProgressStatus.id),
-    );
-  }
-
-  /// Accepts the task by assigning it to the current employee and setting status to Assigned.
   Future<bool> acceptTask(TaskItem task) async {
     final employeeId = currentEmployeeId;
     if (employeeId == null || employeeId.isEmpty) {
       errorMessage.value = 'Employee profile not found.';
       return false;
     }
-    final assignedStatus = taskStatus
-        .firstWhereOrNull((s) => s.name.toLowerCase() == 'assigned');
-    if (assignedStatus == null) {
-      errorMessage.value = 'Assigned status not found. Please try again.';
+    if (task.allowedTransitions.isEmpty) {
+      errorMessage.value = 'No available transition for this task.';
       return false;
     }
-    final employeeName =
-        Get.find<AuthController>().profile.value?.fullName;
-    return _runTransition(
-      task,
-      assignedStatus,
-      () async {
-        await _assignTask(task.id, employeeId);
-        await _updateStatus(task.id, assignedStatus.id);
-      },
-      newAssignedToId: employeeId,
-      newAssignedToName: employeeName,
-    );
-  }
-
-  // ── Member management ────────────────────────────────────────────────────
-
-  Future<void> fetchTaskMembers(String taskItemId) async {
-    membersLoading.value = true;
-    try {
-      final result = await _fetchTaskMembers(taskItemId);
-      currentTaskMembers.assignAll(result);
-    } catch (_) {
-      currentTaskMembers.clear();
-    } finally {
-      membersLoading.value = false;
-    }
-  }
-
-  Future<void> fetchGroupEmployees() async {
-    try {
-      final result = await _fetchEmployees(groupId: _employeeGroupId);
-      groupEmployees.assignAll(result);
-    } catch (_) {
-      groupEmployees.clear();
-    }
-  }
-
-  Future<bool> addMember(String taskItemId, String employeeId) async {
-    try {
-      await _addTaskMember(taskItemId, employeeId);
-      await fetchTaskMembers(taskItemId);
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
-  }
-
-  Future<bool> removeMember(String taskItemId, String memberId) async {
-    try {
-      await _removeTaskMember(taskItemId, memberId);
-      await fetchTaskMembers(taskItemId);
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
-  }
-
-  // ── Progress management ──────────────────────────────────────────────────
-
-  Future<void> fetchTaskProgresses(String taskItemId) async {
-    progressLoading.value = true;
-    progressError.value = '';
-    try {
-      final result = await _fetchTaskProgresses(taskItemId);
-      currentTaskProgresses.assignAll(result);
-    } catch (e) {
-      progressError.value = e.toString();
-    } finally {
-      progressLoading.value = false;
-    }
-  }
-
-  Future<bool> createProgress(
-    String taskItemId, {
-    required int progressPercentage,
-    required DateTime loggedAt,
-    String? notes,
-    double? hoursWorked,
-  }) async {
-    try {
-      await _createTaskProgress(
-        taskItemId,
-        progressPercentage: progressPercentage,
-        loggedAt: loggedAt,
-        notes: notes,
-        hoursWorked: hoursWorked,
-      );
-      await fetchTaskProgresses(taskItemId);
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
-  }
-
-  Future<bool> updateProgress(
-    String taskItemId,
-    String progressId, {
-    required int progressPercentage,
-    required DateTime loggedAt,
-    required String notes,
-    double? hoursWorked,
-  }) async {
-    try {
-      await _updateTaskProgress(
-        taskItemId,
-        progressId,
-        progressPercentage: progressPercentage,
-        loggedAt: loggedAt,
-        notes: notes,
-        hoursWorked: hoursWorked,
-      );
-      await fetchTaskProgresses(taskItemId);
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
-  }
-
-  Future<bool> deleteProgress(String taskItemId, String progressId) async {
-    try {
-      await _deleteTaskProgress(taskItemId, progressId);
-      await fetchTaskProgresses(taskItemId);
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
-  }
-
-  /// Moves the task to "Completed" status.
-  Future<bool> setCompleted(TaskItem task) async {
-    final completedStatus = taskStatus.firstWhereOrNull((s) {
-      final n = s.name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
-      return n == 'completed' || n == 'complete' || n == 'done';
+    final newStatus = task.allowedTransitions.first;
+    return _runTransition(task, newStatus, () async {
+      await _assignTask(task.id, employeeId);
+      await _updateStatus(task.id, newStatus.id);
     });
-    if (completedStatus == null) {
-      errorMessage.value = 'Completed status not found. Please try again.';
-      return false;
-    }
-    return _runTransition(
-      task,
-      completedStatus,
-      () => _updateStatus(task.id, completedStatus.id),
-    );
   }
 
-  /// Moves the task to "In Review" status.
-  Future<bool> setInReview(TaskItem task) async {
-    final inReviewStatus = taskStatus.firstWhereOrNull((s) {
-      final n = s.name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
-      return n == 'inreview';
-    });
-    if (inReviewStatus == null) {
-      errorMessage.value = 'In Review status not found. Please try again.';
-      return false;
-    }
+  /// Generic transition — uses the status directly from [task.allowedTransitions].
+  Future<bool> transitionTask(TaskItem task, TaskStatusLookup newStatus) async {
     return _runTransition(
       task,
-      inReviewStatus,
-      () => _updateStatus(task.id, inReviewStatus.id),
+      newStatus,
+      () => _updateStatus(task.id, newStatus.id),
     );
   }
 }

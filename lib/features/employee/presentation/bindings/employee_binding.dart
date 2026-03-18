@@ -15,27 +15,52 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fet
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/remove_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/home_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_comment_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_member_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_progress_controller.dart';
 
 class EmployeeBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TaskController>(() => TaskController());
     Get.lazyPut<EmployeeTaskController>(
       () => EmployeeTaskController(
         FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
         FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
         AssignTaskItemUsecase(Get.find<TaskItemRepository>()),
         UpdateTaskItemStatusUsecase(Get.find<TaskItemRepository>()),
-        FetchEmployeesUsecase(Get.find<EmployeeRepository>()),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<TaskMemberController>(
+      () => TaskMemberController(
         FetchTaskMembersUsecase(Get.find<TaskItemRepository>()),
         AddTaskMemberUsecase(Get.find<TaskItemRepository>()),
         RemoveTaskMemberUsecase(Get.find<TaskItemRepository>()),
+        FetchEmployeesUsecase(Get.find<EmployeeRepository>()),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<TaskCommentController>(() => TaskCommentController(), fenix: true);
+
+    Get.lazyPut<HomeController>(
+      () => HomeController(
+        FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
+        FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<TaskProgressController>(
+      () => TaskProgressController(
         FetchTaskProgressesUsecase(Get.find<TaskItemRepository>()),
         CreateTaskProgressUsecase(Get.find<TaskItemRepository>()),
         UpdateTaskProgressUsecase(Get.find<TaskItemRepository>()),
         DeleteTaskProgressUsecase(Get.find<TaskItemRepository>()),
       ),
+      fenix: true,
     );
   }
 }

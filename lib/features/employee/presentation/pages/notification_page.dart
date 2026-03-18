@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -11,13 +11,16 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final taskCtrl = Get.find<TaskController>();
+    final taskCtrl = Get.find<EmployeeTaskController>();
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
       body: SafeArea(
         child: Obx(() {
-          final pendingTasks = taskCtrl.pendingTasks;
+          // Unassigned tasks are the "new task requests".
+          final pendingTasks = taskCtrl.allTasks
+              .where((t) => t.assignedToId == null)
+              .toList();
 
           return CustomScrollView(
             slivers: [
@@ -173,13 +176,13 @@ class _NotificationCard extends StatelessWidget {
   });
 
   final bool isDark;
-  final TaskModel task;
+  final TaskItem task;
   final int index;
-  final TaskController taskCtrl;
+  final EmployeeTaskController taskCtrl;
 
   @override
   Widget build(BuildContext context) {
-    final priorityColor = kPriorityColors[task.priorityLabel] ?? kTextMuted;
+    final priorityColor = task.priority.color;
     final cardBg = isDark ? kCardDark : Colors.white;
     final titleColor = isDark ? Colors.white : kTextDark;
     final mutedColor = isDark ? Colors.grey[500]! : kTextMuted;
@@ -265,7 +268,7 @@ class _NotificationCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          task.priorityLabel,
+                          task.priority.name,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -278,9 +281,9 @@ class _NotificationCard extends StatelessWidget {
 
                   const SizedBox(height: 6),
 
-                  if (task.description.isNotEmpty)
+                  if ((task.description ?? '').isNotEmpty)
                     Text(
-                      task.description,
+                      task.description!,
                       style: TextStyle(
                         fontSize: 13,
                         color: mutedColor,
@@ -298,7 +301,7 @@ class _NotificationCard extends StatelessWidget {
                       Icon(Icons.folder_outlined, size: 14, color: mutedColor),
                       const SizedBox(width: 4),
                       Text(
-                        task.category,
+                        task.groupName ?? '',
                         style: TextStyle(
                           fontSize: 12,
                           color: mutedColor,
@@ -361,7 +364,7 @@ class _NotificationCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       // Accept
                       GestureDetector(
-                        onTap: () => taskCtrl.acceptTask(task.id),
+                        onTap: () => taskCtrl.acceptTask(task),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,

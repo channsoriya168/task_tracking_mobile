@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_task_card.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_task_card.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_page_header.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});
@@ -18,91 +18,196 @@ class TasksPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TaskPageHeader(isDark: isDark),
+      child: CustomScrollView(
+        slivers: [
+          // ── Title ──────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: kPagePadding,
+              child: Text(
+                'Tasks',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : kTextDark,
+                ),
+              ),
+            ),
+          ),
 
           // ── Week calendar ──────────────────────────────────
-          Padding(
-            padding: kPageSectionPadding,
-            child: Obx(
-              () => WeekCalendarWidget(
-                isDark: isDark,
-                selectedDate: ctrl.taskSelectedDate.value,
-                onDateSelected: ctrl.selectTaskDate,
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: kPageSectionPadding,
+              child: Obx(
+                () => WeekCalendarWidget(
+                  isDark: isDark,
+                  selectedDate: ctrl.taskSelectedDate.value,
+                  onDateSelected: ctrl.selectTaskDate,
+                ),
               ),
             ),
           ),
 
           // ── Status filter bar ──────────────────────────────
-          SizedBox(
-            height: 52,
-            child: Obx(() {
-              final selected = ctrl.filterStatus.value;
-              final statusItems = [null, ...ctrl.taskStatus];
-              final counts = <String, int>{
-                'All': ctrl.allTasks.length,
-                for (final s in ctrl.taskStatus)
-                  s.name: ctrl.allTasks
-                      .where(
-                        (t) =>
-                            t.status.name.toLowerCase() ==
-                            s.name.toLowerCase(),
-                      )
-                      .length,
-              };
-              return ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 4),
-                itemCount: statusItems.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
-                itemBuilder: (_, i) {
-                  final status = statusItems[i];
-                  final label = status?.name ?? 'All';
-                  return FilterChipWidget(
-                    isDark: isDark,
-                    filter: label,
-                    count: counts[label] ?? 0,
-                    selected: selected == label,
-                    onTap: () => ctrl.selectStatus(status),
-                  );
-                },
-              );
-            }),
+          SliverToBoxAdapter(
+            child: EmployeeTaskFilterBarWidget(
+              isDark: isDark,
+              filterStatus: ctrl.filterStatus,
+              taskStatus: ctrl.taskStatus,
+              allTasks: ctrl.myTasks,
+              onSelectStatus: ctrl.selectStatus,
+            ),
           ),
 
           // ── Search bar ─────────────────────────────────────
-          SearchBarWidget(
-            isDark: isDark,
-            onChanged: (v) => ctrl.searchQuery.value = v,
+          SliverToBoxAdapter(
+            child: SearchBarWidget(
+              isDark: isDark,
+              onChanged: (v) => ctrl.searchQuery.value = v,
+            ),
           ),
 
-          // ── Task list ──────────────────────────────────────
-          Expanded(
-            child: Obx(() {
-              if (ctrl.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final tasks = ctrl.filteredTasks;
-              if (tasks.isEmpty) return TaskEmptyState(isDark: isDark);
-              return ListView.builder(
+          // ── Task list / shimmer / empty ────────────────────
+          Obx(() {
+            if (ctrl.isLoading.value) {
+              return SliverPadding(
                 padding: kPageBottomPadding,
-                itemCount: tasks.length,
-                itemBuilder: (_, i) {
-                  final task = tasks[i];
-                  return Padding(
-                    padding: kItemSpacing,
-                    child: EmployeeTaskCard(
-                      task: task,
-                      isDark: isDark,
-                    ),
-                  );
-                },
+                sliver: SliverList.separated(
+                  itemCount: 5,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (_, __) => _TaskCardShimmer(isDark: isDark),
+                ),
               );
-            }),
-          ),
+            }
+            final tasks = ctrl.filteredTasks;
+            if (tasks.isEmpty) {
+              return SliverFillRemaining(
+                hasScrollBody: false,
+                child: TaskEmptyState(isDark: isDark),
+              );
+            }
+            return SliverPadding(
+              padding: kPageBottomPadding,
+              sliver: SliverList.separated(
+                itemCount: tasks.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, i) =>
+                    EmployeeTaskCard(task: tasks[i], isDark: isDark),
+              ),
+            );
+          }),
         ],
+      ),
+    );
+  }
+}
+
+// ── Shimmer skeleton that mirrors EmployeeTaskCard's shape ────────────────────
+
+class _TaskCardShimmer extends StatelessWidget {
+  const _TaskCardShimmer({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final base = isDark ? const Color(0xFF252540) : Colors.grey.shade300;
+    final highlight = isDark ? const Color(0xFF3A3A60) : Colors.grey.shade100;
+
+    return Shimmer.fromColors(
+      baseColor: base,
+      highlightColor: highlight,
+      child: Container(
+        height: 110,
+        decoration: BoxDecoration(
+          color: isDark ? kCardDark : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.07),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // accent strip
+            Container(
+              width: 4,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white24 : Colors.grey.shade400,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(14),
+                  bottomLeft: Radius.circular(14),
+                ),
+              ),
+            ),
+            // content
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // title + status badge row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _ShimmerBox(
+                            isDark: isDark,
+                            width: double.infinity,
+                            height: 14,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _ShimmerBox(isDark: isDark, width: 60, height: 20),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    // date row
+                    _ShimmerBox(isDark: isDark, width: 180, height: 12),
+                    const Spacer(),
+                    // footer row
+                    Row(
+                      children: [
+                        _ShimmerBox(isDark: isDark, width: 56, height: 20),
+                        const SizedBox(width: 8),
+                        _ShimmerBox(isDark: isDark, width: 56, height: 20),
+                        const Spacer(),
+                        _ShimmerBox(isDark: isDark, width: 36, height: 20),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ShimmerBox extends StatelessWidget {
+  const _ShimmerBox({
+    required this.isDark,
+    required this.width,
+    required this.height,
+  });
+
+  final bool isDark;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white24 : Colors.grey.shade400,
+        borderRadius: BorderRadius.circular(6),
       ),
     );
   }

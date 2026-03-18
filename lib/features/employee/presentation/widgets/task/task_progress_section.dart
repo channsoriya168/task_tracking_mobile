@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_progress.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_progress_controller.dart';
 
 // ── Progress section ──────────────────────────────────────────────────────────
 
@@ -19,7 +19,7 @@ class TaskProgressSection extends StatelessWidget {
     required this.canEdit,
   });
 
-  final EmployeeTaskController ctrl;
+  final TaskProgressController ctrl;
   final String taskId;
   final bool isDark;
   final Color textColor;
@@ -342,7 +342,7 @@ class _ProgressSheet extends StatefulWidget {
   });
 
   final String taskId;
-  final EmployeeTaskController ctrl;
+  final TaskProgressController ctrl;
   final bool isDark;
   /// Non-null when editing an existing record.
   final TaskProgress? editing;

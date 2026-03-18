@@ -14,8 +14,6 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employe
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_form_dialog.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_dialog.dart';
-import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_controller.dart';
 
 class EmployeeController extends GetxController {
   EmployeeController(
@@ -83,15 +81,6 @@ class EmployeeController extends GetxController {
       AppSnackbar.delete('Employee Deleted', 'Employee has been removed.');
     } catch (e) {
       AppSnackbar.error('Error', e.toString());
-    }
-  }
-
-  List<TaskModel> tasksForEmployee(String employeeId) {
-    try {
-      final taskCtrl = Get.find<TaskController>();
-      return taskCtrl.tasks.where((t) => t.assignedToId == employeeId).toList();
-    } catch (_) {
-      return [];
     }
   }
 

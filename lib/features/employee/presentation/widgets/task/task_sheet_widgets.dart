@@ -90,6 +90,51 @@ class TaskSheetButton extends StatelessWidget {
   }
 }
 
+// ── Transition button ─────────────────────────────────────────────────────────
+
+class TaskTransitionButton extends StatelessWidget {
+  const TaskTransitionButton({
+    super.key,
+    required this.label,
+    required this.color,
+    required this.loading,
+    required this.onTap,
+  });
+
+  final String label;
+  final Color color;
+  final bool loading;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: loading ? null : onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        minimumSize: const Size(0, 48),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: loading
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          : Text(
+              label,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              overflow: TextOverflow.ellipsis,
+            ),
+    );
+  }
+}
+
 // ── Detail row ────────────────────────────────────────────────────────────────
 
 class TaskDetailRow extends StatelessWidget {

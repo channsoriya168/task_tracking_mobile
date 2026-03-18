@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_date_row.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_footer_row.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_title_row.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_task_detail_sheet.dart';
 
@@ -12,6 +15,8 @@ class EmployeeTaskCard extends StatelessWidget {
     super.key,
     required this.task,
     required this.isDark,
+
+    /// Direct accept callback (used by home page for confirm-dialog flow).
     this.onAccept,
   });
 
@@ -25,202 +30,285 @@ class EmployeeTaskCard extends StatelessWidget {
     final statusColor = task.status.color;
     final ctrl = Get.find<EmployeeTaskController>();
     final currentId = ctrl.currentEmployeeId;
-    final statusNorm = task.status.name
-        .toLowerCase()
-        .replaceAll(' ', '')
-        .replaceAll('_', '');
 
-    final isPending = task.assignedToName == null;
-    final isAssigned = statusNorm == 'assigned' &&
-        task.assignedToId != null &&
-        task.assignedToId == currentId;
-    final isAssignedOther = statusNorm == 'assigned' &&
-        task.assignedToId != null &&
-        task.assignedToId != currentId;
-    final isInProgress = statusNorm == 'inprogress' &&
-        task.assignedToId != null &&
-        task.assignedToId == currentId;
-    final isInProgressOther = statusNorm == 'inprogress' &&
-        task.assignedToId != null &&
-        task.assignedToId != currentId;
-    final isInReview = statusNorm == 'inreview' &&
-        task.assignedToId != null &&
-        task.assignedToId == currentId;
-    final isInReviewOther = statusNorm == 'inreview' &&
-        task.assignedToId != null &&
-        task.assignedToId != currentId;
-    final isCompleted = statusNorm == 'completed' || statusNorm == 'done';
+    final isPending = task.assignedToId == null;
+    final isMyTask =
+        task.assignedToId != null && task.assignedToId == currentId;
+    final isAssignedToOther = task.assignedToId != null && !isMyTask;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? kCardDark : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : Colors.black.withValues(alpha: 0.07),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+    void openDetail({bool readOnly = false}) {
+      ctrl.prepareTaskDetail(task.id);
+      showEmployeeTaskDetailSheet(context, isDark, task, readOnly: readOnly);
+    }
+
+    final startLabel = task.startDate != null
+        ? formatDate(task.startDate!)
+        : (task.createdAt != null ? formatDate(task.createdAt!) : '');
+
+    final dividerColor = isDark
+        ? Colors.white.withValues(alpha: 0.07)
+        : Colors.black.withValues(alpha: 0.06);
+
+    // Available transitions from the API.
+    final transitions =
+        isMyTask ? task.allowedTransitions : <TaskStatusLookup>[];
+    final primaryTransition =
+        transitions.isNotEmpty ? transitions.first : null;
+
+    return GestureDetector(
+      // Pending/my tasks → interactive detail; others' tasks → read-only
+      onTap: () => openDetail(readOnly: isAssignedToOther),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? kCardDark : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isPending
+                ? kPrimary.withValues(alpha: 0.35)
+                : isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.07),
+            width: isPending ? 1.5 : 1,
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Left accent strip
-              Container(
-                width: 4,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [statusColor, statusColor.withValues(alpha: 0.4)],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Left accent strip ──
+                Container(
+                  width: 4,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [statusColor, statusColor.withValues(alpha: 0.4)],
+                    ),
                   ),
                 ),
-              ),
-              // Card content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                // ── Content ──
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _TitleRow(task: task, isDark: isDark),
-                      if ((task.description ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          task.description!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 12, color: mutedColor, height: 1.4),
+                      // Main info area
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TaskCardTitleRow(
+                              task: task,
+                              isDark: isDark,
+                              mutedColor: mutedColor,
+                            ),
+                            const SizedBox(height: 8),
+                            TaskCardDateRow(
+                              mutedColor: mutedColor,
+                              startLabel: startLabel,
+                              isStartFallback: task.startDate == null,
+                              dueDate: task.dueDate,
+                            ),
+                            const SizedBox(height: 8),
+                            TaskCardFooterRow(
+                              task: task,
+                              isDark: isDark,
+                              mutedColor: mutedColor,
+                              statusColor: statusColor,
+                              priorityColor: task.priority.color,
+                            ),
+                          ],
                         ),
-                      ],
-                      const SizedBox(height: 8),
-                      _DateRow(task: task, isDark: isDark),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          StatusBadgeWidget(
-                            label: task.status.name,
-                            color: statusColor,
-                            isDark: isDark,
-                          ),
-                          const SizedBox(width: 8),
-                          _PriorityDot(color: task.priority.color),
-                          const SizedBox(width: 4),
-                          Text(
-                            task.priority.name,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: mutedColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Spacer(),
-                          if (isPending)
-                            _CardActionChip(
-                              label: 'Accept',
-                              isDark: isDark,
-                              onTap: onAccept ?? () {
-                                ctrl.prepareTaskDetail(task.id);
-                                showEmployeeTaskDetailSheet(context, isDark, task);
-                              },
-                            ),
-                          if (isAssigned)
-                            _CardActionChip(
-                              label: 'In Progress',
-                              isDark: isDark,
-                              onTap: () {
-                                ctrl.prepareTaskDetail(task.id, showMembers: true);
-                                showEmployeeTaskDetailSheet(context, isDark, task,
-                                    showMembers: true);
-                              },
-                            ),
-                          if (isAssignedOther)
-                            _CardActionChip(
-                              label: 'View',
-                              isDark: isDark,
-                              muted: true,
-                              onTap: () {
-                                ctrl.prepareTaskDetail(task.id, showMembers: true);
-                                showEmployeeTaskDetailSheet(context, isDark, task,
-                                    showMembers: true, readOnly: true);
-                              },
-                            ),
-                          if (isInProgress)
-                            _CardActionChip(
-                              label: 'Review',
-                              isDark: isDark,
-                              onTap: () {
-                                ctrl.prepareTaskDetail(task.id, showProgress: true);
-                                showEmployeeTaskDetailSheet(context, isDark, task,
-                                    showProgress: true);
-                              },
-                            ),
-                          if (isInProgressOther)
-                            _CardActionChip(
-                              label: 'View',
-                              isDark: isDark,
-                              muted: true,
-                              onTap: () {
-                                ctrl.prepareTaskDetail(task.id,
-                                    showMembers: true, showProgress: true);
-                                showEmployeeTaskDetailSheet(context, isDark, task,
-                                    showMembers: true,
-                                    showProgress: true,
-                                    readOnly: true);
-                              },
-                            ),
-                          if (isInReview)
-                            _CardActionChip(
-                              label: 'Complete',
-                              isDark: isDark,
-                              onTap: () {
-                                ctrl.prepareTaskDetail(task.id,
-                                    showMembers: true, showProgress: true);
-                                showEmployeeTaskDetailSheet(context, isDark, task,
-                                    showMembers: true,
-                                    showProgress: true,
-                                    showComplete: true);
-                              },
-                            ),
-                          if (isCompleted)
-                            _CardActionChip(
-                              label: 'View',
-                              isDark: isDark,
-                              muted: true,
-                              onTap: () {
-                                ctrl.prepareTaskDetail(task.id,
-                                    showMembers: true, showProgress: true);
-                                showEmployeeTaskDetailSheet(context, isDark, task,
-                                    showMembers: true,
-                                    showProgress: true,
-                                    readOnly: true);
-                              },
-                            ),
-                          if (isInReviewOther)
-                            _CardActionChip(
-                              label: 'View',
-                              isDark: isDark,
-                              muted: true,
-                              onTap: () {
-                                ctrl.prepareTaskDetail(task.id,
-                                    showMembers: true, showProgress: true);
-                                showEmployeeTaskDetailSheet(context, isDark, task,
-                                    showMembers: true,
-                                    showProgress: true,
-                                    readOnly: true);
-                              },
-                            ),
-                        ],
+                      ),
+
+                      // ── Action area (varies by task state) ──
+                      if (isPending)
+                        // Unassigned — anyone in the group can accept
+                        _AcceptBar(
+                          isDark: isDark,
+                          dividerColor: dividerColor,
+                          onTap: onAccept ?? () => openDetail(),
+                        )
+                      else if (isAssignedToOther)
+                        // Already taken by someone else — read-only indicator
+                        _TakenBar(
+                          name: task.assignedToName ?? 'someone',
+                          isDark: isDark,
+                          dividerColor: dividerColor,
+                        )
+                      else if (primaryTransition != null)
+                        _StatusActionBar(
+                          label: 'Update Status',
+                          color: primaryTransition.color,
+                          isDark: isDark,
+                          dividerColor: dividerColor,
+                          onTap: () => openDetail(),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Accept bar: prominent, full-width — for unassigned group tasks ─────────────
+
+class _AcceptBar extends StatelessWidget {
+  const _AcceptBar({
+    required this.isDark,
+    required this.dividerColor,
+    required this.onTap,
+  });
+
+  final bool isDark;
+  final Color dividerColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, thickness: 1, color: dividerColor),
+        InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            color: kPrimary.withValues(alpha: isDark ? 0.18 : 0.06),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 14,
+                  color: kPrimary,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'Accept Task',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: kPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Taken bar: greyed out, shows who already accepted ─────────────────────────
+
+class _TakenBar extends StatelessWidget {
+  const _TakenBar({
+    required this.name,
+    required this.isDark,
+    required this.dividerColor,
+  });
+
+  final String name;
+  final bool isDark;
+  final Color dividerColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isDark ? Colors.white30 : Colors.black26;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, thickness: 1, color: dividerColor),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 7, 12, 7),
+          child: Row(
+            children: [
+              Icon(Icons.lock_outline_rounded, size: 12, color: color),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  'Accepted by $name',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Status action bar: small chip for my-task status progression ──────────────
+
+class _StatusActionBar extends StatelessWidget {
+  const _StatusActionBar({
+    required this.label,
+    required this.color,
+    required this.isDark,
+    required this.dividerColor,
+    required this.onTap,
+  });
+
+  final String label;
+  final Color color;
+  final bool isDark;
+  final Color dividerColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    const icon = Icons.arrow_circle_right_outlined;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, thickness: 1, color: dividerColor),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 5,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, size: 13, color: color),
+                      const SizedBox(width: 4),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
                       ),
                     ],
                   ),
@@ -229,150 +317,7 @@ class EmployeeTaskCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ── Private helpers ───────────────────────────────────────────────────────────
-
-class _TitleRow extends StatelessWidget {
-  const _TitleRow({required this.task, required this.isDark});
-
-  final TaskItem task;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = task.labelName ?? task.groupName;
-    return RichText(
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: task.title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : kTextDark,
-              letterSpacing: -0.1,
-            ),
-          ),
-          if (label != null)
-            TextSpan(
-              text: '  ($label)',
-              style: TextStyle(
-                fontSize: 12,
-                color: isDark ? Colors.white54 : kTextMuted,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DateRow extends StatelessWidget {
-  const _DateRow({required this.task, required this.isDark});
-
-  final TaskItem task;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final mutedColor = isDark ? Colors.white54 : kTextMuted;
-    final showItalic = task.startDate == null;
-    final dateText = task.startDate != null
-        ? formatDate(task.startDate!)
-        : task.createdAt != null
-            ? formatDate(task.createdAt!)
-            : null;
-
-    return Row(
-      children: [
-        Icon(Icons.today_rounded, size: 11, color: mutedColor),
-        const SizedBox(width: 4),
-        if (dateText != null)
-          Text(
-            dateText,
-            style: TextStyle(
-              fontSize: 11,
-              color: mutedColor,
-              fontStyle: showItalic ? FontStyle.italic : null,
-            ),
-          ),
-        if (task.dueDate != null) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child:
-                Icon(Icons.arrow_right_alt_rounded, size: 13, color: mutedColor),
-          ),
-          Text(
-            formatDate(task.dueDate!),
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-          ),
-        ],
       ],
-    );
-  }
-}
-
-class _PriorityDot extends StatelessWidget {
-  const _PriorityDot({required this.color});
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: 7,
-        height: 7,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-      );
-}
-
-class _CardActionChip extends StatelessWidget {
-  const _CardActionChip({
-    required this.label,
-    required this.isDark,
-    required this.onTap,
-    this.muted = false,
-  });
-
-  final String label;
-  final bool isDark;
-  final VoidCallback onTap;
-  final bool muted;
-
-  @override
-  Widget build(BuildContext context) {
-    final bgColor = muted
-        ? (isDark
-            ? Colors.white.withValues(alpha: 0.08)
-            : Colors.black.withValues(alpha: 0.06))
-        : kPrimary.withValues(alpha: 0.12);
-    final borderColor = muted
-        ? (isDark
-            ? Colors.white.withValues(alpha: 0.15)
-            : Colors.black.withValues(alpha: 0.12))
-        : kPrimary.withValues(alpha: 0.3);
-    final labelColor =
-        muted ? (isDark ? Colors.white54 : kTextMuted) : kPrimary;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: borderColor),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-              fontSize: 11, fontWeight: FontWeight.w600, color: labelColor),
-        ),
-      ),
     );
   }
 }
