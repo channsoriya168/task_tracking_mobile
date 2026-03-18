@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
@@ -32,6 +34,16 @@ class TaskCardWidget extends StatelessWidget {
     final cardBg = isDark ? kCardDark : Colors.white;
     final mutedColor = isDark ? Colors.white54 : kTextMuted;
     final ctrl = managerTaskController;
+
+    // Only the task creator can edit or delete
+    String? currentEmployeeId;
+    try {
+      currentEmployeeId = Get.find<AuthController>().profile.value?.employeeId;
+    } catch (_) {}
+    final isOwner =
+        currentEmployeeId != null &&
+        task.createdById != null &&
+        currentEmployeeId == task.createdById;
 
     final statusColor = task.status.color;
     final priorityColor = task.priority.color;
@@ -118,6 +130,7 @@ class TaskCardWidget extends StatelessWidget {
                           isDark: isDark,
                           ctrl: ctrl,
                           fetchDetail: fetchDetail,
+                          canEdit: isOwner,
                         ),
                     ],
                   ),
@@ -130,6 +143,9 @@ class TaskCardWidget extends StatelessWidget {
     );
 
     if (ctrl == null) return cardContent;
+
+    // Swipe-to-delete only available to the task creator
+    if (!isOwner) return cardContent;
 
     return Dismissible(
       key: Key(task.id),

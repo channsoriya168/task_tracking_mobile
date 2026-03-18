@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
@@ -24,15 +23,18 @@ class TaskCardFooterRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        // ── Status badge ────────────────────────────────────────
         StatusBadgeWidget(
           label: task.status.name,
           color: statusColor,
           isDark: isDark,
         ),
         const SizedBox(width: 8),
+
+        // ── Priority dot + label ────────────────────────────────
         Container(
-          width: 7,
-          height: 7,
+          width: 6,
+          height: 6,
           decoration: BoxDecoration(
             color: priorityColor,
             shape: BoxShape.circle,
@@ -47,13 +49,10 @@ class TaskCardFooterRow extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(width: 8),
-        if ((task.labelName ?? task.groupName) != null)
-          _NeutralChip(
-            label: task.labelName ?? task.groupName!,
-            isDark: isDark,
-          ),
+
         const Spacer(),
+
+        // ── Avatars ─────────────────────────────────────────────
         if (task.assignedToName != null)
           UserAvatarWidget(
             name: task.assignedToName!,
@@ -62,40 +61,17 @@ class TaskCardFooterRow extends StatelessWidget {
             showBorder: true,
           ),
         if (task.createdByEmployeeName != null)
-          UserAvatarWidget(
-            name: task.createdByEmployeeName!,
-            imageUrl: task.createdByProfileImageUrl,
-            radius: 10,
-            color: mutedColor,
-            showBorder: true,
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: UserAvatarWidget(
+              name: task.createdByEmployeeName!,
+              imageUrl: task.createdByProfileImageUrl,
+              radius: 10,
+              color: mutedColor,
+              showBorder: true,
+            ),
           ),
       ],
-    );
-  }
-}
-
-// ── Neutral chip ───────────────────────────────────────────────
-class _NeutralChip extends StatelessWidget {
-  const _NeutralChip({required this.label, required this.isDark});
-  final String label;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : Colors.black.withValues(alpha: 0.05);
-    final fg = isDark ? Colors.white60 : kTextMuted;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: fg),
-      ),
     );
   }
 }

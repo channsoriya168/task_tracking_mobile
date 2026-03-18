@@ -16,34 +16,81 @@ class TaskCardTitleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasGroup = task.groupName != null;
+    final hasLabel = task.labelName != null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ── Title ───────────────────────────────────────────────
         Text(
           task.title,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             color: isDark ? Colors.white : kTextDark,
             letterSpacing: -0.1,
+            height: 1.3,
           ),
         ),
+
+        // ── Description ──────────────────────────────────────────
         if ((task.description ?? '').isNotEmpty) ...[
-          const SizedBox(height: 2),
+          const SizedBox(height: 3),
           Text(
             task.description!,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 12,
-              color: mutedColor,
-              height: 1.4,
-            ),
+            style: TextStyle(fontSize: 12, color: mutedColor, height: 1.4),
+          ),
+        ],
+
+        // ── Group / Label pills ───────────────────────────────────
+        if (hasGroup || hasLabel) ...[
+          const SizedBox(height: 7),
+          Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: [
+              if (hasGroup) _MetaPill(label: task.groupName!, isDark: isDark),
+              if (hasLabel) _MetaPill(label: task.labelName!, isDark: isDark),
+            ],
           ),
         ],
       ],
+    );
+  }
+}
+
+// ── Subtle pill chip ─────────────────────────────────────────────
+class _MetaPill extends StatelessWidget {
+  const _MetaPill({required this.label, required this.isDark});
+
+  final String label;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.09)
+            : Colors.black.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white60 : kTextMuted,
+        ),
+      ),
     );
   }
 }

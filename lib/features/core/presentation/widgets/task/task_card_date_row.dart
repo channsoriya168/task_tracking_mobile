@@ -12,13 +12,8 @@ class TaskCardDateRow extends StatelessWidget {
   });
 
   final Color mutedColor;
-
-  /// Already-formatted start label (startDate or createdAt).
   final String startLabel;
-
-  /// True when startLabel comes from createdAt (rendered italic).
   final bool isStartFallback;
-
   final DateTime? dueDate;
 
   static Color dueDateColor(DateTime? dueDate) {
@@ -32,13 +27,20 @@ class TaskCardDateRow extends StatelessWidget {
     return kTextMuted;
   }
 
+  bool get _isOverdue {
+    if (dueDate == null) return false;
+    final today = DateTime.now();
+    return DateTime(dueDate!.year, dueDate!.month, dueDate!.day)
+        .isBefore(DateTime(today.year, today.month, today.day));
+  }
+
   @override
   Widget build(BuildContext context) {
     final dueDateCol = dueDateColor(dueDate);
 
     return Row(
       children: [
-        Icon(Icons.today_rounded, size: 11, color: mutedColor),
+        Icon(Icons.schedule_rounded, size: 12, color: mutedColor),
         const SizedBox(width: 4),
         Text(
           startLabel,
@@ -50,19 +52,14 @@ class TaskCardDateRow extends StatelessWidget {
         ),
         if (dueDate != null) ...[
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Icon(
-              Icons.arrow_right_alt_rounded,
-              size: 13,
-              color: mutedColor,
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Icon(Icons.arrow_forward_rounded, size: 11, color: mutedColor),
+          ),
+          if (_isOverdue)
+            Padding(
+              padding: const EdgeInsets.only(right: 3),
+              child: Icon(Icons.warning_amber_rounded, size: 11, color: kHighPriority),
             ),
-          ),
-          Icon(
-            dueDate!.isBefore(DateTime.now()) ? Icons.event_busy_rounded : Icons.event_outlined,
-            size: 11,
-            color: dueDateCol,
-          ),
-          const SizedBox(width: 3),
           Text(
             formatDate(dueDate!),
             style: TextStyle(

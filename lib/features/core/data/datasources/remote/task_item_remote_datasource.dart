@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
+import 'package:task_tracking_mobile/features/core/data/models/task_comment_model.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_member_model.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_progress_model.dart';
 
@@ -82,6 +83,25 @@ class TaskItemRemoteDatasource {
 
   Future<void> removeTaskMember(String taskItemId, String memberId) async {
     await _dio.delete(ApiEndpoints.taskItemMemberById(taskItemId, memberId));
+  }
+
+  // ── Comments ──────────────────────────────────────────────────────────────
+
+  Future<List<TaskCommentModel>> getTaskComments(String taskItemId) async {
+    final response = await _dio.get(ApiEndpoints.taskItemComments(taskItemId));
+    final raw = response.data;
+    final List dataList;
+    if (raw is List) {
+      dataList = raw;
+    } else if (raw is Map) {
+      final inner = raw['items'] ?? raw['data'] ?? raw['comments'];
+      dataList = inner is List ? inner : [];
+    } else {
+      dataList = [];
+    }
+    return dataList
+        .map((e) => TaskCommentModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   // ── Progress ──────────────────────────────────────────────────────────────

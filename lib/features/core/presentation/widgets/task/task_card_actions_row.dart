@@ -13,12 +13,16 @@ class TaskCardActionsRow extends StatelessWidget {
     required this.isDark,
     required this.ctrl,
     required this.fetchDetail,
+    required this.canEdit,
   });
 
   final TaskItem task;
   final bool isDark;
   final TaskController ctrl;
   final Future<TaskItem?> Function(String id)? fetchDetail;
+
+  /// True only when the current user is the task creator.
+  final bool canEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -47,29 +51,31 @@ class TaskCardActionsRow extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              // ── Edit ──
-              _ActionButton(
-                icon: Icons.edit_outlined,
-                label: 'Edit',
-                color: kPrimary,
-                onTap: () => showTaskDialog(context, isDark, task: task),
-              ),
-              const SizedBox(width: 8),
-              // ── Delete ──
-              _ActionButton(
-                icon: Icons.delete_outline_rounded,
-                label: 'Delete',
-                color: kHighPriority,
-                onTap: () async {
-                  final ok = await showConfirmDeleteDialog(
-                    context,
-                    title: 'Delete Task',
-                    message:
-                        'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
-                  );
-                  if (ok == true) ctrl.deleteTask(task);
-                },
-              ),
+              if (canEdit) ...[
+                // ── Edit ──
+                _ActionButton(
+                  icon: Icons.edit_outlined,
+                  label: 'Edit',
+                  color: kPrimary,
+                  onTap: () => showTaskDialog(context, isDark, task: task),
+                ),
+                const SizedBox(width: 8),
+                // ── Delete ──
+                _ActionButton(
+                  icon: Icons.delete_outline_rounded,
+                  label: 'Delete',
+                  color: kHighPriority,
+                  onTap: () async {
+                    final ok = await showConfirmDeleteDialog(
+                      context,
+                      title: 'Delete Task',
+                      message:
+                          'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
+                    );
+                    if (ok == true) ctrl.deleteTask(task);
+                  },
+                ),
+              ],
             ],
           ),
         ),

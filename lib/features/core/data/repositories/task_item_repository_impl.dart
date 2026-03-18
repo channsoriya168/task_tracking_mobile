@@ -1,5 +1,6 @@
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_item_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/task_comment.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_progress.dart';
@@ -56,6 +57,10 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
   @override
   Future<void> removeTaskMember(String taskItemId, String memberId) =>
       _remote.removeTaskMember(taskItemId, memberId);
+
+  @override
+  Future<List<TaskComment>> fetchTaskComments(String taskItemId) =>
+      _remote.getTaskComments(taskItemId);
 
   @override
   Future<List<TaskProgress>> fetchTaskProgresses(String taskItemId) =>
