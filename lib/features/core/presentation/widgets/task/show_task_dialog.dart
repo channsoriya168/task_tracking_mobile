@@ -28,7 +28,6 @@ Future<void> showTaskDialog(
       isDark: isDark,
       ctrl: ctrl,
       groups: groups.toList(),
-      outerContext: context,
     ),
   );
 }

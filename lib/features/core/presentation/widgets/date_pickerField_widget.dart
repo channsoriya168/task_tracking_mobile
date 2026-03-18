@@ -10,7 +10,6 @@ class DatePickerFieldWidget extends StatelessWidget {
     required this.firstDate,
     required this.onPick,
     required this.onClear,
-    required this.context,
   });
 
   final bool isDark;
@@ -19,7 +18,6 @@ class DatePickerFieldWidget extends StatelessWidget {
   final DateTime firstDate;
   final ValueChanged<DateTime> onPick;
   final VoidCallback onClear;
-  final BuildContext context;
 
   @override
   Widget build(BuildContext ctx) {
@@ -28,7 +26,7 @@ class DatePickerFieldWidget extends StatelessWidget {
         final now = DateTime.now();
         final initial = value ?? now;
         final picked = await showDatePicker(
-          context: context,
+          context: ctx,
           initialDate: initial.isBefore(firstDate) ? firstDate : initial,
           firstDate: firstDate,
           lastDate: DateTime.now().add(const Duration(days: 730)),

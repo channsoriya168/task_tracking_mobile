@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/task_model.dart';
 
 // ── Task List Card ───────────────────────────────────────────
@@ -146,12 +147,6 @@ class _AcceptedByChip extends StatelessWidget {
   final bool isDark;
   final String? avatarUrl;
 
-  String get _initials {
-    final parts = name.trim().split(' ');
-    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    return name.isNotEmpty ? name[0].toUpperCase() : '?';
-  }
-
   @override
   Widget build(BuildContext context) {
     final textColor = isDark ? Colors.white70 : kPrimary;
@@ -166,23 +161,7 @@ class _AcceptedByChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(
-            radius: 10,
-            backgroundColor: kPrimary.withAlpha(40),
-            backgroundImage: avatarUrl != null
-                ? NetworkImage(avatarUrl!)
-                : null,
-            child: avatarUrl == null
-                ? Text(
-                    _initials,
-                    style: TextStyle(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                      color: textColor,
-                    ),
-                  )
-                : null,
-          ),
+          UserAvatarWidget(name: name, imageUrl: avatarUrl, radius: 10),
           const SizedBox(width: 6),
           Text(
             name,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 
 // ── Label chip ────────────────────────────────────────────────────────────────
 
@@ -43,19 +44,7 @@ class TaskAssigneeRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 14,
-          backgroundColor: kPrimary.withValues(alpha: isDark ? 0.25 : 0.12),
-          backgroundImage:
-              imageUrl != null ? NetworkImage(imageUrl!) : null,
-          child: imageUrl == null
-              ? Text(name[0].toUpperCase(),
-                  style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      color: kPrimary))
-              : null,
-        ),
+        UserAvatarWidget(name: name, imageUrl: imageUrl, radius: 14),
         const SizedBox(width: 8),
         Text(name,
             style: TextStyle(

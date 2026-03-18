@@ -31,9 +31,8 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
       _remote.create(taskItem as TaskItemModel);
 
   @override
-  Future<void> updateTaskItem(TaskItem taskItem) async {
-    // TODO: implement update
-  }
+  Future<void> updateTaskItem(TaskItem taskItem) =>
+      _remote.update(taskItem.id, taskItem as TaskItemModel);
 
   @override
   Future<void> deleteTaskItem(TaskItem taskItem) => _remote.delete(taskItem.id);

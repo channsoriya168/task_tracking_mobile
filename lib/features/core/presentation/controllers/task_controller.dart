@@ -117,7 +117,10 @@ class TaskController extends GetxController {
     try {
       return await _fetchTaskItemById(id);
     } catch (e) {
-      AppSnackbar.error('Error', AppSnackbar.parseApiError(e, fallback: 'Could not load task.'));
+      AppSnackbar.error(
+        'Error',
+        AppSnackbar.parseApiError(e, fallback: 'Could not load task.'),
+      );
       return null;
     }
   }
@@ -274,7 +277,8 @@ class TaskController extends GetxController {
   Future<void> deleteTask(TaskItem taskItem) async {
     try {
       await _deleteTaskItem(taskItem);
-      await fetchTasks();
+      allTasks.removeWhere((t) => t.id == taskItem.id);
+      _applyStatusFilter();
       _refreshDashboard();
       AppSnackbar.success(
         'Task Deleted',

@@ -22,6 +22,7 @@ class TaskItem {
   final String? assignedToProfileImageUrl;
   final String? createdById;
   final String? createdByEmployeeName;
+  final String? createdByProfileImageUrl;
 
   final TaskPriority priority;
 
@@ -51,6 +52,7 @@ class TaskItem {
     this.assignedToProfileImageUrl,
     this.createdById,
     this.createdByEmployeeName,
+    this.createdByProfileImageUrl,
     required this.priority,
     required this.status,
     this.startDate,

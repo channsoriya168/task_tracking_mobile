@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 
 class EmployeeAvatarWidget extends StatelessWidget {
   const EmployeeAvatarWidget({
@@ -16,27 +17,13 @@ class EmployeeAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imagePath != null && imagePath!.isNotEmpty;
-    return CircleAvatar(
+    return UserAvatarWidget(
+      name: name,
+      imageUrl: imagePath,
       radius: radius,
-      backgroundColor: color.withAlpha(40),
-      backgroundImage: hasImage ? NetworkImage(imagePath!) : null,
-      child: hasImage
-          ? null
-          : Text(
-              employeeInitials(name),
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w700,
-                fontSize: radius * 0.65,
-              ),
-            ),
+      color: color,
     );
   }
 }
 
-String employeeInitials(String name) {
-  final parts = name.trim().split(' ');
-  if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-  return name.isNotEmpty ? name[0].toUpperCase() : '?';
-}
+String employeeInitials(String name) => UserAvatarWidget.initials(name);

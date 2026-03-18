@@ -17,6 +17,7 @@ class TaskItemModel extends TaskItem {
     super.assignedToProfileImageUrl,
     super.createdById,
     super.createdByEmployeeName,
+    super.createdByProfileImageUrl,
     required super.priority,
     required super.status,
     super.startDate,
@@ -44,6 +45,7 @@ class TaskItemModel extends TaskItem {
       assignedToProfileImageUrl: json['assignedToProfileImageUrl'] as String?,
       createdById: json['createdById'] as String?,
       createdByEmployeeName: json['createdByEmployeeName'] as String?,
+      createdByProfileImageUrl: json['createdByProfileImageUrl'] as String?,
       // Priority: {id, name}
       priority: TaskPriorityModel.fromJson(
         json['priority'] as Map<String, dynamic>,

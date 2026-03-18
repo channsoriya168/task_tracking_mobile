@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
 
@@ -116,24 +117,10 @@ class TaskMemberAvatar extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            CircleAvatar(
+            UserAvatarWidget(
+              name: member.employeeName,
+              imageUrl: member.employeeProfileImageUrl,
               radius: 21,
-              backgroundColor:
-                  kPrimary.withValues(alpha: isDark ? 0.25 : 0.12),
-              backgroundImage: member.employeeProfileImageUrl != null
-                  ? NetworkImage(member.employeeProfileImageUrl!)
-                  : null,
-              child: member.employeeProfileImageUrl == null
-                  ? Text(
-                      member.employeeName.isNotEmpty
-                          ? member.employeeName[0].toUpperCase()
-                          : '?',
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary),
-                    )
-                  : null,
             ),
             if (canEdit)
               Positioned(

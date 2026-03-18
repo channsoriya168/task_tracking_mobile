@@ -16,13 +16,11 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
     required this.isDark,
     required this.ctrl,
     required this.groups,
-    required this.outerContext,
   });
 
   final bool isDark;
   final TaskController ctrl;
   final List<TaskGroup> groups;
-  final BuildContext outerContext;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +28,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(outerContext).viewInsets.bottom,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -71,7 +69,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () => Navigator.pop(outerContext),
+                    onPressed: () => Get.back(),
                     icon: Icon(
                       Icons.close_rounded,
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -193,7 +191,6 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                   firstDate: ctrl.currentDate.value ?? DateTime.now(),
                   onPick: (d) => ctrl.selectedDueDate.value = d,
                   onClear: () => ctrl.selectedDueDate.value = null,
-                  context: outerContext,
                 ),
               ),
               const SizedBox(height: 24),
@@ -223,9 +220,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                             final ok = isEditing
                                 ? await ctrl.updateTask()
                                 : await ctrl.createTask();
-                            if (ok && outerContext.mounted) {
-                              Navigator.pop(outerContext);
-                            }
+                            if (ok) Get.back();
                           }
                         : null,
                     style: ElevatedButton.styleFrom(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 
 class EmployeePickerSheet extends StatefulWidget {
   const EmployeePickerSheet(
@@ -96,14 +97,10 @@ class _EmployeePickerSheetState extends State<EmployeePickerSheet> {
                       return ListTile(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 4),
-                        leading: CircleAvatar(
+                        leading: UserAvatarWidget(
+                          name: emp.fullName,
+                          imageUrl: emp.profileImageUrl,
                           radius: 18,
-                          backgroundColor: kPrimary.withValues(alpha: 0.15),
-                          child: Text(emp.fullName[0].toUpperCase(),
-                              style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: kPrimary)),
                         ),
                         title: Text(emp.fullName,
                             style: TextStyle(
