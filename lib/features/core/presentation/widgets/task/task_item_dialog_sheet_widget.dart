@@ -7,6 +7,7 @@ import 'package:task_tracking_mobile/features/core/domain/entities/task_group.da
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/field_label_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/date_pickerField_widget.dart';
 
@@ -90,7 +91,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Label
-              _FieldLabel('Label', isDark: isDark, isRequired: true),
+              FieldLabelWidget('Label', isDark: isDark, isRequired: true),
               const SizedBox(height: 8),
               Obx(
                 () => DropdownWidget<Label>(
@@ -129,7 +130,11 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _FieldLabel('Group', isDark: isDark, isRequired: true),
+                        FieldLabelWidget(
+                          'Group',
+                          isDark: isDark,
+                          isRequired: true,
+                        ),
                         const SizedBox(height: 8),
                         Obx(() {
                           final groupId = ctrl.selectedGroupId.value;
@@ -156,7 +161,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _FieldLabel(
+                        FieldLabelWidget(
                           'Priority',
                           isDark: isDark,
                           isRequired: true,
@@ -181,7 +186,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               const SizedBox(height: 14),
 
               // Due Date
-              _FieldLabel('Due Date', isDark: isDark, isRequired: true),
+              FieldLabelWidget('Due Date', isDark: isDark, isRequired: true),
               const SizedBox(height: 8),
               Obx(
                 () => DatePickerFieldWidget(
@@ -248,42 +253,6 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text, {required this.isDark, this.isRequired = false});
-  final String text;
-  final bool isDark;
-  final bool isRequired;
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      text: text.isNotEmpty
-          ? TextSpan(
-              text: text,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : kTextDark,
-              ),
-              children: isRequired
-                  ? [
-                      const TextSpan(text: ' '),
-                      TextSpan(
-                        text: '*',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red[400],
-                        ),
-                      ),
-                    ]
-                  : [],
-            )
-          : const TextSpan(),
     );
   }
 }

@@ -1,6 +1,9 @@
 // ── Employee Card + Role Badge ────────────────────────────────
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
@@ -9,6 +12,7 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/employee
 
 class EmployeeCardWidget extends StatelessWidget {
   const EmployeeCardWidget({
+    super.key,
     required this.isDark,
     required this.ctrl,
     required this.employee,
@@ -20,9 +24,18 @@ class EmployeeCardWidget extends StatelessWidget {
   final Employee employee;
   final TaskGroup? taskGroup;
 
+  bool get _isProtected {
+    final authRole = Get.find<AuthController>().role;
+    if (authRole != UserRole.Manager) return false;
+    final r = employee.role?.toLowerCase() ?? '';
+    return r == 'manager' || r == 'admin';
+  }
+
   @override
   Widget build(BuildContext context) {
     final accent = taskGroup?.color ?? kPrimary;
+    final protected = _isProtected;
+
     return GestureDetector(
       onTap: () => showEmployeeMenuSheet(
         context,
@@ -36,6 +49,10 @@ class EmployeeCardWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.orange.withValues(alpha: 0.35),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(isDark ? 35 : 10),
@@ -46,11 +63,38 @@ class EmployeeCardWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            EmployeeAvatarWidget(
-              name: employee.fullName,
-              color: accent,
-              radius: 24,
-              imagePath: employee.profileImageUrl,
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                EmployeeAvatarWidget(
+                  name: employee.fullName,
+                  color: accent,
+                  radius: 24,
+                  imagePath: employee.profileImageUrl,
+                ),
+                if (protected)
+                  Positioned(
+                    right: -4,
+                    bottom: -4,
+                    child: Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark ? kCardDark : Colors.white,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.lock_rounded,
+                        size: 10,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(width: 13),
 
@@ -59,15 +103,43 @@ class EmployeeCardWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    employee.fullName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : kTextDark,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          employee.fullName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : kTextDark,
+                          ),
+                        ),
+                      ),
+                      if (!employee.isActive)
+                        Container(
+                          margin: const EdgeInsets.only(left: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Inactive',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   if (employee.email.isNotEmpty) ...[
                     const SizedBox(height: 2),
@@ -90,21 +162,25 @@ class EmployeeCardWidget extends StatelessWidget {
                         const SizedBox(width: 6),
                       ],
                       if (taskGroup != null)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: accent.withAlpha(28),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text(
-                            taskGroup!.name,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: accent,
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: accent.withAlpha(28),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              taskGroup!.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: accent,
+                              ),
                             ),
                           ),
                         ),

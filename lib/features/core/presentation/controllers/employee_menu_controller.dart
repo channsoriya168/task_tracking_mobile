@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
-
-import 'package:task_tracking_mobile/features/core/presentation/pages/employee/employee_detail_page.dart';
 
 class EmployeeMenuController extends GetxController {
   EmployeeMenuController({required this.employeeId, required this.isDark});
@@ -18,42 +18,40 @@ class EmployeeMenuController extends GetxController {
   Employee? get employee =>
       _empCtrl.employees.firstWhereOrNull((e) => e.id == employeeId);
 
+  /// Returns true when the current Manager is trying to act on a Manager/Admin.
+  /// Admins can always manage everyone.
+  bool get isProtectedFromCurrentUser {
+    final authRole = Get.find<AuthController>().role;
+    if (authRole != UserRole.Manager) return false;
+    final targetRole = employee?.role?.toLowerCase() ?? '';
+    return targetRole == 'manager' || targetRole == 'admin';
+  }
+
   // ── Menu items ─────────────────────────────────────────────────
-  List<EmployeeMenuItem> get menuItems => [
-    const EmployeeMenuItem(
-      action: EmployeeMenuAction.viewDetail,
-      icon: Icons.person_rounded,
-      label: 'View Detail',
-    ),
-    const EmployeeMenuItem(
-      action: EmployeeMenuAction.edit,
-      icon: Icons.edit_rounded,
-      label: 'Edit Employee',
-    ),
-    const EmployeeMenuItem(
-      action: EmployeeMenuAction.changePassword,
-      icon: Icons.lock_reset_rounded,
-      label: 'Change Password',
-      isWarning: true,
-    ),
-    const EmployeeMenuItem(
-      action: EmployeeMenuAction.delete,
-      icon: Icons.delete_rounded,
-      label: 'Delete Employee',
-      isDanger: true,
-    ),
-  ];
+  List<EmployeeMenuItem> get menuItems {
+    if (isProtectedFromCurrentUser) return [];
+    return [
+      const EmployeeMenuItem(
+        action: EmployeeMenuAction.edit,
+        icon: Icons.edit_rounded,
+        label: 'Edit Employee',
+      ),
+      const EmployeeMenuItem(
+        action: EmployeeMenuAction.changePassword,
+        icon: Icons.lock_reset_rounded,
+        label: 'Change Password',
+        isWarning: true,
+      ),
+      const EmployeeMenuItem(
+        action: EmployeeMenuAction.delete,
+        icon: Icons.delete_rounded,
+        label: 'Delete Employee',
+        isDanger: true,
+      ),
+    ];
+  }
 
   // ── Actions ────────────────────────────────────────────────────
-
-  void openDetail() {
-    Get.back();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => Get.to(
-        () => EmployeeDetailPage(employeeId: employeeId, viewOnly: true),
-      ),
-    );
-  }
 
   void edit() {
     final emp = employee;

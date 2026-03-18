@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_filter_task_group_dropdown_widget.dart';
@@ -32,12 +34,15 @@ class EmployeeTabletPage extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kPrimary,
-        foregroundColor: Colors.white,
-        onPressed: () => Get.find<EmployeeController>().showCreateDialog(),
-        child: const Icon(Icons.person_add_rounded),
-      ),
+      floatingActionButton: Get.find<AuthController>().role == UserRole.Employee
+          ? null
+          : FloatingActionButton(
+              backgroundColor: kPrimary,
+              foregroundColor: Colors.white,
+              onPressed: () =>
+                  Get.find<EmployeeController>().showCreateDialog(),
+              child: const Icon(Icons.person_add_rounded),
+            ),
     );
   }
 }

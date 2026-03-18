@@ -22,27 +22,3 @@ Future<bool> confirmDeleteEmployee(String name) async {
   );
   return result == true;
 }
-
-Future<bool> confirmResetQr() async {
-  final result = await Get.dialog<bool>(
-    AlertDialog(
-      title: const Text('Reset QR Code'),
-      content: const Text(
-        'This will invalidate the current QR code and generate a new one. '
-        'The employee must use the new QR code to log in.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Get.back(result: false),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () => Get.back(result: true),
-          style: TextButton.styleFrom(foregroundColor: kMediumPriority),
-          child: const Text('Reset'),
-        ),
-      ],
-    ),
-  );
-  return result == true;
-}

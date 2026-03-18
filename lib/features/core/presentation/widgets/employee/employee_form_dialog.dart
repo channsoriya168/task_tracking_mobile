@@ -10,6 +10,7 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/text_fie
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_form_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_form_group_picker.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/phone_field_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/field_label_widget.dart';
 
 class ManagerEmployeeFormDialog extends StatelessWidget {
   const ManagerEmployeeFormDialog({super.key, required this.controller});
@@ -309,27 +310,7 @@ class _RoleSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Text(
-              'Role',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.grey[300] : Colors.grey[700],
-              ),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              '*',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.red[400],
-              ),
-            ),
-          ],
-        ),
+        FieldLabelWidget('Role', isDark: isDark, isRequired: true),
         const SizedBox(height: 8),
         Obx(
           () => Row(
