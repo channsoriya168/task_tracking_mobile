@@ -104,6 +104,16 @@ class TaskItemRemoteDatasource {
         .toList();
   }
 
+  Future<void> createTaskComment(
+    String taskItemId, {
+    required String content,
+    String? parentCommentId,
+  }) async {
+    final body = <String, dynamic>{'content': content};
+    if (parentCommentId != null) body['parentCommentId'] = parentCommentId;
+    await _dio.post(ApiEndpoints.taskItemComments(taskItemId), data: body);
+  }
+
   // ── Progress ──────────────────────────────────────────────────────────────
 
   Future<List<TaskProgressModel>> getTaskProgresses(String taskItemId) async {

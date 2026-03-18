@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_comment.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
@@ -23,6 +24,9 @@ class TaskDetailController extends GetxController {
   final RxBool membersLoading = true.obs;
   final RxBool commentsLoading = true.obs;
   final RxBool progressesLoading = true.obs;
+
+  final TextEditingController commentTextController = TextEditingController();
+  final RxBool isSendingComment = false.obs;
 
   @override
   void onInit() {
@@ -67,4 +71,34 @@ class TaskDetailController extends GetxController {
   }
 
   void selectTab(int index) => selectedTab.value = index;
+
+  Future<void> submitComment({String? parentCommentId}) async {
+    final repo = _repo;
+    if (repo == null) return;
+    final content = commentTextController.text.trim();
+    if (content.isEmpty) return;
+
+    isSendingComment.value = true;
+    try {
+      await repo.createTaskComment(
+        task.value.id,
+        content: content,
+        parentCommentId: parentCommentId,
+      );
+      commentTextController.clear();
+      // Refresh comments list
+      commentsLoading.value = true;
+      final fresh = await repo.fetchTaskComments(task.value.id).catchError((_) => <TaskComment>[]);
+      comments.assignAll(fresh);
+      commentsLoading.value = false;
+    } finally {
+      isSendingComment.value = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    commentTextController.dispose();
+    super.onClose();
+  }
 }

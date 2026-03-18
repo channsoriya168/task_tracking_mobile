@@ -63,6 +63,18 @@ class TaskItemRepositoryImpl implements TaskItemRepository {
       _remote.getTaskComments(taskItemId);
 
   @override
+  Future<void> createTaskComment(
+    String taskItemId, {
+    required String content,
+    String? parentCommentId,
+  }) =>
+      _remote.createTaskComment(
+        taskItemId,
+        content: content,
+        parentCommentId: parentCommentId,
+      );
+
+  @override
   Future<List<TaskProgress>> fetchTaskProgresses(String taskItemId) =>
       _remote.getTaskProgresses(taskItemId);
 

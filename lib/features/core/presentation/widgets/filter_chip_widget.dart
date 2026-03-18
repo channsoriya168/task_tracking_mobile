@@ -26,6 +26,11 @@ class FilterChipWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? kPrimary : (isDark ? kCardDark : Colors.white),
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: selected
+                ? kPrimary
+                : (isDark ? Colors.white24 : kTextMuted.withValues(alpha: 0.3)),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

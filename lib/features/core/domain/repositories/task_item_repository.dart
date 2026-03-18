@@ -22,6 +22,11 @@ abstract interface class TaskItemRepository {
 
   // ── Comments ─────────────────────────────────────────────────────────────
   Future<List<TaskComment>> fetchTaskComments(String taskItemId);
+  Future<void> createTaskComment(
+    String taskItemId, {
+    required String content,
+    String? parentCommentId,
+  });
 
   // ── Progress ────────────────────────────────────────────────────────────
   Future<List<TaskProgress>> fetchTaskProgresses(String taskItemId);

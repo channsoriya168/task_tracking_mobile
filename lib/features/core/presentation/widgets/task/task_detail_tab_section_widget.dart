@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_detail_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_comments_tab_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_members_tab_widget.dart';
@@ -22,8 +24,18 @@ class TaskDetailTabSection extends StatelessWidget {
     (Icons.trending_up_rounded, 'Progress'),
   ];
 
+  static bool _computeCanComment() {
+    try {
+      final role = Get.find<AuthController>().role;
+      return role == UserRole.Admin || role == UserRole.Manager;
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final canComment = _computeCanComment();
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.07);
@@ -110,6 +122,8 @@ class TaskDetailTabSection extends StatelessWidget {
                     comments: ctrl.comments,
                     loading: ctrl.commentsLoading.value,
                     isDark: isDark,
+                    ctrl: ctrl,
+                    canComment: canComment,
                   ),
                 _ => TaskDetailProgressTab(
                     progresses: ctrl.progresses,

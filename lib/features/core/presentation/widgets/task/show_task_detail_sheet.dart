@@ -18,41 +18,78 @@ Future<void> showTaskDetailSheet(
   TaskItem task, {
   Future<TaskItem?> Function(String id)? fetchDetail,
 }) async {
-  // Create controller scoped to this sheet instance
   TaskItemRepository? repo;
   try {
     repo = Get.find<TaskItemRepository>();
   } catch (_) {}
 
-  final ctrl = Get.put(
-    TaskDetailController(repo, task),
-    tag: task.id,
-  );
-
-  if (fetchDetail != null) ctrl.loadFresh(fetchDetail);
-
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => DraggableScrollableSheet(
+    builder: (_) => _TaskDetailSheet(
+      task: task,
+      isDark: isDark,
+      repo: repo,
+      fetchDetail: fetchDetail,
+    ),
+  );
+}
+
+// ── StatefulWidget — owns the controller lifecycle ───────────────────────────
+class _TaskDetailSheet extends StatefulWidget {
+  const _TaskDetailSheet({
+    required this.task,
+    required this.isDark,
+    required this.repo,
+    required this.fetchDetail,
+  });
+
+  final TaskItem task;
+  final bool isDark;
+  final TaskItemRepository? repo;
+  final Future<TaskItem?> Function(String id)? fetchDetail;
+
+  @override
+  State<_TaskDetailSheet> createState() => _TaskDetailSheetState();
+}
+
+class _TaskDetailSheetState extends State<_TaskDetailSheet> {
+  late final TaskDetailController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = Get.put(
+      TaskDetailController(widget.repo, widget.task),
+      tag: widget.task.id,
+    );
+    if (widget.fetchDetail != null) _ctrl.loadFresh(widget.fetchDetail!);
+  }
+
+  @override
+  void dispose() {
+    Get.delete<TaskDetailController>(tag: widget.task.id, force: true);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
       initialChildSize: 0.75,
       minChildSize: 0.5,
       maxChildSize: 0.95,
       expand: false,
       builder: (_, scrollController) => _TaskDetailSheetContent(
-        ctrl: ctrl,
-        isDark: isDark,
+        ctrl: _ctrl,
+        isDark: widget.isDark,
         scrollController: scrollController,
       ),
-    ),
-  );
-
-  // Clean up controller after sheet is dismissed
-  Get.delete<TaskDetailController>(tag: task.id);
+    );
+  }
 }
 
-// ── Sheet shell ──────────────────────────────────────────────────
+// ── Sheet shell ──────────────────────────────────────────────────────────────
 class _TaskDetailSheetContent extends StatelessWidget {
   const _TaskDetailSheetContent({
     required this.ctrl,
@@ -73,21 +110,45 @@ class _TaskDetailSheetContent extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Drag handle + optional loading bar ──────────────
+          // ── Header: drag handle + close button + loading bar ──
           Obx(() => Padding(
-                padding: const EdgeInsets.only(top: 12, bottom: 4),
+                padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
                 child: Column(
                   children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color:
-                              isDark ? Colors.grey[700] : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(2),
+                    Row(
+                      children: [
+                        // Drag handle (centered)
+                        const Spacer(),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.grey[700] : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(2),
+                          ),
                         ),
-                      ),
+                        const Spacer(),
+                        // Close button
+                        InkWell(
+                          onTap: () => Navigator.of(context).pop(),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : Colors.black.withValues(alpha: 0.06),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 16,
+                              color: isDark ? Colors.white60 : kTextMuted,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     if (ctrl.isLoadingTask.value) ...[
                       const SizedBox(height: 8),
@@ -121,7 +182,7 @@ class _TaskDetailSheetContent extends StatelessWidget {
   }
 }
 
-// ── Body (rebuilds when task changes) ───────────────────────────
+// ── Body (rebuilds when task changes) ────────────────────────────────────────
 class _TaskDetailBody extends StatelessWidget {
   const _TaskDetailBody({
     required this.task,

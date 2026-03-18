@@ -20,12 +20,15 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding ?? kPageSectionPadding,
+      padding: kPageSectionPadding,
       child: Container(
         height: 44,
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? Colors.white24 : kTextMuted.withValues(alpha: 0.3),
+          ),
         ),
         child: TextField(
           controller: controller,
