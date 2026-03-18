@@ -25,28 +25,31 @@ class EmployeeTaskCard extends StatelessWidget {
     final statusColor = task.status.color;
     final ctrl = Get.find<EmployeeTaskController>();
     final currentId = ctrl.currentEmployeeId;
-    final statusLower = task.status.name.toLowerCase();
+    final statusNorm = task.status.name
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('_', '');
 
     final isPending = task.assignedToName == null;
-    final isAssigned = statusLower == 'assigned' &&
+    final isAssigned = statusNorm == 'assigned' &&
         task.assignedToId != null &&
         task.assignedToId == currentId;
-    final isAssignedOther = statusLower == 'assigned' &&
+    final isAssignedOther = statusNorm == 'assigned' &&
         task.assignedToId != null &&
         task.assignedToId != currentId;
-    final isInProgress = statusLower == 'inprogress' &&
+    final isInProgress = statusNorm == 'inprogress' &&
         task.assignedToId != null &&
         task.assignedToId == currentId;
-    final isInProgressOther = statusLower == 'inprogress' &&
+    final isInProgressOther = statusNorm == 'inprogress' &&
         task.assignedToId != null &&
         task.assignedToId != currentId;
-    final isInReview = statusLower == 'inreview' &&
+    final isInReview = statusNorm == 'inreview' &&
         task.assignedToId != null &&
         task.assignedToId == currentId;
-    final isInReviewOther = statusLower == 'inreview' &&
+    final isInReviewOther = statusNorm == 'inreview' &&
         task.assignedToId != null &&
         task.assignedToId != currentId;
-    final isCompleted = statusLower == 'completed' || statusLower == 'done';
+    final isCompleted = statusNorm == 'completed' || statusNorm == 'done';
 
     return Container(
       decoration: BoxDecoration(

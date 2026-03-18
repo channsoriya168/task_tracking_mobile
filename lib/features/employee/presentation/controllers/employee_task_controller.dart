@@ -191,6 +191,78 @@ class EmployeeTaskController extends GetxController {
     } catch (_) {}
   }
 
+  // ── Transition helpers ───────────────────────────────────────────────────
+
+  /// Replaces the task at [taskId] inside [allTasks] with a copy that has
+  /// [newStatus] (and optionally a new assignee).  Returns the updated copy,
+  /// or null if the task was not found in the list.
+  TaskItem? _locallyUpdateStatus(
+    String taskId,
+    TaskStatusLookup newStatus, {
+    String? newAssignedToId,
+    String? newAssignedToName,
+  }) {
+    final idx = allTasks.indexWhere((t) => t.id == taskId);
+    if (idx == -1) return null;
+    final t = allTasks[idx];
+    final updated = TaskItem(
+      id: t.id,
+      title: t.title,
+      description: t.description,
+      groupId: t.groupId,
+      groupName: t.groupName,
+      labelId: t.labelId,
+      labelName: t.labelName,
+      labelColor: t.labelColor,
+      assignedToId: newAssignedToId ?? t.assignedToId,
+      assignedToName: newAssignedToName ?? t.assignedToName,
+      assignedToProfileImageUrl: t.assignedToProfileImageUrl,
+      createdById: t.createdById,
+      createdByEmployeeName: t.createdByEmployeeName,
+      priority: t.priority,
+      status: newStatus,
+      startDate: t.startDate,
+      dueDate: t.dueDate,
+      completedAt: t.completedAt,
+      createdAt: t.createdAt,
+      updatedAt: DateTime.now(),
+      allowedTransitions: t.allowedTransitions,
+    );
+    allTasks[idx] = updated;
+    return updated;
+  }
+
+  /// Shared execution path for every status transition:
+  /// 1. Runs [apiWork] (the API calls).
+  /// 2. Immediately updates the task in [allTasks] so the UI never loses it.
+  /// 3. Switches the filter to [newStatus] so the user lands on the right tab.
+  ///
+  /// No re-fetch is done here — [allTasks] already holds the full list from
+  /// the last calendar/search fetch, so every task in the new status is
+  /// already present and will appear correctly after the local update.
+  Future<bool> _runTransition(
+    TaskItem task,
+    TaskStatusLookup newStatus,
+    Future<void> Function() apiWork, {
+    String? newAssignedToId,
+    String? newAssignedToName,
+  }) async {
+    try {
+      await apiWork();
+      _locallyUpdateStatus(
+        task.id,
+        newStatus,
+        newAssignedToId: newAssignedToId,
+        newAssignedToName: newAssignedToName,
+      );
+      selectStatus(newStatus);
+      return true;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      return false;
+    }
+  }
+
   /// Sets the task status to "In Progress".
   Future<bool> setInProgress(TaskItem task) async {
     final inProgressStatus = taskStatus.firstWhereOrNull((s) {
@@ -201,15 +273,11 @@ class EmployeeTaskController extends GetxController {
       errorMessage.value = 'In Progress status not found. Please try again.';
       return false;
     }
-    try {
-      await _updateStatus(task.id, inProgressStatus.id);
-      selectStatus(inProgressStatus);
-      await fetchTasks();
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
+    return _runTransition(
+      task,
+      inProgressStatus,
+      () => _updateStatus(task.id, inProgressStatus.id),
+    );
   }
 
   /// Accepts the task by assigning it to the current employee and setting status to Assigned.
@@ -219,24 +287,24 @@ class EmployeeTaskController extends GetxController {
       errorMessage.value = 'Employee profile not found.';
       return false;
     }
-
     final assignedStatus = taskStatus
         .firstWhereOrNull((s) => s.name.toLowerCase() == 'assigned');
     if (assignedStatus == null) {
       errorMessage.value = 'Assigned status not found. Please try again.';
       return false;
     }
-
-    try {
-      await _assignTask(task.id, employeeId);
-      await _updateStatus(task.id, assignedStatus.id);
-      selectStatus(assignedStatus);
-      await fetchTasks();
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
+    final employeeName =
+        Get.find<AuthController>().profile.value?.fullName;
+    return _runTransition(
+      task,
+      assignedStatus,
+      () async {
+        await _assignTask(task.id, employeeId);
+        await _updateStatus(task.id, assignedStatus.id);
+      },
+      newAssignedToId: employeeId,
+      newAssignedToName: employeeName,
+    );
   }
 
   // ── Member management ────────────────────────────────────────────────────
@@ -368,15 +436,11 @@ class EmployeeTaskController extends GetxController {
       errorMessage.value = 'Completed status not found. Please try again.';
       return false;
     }
-    try {
-      await _updateStatus(task.id, completedStatus.id);
-      selectStatus(completedStatus);
-      await fetchTasks();
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
+    return _runTransition(
+      task,
+      completedStatus,
+      () => _updateStatus(task.id, completedStatus.id),
+    );
   }
 
   /// Moves the task to "In Review" status.
@@ -389,14 +453,10 @@ class EmployeeTaskController extends GetxController {
       errorMessage.value = 'In Review status not found. Please try again.';
       return false;
     }
-    try {
-      await _updateStatus(task.id, inReviewStatus.id);
-      selectStatus(inReviewStatus);
-      await fetchTasks();
-      return true;
-    } catch (e) {
-      errorMessage.value = e.toString();
-      return false;
-    }
+    return _runTransition(
+      task,
+      inReviewStatus,
+      () => _updateStatus(task.id, inReviewStatus.id),
+    );
   }
 }
