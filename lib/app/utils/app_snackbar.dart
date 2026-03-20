@@ -23,7 +23,10 @@ class AppSnackbar {
 
   /// Extracts a human-readable message from a backend error.
   /// Handles DioException response bodies with `message` or `errors` fields.
-  static String parseApiError(Object? err, {String fallback = 'Something went wrong.'}) {
+  static String parseApiError(
+    Object? err, {
+    String fallback = 'Something went wrong.',
+  }) {
     if (err is DioException) {
       final data = err.response?.data;
       if (data is Map) {
@@ -34,7 +37,9 @@ class AppSnackbar {
         if (data['errors'] is Map) {
           final errors = data['errors'] as Map;
           final messages = errors.values
-              .expand((v) => v is List ? v.map((e) => e.toString()) : [v.toString()])
+              .expand(
+                (v) => v is List ? v.map((e) => e.toString()) : [v.toString()],
+              )
               .take(3)
               .join('\n');
           if (messages.isNotEmpty) return messages;

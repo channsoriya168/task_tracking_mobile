@@ -27,7 +27,6 @@ class EmployeeBinding extends Bindings {
       () => EmployeeTaskController(
         FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
         FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
-        AssignTaskItemUsecase(Get.find<TaskItemRepository>()),
         UpdateTaskItemStatusUsecase(Get.find<TaskItemRepository>()),
       ),
       fenix: true,
@@ -49,6 +48,8 @@ class EmployeeBinding extends Bindings {
       () => HomeController(
         FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
         FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
+        AssignTaskItemUsecase(Get.find<TaskItemRepository>()),
+        UpdateTaskItemStatusUsecase(Get.find<TaskItemRepository>()),
       ),
       fenix: true,
     );

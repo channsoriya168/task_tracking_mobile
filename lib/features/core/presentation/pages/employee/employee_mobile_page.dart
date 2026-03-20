@@ -29,6 +29,7 @@ class EmployeeMobilePage extends StatelessWidget {
             hintText: 'Search employees...',
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
           ),
+
           Expanded(
             child: EmployeeListWidget(isDark: isDark, ctrl: ctrl),
           ),

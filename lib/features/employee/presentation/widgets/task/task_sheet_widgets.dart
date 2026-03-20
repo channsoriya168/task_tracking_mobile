@@ -5,8 +5,12 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/user_ava
 // ── Label chip ────────────────────────────────────────────────────────────────
 
 class TaskLabelChip extends StatelessWidget {
-  const TaskLabelChip(
-      {super.key, required this.name, required this.color, required this.isDark});
+  const TaskLabelChip({
+    super.key,
+    required this.name,
+    required this.color,
+    required this.isDark,
+  });
   final String name;
   final Color color;
   final bool isDark;
@@ -20,9 +24,14 @@ class TaskLabelChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
-      child: Text(name,
-          style: TextStyle(
-              fontSize: 12, fontWeight: FontWeight.w600, color: color)),
+      child: Text(
+        name,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
     );
   }
 }
@@ -46,11 +55,14 @@ class TaskAssigneeRow extends StatelessWidget {
       children: [
         UserAvatarWidget(name: name, imageUrl: imageUrl, radius: 14),
         const SizedBox(width: 8),
-        Text(name,
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : kTextDark)),
+        Text(
+          name,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white : kTextDark,
+          ),
+        ),
       ],
     );
   }
@@ -59,11 +71,12 @@ class TaskAssigneeRow extends StatelessWidget {
 // ── Sheet button ──────────────────────────────────────────────────────────────
 
 class TaskSheetButton extends StatelessWidget {
-  const TaskSheetButton(
-      {super.key,
-      required this.label,
-      required this.isDark,
-      required this.onPressed});
+  const TaskSheetButton({
+    super.key,
+    required this.label,
+    required this.isDark,
+    required this.onPressed,
+  });
   final String label;
   final bool isDark;
   final VoidCallback onPressed;
@@ -82,9 +95,10 @@ class TaskSheetButton extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white70 : kTextMuted),
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white70 : kTextMuted,
+        ),
       ),
     );
   }
@@ -99,38 +113,43 @@ class TaskTransitionButton extends StatelessWidget {
     required this.color,
     required this.loading,
     required this.onTap,
+    this.width,
   });
 
   final String label;
   final Color color;
   final bool loading;
   final VoidCallback onTap;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: loading ? null : onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        minimumSize: const Size(0, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      child: loading
-          ? const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.white,
+    return SizedBox(
+      width: width,
+      child: ElevatedButton(
+        onPressed: loading ? null : onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          minimumSize: const Size(0, 48),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: loading
+            ? const SizedBox(
+                width: 24,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : Text(
+                label,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
               ),
-            )
-          : Text(
-              label,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-              overflow: TextOverflow.ellipsis,
-            ),
+      ),
     );
   }
 }
@@ -161,8 +180,7 @@ class TaskDetailRow extends StatelessWidget {
         const SizedBox(width: 8),
         SizedBox(
           width: 90,
-          child: Text(label,
-              style: TextStyle(fontSize: 13, color: mutedColor)),
+          child: Text(label, style: TextStyle(fontSize: 13, color: mutedColor)),
         ),
         Expanded(child: child),
       ],

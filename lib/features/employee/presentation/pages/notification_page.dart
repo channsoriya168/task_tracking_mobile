@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/home_controller.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -11,14 +11,14 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final taskCtrl = Get.find<EmployeeTaskController>();
+    final homeCtrl = Get.find<HomeController>();
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
       body: SafeArea(
         child: Obx(() {
           // Unassigned tasks are the "new task requests".
-          final pendingTasks = taskCtrl.allTasks
+          final pendingTasks = homeCtrl.allTasks
               .where((t) => t.assignedToId == null)
               .toList();
 
@@ -150,7 +150,7 @@ class NotificationPage extends StatelessWidget {
                         isDark: isDark,
                         task: pendingTasks[index],
                         index: index,
-                        taskCtrl: taskCtrl,
+                        homeCtrl: homeCtrl,
                       ),
                       childCount: pendingTasks.length,
                     ),
@@ -172,13 +172,13 @@ class _NotificationCard extends StatelessWidget {
     required this.isDark,
     required this.task,
     required this.index,
-    required this.taskCtrl,
+    required this.homeCtrl,
   });
 
   final bool isDark;
   final TaskItem task;
   final int index;
-  final EmployeeTaskController taskCtrl;
+  final HomeController homeCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -364,7 +364,7 @@ class _NotificationCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       // Accept
                       GestureDetector(
-                        onTap: () => taskCtrl.acceptTask(task),
+                        onTap: () => homeCtrl.acceptTask(task),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,

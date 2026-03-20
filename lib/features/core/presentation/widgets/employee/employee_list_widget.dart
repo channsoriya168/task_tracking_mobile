@@ -34,12 +34,13 @@ class EmployeeListWidget extends StatelessWidget {
         );
       }
       return ListView.separated(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
         itemCount: employees.length,
         separatorBuilder: (_, __) => const SizedBox(height: 10),
         itemBuilder: (_, i) {
           final emp = employees[i];
-          final taskGroup = Get.find<TaskGroupController>().taskGroupForEmployee(emp);
+          final taskGroup = Get.find<TaskGroupController>()
+              .taskGroupForEmployee(emp);
           return EmployeeCardWidget(
             isDark: isDark,
             ctrl: ctrl,

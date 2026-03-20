@@ -4,7 +4,6 @@ import 'package:task_tracking_mobile/features/core/presentation/controllers/navi
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/assign_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_comment_controller.dart';
@@ -14,38 +13,27 @@ import 'package:task_tracking_mobile/features/employee/presentation/controllers/
 class EmployeeTaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
   final FetchTaskStatusesUsecase _fetchStatuses;
-  final AssignTaskItemUsecase _assignTask;
   final UpdateTaskItemStatusUsecase _updateStatus;
 
   EmployeeTaskController(
     this._fetchTaskItems,
     this._fetchStatuses,
-    this._assignTask,
     this._updateStatus,
   );
 
   // ── State ────────────────────────────────────────────────────────────────
 
-  /// Raw API result — full group task list.
   final RxList<TaskItem> allTasks = <TaskItem>[].obs;
-
-  /// My tasks only — excludes pending and tasks not assigned to me.
-  /// Passed to the filter bar so chip counts reflect only my tasks.
   final RxList<TaskItem> myTasks = <TaskItem>[].obs;
-
   final RxList<TaskStatusLookup> taskStatus = <TaskStatusLookup>[].obs;
 
-  /// Active status filter chip.
   final RxString filterStatus = 'All'.obs;
   final Rxn<int> filterStatusId = Rxn<int>();
-
   final RxString searchQuery = ''.obs;
   final Rxn<DateTime> taskSelectedDate = Rxn<DateTime>();
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-
-  /// Loading state for the detail-sheet primary action button.
   final RxBool actionLoading = false.obs;
 
   // ── Computed ─────────────────────────────────────────────────────────────
@@ -53,7 +41,6 @@ class EmployeeTaskController extends GetxController {
   String? get currentEmployeeId =>
       Get.find<AuthController>().profile.value?.employeeId;
 
-  /// Tasks shown in the list — my tasks with optional status filter applied.
   List<TaskItem> get filteredTasks {
     if (filterStatusId.value == null) return myTasks.toList();
     return myTasks.where((t) => t.status.id == filterStatusId.value).toList();
@@ -71,20 +58,15 @@ class EmployeeTaskController extends GetxController {
     fetchTasks();
     fetchStatuses();
 
-    // Rebuild myTasks whenever allTasks changes.
     ever(allTasks, (_) => _refreshMyTasks());
-
-    // Status chip change → re-filter client-side.
     ever(filterStatusId, (_) => myTasks.refresh());
 
-    // Search input → debounced API call.
     debounce(
       searchQuery,
       (_) => fetchTasks(),
       time: const Duration(milliseconds: 500),
     );
 
-    // Re-fetch when navigating back to My Tasks tab (index 1).
     ever(Get.find<NavigationController>().selectedIndex, (int idx) {
       if (idx == 1) fetchTasks();
     });
@@ -178,13 +160,9 @@ class EmployeeTaskController extends GetxController {
 
   // ── Status transitions ───────────────────────────────────────────────────
 
-  Future<bool> _runTransition(
-    TaskItem task,
-    TaskStatusLookup newStatus,
-    Future<void> Function() apiWork,
-  ) async {
+  Future<bool> transitionTask(TaskItem task, TaskStatusLookup newStatus) async {
     try {
-      await apiWork();
+      await _updateStatus(task.id, newStatus.id);
       await fetchTasks();
       selectStatus(newStatus);
       return true;
@@ -192,31 +170,5 @@ class EmployeeTaskController extends GetxController {
       errorMessage.value = e.toString();
       return false;
     }
-  }
-
-  Future<bool> acceptTask(TaskItem task) async {
-    final employeeId = currentEmployeeId;
-    if (employeeId == null || employeeId.isEmpty) {
-      errorMessage.value = 'Employee profile not found.';
-      return false;
-    }
-    if (task.allowedTransitions.isEmpty) {
-      errorMessage.value = 'No available transition for this task.';
-      return false;
-    }
-    final newStatus = task.allowedTransitions.first;
-    return _runTransition(task, newStatus, () async {
-      await _assignTask(task.id, employeeId);
-      await _updateStatus(task.id, newStatus.id);
-    });
-  }
-
-  /// Generic transition — uses the status directly from [task.allowedTransitions].
-  Future<bool> transitionTask(TaskItem task, TaskStatusLookup newStatus) async {
-    return _runTransition(
-      task,
-      newStatus,
-      () => _updateStatus(task.id, newStatus.id),
-    );
   }
 }

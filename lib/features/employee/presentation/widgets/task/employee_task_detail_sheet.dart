@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/helper/format_date.dart';
+import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
@@ -8,6 +9,8 @@ import 'package:task_tracking_mobile/features/core/domain/entities/task_item_sta
 import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/controllers/home_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_comment_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_member_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_progress_controller.dart';
@@ -85,9 +88,13 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
   Future<void> _handleAccept() async {
     if (_loadingId.value != null) return;
     _loadingId.value = -1;
-    final success = await ctrl.acceptTask(task);
+    final success = await Get.find<HomeController>().acceptTask(task);
     _loadingId.value = null;
-    if (success && mounted) Navigator.pop(context);
+    if (success && mounted) {
+      Navigator.pop(context);
+      AppSnackbar.success('Task Accepted', 'You have accepted "${task.title}"');
+      Get.find<NavigationController>().changePage(1);
+    }
   }
 
   Future<void> _handleTransition(TaskStatusLookup newStatus) async {
@@ -95,7 +102,10 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     _loadingId.value = newStatus.id;
     final success = await ctrl.transitionTask(task, newStatus);
     _loadingId.value = null;
-    if (success && mounted) Navigator.pop(context);
+    if (success && mounted) {
+      Navigator.pop(context);
+      AppSnackbar.update('Status Updated', 'Task status changed to "${newStatus.name}"');
+    }
   }
 
   // ── Member helpers ───────────────────────────────────────────────────────
@@ -551,7 +561,8 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
 
         if (_isPending) {
           return TaskTransitionButton(
-            label: 'Accept',
+            width: double.infinity,
+            label: 'Accept Task',
             color: task.allowedTransitions.first.color,
             loading: activeId == -1,
             onTap: _handleAccept,

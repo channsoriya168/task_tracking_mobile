@@ -3,13 +3,22 @@ import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/assign_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/fetch_task_item.usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/task_item/update_task_item_status_usecase.dart';
 
 class HomeController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
   final FetchTaskStatusesUsecase _fetchStatuses;
+  final AssignTaskItemUsecase _assignTask;
+  final UpdateTaskItemStatusUsecase _updateStatus;
 
-  HomeController(this._fetchTaskItems, this._fetchStatuses);
+  HomeController(
+    this._fetchTaskItems,
+    this._fetchStatuses,
+    this._assignTask,
+    this._updateStatus,
+  );
 
   // ── State ────────────────────────────────────────────────────────────────
 
@@ -21,6 +30,28 @@ class HomeController extends GetxController {
   final Rxn<int> filterStatusId = Rxn<int>();
   final RxString searchQuery = ''.obs;
   final Rxn<DateTime> selectedDate = Rxn<DateTime>();
+
+  // ── Computed ─────────────────────────────────────────────────────────────
+
+  String get employeeName =>
+      Get.find<AuthController>().profile.value?.fullName ?? '';
+
+  /// All group tasks filtered by status and search query.
+  /// Date filtering is handled by the API — no client-side date re-filter.
+  List<TaskItem> get filteredTasks {
+    var tasks = allTasks.toList();
+
+    if (filterStatusId.value != null) {
+      tasks = tasks.where((t) => t.status.id == filterStatusId.value).toList();
+    }
+
+    final q = searchQuery.value.trim().toLowerCase();
+    if (q.isNotEmpty) {
+      tasks = tasks.where((t) => t.title.toLowerCase().contains(q)).toList();
+    }
+
+    return tasks;
+  }
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
 
@@ -71,64 +102,6 @@ class HomeController extends GetxController {
     } catch (_) {}
   }
 
-  // ── Computed ─────────────────────────────────────────────────────────────
-
-  List<TaskItem> get filteredTasks {
-    var tasks = allTasks.toList();
-
-    final sel = selectedDate.value;
-    if (sel != null) {
-      tasks = tasks.where((t) {
-        final d = t.dueDate ?? t.startDate ?? t.createdAt;
-        if (d == null) return false;
-        return d.year == sel.year && d.month == sel.month && d.day == sel.day;
-      }).toList();
-    }
-
-    if (filterStatusId.value != null) {
-      tasks = tasks.where((t) => t.status.id == filterStatusId.value).toList();
-    }
-
-    final q = searchQuery.value.trim().toLowerCase();
-    if (q.isNotEmpty) {
-      tasks = tasks.where((t) => t.title.toLowerCase().contains(q)).toList();
-    }
-
-    return tasks;
-  }
-
-  /// Tasks grouped by status name (respects date/status/search filters).
-  Map<String, List<TaskItem>> get groupedTasks {
-    final Map<String, List<TaskItem>> groups = {};
-    for (final task in filteredTasks) {
-      groups.putIfAbsent(task.status.name, () => []).add(task);
-    }
-    return groups;
-  }
-
-  /// All tasks grouped by task group name (no date/status filter).
-  Map<String, List<TaskItem>> get tasksByGroup {
-    final Map<String, List<TaskItem>> groups = {};
-    for (final task in allTasks) {
-      final key = task.groupName ?? 'No Group';
-      groups.putIfAbsent(key, () => []).add(task);
-    }
-    return groups;
-  }
-
-  /// { groupName → { statusName → count } }
-  Map<String, Map<String, int>> get statusCountByGroup {
-    final result = <String, Map<String, int>>{};
-    for (final entry in tasksByGroup.entries) {
-      final counts = <String, int>{};
-      for (final task in entry.value) {
-        counts[task.status.name] = (counts[task.status.name] ?? 0) + 1;
-      }
-      result[entry.key] = counts;
-    }
-    return result;
-  }
-
   // ── Actions ──────────────────────────────────────────────────────────────
 
   void selectDate(DateTime? date) {
@@ -145,6 +118,23 @@ class HomeController extends GetxController {
     } else {
       filterStatus.value = status.name;
       filterStatusId.value = status.id;
+    }
+  }
+
+  // ── Accept task ───────────────────────────────────────────────────────────
+
+  Future<bool> acceptTask(TaskItem task) async {
+    final employeeId =
+        Get.find<AuthController>().profile.value?.employeeId ?? '';
+    if (employeeId.isEmpty || task.allowedTransitions.isEmpty) return false;
+    final newStatus = task.allowedTransitions.first;
+    try {
+      await _assignTask(task.id, employeeId);
+      await _updateStatus(task.id, newStatus.id);
+      await fetchTasks();
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 }
