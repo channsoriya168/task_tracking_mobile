@@ -27,10 +27,12 @@ class AdminDashboardMobilePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
-      body: Obx(() {
-        final filtered = adminTaskCtrl.filteredTasks;
+      body: RefreshIndicator(
+        onRefresh: adminTaskCtrl.fetchTasks,
+        child: Obx(() {
+          final filtered = adminTaskCtrl.filteredTasks;
 
-        return CustomScrollView(
+          return CustomScrollView(
           slivers: [
             // ── App Bar ───────────────────────────────────────
             SliverAppBar(
@@ -301,7 +303,8 @@ class AdminDashboardMobilePage extends StatelessWidget {
             const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
           ],
         );
-      }),
+        }),
+      ),
     );
   }
 }

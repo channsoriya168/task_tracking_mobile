@@ -21,7 +21,9 @@ class AdminDashboardTabletPage extends StatelessWidget {
 
     return ColoredBox(
       color: isDark ? kBgDark : kBgLight,
-      child: CustomScrollView(
+      child: RefreshIndicator(
+        onRefresh: taskCtrl.fetchTasks,
+        child: CustomScrollView(
         slivers: [
           // ── App Bar ───────────────────────────────────────
           SliverAppBar(
@@ -142,6 +144,7 @@ class AdminDashboardTabletPage extends StatelessWidget {
           const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
         ],
       ),
+    ),
     );
   }
 }
