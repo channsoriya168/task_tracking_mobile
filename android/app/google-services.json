@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216125357819",
+    "project_id": "tasktrackingsystem-3230f",
+    "storage_bucket": "tasktrackingsystem-3230f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216125357819:android:3132e9dd628191d4f4ba5e",
+        "android_client_info": {
+          "package_name": "com.example.task_tracking_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDYWxMCesrMdrE6udcyLyhzcQk8ioFjtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/services/push_notification_service.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
@@ -15,6 +17,14 @@ class SplashBinding extends Bindings {
     );
     Get.put<AuthController>(AuthController(), permanent: true);
     Get.put<NavigationController>(NavigationController(), permanent: true);
+
+    // Initialize push notification service
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    Get.putAsync<PushNotificationService>(
+      () => PushNotificationService().init(),
+      permanent: true,
+    );
+
     Get.lazyPut(() => SplashController());
   }
 }

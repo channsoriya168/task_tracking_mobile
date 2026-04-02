@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/app/services/push_notification_service.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
@@ -93,6 +94,10 @@ class AuthController extends GetxController {
       );
       currentAuth.value = auth;
       fetchProfile();
+
+      // Register FCM token with backend
+      _registerPushToken();
+
       Get.find<NavigationController>().changePage(0);
       Get.offAllNamed(AppRoutes.mainPage);
       Get.snackbar(
@@ -268,9 +273,31 @@ class AuthController extends GetxController {
 
   // ── Logout ───────────────────────────────────────────────
   Future<void> logout() async {
+    // Unregister FCM token before clearing session
+    await _unregisterPushToken();
+
     await _logoutUsecase();
     currentAuth.value = null;
     Get.find<NavigationController>().changePage(0);
     Get.offAllNamed(AppRoutes.login);
+  }
+
+  // ── Push notification helpers ────────────────────────────
+  void _registerPushToken() {
+    try {
+      final pushService = Get.find<PushNotificationService>();
+      pushService.registerToken();
+    } catch (_) {
+      // PushNotificationService may not be initialized yet — silently skip
+    }
+  }
+
+  Future<void> _unregisterPushToken() async {
+    try {
+      final pushService = Get.find<PushNotificationService>();
+      await pushService.unregisterToken();
+    } catch (_) {
+      // Silently ignore — logout should always succeed
+    }
   }
 }

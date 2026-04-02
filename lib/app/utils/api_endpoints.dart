@@ -40,4 +40,17 @@ abstract class ApiEndpoints {
   // ── Labels ────────────────────────────────────────────────
   static const String labels = '/api/v1/Labels';
   static String labelById(String id) => '/api/v1/Labels/$id';
+
+  // ── Device Tokens ────────────────────────────────────────
+  static const String deviceTokens = '/api/v1/device-tokens';
+
+  // ── Notifications ────────────────────────────────────────
+  static const String notifications = '/api/v1/notifications';
+  static const String notificationsUnreadCount =
+      '/api/v1/notifications/unread-count';
+  static String notificationMarkRead(String id) =>
+      '/api/v1/notifications/$id/read';
+  static const String notificationsMarkAllRead =
+      '/api/v1/notifications/read-all';
+  static String notificationById(String id) => '/api/v1/notifications/$id';
 }

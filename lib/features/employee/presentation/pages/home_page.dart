@@ -8,7 +8,7 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/task/tas
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/home_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_task_card.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/notification_page.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_bell_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
 
 class HomePage extends StatelessWidget {
@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
             // ── Greeting header ───────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 20, 8, 0),
                 child: Row(
                   children: [
                     Expanded(
@@ -64,29 +64,8 @@ class HomePage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // ── Notification icon ──────────────────────
-                    InkWell(
-                      onTap: () => Get.to(
-                        () => const NotificationPage(),
-                        transition: Transition.rightToLeft,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.black.withValues(alpha: 0.05),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.notifications_outlined,
-                          size: 20,
-                          color: isDark ? Colors.white70 : kTextDark,
-                        ),
-                      ),
-                    ),
+                    // ── Notification bell ──────────────────────
+                    const NotificationBellWidget(),
                   ],
                 ),
               ),

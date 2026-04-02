@@ -31,6 +31,10 @@ import 'package:task_tracking_mobile/features/core/presentation/bindings/task_bi
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/bindings/employee_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/notification/data/datasources/notification_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/notification/data/repositories/notification_repository_impl.dart';
+import 'package:task_tracking_mobile/features/notification/domain/repositories/notification_repository.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -53,6 +57,10 @@ class AppBinding extends Bindings {
       LabelRepositoryImpl(LabelRemoteDatasource()),
       permanent: true,
     );
+    Get.put<NotificationRepository>(
+      NotificationRepositoryImpl(NotificationRemoteDatasource()),
+      permanent: true,
+    );
 
     // ── Image ─────────────────────────────────────────────────
     Get.lazyPut(() => ImageService(), fenix: true);
@@ -62,6 +70,12 @@ class AppBinding extends Bindings {
     if (!Get.isRegistered<NavigationController>()) {
       Get.put<NavigationController>(NavigationController(), permanent: true);
     }
+
+    // ── Notification controller ───────────────────────────────
+    Get.put<NotificationController>(
+      NotificationController(Get.find<NotificationRepository>()),
+      permanent: true,
+    );
 
     // ── Feature bindings ──────────────────────────────────────
     ManagerTaskBinding().dependencies();

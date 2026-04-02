@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,6 +12,8 @@ import 'package:task_tracking_mobile/features/core/presentation/controllers/them
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
+  await Firebase.initializeApp();
+
   Get.put<ThemeController>(ThemeController(), permanent: true);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

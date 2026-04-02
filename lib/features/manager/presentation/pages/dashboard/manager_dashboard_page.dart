@@ -11,6 +11,7 @@ import 'package:task_tracking_mobile/features/manager/presentation/widgets/dashb
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/task_empty_state.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_shimmer_widget.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_bell_widget.dart';
 
 class ManagerDashboardPage extends StatelessWidget {
   const ManagerDashboardPage({super.key});
@@ -53,40 +54,9 @@ class ManagerDashboardPage extends StatelessWidget {
                   color: textColor,
                 ),
               ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: isDark ? kCardDark : Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.10)
-                              : Colors.black.withValues(alpha: 0.08),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(
-                              alpha: isDark ? 0.25 : 0.08,
-                            ),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.notifications_outlined,
-                        size: 22,
-                        color: isDark ? Colors.white : kTextDark,
-                      ),
-                    ),
-                  ),
-                ),
+              actions: const [
+                NotificationBellWidget(),
+                SizedBox(width: 8),
               ],
             ),
 

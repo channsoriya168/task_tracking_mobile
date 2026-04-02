@@ -6,6 +6,7 @@ import 'package:task_tracking_mobile/features/auth/presentation/pages/login_page
 import 'package:task_tracking_mobile/features/auth/presentation/pages/splash_page.dart';
 import 'package:task_tracking_mobile/features/core/presentation/bindings/app_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/pages/main_page.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/pages/notification_page.dart';
 
 class AppPages {
   static final routes = [
@@ -20,6 +21,10 @@ class AppPages {
       page: () => const MainPage(),
       binding: AppBinding(),
       middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: AppRoutes.notifications,
+      page: () => const NotificationPage(),
     ),
   ];
 }
