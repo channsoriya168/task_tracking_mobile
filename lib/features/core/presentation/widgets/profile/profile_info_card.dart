@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_shared_widgets.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_card.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_info_row.dart';
 
-class ProfileInfoCardWidget extends StatelessWidget {
-  const ProfileInfoCardWidget({
+class ProfileInfoCard extends StatelessWidget {
+  const ProfileInfoCard({
     super.key,
     required this.isDark,
     required this.fullName,

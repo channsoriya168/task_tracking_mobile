@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
-class ProfileHeaderWidget extends StatelessWidget {
-  const ProfileHeaderWidget({
+class ProfileHeader extends StatelessWidget {
+  const ProfileHeader({
     super.key,
     required this.isDark,
     required this.name,

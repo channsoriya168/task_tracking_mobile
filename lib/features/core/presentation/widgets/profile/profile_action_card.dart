@@ -4,11 +4,12 @@ import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/change_password_sheet.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_shared_widgets.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_action_row.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_card.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_change_password_sheet.dart';
 
-class ProfileActionCardWidget extends StatelessWidget {
-  const ProfileActionCardWidget({super.key, required this.isDark});
+class ProfileActionCard extends StatelessWidget {
+  const ProfileActionCard({super.key, required this.isDark});
 
   final bool isDark;
 
@@ -34,7 +35,7 @@ class ProfileActionCardWidget extends StatelessWidget {
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (_) => ChangePasswordSheet(isDark: isDark),
+                  builder: (_) => ProfileChangePasswordSheet(isDark: isDark),
                 );
               },
             ),

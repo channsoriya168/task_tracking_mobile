@@ -2,32 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_shared_widgets.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/password_input_widget.dart';
 
-class ChangePasswordSheet extends StatelessWidget {
-  const ChangePasswordSheet({super.key, required this.isDark});
+class ProfileChangePasswordSheet extends StatelessWidget {
+  const ProfileChangePasswordSheet({super.key, required this.isDark});
 
   final bool isDark;
-
-  String _currentFieldError(String err) {
-    if (err.contains('required')) return 'Current password is required.';
-    if (err.contains('incorrect')) return 'Current password is incorrect.';
-    return '';
-  }
-
-  String _newFieldError(String err) {
-    if (err.contains('required')) return 'New password is required.';
-    if (err.contains('Min 8'))
-      return 'Min 8 chars · uppercase · lowercase · number · special.';
-    if (err.contains('match')) return 'Passwords do not match.';
-    return '';
-  }
-
-  String _confirmFieldError(String err) {
-    if (err.contains('required')) return 'Please confirm your new password.';
-    if (err.contains('match')) return 'Passwords do not match.';
-    return '';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,31 +62,26 @@ class ChangePasswordSheet extends StatelessWidget {
               const SizedBox(height: 20),
 
               // ── Current password ───────────────────────────
-              PasswordFieldWidget(
+              PasswordInputWidget(
                 controller: ctrl.currentPasswordController,
                 label: 'Current Password',
+                hint: 'Enter current password',
                 isDark: isDark,
-                obscure: ctrl.obscureCurrent.value,
-                onToggle: () =>
-                    ctrl.obscureCurrent.value = !ctrl.obscureCurrent.value,
-                hasError: _currentFieldError(err).isNotEmpty,
+                errorText: _currentFieldError(err).isEmpty
+                    ? null
+                    : _currentFieldError(err),
               ),
-              _FieldError(message: _currentFieldError(err)),
-
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
               // ── New password ───────────────────────────────
-              PasswordFieldWidget(
+              PasswordInputWidget(
                 controller: ctrl.newPasswordController,
                 label: 'New Password',
+                hint: 'Enter new password',
                 isDark: isDark,
-                obscure: ctrl.obscureNew.value,
-                onToggle: () => ctrl.obscureNew.value = !ctrl.obscureNew.value,
-                hasError: _newFieldError(err).isNotEmpty,
+                errorText:
+                    _newFieldError(err).isEmpty ? null : _newFieldError(err),
               ),
-              _FieldError(message: _newFieldError(err)),
-
-              // ── Password hint (shown only when no new-field error) ──
               if (_newFieldError(err).isEmpty) ...[
                 const SizedBox(height: 6),
                 Row(
@@ -129,21 +104,18 @@ class ChangePasswordSheet extends StatelessWidget {
                   ],
                 ),
               ],
-
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
               // ── Confirm password ───────────────────────────
-              PasswordFieldWidget(
+              PasswordInputWidget(
                 controller: ctrl.confirmPasswordController,
                 label: 'Confirm New Password',
+                hint: 'Re-enter new password',
                 isDark: isDark,
-                obscure: ctrl.obscureConfirm.value,
-                onToggle: () =>
-                    ctrl.obscureConfirm.value = !ctrl.obscureConfirm.value,
-                hasError: _confirmFieldError(err).isNotEmpty,
+                errorText: _confirmFieldError(err).isEmpty
+                    ? null
+                    : _confirmFieldError(err),
               ),
-              _FieldError(message: _confirmFieldError(err)),
-
               const SizedBox(height: 20),
 
               // ── Submit button ──────────────────────────────
@@ -186,34 +158,24 @@ class ChangePasswordSheet extends StatelessWidget {
       ),
     );
   }
-}
 
-class _FieldError extends StatelessWidget {
-  const _FieldError({required this.message});
+  String _currentFieldError(String err) {
+    if (err.contains('required')) return 'Current password is required.';
+    if (err.contains('incorrect')) return 'Current password is incorrect.';
+    return '';
+  }
 
-  final String message;
+  String _newFieldError(String err) {
+    if (err.contains('required')) return 'New password is required.';
+    if (err.contains('Min 8'))
+      return 'Min 8 chars · uppercase · lowercase · number · special.';
+    if (err.contains('match')) return 'Passwords do not match.';
+    return '';
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    if (message.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(top: 6, left: 4),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.error_outline_rounded,
-            size: 13,
-            color: kHighPriority,
-          ),
-          const SizedBox(width: 5),
-          Expanded(
-            child: Text(
-              message,
-              style: const TextStyle(fontSize: 12, color: kHighPriority),
-            ),
-          ),
-        ],
-      ),
-    );
+  String _confirmFieldError(String err) {
+    if (err.contains('required')) return 'Please confirm your new password.';
+    if (err.contains('match')) return 'Passwords do not match.';
+    return '';
   }
 }

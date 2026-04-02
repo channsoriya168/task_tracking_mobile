@@ -22,7 +22,7 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_comp
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 
 class AuthController extends GetxController {
- final LoginUsecase loginUsecase;
+  final LoginUsecase loginUsecase;
   final LogoutUsecase logoutUsecase;
   final FetchProfileUsecase fetchProfileUsecase;
   final CheckAuthUsecase checkAuthUsecase;
@@ -52,9 +52,6 @@ class AuthController extends GetxController {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  final RxBool obscureCurrent = true.obs;
-  final RxBool obscureNew = true.obs;
-  final RxBool obscureConfirm = true.obs;
   final RxBool isChangingPassword = false.obs;
   final RxString changePasswordError = ''.obs;
   final RxBool isUploadingImage = false.obs;
@@ -86,6 +83,7 @@ class AuthController extends GetxController {
     confirmPasswordController.dispose();
     super.onClose();
   }
+
 
   // ── Login ────────────────────────────────────────────────
   void submitLogin() {
@@ -154,19 +152,17 @@ class AuthController extends GetxController {
 
   // ── Change password ───────────────────────────────────────
   Future<void> submitChangePassword() async {
-    final current = currentPasswordController.text.trim();
-    final newPass = newPasswordController.text;
-    final confirm = confirmPasswordController.text;
-
-    if (current.isEmpty || newPass.isEmpty || confirm.isEmpty) {
+    if (currentPasswordController.text.trim().isEmpty ||
+        newPasswordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
       changePasswordError.value = 'All fields are required.';
       return;
     }
-    if (newPass != confirm) {
+    if (newPasswordController.text != confirmPasswordController.text) {
       changePasswordError.value = 'New passwords do not match.';
       return;
     }
-    final passError = Validators.strongPassword(newPass);
+    final passError = Validators.strongPassword(newPasswordController.text);
     if (passError != null) {
       changePasswordError.value = passError;
       return;
@@ -176,9 +172,9 @@ class AuthController extends GetxController {
     changePasswordError.value = '';
     try {
       await changePasswordUsecase(
-        currentPassword: current,
-        newPassword: newPass,
-        confirmNewPassword: confirm,
+        currentPassword: currentPasswordController.text.trim(),
+        newPassword: newPasswordController.text,
+        confirmNewPassword: confirmPasswordController.text,
       );
       clearChangePasswordForm();
       Get.back();
@@ -206,9 +202,6 @@ class AuthController extends GetxController {
     currentPasswordController.clear();
     newPasswordController.clear();
     confirmPasswordController.clear();
-    obscureCurrent.value = true;
-    obscureNew.value = true;
-    obscureConfirm.value = true;
     changePasswordError.value = '';
   }
 
