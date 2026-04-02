@@ -14,12 +14,7 @@ class LoginBgCircles extends StatelessWidget {
           right: -60,
           child: _Circle(
             size: 220,
-            color: Color.fromRGBO(
-              kPrimary.r.toInt(),
-              kPrimary.g.toInt(),
-              kPrimary.b.toInt(),
-              isDark ? 0.15 : 0.08,
-            ),
+            color: kPrimary.withValues(alpha: isDark ? 0.15 : 0.08),
           ),
         ),
         Positioned(
@@ -27,12 +22,7 @@ class LoginBgCircles extends StatelessWidget {
           right: 40,
           child: _Circle(
             size: 80,
-            color: Color.fromRGBO(
-              kPrimary.r.toInt(),
-              kPrimary.g.toInt(),
-              kPrimary.b.toInt(),
-              isDark ? 0.2 : 0.12,
-            ),
+            color: kPrimary.withValues(alpha: isDark ? 0.2 : 0.12),
           ),
         ),
         Positioned(
@@ -40,12 +30,7 @@ class LoginBgCircles extends StatelessWidget {
           left: -70,
           child: _Circle(
             size: 260,
-            color: Color.fromRGBO(
-              kPrimary.r.toInt(),
-              kPrimary.g.toInt(),
-              kPrimary.b.toInt(),
-              isDark ? 0.12 : 0.07,
-            ),
+            color: kPrimary.withValues(alpha: isDark ? 0.12 : 0.07),
           ),
         ),
         Positioned(
@@ -53,12 +38,7 @@ class LoginBgCircles extends StatelessWidget {
           left: 30,
           child: _Circle(
             size: 60,
-            color: Color.fromRGBO(
-              kPrimary.r.toInt(),
-              kPrimary.g.toInt(),
-              kPrimary.b.toInt(),
-              isDark ? 0.18 : 0.1,
-            ),
+            color: kPrimary.withValues(alpha: isDark ? 0.18 : 0.1),
           ),
         ),
       ],

@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/services/push_notification_service.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
@@ -15,11 +14,26 @@ class SplashBinding extends Bindings {
       AuthRepositoryImpl(AuthRemoteDatasource()),
       permanent: true,
     );
-    Get.put<AuthController>(AuthController(), permanent: true);
+    Get.put<AuthController>(
+      AuthController(
+        loginUsecase: Get.find(),
+        logoutUsecase: Get.find(),
+        fetchProfileUsecase: Get.find(),
+        checkAuthUsecase: Get.find(),
+        refreshTokenUsecase: Get.find(),
+        changePasswordUsecase: Get.find(),
+        updateProfileUsecase: Get.find(),
+      ),
+      permanent: true,
+    );
     Get.put<NavigationController>(NavigationController(), permanent: true);
 
-    // Initialize push notification service
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    // Initialize push notification service.
+    // Note: onBackgroundMessage is intentionally omitted — FCM notification
+    // payloads are displayed automatically by the OS without a background
+    // handler. A handler is only needed for custom data-only message
+    // processing, which this app does not use. Registering one spawns a
+    // second Flutter engine that crashes on 16 KB-page-size emulators.
     Get.putAsync<PushNotificationService>(
       () => PushNotificationService().init(),
       permanent: true,

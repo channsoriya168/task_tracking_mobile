@@ -18,7 +18,7 @@ class MainPage extends StatelessWidget {
 
   List<NavItem> _navItemsForRole(UserRole? role) {
     switch (role) {
-      case UserRole.Manager:
+      case UserRole.manager:
         return const [
           NavItem(
             icon: Icons.dashboard_rounded,
@@ -41,7 +41,7 @@ class MainPage extends StatelessWidget {
             page: ProfilePage(),
           ),
         ];
-      case UserRole.Admin:
+      case UserRole.admin:
         return const [
           NavItem(
             icon: Icons.analytics_rounded,
@@ -64,7 +64,7 @@ class MainPage extends StatelessWidget {
             page: ProfilePage(),
           ),
         ];
-      case UserRole.Employee:
+      case UserRole.employee:
         return const [
           NavItem(icon: Icons.home, label: 'Home', page: HomePage()),
           NavItem(

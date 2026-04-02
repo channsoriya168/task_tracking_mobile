@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-enum UserRole { admin, manager, staff }
+import 'package:task_tracking_mobile/app/enums/user_role.dart';
 
 class UserModel {
   final String id;
@@ -24,7 +23,7 @@ class UserModel {
             .toLowerCase();
     final role = UserRole.values.firstWhere(
       (r) => r.name == roleStr,
-      orElse: () => UserRole.staff,
+      orElse: () => UserRole.employee,
     );
     return UserModel(
       id: json['id']?.toString() ?? json['userId']?.toString() ?? '',
@@ -49,8 +48,8 @@ class UserModel {
         return 'Admin';
       case UserRole.manager:
         return 'Manager';
-      case UserRole.staff:
-        return 'Staff';
+      case UserRole.employee:
+        return 'Employee';
     }
   }
 
@@ -60,7 +59,7 @@ class UserModel {
         return const Color(0xFF6C63FF);
       case UserRole.manager:
         return const Color(0xFFFFA502);
-      case UserRole.staff:
+      case UserRole.employee:
         return const Color(0xFF2ED573);
     }
   }
@@ -71,7 +70,7 @@ class UserModel {
         return Icons.admin_panel_settings_rounded;
       case UserRole.manager:
         return Icons.analytics_rounded;
-      case UserRole.staff:
+      case UserRole.employee:
         return Icons.work_rounded;
     }
   }
@@ -96,21 +95,21 @@ const List<UserModel> kSampleUsers = [
     id: 'staff1',
     name: 'Mike Chen',
     email: 'mike@company.com',
-    role: UserRole.staff,
+    role: UserRole.employee,
     avatarLetter: 'M',
   ),
   UserModel(
     id: 'staff2',
     name: 'Emma Davis',
     email: 'emma@company.com',
-    role: UserRole.staff,
+    role: UserRole.employee,
     avatarLetter: 'E',
   ),
   UserModel(
     id: 'staff3',
     name: 'James Wilson',
     email: 'james@company.com',
-    role: UserRole.staff,
+    role: UserRole.employee,
     avatarLetter: 'J',
   ),
 ];

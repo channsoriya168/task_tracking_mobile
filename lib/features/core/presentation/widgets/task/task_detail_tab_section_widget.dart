@@ -27,7 +27,7 @@ class TaskDetailTabSection extends StatelessWidget {
   static bool _computeCanComment() {
     try {
       final role = Get.find<AuthController>().role;
-      return role == UserRole.Admin || role == UserRole.Manager;
+      return role == UserRole.admin || role == UserRole.manager;
     } catch (_) {
       return false;
     }

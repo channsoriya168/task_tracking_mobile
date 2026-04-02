@@ -22,7 +22,7 @@ class EmployeeMenuController extends GetxController {
   /// Admins can always manage everyone.
   bool get isProtectedFromCurrentUser {
     final authRole = Get.find<AuthController>().role;
-    if (authRole != UserRole.Manager) return false;
+    if (authRole != UserRole.manager) return false;
     final targetRole = employee?.role?.toLowerCase() ?? '';
     return targetRole == 'manager' || targetRole == 'admin';
   }

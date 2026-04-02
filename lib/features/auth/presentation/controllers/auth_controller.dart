@@ -5,6 +5,7 @@ import 'package:task_tracking_mobile/app/services/push_notification_service.dart
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
+import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
@@ -21,13 +22,23 @@ import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_comp
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 
 class AuthController extends GetxController {
-  late final LoginUsecase _loginUsecase;
-  late final LogoutUsecase _logoutUsecase;
-  late final FetchProfileUsecase _fetchProfileUsecase;
-  late final CheckAuthUsecase _checkAuthUsecase;
-  late final RefreshTokenUsecase _refreshTokenUsecase;
-  late final ChangePasswordUsecase _changePasswordUsecase;
-  late final UpdateProfileUsecase _updateProfileUsecase;
+ final LoginUsecase loginUsecase;
+  final LogoutUsecase logoutUsecase;
+  final FetchProfileUsecase fetchProfileUsecase;
+  final CheckAuthUsecase checkAuthUsecase;
+  final RefreshTokenUsecase refreshTokenUsecase;
+  final ChangePasswordUsecase changePasswordUsecase;
+  final UpdateProfileUsecase updateProfileUsecase;
+
+  AuthController({
+    required this.loginUsecase,
+    required this.logoutUsecase,
+    required this.fetchProfileUsecase,
+    required this.checkAuthUsecase,
+    required this.refreshTokenUsecase,
+    required this.changePasswordUsecase,
+    required this.updateProfileUsecase,
+  });
 
   final Rx<Auth?> currentAuth = Rx<Auth?>(null);
   final Rx<EmployeeProfile?> profile = Rx<EmployeeProfile?>(null);
@@ -47,29 +58,22 @@ class AuthController extends GetxController {
   final RxBool isChangingPassword = false.obs;
   final RxString changePasswordError = ''.obs;
   final RxBool isUploadingImage = false.obs;
+  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
   bool get isAuthenticated => currentAuth.value != null;
 
   /// Maps the API role string (e.g. "Admin") to [UserRole].
   UserRole? get role {
     final r = currentAuth.value?.primaryRole.toLowerCase();
-    if (r == 'admin') return UserRole.Admin;
-    if (r == 'manager') return UserRole.Manager;
-    if (r == 'employee') return UserRole.Employee;
+    if (r == 'admin') return UserRole.admin;
+    if (r == 'manager') return UserRole.manager;
+    if (r == 'employee') return UserRole.employee;
     return null;
   }
 
   @override
   void onInit() {
     super.onInit();
-    final repo = Get.find<AuthRepository>();
-    _loginUsecase = LoginUsecase(repo);
-    _logoutUsecase = LogoutUsecase(repo);
-    _fetchProfileUsecase = FetchProfileUsecase(repo);
-    _checkAuthUsecase = CheckAuthUsecase(repo);
-    _refreshTokenUsecase = RefreshTokenUsecase(repo);
-    _changePasswordUsecase = ChangePasswordUsecase(repo);
-    _updateProfileUsecase = UpdateProfileUsecase(repo);
     _initChangePasswordListeners();
   }
 
@@ -84,11 +88,16 @@ class AuthController extends GetxController {
   }
 
   // ── Login ────────────────────────────────────────────────
+  void submitLogin() {
+    if (!(loginFormKey.currentState?.validate() ?? false)) return;
+    login();
+  }
+
   Future<void> login() async {
     errorMessage.value = '';
     isLoading.value = true;
     try {
-      final auth = await _loginUsecase(
+      final auth = await loginUsecase(
         phoneController.text.trim(),
         passwordController.text,
       );
@@ -100,13 +109,7 @@ class AuthController extends GetxController {
 
       Get.find<NavigationController>().changePage(0);
       Get.offAllNamed(AppRoutes.mainPage);
-      Get.snackbar(
-        'Welcome back, ${auth.fullName}!',
-        '',
-        backgroundColor: const Color(0xFF2ED573),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      AppSnackbar.success('Welcome back, ${auth.fullName}!', '');
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
@@ -117,20 +120,17 @@ class AuthController extends GetxController {
   // ── Fetch profile ─────────────────────────────────────────
   Future<void> fetchProfile() async {
     try {
-      final profile = await _fetchProfileUsecase();
+      final profile = await fetchProfileUsecase();
       this.profile.value = profile;
     } catch (_) {
       // Silently fail — currentAuth from login/restore is still valid
     }
   }
 
-  // ── Check auth (called from Splash / route guards) ────────
-  /// Returns `true` if the session is valid (or was silently refreshed).
-  /// Returns `false` if the user must log in again.
-  /// On success, kicks off a background profile fetch to populate [currentAuth].
+  // ── Check auth ──────────────────────────────────────────
   Future<bool> checkAuth() async {
     try {
-      final auth = await _checkAuthUsecase();
+      final auth = await checkAuthUsecase();
       currentAuth.value = auth;
       fetchProfile();
       return true;
@@ -144,7 +144,7 @@ class AuthController extends GetxController {
   /// Called by [ApiClient]'s interceptor on 401. Returns true on success.
   Future<bool> refreshToken() async {
     try {
-      final refreshed = await _refreshTokenUsecase();
+      final refreshed = await refreshTokenUsecase();
       currentAuth.value = refreshed;
       return true;
     } catch (_) {
@@ -175,20 +175,14 @@ class AuthController extends GetxController {
     isChangingPassword.value = true;
     changePasswordError.value = '';
     try {
-      await _changePasswordUsecase(
+      await changePasswordUsecase(
         currentPassword: current,
         newPassword: newPass,
         confirmNewPassword: confirm,
       );
       clearChangePasswordForm();
       Get.back();
-      Get.snackbar(
-        'Success',
-        'Password changed successfully.',
-        backgroundColor: const Color(0xFF2ED573),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      AppSnackbar.success('Success', 'Password changed successfully.');
     } catch (e) {
       changePasswordError.value = e.toString();
     } finally {
@@ -202,6 +196,7 @@ class AuthController extends GetxController {
         changePasswordError.value = '';
       }
     }
+
     currentPasswordController.addListener(clearError);
     newPasswordController.addListener(clearError);
     confirmPasswordController.addListener(clearError);
@@ -224,23 +219,11 @@ class AuthController extends GetxController {
     if (file == null) return;
     isUploadingImage.value = true;
     try {
-      await _updateProfileUsecase(image: file);
+      await updateProfileUsecase(image: file);
       await fetchProfile();
-      Get.snackbar(
-        'Success',
-        'Profile photo updated.',
-        backgroundColor: const Color(0xFF2ED573),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      AppSnackbar.success('Success', 'Profile photo updated.');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        backgroundColor: const Color(0xFFFF4757),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      AppSnackbar.error('Error', e.toString());
     } finally {
       isUploadingImage.value = false;
     }
@@ -249,23 +232,11 @@ class AuthController extends GetxController {
   Future<void> removeProfileImage() async {
     isUploadingImage.value = true;
     try {
-      await _updateProfileUsecase(removeImage: true);
+      await updateProfileUsecase(removeImage: true);
       await fetchProfile();
-      Get.snackbar(
-        'Success',
-        'Profile photo removed.',
-        backgroundColor: const Color(0xFF2ED573),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      AppSnackbar.success('Success', 'Profile photo removed.');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        backgroundColor: const Color(0xFFFF4757),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      AppSnackbar.error('Error', e.toString());
     } finally {
       isUploadingImage.value = false;
     }
@@ -276,10 +247,11 @@ class AuthController extends GetxController {
     // Unregister FCM token before clearing session
     await _unregisterPushToken();
 
-    await _logoutUsecase();
+    await logoutUsecase();
     currentAuth.value = null;
     Get.find<NavigationController>().changePage(0);
     Get.offAllNamed(AppRoutes.login);
+    AppSnackbar.success('Logged out', 'You have been logged out successfully.');
   }
 
   // ── Push notification helpers ────────────────────────────

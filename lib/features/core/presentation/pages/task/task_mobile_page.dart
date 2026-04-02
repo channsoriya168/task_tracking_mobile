@@ -33,7 +33,7 @@ class TaskMobilePage extends StatelessWidget {
                 child: TaskHeaderWidget(isDark: isDark, ctrl: ctrl),
               ),
               Obx(() {
-                if (auth.role != UserRole.Admin) return const SizedBox.shrink();
+                if (auth.role != UserRole.admin) return const SizedBox.shrink();
                 return Padding(
                   padding: const EdgeInsets.only(top: 12, right: 12),
                   child: OutlinedButton.icon(

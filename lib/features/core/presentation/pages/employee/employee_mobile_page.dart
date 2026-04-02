@@ -35,7 +35,7 @@ class EmployeeMobilePage extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: Get.find<AuthController>().role == UserRole.Employee
+      floatingActionButton: Get.find<AuthController>().role == UserRole.employee
           ? null
           : FloatingActionButton(
               backgroundColor: kPrimary,

@@ -26,7 +26,7 @@ class EmployeeCardWidget extends StatelessWidget {
 
   bool get _isProtected {
     final authRole = Get.find<AuthController>().role;
-    if (authRole != UserRole.Manager) return false;
+    if (authRole != UserRole.manager) return false;
     final r = employee.role?.toLowerCase() ?? '';
     return r == 'manager' || r == 'admin';
   }

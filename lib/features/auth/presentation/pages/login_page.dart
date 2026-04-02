@@ -15,13 +15,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = Get.find<AuthController>();
-    final formKey = GlobalKey<FormState>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    void submit() {
-      if (!(formKey.currentState?.validate() ?? false)) return;
-      auth.login();
-    }
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
@@ -33,7 +27,7 @@ class LoginPage extends StatelessWidget {
               child: SingleChildScrollView(
                 padding: kPagePaddingWithBottom,
                 child: Form(
-                  key: formKey,
+                  key: auth.loginFormKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -66,7 +60,7 @@ class LoginPage extends StatelessWidget {
                       Obx(
                         () => LoginButton(
                           isLoading: auth.isLoading.value,
-                          onPressed: submit,
+                          onPressed: auth.submitLogin,
                         ),
                       ),
                       const SizedBox(height: 24),

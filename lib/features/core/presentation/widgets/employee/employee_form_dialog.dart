@@ -304,7 +304,7 @@ class _RoleSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final authCtrl = Get.find<AuthController>();
     // Manager users cannot assign roles — role is always "Employee"
-    if (authCtrl.role != UserRole.Admin) return const SizedBox.shrink();
+    if (authCtrl.role != UserRole.admin) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -9,14 +9,6 @@ import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
 
-/// Top-level background message handler (must be a top-level function).
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // No-op: the OS shows the notification automatically for data+notification
-  // messages when the app is in background / terminated.
-  debugPrint('Background message: ${message.messageId}');
-}
-
 class PushNotificationService extends GetxService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications =
@@ -40,12 +32,14 @@ class PushNotificationService extends GetxService {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_channel);
 
-    // iOS foreground presentation options (prepared for future use)
-    await _messaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    // iOS foreground presentation options
+    if (Platform.isIOS) {
+      await _messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
 
     // Initialize flutter_local_notifications
     const androidSettings =

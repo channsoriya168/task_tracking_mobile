@@ -15,7 +15,7 @@ class ProfileActionCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authCtrl = Get.find<AuthController>();
-    final isEmployee = authCtrl.role == UserRole.Employee;
+    final isEmployee = authCtrl.role == UserRole.employee;
 
     return ProfileCard(
       isDark: isDark,
