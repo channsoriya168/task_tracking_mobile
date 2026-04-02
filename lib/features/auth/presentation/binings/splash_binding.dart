@@ -3,6 +3,13 @@ import 'package:task_tracking_mobile/app/services/push_notification_service.dart
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/change_password_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/check_auth_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/fetch_profile_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/splash_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
@@ -14,6 +21,13 @@ class SplashBinding extends Bindings {
       AuthRepositoryImpl(AuthRemoteDatasource()),
       permanent: true,
     );
+    Get.put(LoginUsecase(Get.find()), permanent: true);
+    Get.put(LogoutUsecase(Get.find()), permanent: true);
+    Get.put(FetchProfileUsecase(Get.find()), permanent: true);
+    Get.put(CheckAuthUsecase(Get.find()), permanent: true);
+    Get.put(RefreshTokenUsecase(Get.find()), permanent: true);
+    Get.put(ChangePasswordUsecase(Get.find()), permanent: true);
+    Get.put(UpdateProfileUsecase(Get.find()), permanent: true);
     Get.put<AuthController>(
       AuthController(
         loginUsecase: Get.find(),
