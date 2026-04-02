@@ -29,8 +29,14 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await homeCtrl.fetchTasks();
+            await homeCtrl.fetchStatuses();
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
             // ── Greeting header ───────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
@@ -110,6 +116,7 @@ class HomePage extends StatelessWidget {
               );
             }),
           ],
+          ),
         ),
       ),
     );
