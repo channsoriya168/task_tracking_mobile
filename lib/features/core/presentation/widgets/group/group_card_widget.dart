@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/action_button.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_dialog.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/group/group_dialog.dart';
 
 class TaskGroupCardWidget extends StatelessWidget {
   const TaskGroupCardWidget({

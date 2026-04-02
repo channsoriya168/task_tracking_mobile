@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
 
 class EmployeeFormGroupPicker extends StatelessWidget {
   const EmployeeFormGroupPicker({
@@ -27,7 +27,7 @@ class EmployeeFormGroupPicker extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Task Group',
+                  'Group',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,

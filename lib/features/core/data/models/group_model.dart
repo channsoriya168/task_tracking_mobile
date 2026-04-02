@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 
 class TaskGroupModel extends TaskGroup {
   TaskGroupModel({

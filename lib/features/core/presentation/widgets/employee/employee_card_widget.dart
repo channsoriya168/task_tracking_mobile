@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/app/enums/user_role.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_menu_sheet.dart';

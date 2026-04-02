@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/create_task_group_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_task_groups_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/create_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_groups_usecase.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 
 class TaskGroupController extends GetxController {
@@ -29,7 +29,7 @@ class TaskGroupController extends GetxController {
     try {
       taskGroups.assignAll(await _getAllTaskGroups());
     } catch (_) {
-      AppSnackbar.error('Task Groups', 'Failed to load task groups.');
+      AppSnackbar.error('Group', 'Failed to load groups.');
     }
   }
 
@@ -72,7 +72,7 @@ class TaskGroupController extends GetxController {
       );
       return true;
     } catch (_) {
-      AppSnackbar.error('Task Groups', 'Failed to create task group.');
+      AppSnackbar.error('Group', 'Failed to create group.');
       return false;
     }
   }

@@ -6,14 +6,14 @@ import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/app/utils/validators.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_validator.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employee_password_usecase.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_form_dialog.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_dialog.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/group/group_dialog.dart';
 
 class EmployeeController extends GetxController {
   EmployeeController(

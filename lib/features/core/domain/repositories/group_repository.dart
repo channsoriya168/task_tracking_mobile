@@ -1,4 +1,4 @@
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 
 abstract interface class TaskGroupRepository {
   Future<List<TaskGroup>> getAll();

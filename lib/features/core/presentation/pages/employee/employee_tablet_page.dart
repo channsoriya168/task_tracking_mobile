@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_filter_task_group_dropdown_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_filter_group_dropdown_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_header_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_list_widget.dart';
 

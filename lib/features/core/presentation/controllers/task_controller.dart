@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';

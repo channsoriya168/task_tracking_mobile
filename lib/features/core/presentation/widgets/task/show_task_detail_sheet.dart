@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/task_item_repository.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_detail_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_avatar_name_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_colored_chip_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_row_widget.dart';
@@ -267,7 +267,7 @@ class _TaskDetailBody extends StatelessWidget {
         // ── Task Group ────────────────────────────────────────
         TaskDetailRow(
           icon: Icons.folder_outlined,
-          label: 'Task Group',
+          label: 'Group',
           isDark: isDark,
           child: task.groupName != null
               ? TaskDetailColoredChip(

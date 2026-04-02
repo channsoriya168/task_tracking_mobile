@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
 
 // ── Preset Colors ─────────────────────────────────────────────
 const taskGroupPresetColors = [

@@ -1,5 +1,5 @@
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
-import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/group_repository.dart';
 
 class CreateTaskGroupUseCase {
   final TaskGroupRepository repository;

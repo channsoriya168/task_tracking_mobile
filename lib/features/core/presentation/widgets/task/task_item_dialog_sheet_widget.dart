@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';

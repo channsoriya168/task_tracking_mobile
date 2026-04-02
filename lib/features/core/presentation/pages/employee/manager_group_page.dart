@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_card_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task_group/task_group_dialog.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/group/group_card_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/group/group_dialog.dart';
 
 class ManageTaskGroupWidget extends StatelessWidget {
   const ManageTaskGroupWidget({super.key});
@@ -27,7 +27,7 @@ class ManageTaskGroupWidget extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          'Task Groups',
+          'Group',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : kTextDark,

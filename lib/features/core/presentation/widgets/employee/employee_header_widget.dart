@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/pages/employee/manager_task_group_page.dart';
+import 'package:task_tracking_mobile/features/core/presentation/pages/employee/manager_group_page.dart';
 
 class EmployeeHeaderWidget extends StatelessWidget {
   const EmployeeHeaderWidget({required this.isDark, required this.ctrl});
@@ -43,7 +43,7 @@ class EmployeeHeaderWidget extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: () => Get.to(() => const ManageTaskGroupWidget()),
             icon: const Icon(Icons.work_outline_rounded, size: 16),
-            label: const Text('Task Groups'),
+            label: const Text('Group'),
             style: OutlinedButton.styleFrom(
               foregroundColor: kPrimary,
               side: const BorderSide(color: kPrimary),

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/features/core/data/datasources/remote/task_group_remote_datasource.dart';
-import 'package:task_tracking_mobile/features/core/data/models/task_group_model.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_group.dart';
-import 'package:task_tracking_mobile/features/core/domain/repositories/task_group_repository.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/remote/group_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/data/models/group_model.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/group_repository.dart';
 
 class TaskGroupRepositoryImpl implements TaskGroupRepository {
   final TaskGroupRemoteDatasource _remote;

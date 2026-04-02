@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
-import 'package:task_tracking_mobile/features/core/data/models/task_group_model.dart';
+import 'package:task_tracking_mobile/features/core/data/models/group_model.dart';
 
 class TaskGroupRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;

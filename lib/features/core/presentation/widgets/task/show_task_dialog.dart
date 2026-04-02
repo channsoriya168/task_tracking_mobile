@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/task_group_controller.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_item_dialog_sheet_widget.dart';
 
 Future<void> showTaskDialog(

@@ -50,7 +50,7 @@ class EmployeeFilterTaskGroupDropdownWidget extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'All Task Groups',
+                        'All Group',
                         style: TextStyle(
                           color: isDark ? Colors.grey[400] : kTextMuted,
                         ),
