@@ -125,7 +125,13 @@ class EmployeeController extends GetxController {
   }
 
   // ── Form validity (reactive) ──────────────────────────────────
-  bool get canSave => formDob.value != null && selectedGroupId.value != null;
+  // Create: require DOB + group before enabling submit.
+  // Edit: always allow submit — validator shows inline errors for missing fields.
+  bool get canSave {
+    if (isSaving.value) return false;
+    if (isEditMode.value) return true;
+    return formDob.value != null && selectedGroupId.value != null;
+  }
 
   // ── Task Group dialog ─────────────────────────────────────────
   Future<void> openTaskGroupDialog(BuildContext context) async {

@@ -31,10 +31,31 @@ class EmployeeCardWidget extends StatelessWidget {
     return r == 'manager' || r == 'admin';
   }
 
+  static Color _roleColor(String? role) {
+    switch (role?.toLowerCase()) {
+      case 'admin':
+        return const Color(0xFFEF4444);
+      case 'manager':
+        return const Color(0xFF8B5CF6);
+      default:
+        return const Color(0xFF10B981);
+    }
+  }
+
+  static String _roleLabel(String? role) {
+    final r = role?.toLowerCase() ?? '';
+    if (r == 'admin') return 'Admin';
+    if (r == 'manager') return 'Manager';
+    return 'Employee';
+  }
+
   @override
   Widget build(BuildContext context) {
     final accent = taskGroup?.color ?? kPrimary;
     final protected = _isProtected;
+    final hasPhone = employee.phone != null && employee.phone!.isNotEmpty;
+    final roleColor = _roleColor(employee.role);
+    final hasGroups = employee.taskGroups.isNotEmpty || taskGroup != null;
 
     return GestureDetector(
       onTap: () => showEmployeeMenuSheet(
@@ -45,47 +66,85 @@ class EmployeeCardWidget extends StatelessWidget {
         accentColor: accent,
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.orange.withValues(alpha: 0.35),
-            width: 1,
+            color: isDark
+                ? Colors.white.withAlpha(10)
+                : Colors.grey.withAlpha(25),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(isDark ? 35 : 10),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              color: Colors.black.withAlpha(isDark ? 50 : 12),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
+            if (!isDark)
+              BoxShadow(
+                color: accent.withAlpha(18),
+                blurRadius: 20,
+                offset: const Offset(0, 6),
+              ),
           ],
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // ── Avatar ────────────────────────────────────────
             Stack(
               clipBehavior: Clip.none,
               children: [
-                EmployeeAvatarWidget(
-                  name: employee.fullName,
-                  color: accent,
-                  radius: 24,
-                  imagePath: employee.profileImageUrl,
+                Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        accent.withAlpha(180),
+                        accent,
+                      ],
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isDark ? kCardDark : Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: EmployeeAvatarWidget(
+                      name: employee.fullName,
+                      color: accent,
+                      radius: 26,
+                      imagePath: employee.profileImageUrl,
+                    ),
+                  ),
                 ),
                 if (protected)
                   Positioned(
-                    right: -4,
-                    bottom: -4,
+                    right: -2,
+                    bottom: -2,
                     child: Container(
-                      width: 18,
-                      height: 18,
+                      width: 20,
+                      height: 20,
                       decoration: BoxDecoration(
                         color: Colors.orange,
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isDark ? kCardDark : Colors.white,
-                          width: 1.5,
+                          width: 2,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.orange.withAlpha(80),
+                            blurRadius: 6,
+                          ),
+                        ],
                       ),
                       child: const Icon(
                         Icons.lock_rounded,
@@ -96,13 +155,16 @@ class EmployeeCardWidget extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(width: 13),
 
+            const SizedBox(width: 14),
+
+            // ── Info ──────────────────────────────────────────
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Name + inactive
                   Row(
                     children: [
                       Expanded(
@@ -111,89 +173,115 @@ class EmployeeCardWidget extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
                             color: isDark ? Colors.white : kTextDark,
+                            letterSpacing: 0.1,
                           ),
                         ),
                       ),
-                      if (!employee.isActive)
-                        Container(
-                          margin: const EdgeInsets.only(left: 6),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            'Inactive',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: isDark
-                                  ? Colors.grey[400]
-                                  : Colors.grey[600],
-                            ),
-                          ),
-                        ),
+                      if (!employee.isActive) ...[
+                        const SizedBox(width: 6),
+                        _InactiveBadge(isDark: isDark),
+                      ],
                     ],
                   ),
-                  if (employee.email.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      employee.email,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? Colors.grey[500] : kTextMuted,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 5),
+
+                  const SizedBox(height: 3),
+
+                  // Role label (colored)
                   Row(
                     children: [
-                      if (employee.role != null &&
-                          employee.role!.isNotEmpty) ...[
-                        _RoleBadge(role: employee.role!),
-                        const SizedBox(width: 6),
-                      ],
-                      if (taskGroup != null)
-                        Flexible(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 7,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: accent.withAlpha(28),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              taskGroup!.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: accent,
-                              ),
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: roleColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        _roleLabel(employee.role),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: roleColor,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Phone
+                  if (hasPhone) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.phone_rounded,
+                          size: 11,
+                          color: isDark ? Colors.grey[500] : kTextMuted,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            employee.phone!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : const Color(0xFF6B7280),
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
+
+                  // Group badges
+                  if (hasGroups) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 5,
+                      runSpacing: 4,
+                      children: [
+                        if (employee.taskGroups.isNotEmpty)
+                          ...employee.taskGroups.take(2).map(
+                                (g) => _GroupChip(
+                                  name: g.groupName,
+                                  color: g.groupColor,
+                                ),
+                              )
+                        else if (taskGroup != null)
+                          _GroupChip(
+                            name: taskGroup!.name,
+                            color: accent,
+                          ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
 
-            Icon(
-              Icons.chevron_right_rounded,
-              size: 18,
-              color: isDark ? Colors.grey[600] : Colors.grey[350],
+            // ── Chevron ───────────────────────────────────────
+            Container(
+              margin: const EdgeInsets.only(left: 8),
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withAlpha(10)
+                    : Colors.grey.withAlpha(15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: isDark ? Colors.grey[500] : Colors.grey[400],
+              ),
             ),
           ],
         ),
@@ -202,45 +290,70 @@ class EmployeeCardWidget extends StatelessWidget {
   }
 }
 
-class _RoleBadge extends StatelessWidget {
-  const _RoleBadge({required this.role});
-
-  final String role;
-
-  static Color _badgeColor(String role) {
-    switch (role.toLowerCase()) {
-      case 'admin':
-        return const Color(0xFFEF4444);
-      case 'manager':
-        return const Color(0xFF8B5CF6);
-      default:
-        return const Color(0xFF10B981);
-    }
-  }
-
-  static String _label(String role) {
-    final r = role.toLowerCase();
-    if (r == 'admin') return 'Admin';
-    if (r == 'manager') return 'Manager';
-    return 'Employee';
-  }
+// ── Inactive Badge ────────────────────────────────────────────
+class _InactiveBadge extends StatelessWidget {
+  const _InactiveBadge({required this.isDark});
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final color = _badgeColor(role);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withAlpha(28),
-        borderRadius: BorderRadius.circular(5),
+        color: Colors.grey.withAlpha(isDark ? 40 : 20),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.grey.withAlpha(isDark ? 60 : 40),
+        ),
       ),
       child: Text(
-        _label(role),
+        'Inactive',
         style: TextStyle(
           fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: color,
+          fontWeight: FontWeight.w500,
+          color: isDark ? Colors.grey[400] : Colors.grey[500],
         ),
+      ),
+    );
+  }
+}
+
+// ── Group Chip ────────────────────────────────────────────────
+class _GroupChip extends StatelessWidget {
+  const _GroupChip({required this.name, required this.color});
+  final String name;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withAlpha(22),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withAlpha(70)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 5,
+            height: 5,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }

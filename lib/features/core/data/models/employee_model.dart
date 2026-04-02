@@ -18,7 +18,7 @@ class EmployeeModel extends Employee {
   });
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
-    final groupsJson = json['taskGroups'] as List<dynamic>? ?? [];
+    final groupsJson = json['groups'] as List<dynamic>? ?? [];
     final taskGroups = groupsJson
         .where((g) => g['groupId'] != null)
         .map((g) {

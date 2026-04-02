@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_filter_group_dropdown_widget.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_filter_group_chips_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_header_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/employee/employee_list_widget.dart';
 
@@ -22,7 +22,8 @@ class EmployeeMobilePage extends StatelessWidget {
       body: Column(
         children: [
           EmployeeHeaderWidget(isDark: isDark, ctrl: ctrl),
-          EmployeeFilterTaskGroupDropdownWidget(isDark: isDark, ctrl: ctrl),
+          const SizedBox(height: 14),
+          EmployeeFilterGroupChipsWidget(isDark: isDark, ctrl: ctrl),
           SearchBarWidget(
             isDark: isDark,
             onChanged: (v) => ctrl.searchQuery.value = v,
