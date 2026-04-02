@@ -12,8 +12,8 @@ abstract class ApiEndpoints {
   static const String resetPassword = '/api/v1/Auth/reset-password';
 
   // ── Task Groups ───────────────────────────────────────────
-  static const String taskGroups = '/api/v1/task-groups';
-  static String taskGroupById(String id) => '/api/v1/task-groups/$id';
+  static const String taskGroups = '/api/v1/groups';
+  static String taskGroupById(String id) => '/api/v1/groups/$id';
 
   // ── Employees ─────────────────────────────────────────────
   static const String employees = '/api/v1/employees';
