@@ -31,7 +31,9 @@ class EmployeeTaskCard extends StatelessWidget {
     final ctrl = Get.find<EmployeeTaskController>();
     final currentId = ctrl.currentEmployeeId;
 
-    final isPending = task.assignedToId == null;
+    final terminalStatuses = {'cancelled', 'completed'};
+    final isPending = task.assignedToId == null &&
+        !terminalStatuses.contains(task.status.name.toLowerCase());
     final isMyTask =
         task.assignedToId != null && task.assignedToId == currentId;
     final isAssignedToOther = task.assignedToId != null && !isMyTask;
