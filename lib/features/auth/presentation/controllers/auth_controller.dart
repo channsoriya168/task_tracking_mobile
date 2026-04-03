@@ -8,7 +8,6 @@ import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
-import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/change_password_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/check_auth_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/fetch_profile_usecase.dart';

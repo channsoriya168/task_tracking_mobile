@@ -31,7 +31,7 @@ class EmployeeProfileModel extends EmployeeProfile {
       dateOfBirth: employee['dateOfBirth'] != null
           ? DateTime.tryParse(employee['dateOfBirth'] as String)
           : null,
-      taskGroups: (employee['taskGroups'] as List<dynamic>?) ?? [],
+      taskGroups: (employee['groups'] as List<dynamic>?) ?? [],
     );
   }
 }

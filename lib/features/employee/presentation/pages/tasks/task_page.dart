@@ -17,9 +17,16 @@ class TasksPage extends StatelessWidget {
     final ctrl = Get.find<EmployeeTaskController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return SafeArea(
-      child: CustomScrollView(
-        slivers: [
+    return Scaffold(
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await ctrl.fetchTasks();
+            await ctrl.fetchStatuses();
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
           // ── Title ──────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
@@ -98,6 +105,8 @@ class TasksPage extends StatelessWidget {
             );
           }),
         ],
+          ),
+        ),
       ),
     );
   }
