@@ -70,7 +70,7 @@ class _ResetPasswordSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Reset Password',
+                        'snack_reset_pwd'.tr,
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
@@ -102,8 +102,8 @@ class _ResetPasswordSheet extends StatelessWidget {
               Obx(
                 () => PasswordInputWidget(
                   controller: ctrl.resetPasswordCtrl,
-                  label: 'New Password',
-                  hint: 'e.g. MyPass@123',
+                  label: 'change_pwd_new'.tr,
+                  hint: 'change_pwd_new_hint'.tr,
                   isDark: isDark,
                   isRequired: true,
                   errorText: ctrl.resetPasswordErrors['newPassword'],
@@ -115,8 +115,8 @@ class _ResetPasswordSheet extends StatelessWidget {
               Obx(
                 () => PasswordInputWidget(
                   controller: ctrl.resetConfirmPasswordCtrl,
-                  label: 'Confirm New Password',
-                  hint: 'Re-enter password',
+                  label: 'change_pwd_confirm'.tr,
+                  hint: 'change_pwd_confirm_hint'.tr,
                   isDark: isDark,
                   isRequired: true,
                   errorText: ctrl.resetPasswordErrors['confirmPassword'],
@@ -152,8 +152,8 @@ class _ResetPasswordSheet extends StatelessWidget {
                               color: Colors.white,
                             ),
                           )
-                        : const Text(
-                            'Reset Password',
+                        : Text(
+                            'snack_reset_pwd'.tr,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 15,

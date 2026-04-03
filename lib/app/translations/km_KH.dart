@@ -194,6 +194,12 @@ const Map<String, String> kmKH = {
   'employee_search_hint': 'ស្វែងរកបុគ្គលិក...',
   'employee_all': 'ទាំងអស់',
   'employee_no_role': 'គ្មានតួនាទី',
+  'employee_menu_title': 'ព័ត៌មានលម្អិតបុគ្គលិក',
+  'employee_menu_joined': 'បានចូលរួម',
+  'employee_menu_change_pwd_subtitle': 'ធ្វើបច្ចុប្បន្នភាពព័ត៌មានសម្ងាត់គណនី',
+  'employee_menu_edit_subtitle': 'កែប្រែព័ត៌មាន',
+  'employee_menu_delete_subtitle': 'លុបបុគ្គលិក',
+  'employee_menu_no_permission': 'អ្នកមិនមានសិទ្ធិគ្រប់គ្រងគណនីនេះទេ។',
 
   // ── Group ─────────────────────────────────────────────────────
   'group_title': 'ក្រុម',

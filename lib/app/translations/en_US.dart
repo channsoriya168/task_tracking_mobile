@@ -193,6 +193,13 @@ const Map<String, String> enUS = {
   'employee_search_hint': 'Search employees...',
   'employee_all': 'All',
   'employee_no_role': 'No role',
+  'employee_menu_title': 'Employee Details',
+  'employee_menu_joined': 'Joined',
+  'employee_menu_change_pwd_subtitle': 'Update account credentials',
+  'employee_menu_edit_subtitle': 'Modify info',
+  'employee_menu_delete_subtitle': 'Remove employee',
+  'employee_menu_no_permission':
+      'You do not have permission to manage this account.',
 
   // ── Group ─────────────────────────────────────────────────────
   'group_title': 'Group',
