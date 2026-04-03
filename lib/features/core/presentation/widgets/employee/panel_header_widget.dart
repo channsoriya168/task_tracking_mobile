@@ -19,14 +19,14 @@ class PanelHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final tgCtrl = Get.find<TaskGroupController>();
-      final pos = selectedTaskGroupId != null
-          ? tgCtrl.findPosition(selectedTaskGroupId!)
-          : null;
-      final title = pos?.name ?? 'All Employees';
+      final tgCtrl = Get.find<GroupController>();
+      // final pos = selectedTaskGroupId != null
+      //     ? tgCtrl.findPosition(selectedTaskGroupId!)
+      //     : null;
+      // final title = pos?.name ?? 'All Employees';
       final count = selectedTaskGroupId == null
-          ? ctrl.employees.length
-          : tgCtrl.employeeCountByTaskGroup(selectedTaskGroupId!);
+          ? ctrl.allEmployees.length
+          : tgCtrl.employeeCountByGroup(selectedTaskGroupId!);
 
       return Padding(
         padding: const EdgeInsets.fromLTRB(24, 20, 16, 4),
@@ -35,14 +35,14 @@ class PanelHeaderWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : kTextDark,
-                  ),
-                ),
+                // Text(
+                //   title,
+                //   style: TextStyle(
+                //     fontSize: 20,
+                //     fontWeight: FontWeight.bold,
+                //     color: isDark ? Colors.white : kTextDark,
+                //   ),
+                // ),
                 Text(
                   '$count ${count == 1 ? 'member' : 'members'}',
                   style: TextStyle(

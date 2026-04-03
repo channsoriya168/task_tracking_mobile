@@ -3,39 +3,34 @@ import 'package:task_tracking_mobile/app/services/api_client.dart';
 import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/core/data/models/group_model.dart';
 
-class TaskGroupRemoteDatasource {
+class GroupRemoteDatasource {
   final Dio _dio = ApiClient.instance.dio;
 
-  Future<List<TaskGroupModel>> getAll() async {
-    final response = await _dio.get(ApiEndpoints.taskGroups);
+  Future<List<GroupModel>> getAll() async {
+    final response = await _dio.get(ApiEndpoints.groups);
     final list = response.data as List<dynamic>;
     return list
-        .map((e) => TaskGroupModel.fromJson(e as Map<String, dynamic>))
+        .map((e) => GroupModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
-  Future<TaskGroupModel> getById(String id) async {
-    final response = await _dio.get(ApiEndpoints.taskGroupById(id));
-    return TaskGroupModel.fromJson(response.data as Map<String, dynamic>);
-  }
-
-  Future<TaskGroupModel> create(TaskGroupModel taskGroup) async {
+  Future<GroupModel> create(GroupModel group) async {
     final response = await _dio.post(
-      ApiEndpoints.taskGroups,
-      data: taskGroup.toRequestJson(),
+      ApiEndpoints.groups,
+      data: group.toRequestJson(),
     );
-    return TaskGroupModel.fromJson(response.data as Map<String, dynamic>);
+    return GroupModel.fromJson(response.data as Map<String, dynamic>);
   }
 
-  Future<TaskGroupModel> update(String id, TaskGroupModel taskGroup) async {
+  Future<GroupModel> update(String id, GroupModel group) async {
     final response = await _dio.put(
-      ApiEndpoints.taskGroupById(id),
-      data: taskGroup.toRequestJson(),
+      ApiEndpoints.groupById(id),
+      data: group.toRequestJson(),
     );
-    return TaskGroupModel.fromJson(response.data as Map<String, dynamic>);
+    return GroupModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   Future<void> delete(String id) async {
-    await _dio.delete(ApiEndpoints.taskGroupById(id));
+    await _dio.delete(ApiEndpoints.groupById(id));
   }
 }

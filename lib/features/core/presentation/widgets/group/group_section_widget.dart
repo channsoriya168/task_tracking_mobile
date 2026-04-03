@@ -10,13 +10,13 @@ class TaskGroupSectionWidget extends StatefulWidget {
   const TaskGroupSectionWidget({
     required this.isDark,
     required this.ctrl,
-    required this.taskGroup,
+    required this.group,
     required this.employees,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
-  final TaskGroup taskGroup;
+  final Group group;
   final List<Employee> employees;
 
   @override
@@ -30,7 +30,7 @@ class _TaskGroupSectionState extends State<TaskGroupSectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final p = widget.taskGroup;
+    final p = widget.group;
     final emps = widget.employees;
 
     return Column(

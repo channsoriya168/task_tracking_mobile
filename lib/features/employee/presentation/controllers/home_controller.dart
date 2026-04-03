@@ -68,8 +68,8 @@ class HomeController extends GetxController {
 
   String? get _employeeGroupId {
     final profile = Get.find<AuthController>().profile.value;
-    if (profile == null || profile.taskGroups.isEmpty) return null;
-    final first = profile.taskGroups.first;
+    if (profile == null || profile.groups.isEmpty) return null;
+    final first = profile.groups.first;
     if (first is Map<String, dynamic>) {
       return first['id'] as String? ??
           first['groupId'] as String? ??

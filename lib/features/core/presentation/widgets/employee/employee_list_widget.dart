@@ -26,28 +26,50 @@ class EmployeeListWidget extends StatelessWidget {
 
       final employees = ctrl.filteredEmployees;
       if (employees.isEmpty) {
-        return Center(
-          child: Text(
-            'No employees found.',
-            style: TextStyle(color: isDark ? Colors.grey[500] : kTextMuted),
+        return RefreshIndicator(
+          color: kPrimary,
+          onRefresh: () => ctrl.fetchEmployees(),
+          child: ListView(
+            children: [
+              SizedBox(
+                height: 300,
+                child: Center(
+                  child: Text(
+                    'No employees found.',
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[500] : kTextMuted,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       }
-      return ListView.separated(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-        itemCount: employees.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 10),
-        itemBuilder: (_, i) {
-          final emp = employees[i];
-          final taskGroup = Get.find<TaskGroupController>()
-              .taskGroupForEmployee(emp);
-          return EmployeeCardWidget(
-            isDark: isDark,
-            ctrl: ctrl,
-            employee: emp,
-            taskGroup: taskGroup,
-          );
-        },
+      return RefreshIndicator(
+        color: kPrimary,
+        onRefresh: () => ctrl.fetchEmployees(),
+        child: ListView.separated(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          itemCount: employees.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          itemBuilder: (_, i) {
+            final emp = employees[i];
+            final groups = Get.find<GroupController>().groups;
+            final groupId = emp.groups.isNotEmpty
+                ? emp.groups.first.groupId
+                : null;
+            final taskGroup = groupId != null
+                ? groups.firstWhereOrNull((g) => g.id == groupId)
+                : null;
+            return EmployeeCardWidget(
+              isDark: isDark,
+              ctrl: ctrl,
+              employee: emp,
+              taskGroup: taskGroup,
+            );
+          },
+        ),
       );
     });
   }

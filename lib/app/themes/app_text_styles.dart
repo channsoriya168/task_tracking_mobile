@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Centralized typography for the app.
-///
-/// To switch the entire app font, change [_fontFamily] only — one line.
 abstract class AppTextStyles {
   AppTextStyles._();
 
-  // ── Single source of truth — change THIS line to switch font app-wide ───
-  static const String _fontFamily = 'Inter';
+  // Returns 'Siemreap' for Khmer, 'Inter' for all other locales.
+  static String get _fontFamily =>
+      Get.locale?.languageCode == 'km' ? 'Siemreap' : 'Kantumruy Pro';
 
   // ── Base builder ────────────────────────────────────────────────────────
   static TextStyle _font({

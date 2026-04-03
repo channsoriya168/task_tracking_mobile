@@ -111,58 +111,60 @@ class _TaskDetailSheetContent extends StatelessWidget {
       child: Column(
         children: [
           // ── Header: drag handle + close button + loading bar ──
-          Obx(() => Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        // Drag handle (centered)
-                        const Spacer(),
-                        Container(
-                          width: 40,
-                          height: 4,
+          Obx(
+            () => Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      // Drag handle (centered)
+                      const Spacer(),
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.grey[700] : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const Spacer(),
+                      // Close button
+                      InkWell(
+                        onTap: () => Navigator.of(context).pop(),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.grey[700] : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(2),
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.black.withValues(alpha: 0.06),
+                            shape: BoxShape.circle,
                           ),
-                        ),
-                        const Spacer(),
-                        // Close button
-                        InkWell(
-                          onTap: () => Navigator.of(context).pop(),
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.08)
-                                  : Colors.black.withValues(alpha: 0.06),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 16,
-                              color: isDark ? Colors.white60 : kTextMuted,
-                            ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 16,
+                            color: isDark ? Colors.white60 : kTextMuted,
                           ),
-                        ),
-                      ],
-                    ),
-                    if (ctrl.isLoadingTask.value) ...[
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        height: 2,
-                        child: LinearProgressIndicator(
-                          backgroundColor: Colors.transparent,
-                          color: kPrimary.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
+                  ),
+                  if (ctrl.isLoadingTask.value) ...[
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 2,
+                      child: LinearProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        color: kPrimary.withValues(alpha: 0.5),
+                      ),
+                    ),
                   ],
-                ),
-              )),
+                ],
+              ),
+            ),
+          ),
 
           // ── Scrollable body ──────────────────────────────────
           Expanded(
@@ -205,13 +207,13 @@ class _TaskDetailBody extends StatelessWidget {
         : Colors.black.withValues(alpha: 0.07);
     final statusColor = task.status.color;
 
-    TaskGroupController? groupCtrl;
+    GroupController? groupCtrl;
     try {
-      groupCtrl = Get.find<TaskGroupController>();
+      groupCtrl = Get.find<GroupController>();
     } catch (_) {}
-    final taskGroup =
-        task.groupId != null ? groupCtrl?.findPosition(task.groupId!) : null;
-    final groupColor = taskGroup?.color ?? kPrimary;
+    // final taskGroup =
+    //     // task.groupId != null ? groupCtrl?.findPosition(task.groupId!) : null;
+    // final groupColor = taskGroup?.color ?? kPrimary;
 
     return ListView(
       controller: scrollController,
@@ -265,18 +267,18 @@ class _TaskDetailBody extends StatelessWidget {
         const SizedBox(height: 20),
 
         // ── Task Group ────────────────────────────────────────
-        TaskDetailRow(
-          icon: Icons.folder_outlined,
-          label: 'Group',
-          isDark: isDark,
-          child: task.groupName != null
-              ? TaskDetailColoredChip(
-                  label: task.groupName!,
-                  color: groupColor,
-                  isDark: isDark,
-                )
-              : Text('—', style: TextStyle(fontSize: 14, color: mutedColor)),
-        ),
+        // TaskDetailRow(
+        //   icon: Icons.folder_outlined,
+        //   label: 'Group',
+        //   isDark: isDark,
+        //   child: task.groupName != null
+        //       ? TaskDetailColoredChip(
+        //           label: task.groupName!,
+        //           // color: groupColor,
+        //           isDark: isDark,
+        //         )
+        //       : Text('—', style: TextStyle(fontSize: 14, color: mutedColor)),
+        // ),
         const SizedBox(height: 14),
 
         // ── Label ─────────────────────────────────────────────

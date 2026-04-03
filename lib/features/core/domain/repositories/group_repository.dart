@@ -1,14 +1,13 @@
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 
-abstract interface class TaskGroupRepository {
-  Future<List<TaskGroup>> getAll();
-  Future<TaskGroup> getById(String id);
-  Future<TaskGroup> create({
+abstract interface class GroupRepository {
+  Future<List<Group>> getAll();
+  Future<Group> create({
     required String name,
     String? color,
     String? description,
   });
-  Future<TaskGroup> update(
+  Future<Group> update(
     String id, {
     required String name,
     String? color,

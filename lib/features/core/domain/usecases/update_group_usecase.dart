@@ -1,12 +1,12 @@
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/group_repository.dart';
 
-class UpdateTaskGroupUseCase {
-  final TaskGroupRepository repository;
+class UpdateGroupUseCase {
+  final GroupRepository repository;
 
-  UpdateTaskGroupUseCase(this.repository);
+  UpdateGroupUseCase(this.repository);
 
-  Future<TaskGroup> call(
+  Future<Group> call(
     String id, {
     required String name,
     String? color,

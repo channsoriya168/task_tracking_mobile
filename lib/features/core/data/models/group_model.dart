@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 
-class TaskGroupModel extends TaskGroup {
-  TaskGroupModel({
+class GroupModel extends Group {
+  GroupModel({
     required super.id,
     required super.name,
     super.color,
@@ -12,8 +12,8 @@ class TaskGroupModel extends TaskGroup {
     super.updatedAt,
   });
 
-  factory TaskGroupModel.fromJson(Map<String, dynamic> json) {
-    return TaskGroupModel(
+  factory GroupModel.fromJson(Map<String, dynamic> json) {
+    return GroupModel(
       id: json['id'] as String,
       name: json['name'] as String,
       color: _parseColor(json['color'] as String?),
@@ -59,6 +59,6 @@ class TaskGroupModel extends TaskGroup {
 
   static String? _colorToHex(Color? color) {
     if (color == null) return null;
-    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+    return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
   }
 }

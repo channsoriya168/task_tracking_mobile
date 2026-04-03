@@ -10,7 +10,7 @@ class EmployeeProfile {
     this.profileImageUrl,
     this.placeOfBirth,
     this.dateOfBirth,
-    required this.taskGroups,
+    required this.groups,
   });
   final String userId;
   final String fullName;
@@ -22,6 +22,6 @@ class EmployeeProfile {
   final String? profileImageUrl;
   final String? placeOfBirth;
   final DateTime? dateOfBirth;
-  final List<dynamic> taskGroups;
+  final List<dynamic> groups;
   String get primaryRole => roles.isNotEmpty ? roles.first : '';
 }

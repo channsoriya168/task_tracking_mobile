@@ -8,7 +8,7 @@ class EmployeeProfileModel extends EmployeeProfile {
     super.profileImageUrl,
     super.placeOfBirth,
     super.dateOfBirth,
-    required super.taskGroups,
+    required super.groups,
     required super.userId,
     required super.fullName,
     required super.phoneNumber,
@@ -31,7 +31,7 @@ class EmployeeProfileModel extends EmployeeProfile {
       dateOfBirth: employee['dateOfBirth'] != null
           ? DateTime.tryParse(employee['dateOfBirth'] as String)
           : null,
-      taskGroups: (employee['groups'] as List<dynamic>?) ?? [],
+      groups: (employee['groups'] as List<dynamic>?) ?? [],
     );
   }
 }

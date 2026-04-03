@@ -13,14 +13,14 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
   const LeftPanelTaskGroupWidget({
     required this.isDark,
     required this.ctrl,
-    required this.posCtrl,
+    required this.groupController,
     required this.selectedId,
     required this.onSelect,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
-  final TaskGroupController posCtrl;
+  final GroupController groupController;
   final String? selectedId;
   final ValueChanged<String?> onSelect;
 
@@ -37,7 +37,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Group',
+                  'group_title'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -47,9 +47,9 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   onPressed: () =>
-                      showTaskGroupDialog(context, posCtrl, isDark),
+                      showGroupDialog(context, groupController, isDark),
                   icon: Icon(Icons.add_rounded, color: kPrimary, size: 22),
-                  tooltip: 'Add Task Group',
+                  tooltip: 'group_add_tooltip'.tr,
                 ),
               ],
             ),
@@ -60,7 +60,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
             final totalCount = ctrl.employees.length;
             return TaskGroupTitleWidget(
               isDark: isDark,
-              label: 'All Employees',
+              label: 'group_all_employees_label'.tr,
               count: totalCount,
               color: kPrimary,
               icon: Icons.people_rounded,
@@ -73,7 +73,7 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
             child: Text(
-              'GROUPS',
+              'group_section_label'.tr,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -86,12 +86,12 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
           // Position list
           Expanded(
             child: Obx(() {
-              final positions = ctrl.taskGroups;
-              if (positions.isEmpty) {
+              final groups = ctrl.Groups;
+              if (groups.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(
-                    'No task groups yet.\nTap + to create one.',
+                    'group_empty_hint'.tr,
                     style: TextStyle(
                       fontSize: 13,
                       color: isDark ? Colors.grey[600] : kTextMuted,
@@ -101,29 +101,33 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
               }
               return ListView.builder(
                 padding: EdgeInsets.zero,
-                itemCount: positions.length,
+                itemCount: groups.length,
                 itemBuilder: (_, i) {
-                  final pos = positions[i];
-                  final count = posCtrl.employeeCountByTaskGroup(pos.id);
+                  final group = groups[i];
+                  final count = groupController.employeeCountByGroup(group.id);
                   return TaskGroupTitleWidget(
                     isDark: isDark,
-                    label: pos.name,
+                    label: group.name,
                     count: count,
-                    color: pos.color ?? kPrimary,
+                    color: group.color ?? kPrimary,
                     icon: Icons.work_rounded,
-                    selected: selectedId == pos.id,
-                    onTap: () => onSelect(pos.id),
-                    onEdit: () =>
-                        showTaskGroupDialog(context, posCtrl, isDark, pos),
+                    selected: selectedId == group.id,
+                    onTap: () => onSelect(group.id),
+                    onEdit: () => showGroupDialog(
+                      context,
+                      groupController,
+                      isDark,
+                      group,
+                    ),
                     onDelete: () async {
                       final confirmed = await _confirmDelete(
                         context,
-                        pos,
+                        group,
                         count,
                       );
                       if (confirmed == true) {
-                        if (selectedId == pos.id) onSelect(null);
-                        posCtrl.deleteTaskGroup(pos.id);
+                        if (selectedId == group.id) onSelect(null);
+                        groupController.deleteGroup(group.id);
                       }
                     },
                   );
@@ -136,13 +140,17 @@ class LeftPanelTaskGroupWidget extends StatelessWidget {
     );
   }
 
-  Future<bool?> _confirmDelete(BuildContext context, TaskGroup pos, int count) {
+  Future<bool?> _confirmDelete(BuildContext context, Group group, int count) {
     return showConfirmDeleteDialog(
       context,
-      title: 'Delete Task Group',
+      title: 'group_dialog_delete_title'.tr,
       content: count > 0
-          ? 'This removes $count ${count == 1 ? 'employee' : 'employees'} in "${pos.name}". Continue?'
-          : 'Delete task group "${pos.name}"?',
+          ? (count == 1
+              ? 'group_confirm_delete_employee_msg'
+                  .trParams({'count': '1', 'name': group.name})
+              : 'group_confirm_delete_employees_msg'
+                  .trParams({'count': '$count', 'name': group.name}))
+          : 'group_confirm_delete_simple_msg'.trParams({'name': group.name}),
     );
   }
 }

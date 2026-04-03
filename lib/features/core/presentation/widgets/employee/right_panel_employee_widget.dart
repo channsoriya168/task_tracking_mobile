@@ -13,12 +13,12 @@ class RightPanelEmployeeWidget extends StatelessWidget {
   const RightPanelEmployeeWidget({
     required this.isDark,
     required this.ctrl,
-    required this.selectedTaskGroupId,
+    required this.selectedGroupId,
   });
 
   final bool isDark;
   final EmployeeController ctrl;
-  final String? selectedTaskGroupId;
+  final String? selectedGroupId;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class RightPanelEmployeeWidget extends StatelessWidget {
         PanelHeaderWidget(
           isDark: isDark,
           ctrl: ctrl,
-          selectedTaskGroupId: selectedTaskGroupId,
+          selectedTaskGroupId: selectedGroupId,
         ),
         SearchBarWidget(
           isDark: isDark,
@@ -42,9 +42,8 @@ class RightPanelEmployeeWidget extends StatelessWidget {
               return EmployeeGridShimmer(isDark: isDark);
             }
 
-            final employees = selectedTaskGroupId == null
-                ? ctrl.filteredEmployees
-                : Get.find<TaskGroupController>().employeesByTaskGroup(selectedTaskGroupId!);
+            final employees = ctrl.filteredEmployees;
+            final groups = Get.find<GroupController>().groups;
 
             if (employees.isEmpty) {
               return Center(
@@ -82,12 +81,17 @@ class RightPanelEmployeeWidget extends StatelessWidget {
               itemCount: employees.length,
               itemBuilder: (_, i) {
                 final emp = employees[i];
-                final taskGroup = Get.find<TaskGroupController>().taskGroupForEmployee(emp);
+                final groupId = emp.groups.isNotEmpty
+                    ? emp.groups.first.groupId
+                    : null;
+                final group = groupId != null
+                    ? groups.firstWhereOrNull((g) => g.id == groupId)
+                    : null;
                 return EmployeeGridCardWidget(
                   isDark: isDark,
                   ctrl: ctrl,
                   employee: emp,
-                  taskGroup: taskGroup,
+                  group: group,
                 );
               },
             );

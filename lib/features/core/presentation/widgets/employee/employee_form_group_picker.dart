@@ -17,9 +17,9 @@ class EmployeeFormGroupPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tgCtrl = Get.find<TaskGroupController>();
+    final tgCtrl = Get.find<GroupController>();
     return Obx(() {
-      final groups = tgCtrl.taskGroups.cast<TaskGroup>();
+      final groups = tgCtrl.groups.cast<Group>();
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

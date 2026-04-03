@@ -11,8 +11,8 @@ Future<void> showTaskDialog(
   TaskItem? task,
 }) async {
   final ctrl = Get.find<TaskController>();
-  final posCtrl = Get.find<TaskGroupController>();
-  final groups = posCtrl.taskGroups;
+  final posCtrl = Get.find<GroupController>();
+  final groups = posCtrl.groups;
 
   if (task != null) {
     ctrl.openForEdit(task);

@@ -5,13 +5,13 @@ import 'package:task_tracking_mobile/features/core/data/models/group_model.dart'
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/group_repository.dart';
 
-class TaskGroupRepositoryImpl implements TaskGroupRepository {
-  final TaskGroupRemoteDatasource _remote;
+class GroupRepositoryImpl implements GroupRepository {
+  final GroupRemoteDatasource _remote;
 
-  TaskGroupRepositoryImpl(this._remote);
+  GroupRepositoryImpl(this._remote);
 
   @override
-  Future<List<TaskGroup>> getAll() async {
+  Future<List<Group>> getAll() async {
     try {
       return await _remote.getAll();
     } on DioException catch (e) {
@@ -20,22 +20,13 @@ class TaskGroupRepositoryImpl implements TaskGroupRepository {
   }
 
   @override
-  Future<TaskGroup> getById(String id) async {
-    try {
-      return await _remote.getById(id);
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    }
-  }
-
-  @override
-  Future<TaskGroup> create({
+  Future<Group> create({
     required String name,
     String? color,
     String? description,
   }) async {
     try {
-      final model = TaskGroupModel(
+      final model = GroupModel(
         id: '',
         name: name,
         color: color != null ? _parseColor(color) : null,
@@ -49,14 +40,14 @@ class TaskGroupRepositoryImpl implements TaskGroupRepository {
   }
 
   @override
-  Future<TaskGroup> update(
+  Future<Group> update(
     String id, {
     required String name,
     String? color,
     String? description,
   }) async {
     try {
-      final model = TaskGroupModel(
+      final model = GroupModel(
         id: id,
         name: name,
         color: color != null ? _parseColor(color) : null,

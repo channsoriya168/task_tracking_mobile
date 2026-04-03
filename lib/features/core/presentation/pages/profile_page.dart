@@ -107,7 +107,7 @@ class ProfilePage extends StatelessWidget {
             if (Get.find<AuthController>()
                     .profile
                     .value
-                    ?.taskGroups
+                    ?.groups
                     .isNotEmpty ??
                 false)
               SliverPadding(
@@ -122,7 +122,7 @@ class ProfilePage extends StatelessWidget {
             if (Get.find<AuthController>()
                     .profile
                     .value
-                    ?.taskGroups
+                    ?.groups
                     .isNotEmpty ??
                 false)
               SliverPadding(
@@ -130,7 +130,7 @@ class ProfilePage extends StatelessWidget {
                 sliver: SliverToBoxAdapter(
                   child: Obx(() {
                     final profile = Get.find<AuthController>().profile.value;
-                    final groups = profile?.taskGroups ?? [];
+                    final groups = profile?.groups ?? [];
                     if (groups.isEmpty) {
                       return ProfileGroupEmptyState(isDark: isDark);
                     }

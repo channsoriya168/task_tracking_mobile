@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/pages/employee/manager_group_page.dart';
+import 'package:task_tracking_mobile/features/core/presentation/pages/employee/group_page.dart';
 
 class EmployeeHeaderWidget extends StatelessWidget {
   const EmployeeHeaderWidget({required this.isDark, required this.ctrl});
@@ -30,7 +30,9 @@ class EmployeeHeaderWidget extends StatelessWidget {
               ),
               Obx(
                 () => Text(
-                  'employee_members'.trParams({'count': '${ctrl.employees.length}'}),
+                  'employee_members'.trParams({
+                    'count': '${ctrl.employees.length}',
+                  }),
                   style: TextStyle(
                     fontSize: 13,
                     color: isDark ? Colors.grey[500] : kTextMuted,
@@ -41,9 +43,8 @@ class EmployeeHeaderWidget extends StatelessWidget {
           ),
           const Spacer(),
           OutlinedButton.icon(
-            onPressed: () => Get.to(() => const ManageTaskGroupWidget()),
-            icon: const Icon(Icons.work_outline_rounded, size: 16),
-            label: Text('employee_group_btn'.tr),
+            onPressed: () => Get.to(() => const GroupPage()),
+            label: Text('employee_create_group_btn'.tr),
             style: OutlinedButton.styleFrom(
               foregroundColor: kPrimary,
               side: const BorderSide(color: kPrimary),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class EmployeeTaskGroup {
+class EmployeeGroup {
   final String groupId;
   final String groupName;
   final Color groupColor;
   final int role; // 0 = member, 1 = lead
   final DateTime joinedAt;
 
-  const EmployeeTaskGroup({
+  const EmployeeGroup({
     required this.groupId,
     required this.groupName,
     required this.groupColor,
@@ -28,7 +28,7 @@ class Employee {
   final DateTime? dateOfBirth;
   final DateTime createdAt;
   final DateTime? updatedAt;
-  final List<EmployeeTaskGroup> taskGroups;
+  final List<EmployeeGroup> groups;
 
   const Employee({
     required this.id,
@@ -42,6 +42,6 @@ class Employee {
     this.dateOfBirth,
     required this.createdAt,
     this.updatedAt,
-    required this.taskGroups,
+    required this.groups,
   });
 }

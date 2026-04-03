@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/image_service.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/delete_group_usecase.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/update_group_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/get_all_groups_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/group_remote_datasource.dart';
@@ -44,8 +46,8 @@ class AppBinding extends Bindings {
       EmployeeRepositoryImpl(EmployeeRemoteDatasource()),
       permanent: true,
     );
-    Get.put<TaskGroupRepository>(
-      TaskGroupRepositoryImpl(TaskGroupRemoteDatasource()),
+    Get.put<GroupRepository>(
+      GroupRepositoryImpl(GroupRemoteDatasource()),
       permanent: true,
     );
     Get.put<TaskItemRepository>(
@@ -79,10 +81,12 @@ class AppBinding extends Bindings {
 
     // ── Feature bindings ──────────────────────────────────────
     ManagerTaskBinding().dependencies();
-    Get.lazyPut<TaskGroupController>(
-      () => TaskGroupController(
-        GetAllTaskGroupsUseCase(Get.find<TaskGroupRepository>()),
-        CreateTaskGroupUseCase(Get.find<TaskGroupRepository>()),
+    Get.lazyPut<GroupController>(
+      () => GroupController(
+        GetAllGroupsUseCase(Get.find<GroupRepository>()),
+        CreateGroupUseCase(Get.find<GroupRepository>()),
+        UpdateGroupUseCase(Get.find<GroupRepository>()),
+        DeleteGroupUseCase(Get.find<GroupRepository>()),
       ),
       fenix: true,
     );

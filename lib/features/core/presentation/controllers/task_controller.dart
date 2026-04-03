@@ -218,7 +218,10 @@ class TaskController extends GetxController {
       await fetchTasks();
       _refreshDashboard();
       _clearForm();
-      AppSnackbar.success('snack_task_created'.tr, 'snack_task_created_msg'.trParams({'title': title}));
+      AppSnackbar.success(
+        'snack_task_created'.tr,
+        'snack_task_created_msg'.trParams({'title': title}),
+      );
       return true;
     } catch (e) {
       AppSnackbar.error(
@@ -263,7 +266,10 @@ class TaskController extends GetxController {
       await fetchTasks();
       _refreshDashboard();
       _clearForm();
-      AppSnackbar.success('snack_task_updated'.tr, 'snack_task_updated_msg'.trParams({'title': title}));
+      AppSnackbar.success(
+        'snack_task_updated'.tr,
+        'snack_task_updated_msg'.trParams({'title': title}),
+      );
       return true;
     } catch (e) {
       AppSnackbar.error(
@@ -308,7 +314,7 @@ class TaskController extends GetxController {
   }
 
   /// Resets the form to defaults before opening the create-task dialog.
-  void resetForm(List<TaskGroup> groups) {
+  void resetForm(List<Group> groups) {
     editingTask.value = null;
     titleTextEditor.clear();
     descTextEditor.clear();

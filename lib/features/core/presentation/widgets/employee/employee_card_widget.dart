@@ -22,7 +22,7 @@ class EmployeeCardWidget extends StatelessWidget {
   final bool isDark;
   final EmployeeController ctrl;
   final Employee employee;
-  final TaskGroup? taskGroup;
+  final Group? taskGroup;
 
   bool get _isProtected {
     final authRole = Get.find<AuthController>().role;
@@ -36,7 +36,7 @@ class EmployeeCardWidget extends StatelessWidget {
     const accent = kPrimary;
     final protected = _isProtected;
     final hasPhone = employee.phone != null && employee.phone!.isNotEmpty;
-    final hasGroups = employee.taskGroups.isNotEmpty || taskGroup != null;
+    final hasGroups = employee.groups.isNotEmpty || taskGroup != null;
 
     return GestureDetector(
       onTap: () => showEmployeeMenuSheet(
@@ -217,8 +217,8 @@ class EmployeeCardWidget extends StatelessWidget {
                       spacing: 5,
                       runSpacing: 4,
                       children: [
-                        if (employee.taskGroups.isNotEmpty)
-                          ...employee.taskGroups
+                        if (employee.groups.isNotEmpty)
+                          ...employee.groups
                               .take(2)
                               .map(
                                 (g) => _GroupChip(

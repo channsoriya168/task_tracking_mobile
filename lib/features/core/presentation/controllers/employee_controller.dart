@@ -30,23 +30,28 @@ class EmployeeController extends GetxController {
 
   // ── List state ────────────────────────────────────────────────
   final RxList<Employee> employees = <Employee>[].obs;
+  final RxList<Employee> allEmployees = <Employee>[].obs;
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
   final RxString selectedTaskGroupId = ''.obs;
 
-  RxList<TaskGroup> get taskGroups =>
-      Get.find<TaskGroupController>().taskGroups;
+  RxList<Group> get Groups => Get.find<GroupController>().groups;
 
   @override
   void onInit() {
     super.onInit();
     fetchEmployees();
+    ever(selectedTaskGroupId, (_) => fetchEmployees());
   }
 
   Future<void> fetchEmployees() async {
     try {
       isLoading.value = true;
-      employees.value = await _repository.fetchEmployees();
+      final groupId = selectedTaskGroupId.value.isNotEmpty
+          ? selectedTaskGroupId.value
+          : null;
+      employees.value = await _repository.fetchEmployees(groupId: groupId);
+      if (groupId == null) allEmployees.assignAll(employees);
     } catch (_) {
       AppSnackbar.error('snack_error'.tr, 'snack_emp_load_failed'.tr);
     } finally {
@@ -56,14 +61,6 @@ class EmployeeController extends GetxController {
 
   List<Employee> get filteredEmployees {
     var list = employees.toList();
-    if (selectedTaskGroupId.value.isNotEmpty) {
-      list = list
-          .where(
-            (e) =>
-                e.taskGroups.any((g) => g.groupId == selectedTaskGroupId.value),
-          )
-          .toList();
-    }
     if (searchQuery.value.isNotEmpty) {
       final q = searchQuery.value.toLowerCase();
       list = list.where((e) {
@@ -135,15 +132,13 @@ class EmployeeController extends GetxController {
 
   // ── Task Group dialog ─────────────────────────────────────────
   Future<void> openTaskGroupDialog(BuildContext context) async {
-    final tgCtrl = Get.find<TaskGroupController>();
+    final tgCtrl = Get.find<GroupController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final before = tgCtrl.taskGroups.map((g) => g.id).toSet();
+    final before = tgCtrl.groups.map((g) => g.id).toSet();
 
-    await showTaskGroupDialog(context, tgCtrl, isDark);
+    await showGroupDialog(context, tgCtrl, isDark);
 
-    final added = tgCtrl.taskGroups
-        .where((g) => !before.contains(g.id))
-        .toList();
+    final added = tgCtrl.groups.where((g) => !before.contains(g.id)).toList();
     if (added.isNotEmpty) {
       selectedGroupId.value = added.first.id;
     }
@@ -171,8 +166,8 @@ class EmployeeController extends GetxController {
     placeCtrl.text = employee.placeOfBirth ?? '';
     selectedRole.value = employee.role ?? 'Employee';
     formDob.value = employee.dateOfBirth;
-    selectedGroupId.value = employee.taskGroups.isNotEmpty
-        ? employee.taskGroups.first.groupId
+    selectedGroupId.value = employee.groups.isNotEmpty
+        ? employee.groups.first.groupId
         : null;
     await Get.bottomSheet(
       ManagerEmployeeFormDialog(controller: this),
@@ -253,10 +248,7 @@ class EmployeeController extends GetxController {
       resetPasswordCtrl.clear();
       resetConfirmPasswordCtrl.clear();
       Get.back();
-      AppSnackbar.success(
-        'snack_reset_pwd'.tr,
-        'snack_pwd_changed'.tr,
-      );
+      AppSnackbar.success('snack_reset_pwd'.tr, 'snack_pwd_changed'.tr);
     } catch (e) {
       AppSnackbar.error('snack_reset_pwd'.tr, AppSnackbar.parseApiError(e));
     } finally {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TaskGroup {
+class Group {
   final String id;
   final String name;
   final Color? color;
@@ -9,7 +9,7 @@ class TaskGroup {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
-  TaskGroup({
+  Group({
     required this.id,
     required this.name,
     this.color,
@@ -19,7 +19,7 @@ class TaskGroup {
     this.updatedAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  TaskGroup copyWith({
+  Group copyWith({
     String? id,
     String? name,
     Color? color,
@@ -28,7 +28,7 @@ class TaskGroup {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return TaskGroup(
+    return  Group(
       id: id ?? this.id,
       name: name ?? this.name,
       color: color ?? this.color,

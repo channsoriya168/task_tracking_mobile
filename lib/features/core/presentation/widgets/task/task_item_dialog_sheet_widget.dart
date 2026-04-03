@@ -20,7 +20,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
 
   final bool isDark;
   final TaskController ctrl;
-  final List<TaskGroup> groups;
+  final List<Group> groups;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +137,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                         const SizedBox(height: 8),
                         Obx(() {
                           final groupId = ctrl.selectedGroupId.value;
-                          return DropdownWidget<TaskGroup>(
+                          return DropdownWidget<Group>(
                             value: groups.firstWhereOrNull(
                               (g) => g.id == groupId,
                             ),

@@ -11,9 +11,9 @@ abstract class ApiEndpoints {
   static const String changePassword = '/api/v1/Auth/change-password';
   static const String resetPassword = '/api/v1/Auth/reset-password';
 
-  // ── Task Groups ───────────────────────────────────────────
-  static const String taskGroups = '/api/v1/groups';
-  static String taskGroupById(String id) => '/api/v1/groups/$id';
+  // ── Groups ───────────────────────────────────────────
+  static const String groups = '/api/v1/groups';
+  static String groupById(String id) => '/api/v1/groups/$id';
 
   // ── Employees ─────────────────────────────────────────────
   static const String employees = '/api/v1/employees';
@@ -24,7 +24,8 @@ abstract class ApiEndpoints {
   static String taskItemById(String id) => '/api/v1/task-items/$id';
   static String taskItemAssign(String id) => '/api/v1/task-items/$id/assign';
   static String taskItemStatus(String id) => '/api/v1/task-items/$id/status';
-  static String taskItemMembers(String taskItemId) => '/api/v1/task-items/$taskItemId/members';
+  static String taskItemMembers(String taskItemId) =>
+      '/api/v1/task-items/$taskItemId/members';
   static String taskItemMemberById(String taskItemId, String memberId) =>
       '/api/v1/task-items/$taskItemId/members/$memberId';
   static String taskItemProgresses(String taskItemId) =>
