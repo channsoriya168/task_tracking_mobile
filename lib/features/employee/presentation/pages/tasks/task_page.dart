@@ -159,6 +159,7 @@ class _TaskCardShimmer extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Title + priority dot
                     Row(
