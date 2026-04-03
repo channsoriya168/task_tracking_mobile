@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
 
-Future<bool> confirmDeleteEmployee(String name) async {
-  final result = await Get.dialog<bool>(
-    AlertDialog(
-      title: const Text('Delete Employee'),
-      content: Text('Remove "$name" from the team?'),
-      actions: [
-        TextButton(
-          onPressed: () => Get.back(result: false),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () => Get.back(result: true),
-          style: TextButton.styleFrom(foregroundColor: kHighPriority),
-          child: const Text('Delete'),
-        ),
-      ],
-    ),
+Future<bool> confirmDeleteEmployee(BuildContext context, String name) async {
+  final result = await showConfirmDeleteDialog(
+    context,
+    title: 'employee_confirm_delete_title'.tr,
+    content: 'employee_confirm_delete_msg'.trParams({'name': name}),
   );
   return result == true;
 }

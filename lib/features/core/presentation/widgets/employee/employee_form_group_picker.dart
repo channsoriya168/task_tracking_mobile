@@ -26,12 +26,24 @@ class EmployeeFormGroupPicker extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  'Group',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.grey[400] : kTextMuted,
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Task Group',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : kTextDark,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          color: Colors.red[400],
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

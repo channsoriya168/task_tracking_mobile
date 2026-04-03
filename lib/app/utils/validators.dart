@@ -50,7 +50,7 @@ class Validators {
       r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:,.<>?]).{8,}$',
     );
     if (!regex.hasMatch(value)) {
-      return 'Min 8 chars with uppercase, lowercase, number & special character (e.g. Ditway@168).';
+      return 'Min 8 chars · uppercase · lowercase · number · special (e.g. Ditway@168).';
     }
     return null;
   }

@@ -9,7 +9,7 @@ const Map<String, String> kmKH = {
   'login_password_label': 'ពាក្យសម្ងាត់',
   'login_password_hint': 'បញ្ចូលពាក្យសម្ងាត់របស់អ្នក',
   'login_password_required': 'ត្រូវការពាក្យសម្ងាត់',
-  'login_password_min': 'ត្រូវការយ៉ាងហោចណាស់ ៦ តួអក្សរ',
+  'login_password_min': 'ត្រូវការយ៉ាងហោចណាស់ ៨ តួអក្សរ',
   'login_sign_in': 'ចូលប្រព័ន្ធ',
 
   // ── Notifications ────────────────────────────────────────────
@@ -169,6 +169,24 @@ const Map<String, String> kmKH = {
   'dialog_delete_confirm': 'លុប',
   'dialog_cancel': 'បោះបង់',
 
+  // ── Employee Form ─────────────────────────────────────────────
+  'emp_form_title_add': 'បន្ថែមបុគ្គលិក',
+  'emp_form_title_edit': 'កែសម្រួលបុគ្គលិក',
+  'emp_form_subtitle_add': 'បំពេញព័ត៌មានខាងក្រោម',
+  'emp_form_subtitle_edit': 'ធ្វើបច្ចុប្បន្នភាពព័ត៌មានបុគ្គលិក',
+  'emp_form_section_assignment': 'ការចាត់តាំង',
+  'emp_form_section_role': 'តួនាទី',
+  'emp_form_name_hint': 'ឧ. សុខ ដារា',
+  'emp_form_email_hint': 'ឧ. sokdara@company.com',
+  'emp_form_place_hint': 'ឧ. ភ្នំពេញ',
+  'emp_form_password_hint': 'បញ្ចូលពាក្យសម្ងាត់ខ្លាំង',
+  'emp_form_password_helper':
+      'យ៉ាងតិច ៨ តួ · អក្សរធំ · អក្សរតូច · លេខ · និមិត្តសញ្ញាពិសេស',
+  'emp_form_confirm_password_label': 'បញ្ជាក់ពាក្យសម្ងាត់',
+  'emp_form_confirm_password_hint': 'បញ្ចូលពាក្យសម្ងាត់ម្ដងទៀត',
+  'emp_form_btn_save': 'រក្សាទុកការផ្លាស់ប្ដូរ',
+  'emp_form_btn_add': 'បន្ថែមបុគ្គលិក',
+
   // ── Employee ──────────────────────────────────────────────────
   'employee_title': 'បុគ្គលិក',
   'employee_members': '@count សមាជិក',
@@ -194,10 +212,13 @@ const Map<String, String> kmKH = {
   'group_btn_close': 'បិទ',
   'group_btn_delete': 'លុបក្រុម',
   'group_dialog_delete_title': 'លុបក្រុមកិច្ចការ',
-  'group_dialog_delete_msg': 'តើអ្នកប្រាកដជាចង់លុប "@name" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។',
+  'group_dialog_delete_msg':
+      'តើអ្នកប្រាកដជាចង់លុប "@name" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។',
   'group_confirm_delete_simple_msg': 'លុបក្រុម "@name"?',
-  'group_confirm_delete_employee_msg': 'វានឹងដកបុគ្គលិក @count នាក់ចេញពីក្រុម "@name"។ បន្តទេ?',
-  'group_confirm_delete_employees_msg': 'វានឹងដកបុគ្គលិក @count នាក់ចេញពីក្រុម "@name"។ បន្តទេ?',
+  'group_confirm_delete_employee_msg':
+      'វានឹងដកបុគ្គលិក @count នាក់ចេញពីក្រុម "@name"។ បន្តទេ?',
+  'group_confirm_delete_employees_msg':
+      'វានឹងដកបុគ្គលិក @count នាក់ចេញពីក្រុម "@name"។ បន្តទេ?',
   'group_add_tooltip': 'បន្ថែមក្រុមកិច្ចការ',
   'group_all_employees_label': 'បុគ្គលិកទាំងអស់',
   'group_section_label': 'ក្រុម',
@@ -210,7 +231,7 @@ const Map<String, String> kmKH = {
   'val_phone_required': 'ត្រូវការលេខទូរស័ព្ទ។',
   'val_phone_invalid': 'បញ្ចូលលេខទូរស័ព្ទកម្ពុជាដែលត្រឹមត្រូវ។',
   'val_password_required': 'ត្រូវការពាក្យសម្ងាត់។',
-  'val_password_min': 'ពាក្យសម្ងាត់ត្រូវការយ៉ាងហោចណាស់ ៦ តួអក្សរ។',
+  'val_password_min': 'ពាក្យសម្ងាត់ត្រូវការយ៉ាងហោចណាស់ ៨ តួអក្សរ។',
   'val_password_strong':
       'យ៉ាងតិច ៨ តួ ជាមួយអក្សរធំ អក្សរតូច លេខ និងតួអក្សរពិសេស (ឧ. Ditway@168)។',
   'val_field_required': '@label ត្រូវការ។',
@@ -225,6 +246,9 @@ const Map<String, String> kmKH = {
   'snack_photo_removed': 'រូបថតប្រវត្តិរូបត្រូវបានលុបចោល។',
   'snack_logged_out': 'បានចេញ',
   'snack_logged_out_msg': 'អ្នកបានចេញដោយជោគជ័យ។',
+  'employee_confirm_delete_title': 'លុបបុគ្គលិក',
+  'employee_confirm_delete_msg':
+      'ដកចេញ "@name" ពីក្រុម? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។',
   'snack_emp_deleted': 'បុគ្គលិកត្រូវបានលុប',
   'snack_emp_deleted_msg': 'បុគ្គលិកត្រូវបានដកចេញ។',
   'snack_emp_added': 'បុគ្គលិកត្រូវបានបន្ថែម',

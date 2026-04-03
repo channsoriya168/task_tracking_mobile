@@ -17,6 +17,7 @@ class TextFieldWidget extends StatelessWidget {
     this.obscureText = false,
     this.suffixIcon,
     this.errorText,
+    this.helperText,
   });
 
   final TextEditingController controller;
@@ -31,6 +32,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final Widget? suffixIcon;
   final String? errorText;
+  final String? helperText;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,12 @@ class TextFieldWidget extends StatelessWidget {
             hintText: hint,
             suffixIcon: suffixIcon,
             errorText: errorText,
+            helperText: helperText,
+            helperMaxLines: 2,
+            helperStyle: TextStyle(
+              fontSize: 11,
+              color: isDark ? Colors.grey[500] : Colors.grey[500],
+            ),
             hintStyle: TextStyle(
               color: isDark ? Colors.grey[600] : Colors.grey[400],
               fontSize: 14,

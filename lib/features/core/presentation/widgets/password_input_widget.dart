@@ -27,6 +27,7 @@ class PasswordInputWidget extends StatefulWidget {
     required this.isDark,
     this.isRequired = false,
     this.errorText,
+    this.helperText,
   });
 
   final TextEditingController controller;
@@ -35,6 +36,7 @@ class PasswordInputWidget extends StatefulWidget {
   final bool isDark;
   final bool isRequired;
   final String? errorText;
+  final String? helperText;
 
   @override
   State<PasswordInputWidget> createState() => _PasswordInputWidgetState();
@@ -62,6 +64,7 @@ class _PasswordInputWidgetState extends State<PasswordInputWidget> {
         onPressed: () => setState(() => _obscure = !_obscure),
       ),
       errorText: widget.errorText,
+      helperText: widget.helperText,
     );
   }
 }

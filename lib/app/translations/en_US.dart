@@ -9,7 +9,7 @@ const Map<String, String> enUS = {
   'login_password_label': 'Password',
   'login_password_hint': 'Enter your password',
   'login_password_required': 'Password is required',
-  'login_password_min': 'At least 6 characters required',
+  'login_password_min': 'At least 8 characters required',
   'login_sign_in': 'Sign In',
 
   // ── Notifications ────────────────────────────────────────────
@@ -168,6 +168,24 @@ const Map<String, String> enUS = {
   'dialog_delete_confirm': 'Delete',
   'dialog_cancel': 'Cancel',
 
+  // ── Employee Form ─────────────────────────────────────────────
+  'emp_form_title_add': 'Add Employee',
+  'emp_form_title_edit': 'Edit Employee',
+  'emp_form_subtitle_add': 'Fill in the details below',
+  'emp_form_subtitle_edit': 'Update employee information',
+  'emp_form_section_assignment': 'Assignment',
+  'emp_form_section_role': 'Role',
+  'emp_form_name_hint': 'e.g. Sok Dara',
+  'emp_form_email_hint': 'e.g. sokdara@company.com',
+  'emp_form_place_hint': 'e.g. Phnom Penh',
+  'emp_form_password_hint': 'Enter a strong password',
+  'emp_form_password_helper':
+      'Min 8 chars · uppercase · lowercase · number · special',
+  'emp_form_confirm_password_label': 'Confirm Password',
+  'emp_form_confirm_password_hint': 'Re-enter password',
+  'emp_form_btn_save': 'Save Changes',
+  'emp_form_btn_add': 'Add Employee',
+
   // ── Employee ──────────────────────────────────────────────────
   'employee_title': 'Employees',
   'employee_members': '@count members',
@@ -193,10 +211,13 @@ const Map<String, String> enUS = {
   'group_btn_close': 'Close',
   'group_btn_delete': 'Delete Group',
   'group_dialog_delete_title': 'Delete Task Group',
-  'group_dialog_delete_msg': 'Are you sure you want to delete "@name"? This action cannot be undone.',
+  'group_dialog_delete_msg':
+      'Are you sure you want to delete "@name"? This action cannot be undone.',
   'group_confirm_delete_simple_msg': 'Delete group "@name"?',
-  'group_confirm_delete_employee_msg': 'This will also remove @count employee in "@name". Continue?',
-  'group_confirm_delete_employees_msg': 'This will also remove @count employees in "@name". Continue?',
+  'group_confirm_delete_employee_msg':
+      'This will also remove @count employee in "@name". Continue?',
+  'group_confirm_delete_employees_msg':
+      'This will also remove @count employees in "@name". Continue?',
   'group_add_tooltip': 'Add Task Group',
   'group_all_employees_label': 'All Employees',
   'group_section_label': 'GROUPS',
@@ -209,7 +230,7 @@ const Map<String, String> enUS = {
   'val_phone_required': 'Phone number is required.',
   'val_phone_invalid': 'Enter a valid Cambodian phone number.',
   'val_password_required': 'Password is required.',
-  'val_password_min': 'Password must be at least 6 characters.',
+  'val_password_min': 'Password must be at least 8 characters.',
   'val_password_strong':
       'Min 8 chars with uppercase, lowercase, number & special character (e.g. Ditway@168).',
   'val_field_required': '@label is required.',
@@ -224,6 +245,9 @@ const Map<String, String> enUS = {
   'snack_photo_removed': 'Profile photo removed.',
   'snack_logged_out': 'Logged out',
   'snack_logged_out_msg': 'You have been logged out successfully.',
+  'employee_confirm_delete_title': 'Delete Employee',
+  'employee_confirm_delete_msg':
+      'Remove "@name" from the team? This action cannot be undone.',
   'snack_emp_deleted': 'Employee Deleted',
   'snack_emp_deleted_msg': 'Employee has been removed.',
   'snack_emp_added': 'Employee Added',

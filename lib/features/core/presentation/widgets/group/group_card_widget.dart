@@ -55,8 +55,11 @@ class GroupCardWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             child: Row(
               children: [
-                // Left accent bar
-                Container(width: 5, height: 72, color: group.color ?? kPrimary),
+                // Left accent bar — stretches with content
+                Container(
+                  width: 5,
+                  color: group.color ?? kPrimary,
+                ),
                 const SizedBox(width: 14),
                 // Icon avatar
                 Container(
@@ -76,36 +79,52 @@ class GroupCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        group.name,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : kTextDark,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.people_alt_rounded,
-                            size: 12,
-                            color: isDark ? Colors.grey[500] : kTextMuted,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          group.name,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : kTextDark,
                           ),
-                          const SizedBox(width: 4),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.people_alt_rounded,
+                              size: 12,
+                              color: isDark ? Colors.grey[500] : kTextMuted,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '$employeeCount ${employeeCount == 1 ? 'group_member'.tr : 'group_members'.tr}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.grey[500] : kTextMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (group.description != null &&
+                            group.description!.isNotEmpty) ...[
+                          const SizedBox(height: 4),
                           Text(
-                            '$employeeCount ${employeeCount == 1 ? 'group_member'.tr : 'group_members'.tr}',
+                            group.description!,
                             style: TextStyle(
                               fontSize: 12,
                               color: isDark ? Colors.grey[500] : kTextMuted,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 ActionButton(

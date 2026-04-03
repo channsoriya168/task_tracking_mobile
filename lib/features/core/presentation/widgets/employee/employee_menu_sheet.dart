@@ -64,7 +64,7 @@ class _EmployeeMenuSheet extends StatelessWidget {
         });
       case EmployeeMenuAction.delete:
         final name = menuCtrl.employee?.fullName ?? '';
-        if (await confirmDeleteEmployee(name)) menuCtrl.deleteEmployee();
+        if (await confirmDeleteEmployee(context, name)) menuCtrl.deleteEmployee();
     }
   }
 
