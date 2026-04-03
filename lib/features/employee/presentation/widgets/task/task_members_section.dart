@@ -39,7 +39,7 @@ class TaskMembersSection extends StatelessWidget {
             children: [
               Icon(Icons.group_outlined, size: 16, color: mutedColor),
               const SizedBox(width: 8),
-              Text('Members',
+              Text('member_title'.tr,
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -73,7 +73,7 @@ class TaskMembersSection extends StatelessWidget {
             )
           else if (members.isEmpty)
             Text(
-              canEdit ? 'No members yet. Tap + to add.' : 'No members.',
+              canEdit ? 'member_empty_editable'.tr : 'member_empty'.tr,
               style: TextStyle(fontSize: 13, color: mutedColor),
             )
           else

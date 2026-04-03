@@ -12,6 +12,100 @@ const Map<String, String> enUS = {
   'login_password_min': 'At least 6 characters required',
   'login_sign_in': 'Sign In',
 
+  // ── Notifications ────────────────────────────────────────────
+  'notification_title': 'Notifications',
+  'notification_new_count': '@count New',
+  'notification_new_requests': 'New Task Requests',
+  'notification_empty': 'No new notifications',
+  'notification_assigned': 'New task assigned to you',
+  'notification_decline': 'Decline',
+  'notification_accept': 'Accept',
+
+  // ── Task detail ───────────────────────────────────────────────
+  'task_empty': 'No tasks found',
+  'task_no_due_date': 'No due date',
+  'task_overdue': 'Overdue',
+  'task_detail_label': 'Label',
+  'task_detail_group': 'Group',
+  'task_detail_priority': 'Priority',
+  'task_detail_start_date': 'Start Date',
+  'task_detail_due_date': 'Due Date',
+  'task_detail_assigned_to': 'Assigned to',
+  'task_detail_not_assigned': 'Not assigned yet',
+  'task_detail_created_by': 'Created by',
+  'task_detail_created': 'Created',
+
+  // ── Comments ──────────────────────────────────────────────────
+  'comment_title': 'Comments',
+  'comment_empty_mine': 'No comments yet — be the first!',
+  'comment_empty': 'No comments yet.',
+  'comment_hint': 'Write a comment…',
+
+  // ── Progress ──────────────────────────────────────────────────
+  'progress_title': 'Progress',
+  'progress_error': 'Error: @error\n(Tap to retry)',
+  'progress_empty': 'No progress logs yet.',
+  'progress_delete_title': 'Delete Progress',
+  'progress_delete_msg': 'Remove this progress log?',
+  'progress_edit': 'Edit Progress',
+  'progress_log': 'Log Progress',
+  'progress_notes': 'Notes *',
+  'progress_notes_hint': 'What did you work on?',
+  'progress_percent': 'Progress % (0–100)',
+  'progress_hours': 'Hours (optional)',
+  'progress_hours_hint': 'e.g. 2.5',
+  'progress_update': 'Update',
+  'progress_save': 'Save',
+
+  // ── Members ───────────────────────────────────────────────────
+  'member_title': 'Members',
+  'member_empty_editable': 'No members yet. Tap + to add.',
+  'member_empty': 'No members.',
+  'member_add_title': 'Add Member',
+  'member_add_confirm': 'Add @name to this task?',
+  'member_remove_title': 'Remove Member',
+  'member_remove_confirm': 'Remove @name from this task?',
+
+  // ── Picker ────────────────────────────────────────────────────
+  'picker_select_employee': 'Select Employee',
+  'picker_search_hint': 'Search...',
+  'picker_empty': 'No employees found.',
+
+  // ── Actions ───────────────────────────────────────────────────
+  'action_add': 'Add',
+  'action_remove': 'Remove',
+  'action_edit': 'Edit',
+  'action_delete': 'Delete',
+  'action_detail': 'Detail',
+
+  // ── Status ───────────────────────────────────────────────────
+  'status_all': 'All',
+  'status_pending': 'Pending',
+  'status_assigned': 'Assigned',
+  'status_inprogress': 'In Progress',
+  'status_inreview': 'In Review',
+  'status_completed': 'Completed',
+  'status_cancelled': 'Cancelled',
+  'status_onhold': 'On Hold',
+
+  // ── Priority ──────────────────────────────────────────────────
+  'priority_critical': 'Critical',
+  'priority_high': 'High',
+  'priority_medium': 'Medium',
+  'priority_low': 'Low',
+
+  // ── Task card ─────────────────────────────────────────────────
+  'task_accept': 'ACCEPT TASK',
+  'task_due_today': 'Due Today',
+  'task_due_date': 'Due @date',
+  'task_overdue_date': 'Overdue: @date',
+  'task_done_date': 'Done: @date',
+
+  // ── Home ─────────────────────────────────────────────────────
+  'home_greeting_morning': 'Good morning',
+  'home_greeting_afternoon': 'Good afternoon',
+  'home_greeting_evening': 'Good evening',
+
   // ── Navigation ────────────────────────────────────────────────
   'nav_dashboard': 'Dashboard',
   'nav_tasks': 'Tasks',

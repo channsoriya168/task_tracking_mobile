@@ -57,15 +57,15 @@ class EmployeeTaskCard extends StatelessWidget {
     String? dueDateLabel;
     bool dueDateUrgent = false;
     if (task.completedAt != null) {
-      dueDateLabel = 'Done: ${formatDate(task.completedAt!)}';
+      dueDateLabel = 'task_done_date'.trParams({'date': formatDate(task.completedAt!)});
     } else if (isDueToday) {
-      dueDateLabel = 'Due Today';
+      dueDateLabel = 'task_due_today'.tr;
       dueDateUrgent = true;
     } else if (isOverdue) {
-      dueDateLabel = 'Overdue: ${formatDate(task.dueDate!)}';
+      dueDateLabel = 'task_overdue_date'.trParams({'date': formatDate(task.dueDate!)});
       dueDateUrgent = true;
     } else if (task.dueDate != null) {
-      dueDateLabel = 'Due ${formatDate(task.dueDate!)}';
+      dueDateLabel = 'task_due_date'.trParams({'date': formatDate(task.dueDate!)});
     }
 
     // Avatar: prefer assignee, fall back to creator
@@ -284,8 +284,8 @@ class _AcceptButton extends StatelessWidget {
           color: kPrimary,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: const Text(
-          'ACCEPT TASK',
+        child: Text(
+          'task_accept'.tr,
           style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w800,

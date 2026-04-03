@@ -16,9 +16,9 @@ class HomePage extends StatelessWidget {
 
   String _greeting() {
     final h = DateTime.now().hour;
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (h < 12) return 'home_greeting_morning'.tr;
+    if (h < 17) return 'home_greeting_afternoon'.tr;
+    return 'home_greeting_evening'.tr;
   }
 
   @override
@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
 
             // ── Task list / shimmer / empty ───────────────────
             Obx(() {
-              if (homeCtrl.isLoading.value) {
+              if (homeCtrl.isLoading.value && homeCtrl.allTasks.isEmpty) {
                 return SliverPadding(
                   padding: kPageBottomPadding,
                   sliver: SliverList.separated(
@@ -201,58 +201,69 @@ class _TaskCardShimmer extends StatelessWidget {
       baseColor: base,
       highlightColor: highlight,
       child: Container(
-        height: 110,
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : Colors.black.withValues(alpha: 0.07),
-          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // ── Left accent strip ──
             Container(
-              width: 4,
+              width: 5,
               decoration: BoxDecoration(
                 color: isDark ? Colors.white24 : Colors.grey.shade400,
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(14),
-                  bottomLeft: Radius.circular(14),
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
                 ),
               ),
             ),
+            // ── Content ──
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title + priority dot
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: _ShimmerBox(
                             isDark: isDark,
                             width: double.infinity,
-                            height: 14,
+                            height: 16,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        _ShimmerBox(isDark: isDark, width: 60, height: 20),
+                        _ShimmerBox(isDark: isDark, width: 10, height: 10, radius: 5),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
+                    // Description line 1
+                    _ShimmerBox(isDark: isDark, width: double.infinity, height: 12),
+                    const SizedBox(height: 5),
+                    // Description line 2
                     _ShimmerBox(isDark: isDark, width: 180, height: 12),
-                    const Spacer(),
+                    const SizedBox(height: 10),
+                    // Due date
+                    _ShimmerBox(isDark: isDark, width: 100, height: 12),
+                    const SizedBox(height: 14),
+                    // Avatar + action button
                     Row(
                       children: [
-                        _ShimmerBox(isDark: isDark, width: 56, height: 20),
-                        const SizedBox(width: 8),
-                        _ShimmerBox(isDark: isDark, width: 56, height: 20),
+                        _ShimmerBox(isDark: isDark, width: 28, height: 28, radius: 14),
                         const Spacer(),
-                        _ShimmerBox(isDark: isDark, width: 36, height: 20),
+                        _ShimmerBox(isDark: isDark, width: 90, height: 32, radius: 10),
                       ],
                     ),
                   ],
@@ -271,11 +282,13 @@ class _ShimmerBox extends StatelessWidget {
     required this.isDark,
     required this.width,
     required this.height,
+    this.radius = 6,
   });
 
   final bool isDark;
   final double width;
   final double height;
+  final double radius;
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +297,7 @@ class _ShimmerBox extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: isDark ? Colors.white24 : Colors.grey.shade400,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(radius),
       ),
     );
   }

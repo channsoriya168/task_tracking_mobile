@@ -50,7 +50,7 @@ class NotificationPage extends StatelessWidget {
                   ),
                 ),
                 title: Text(
-                  'Notifications',
+                  'notification_title'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -74,7 +74,7 @@ class NotificationPage extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      '${pendingTasks.length} New',
+                      'notification_new_count'.trParams({'count': '${pendingTasks.length}'}),
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -101,7 +101,7 @@ class NotificationPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'New Task Requests',
+                        'notification_new_requests'.tr,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -129,7 +129,7 @@ class NotificationPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'No new notifications',
+                            'notification_empty'.tr,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -220,8 +220,8 @@ class _NotificationCard extends StatelessWidget {
                     color: Color(0xFFFFA502),
                   ),
                   const SizedBox(width: 6),
-                  const Text(
-                    'New task assigned to you',
+                  Text(
+                    'notification_assigned'.tr,
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -350,8 +350,8 @@ class _NotificationCard extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
-                            'Decline',
+                          child: Text(
+                            'notification_decline'.tr,
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -383,17 +383,17 @@ class _NotificationCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.check_rounded,
                                 size: 14,
                                 color: Colors.white,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Text(
-                                'Accept',
+                                'notification_accept'.tr,
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,

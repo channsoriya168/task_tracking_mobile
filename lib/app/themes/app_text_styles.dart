@@ -9,6 +9,7 @@ abstract class AppTextStyles {
   // Returns 'Siemreap' for Khmer, 'Inter' for all other locales.
   static String get _fontFamily =>
       Get.locale?.languageCode == 'km' ? 'Siemreap' : 'Kantumruy Pro';
+  // ── Single source of truth — change THIS line to switch font app-wide ───
 
   // ── Base builder ────────────────────────────────────────────────────────
   static TextStyle _font({

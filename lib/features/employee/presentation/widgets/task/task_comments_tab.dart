@@ -59,8 +59,8 @@ class TaskCommentsTab extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     canComment
-                        ? 'No comments yet — be the first!'
-                        : 'No comments yet.',
+                        ? 'comment_empty_mine'.tr
+                        : 'comment_empty'.tr,
                     style: TextStyle(fontSize: 13, color: mutedColor),
                   ),
                 ],
@@ -224,7 +224,7 @@ class _CommentInput extends StatelessWidget {
                   maxLines: 4,
                   style: TextStyle(fontSize: 13, color: textColor),
                   decoration: InputDecoration(
-                    hintText: 'Write a comment…',
+                    hintText: 'comment_hint'.tr,
                     hintStyle: TextStyle(fontSize: 13, color: mutedColor),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
