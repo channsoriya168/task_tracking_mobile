@@ -56,11 +56,7 @@ class GroupCardWidget extends StatelessWidget {
             child: Row(
               children: [
                 // Left accent bar
-                Container(
-                  width: 5,
-                  height: 72,
-                  color: group.color ?? kPrimary,
-                ),
+                Container(width: 5, height: 72, color: group.color ?? kPrimary),
                 const SizedBox(width: 14),
                 // Icon avatar
                 Container(
@@ -115,8 +111,7 @@ class GroupCardWidget extends StatelessWidget {
                 ActionButton(
                   icon: Icons.edit_rounded,
                   color: group.color ?? kPrimary,
-                  onTap: () =>
-                      showGroupDialog(context, ctrl, isDark, group),
+                  onTap: () => showGroupDialog(context, ctrl, isDark, group),
                 ),
                 const SizedBox(width: 6),
                 ActionButton(
@@ -142,10 +137,14 @@ class GroupCardWidget extends StatelessWidget {
       title: 'group_dialog_delete_title'.tr,
       content: employeeCount > 0
           ? (employeeCount == 1
-              ? 'group_confirm_delete_employee_msg'
-                  .trParams({'count': '1', 'name': group.name})
-              : 'group_confirm_delete_employees_msg'
-                  .trParams({'count': '$employeeCount', 'name': group.name}))
+                ? 'group_confirm_delete_employee_msg'.trParams({
+                    'count': '1',
+                    'name': group.name,
+                  })
+                : 'group_confirm_delete_employees_msg'.trParams({
+                    'count': '$employeeCount',
+                    'name': group.name,
+                  }))
           : 'group_confirm_delete_simple_msg'.trParams({'name': group.name}),
     );
   }

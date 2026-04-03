@@ -69,26 +69,44 @@ class GroupPage extends StatelessWidget {
           );
         }
 
-        return RefreshIndicator(
-          color: kPrimary,
-          onRefresh: () => ctrl.fetchGroups(),
-          child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
-            itemCount: groups.length,
-            itemBuilder: (_, i) {
-              final group = groups[i];
-              final count = ctrl.employeeCountByGroup(group.id);
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: GroupCardWidget(
-                  isDark: isDark,
-                  ctrl: ctrl,
-                  group: group,
-                  employeeCount: count,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 600;
+
+            final list = RefreshIndicator(
+              color: kPrimary,
+              onRefresh: () => ctrl.fetchGroups(),
+              child: ListView.builder(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+                itemCount: groups.length,
+                itemBuilder: (_, i) {
+                  final group = groups[i];
+                  final count = ctrl.employeeCountByGroup(group.id);
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: GroupCardWidget(
+                      isDark: isDark,
+                      ctrl: ctrl,
+                      group: group,
+                      employeeCount: count,
+                    ),
+                  );
+                },
+              ),
+            );
+
+            if (isWide) {
+              return Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 640),
+                  child: list,
                 ),
               );
-            },
-          ),
+            }
+
+            return list;
+          },
         );
       }),
       floatingActionButton: FloatingActionButton(

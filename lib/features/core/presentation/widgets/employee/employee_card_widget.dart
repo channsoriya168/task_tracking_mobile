@@ -174,7 +174,7 @@ class EmployeeCardWidget extends StatelessWidget {
                       Text(
                         employee.role ?? 'employee_no_role'.tr,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: accent,
                         ),
@@ -199,7 +199,7 @@ class EmployeeCardWidget extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 11,
                               color: isDark
                                   ? Colors.grey[400]
                                   : const Color(0xFF6B7280),
