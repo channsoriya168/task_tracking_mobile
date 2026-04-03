@@ -8,7 +8,7 @@ abstract class AppTextStyles {
   AppTextStyles._();
 
   // ── Single source of truth — change THIS line to switch font app-wide ───
-  static const String _fontFamily = 'Inter';
+  static const String _fontFamily = 'Kantumruy Pro';
 
   // ── Base builder ────────────────────────────────────────────────────────
   static TextStyle _font({
