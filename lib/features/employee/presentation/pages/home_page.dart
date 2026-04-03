@@ -16,9 +16,9 @@ class HomePage extends StatelessWidget {
 
   String _greeting() {
     final h = DateTime.now().hour;
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (h < 12) return 'home_greeting_morning'.tr;
+    if (h < 17) return 'home_greeting_afternoon'.tr;
+    return 'home_greeting_evening'.tr;
   }
 
   @override

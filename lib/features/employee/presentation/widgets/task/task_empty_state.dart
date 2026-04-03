@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 class TaskEmptyState extends StatelessWidget {
@@ -19,7 +20,7 @@ class TaskEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'No tasks found',
+            'task_empty'.tr,
             style: TextStyle(
               fontSize: 15,
               color: isDark ? Colors.white38 : kTextMuted,

@@ -70,10 +70,10 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
       ? Colors.white.withValues(alpha: 0.08)
       : Colors.black.withValues(alpha: 0.07);
 
-  static const _tabs = [
-    (Icons.group_outlined, 'Members'),
-    (Icons.chat_bubble_outline_rounded, 'Comments'),
-    (Icons.trending_up_rounded, 'Progress'),
+  List<(IconData, String)> get _tabs => [
+    (Icons.group_outlined, 'member_title'.tr),
+    (Icons.chat_bubble_outline_rounded, 'comment_title'.tr),
+    (Icons.trending_up_rounded, 'progress_title'.tr),
   ];
 
   // ── Action helpers ───────────────────────────────────────────────────────
@@ -132,18 +132,18 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     if (selected == null || !mounted) return;
 
     final ok = await _confirmDialog(
-      title: 'Add Member',
-      content: 'Add ${selected.fullName} to this task?',
-      confirmLabel: 'Add',
+      title: 'member_add_title'.tr,
+      content: 'member_add_confirm'.trParams({'name': selected.fullName}),
+      confirmLabel: 'action_add'.tr,
     );
     if (ok == true) await memberCtrl.addMember(task.id, selected.id);
   }
 
   Future<void> _onRemoveMember(TaskMember member) async {
     final ok = await _confirmDialog(
-      title: 'Remove Member',
-      content: 'Remove ${member.employeeName} from this task?',
-      confirmLabel: 'Remove',
+      title: 'member_remove_title'.tr,
+      content: 'member_remove_confirm'.trParams({'name': member.employeeName}),
+      confirmLabel: 'action_remove'.tr,
       confirmColor: Colors.red,
     );
     if (ok == true) await memberCtrl.removeMember(task.id, member.id);
@@ -317,7 +317,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
         if (task.groupName != null || task.labelName != null) ...[
           TaskDetailRow(
             icon: Icons.label_outline_rounded,
-            label: task.labelName != null ? 'Label' : 'Group',
+            label: task.labelName != null ? 'task_detail_label'.tr : 'task_detail_group'.tr,
             isDark: isDark,
             child: TaskLabelChip(
               name: task.labelName ?? task.groupName!,
@@ -329,7 +329,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
         ],
         TaskDetailRow(
           icon: Icons.flag_outlined,
-          label: 'Priority',
+          label: 'task_detail_priority'.tr,
           isDark: isDark,
           child: Row(
             children: [
@@ -357,7 +357,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
           const SizedBox(height: 14),
           TaskDetailRow(
             icon: Icons.play_circle_outline_rounded,
-            label: 'Start Date',
+            label: 'task_detail_start_date'.tr,
             isDark: isDark,
             child: _dateText(formatDate(task.startDate!)),
           ),
@@ -366,7 +366,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
           const SizedBox(height: 14),
           TaskDetailRow(
             icon: Icons.event_rounded,
-            label: 'Due Date',
+            label: 'task_detail_due_date'.tr,
             isDark: isDark,
             child: _dateText(formatDate(task.dueDate!)),
           ),
@@ -374,7 +374,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
         const SizedBox(height: 14),
         TaskDetailRow(
           icon: Icons.person_outline_rounded,
-          label: 'Assigned to',
+          label: 'task_detail_assigned_to'.tr,
           isDark: isDark,
           child: task.assignedToName != null
               ? TaskAssigneeRow(
@@ -383,7 +383,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
                   imageUrl: task.assignedToProfileImageUrl,
                 )
               : Text(
-                  'Not assigned yet',
+                  'task_detail_not_assigned'.tr,
                   style: TextStyle(fontSize: 14, color: mutedColor),
                 ),
         ),
@@ -391,7 +391,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
           const SizedBox(height: 14),
           TaskDetailRow(
             icon: Icons.person_add_alt_1_outlined,
-            label: 'Created by',
+            label: 'task_detail_created_by'.tr,
             isDark: isDark,
             child: TaskAssigneeRow(
               name: task.createdByEmployeeName!,
@@ -403,7 +403,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
         const SizedBox(height: 14),
         TaskDetailRow(
           icon: Icons.access_time_rounded,
-          label: 'Created',
+          label: 'task_detail_created'.tr,
           isDark: isDark,
           child: _dateText(formatDate(task.createdAt ?? DateTime.now())),
         ),
@@ -562,7 +562,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
         if (_isPending) {
           return TaskTransitionButton(
             width: double.infinity,
-            label: 'Accept Task',
+            label: 'task_accept'.tr,
             color: task.allowedTransitions.first.color,
             loading: activeId == -1,
             onTap: _handleAccept,

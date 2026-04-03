@@ -41,7 +41,7 @@ class TaskProgressSection extends StatelessWidget {
             children: [
               Icon(Icons.timeline_rounded, size: 16, color: mutedColor),
               const SizedBox(width: 8),
-              Text('Progress',
+              Text('progress_title'.tr,
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -86,14 +86,14 @@ class TaskProgressSection extends StatelessWidget {
             GestureDetector(
               onTap: () => ctrl.fetchTaskProgresses(taskId),
               child: Text(
-                'Error: $error\n(Tap to retry)',
+                'progress_error'.trParams({'error': error}),
                 style: TextStyle(
                     fontSize: 12,
                     color: Colors.red.withValues(alpha: 0.8)),
               ),
             )
           else if (progresses.isEmpty)
-            Text('No progress logs yet.',
+            Text('progress_empty'.tr,
                 style: TextStyle(fontSize: 13, color: mutedColor))
           else
             Column(
@@ -125,16 +125,16 @@ class TaskProgressSection extends StatelessWidget {
         backgroundColor: isDark ? kCardDark : Colors.white,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Delete Progress',
+        title: Text('progress_delete_title'.tr,
             style: TextStyle(
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : kTextDark)),
-        content: Text('Remove this progress log?',
+        content: Text('progress_delete_msg'.tr,
             style: TextStyle(color: isDark ? Colors.white70 : kTextMuted)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel',
+            child: Text('dialog_cancel'.tr,
                 style: TextStyle(
                     color: isDark ? Colors.white54 : kTextMuted)),
           ),
@@ -147,7 +147,7 @@ class TaskProgressSection extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
             ),
-            child: const Text('Delete'),
+            child: Text('action_delete'.tr),
           ),
         ],
       ),
@@ -464,7 +464,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(isEdit ? 'Edit Progress' : 'Log Progress',
+            Text(isEdit ? 'progress_edit'.tr : 'progress_log'.tr,
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -472,7 +472,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
             const SizedBox(height: 16),
 
             // Notes (required) — shown first
-            Text('Notes *',
+            Text('progress_notes'.tr,
                 style: TextStyle(fontSize: 13, color: mutedColor)),
             const SizedBox(height: 6),
             TextField(
@@ -485,7 +485,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                 }
               },
               decoration: InputDecoration(
-                hintText: 'What did you work on?',
+                hintText: 'progress_notes_hint'.tr,
                 hintStyle: TextStyle(color: mutedColor),
                 errorText: _notesError,
                 filled: true,
@@ -506,7 +506,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Progress % (0–100)',
+                      Text('progress_percent'.tr,
                           style: TextStyle(fontSize: 13, color: mutedColor)),
                       const SizedBox(height: 6),
                       TextField(
@@ -534,7 +534,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Hours (optional)',
+                      Text('progress_hours'.tr,
                           style: TextStyle(fontSize: 13, color: mutedColor)),
                       const SizedBox(height: 6),
                       TextField(
@@ -543,7 +543,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
                         decoration: InputDecoration(
-                          hintText: 'e.g. 2.5',
+                          hintText: 'progress_hours_hint'.tr,
                           hintStyle: TextStyle(color: mutedColor),
                           filled: true,
                           fillColor: fieldFill,
@@ -573,7 +573,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: Text('Cancel',
+                    child: Text('dialog_cancel'.tr,
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -599,7 +599,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                             child: CircularProgressIndicator(
                                 strokeWidth: 2, color: Colors.white),
                           )
-                        : Text(isEdit ? 'Update' : 'Save',
+                        : Text(isEdit ? 'progress_update'.tr : 'progress_save'.tr,
                             style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600)),

@@ -12,6 +12,100 @@ const Map<String, String> kmKH = {
   'login_password_min': 'ត្រូវការយ៉ាងហោចណាស់ ៦ តួអក្សរ',
   'login_sign_in': 'ចូលប្រព័ន្ធ',
 
+  // ── Notifications ────────────────────────────────────────────
+  'notification_title': 'ការជូនដំណឹង',
+  'notification_new_count': '@count ថ្មី',
+  'notification_new_requests': 'សំណើកិច្ចការថ្មី',
+  'notification_empty': 'គ្មានការជូនដំណឹងថ្មី',
+  'notification_assigned': 'កិច្ចការថ្មីត្រូវបានចាត់តាំងអ្នក',
+  'notification_decline': 'បដិសេធ',
+  'notification_accept': 'ទទួល',
+
+  // ── Task detail ───────────────────────────────────────────────
+  'task_empty': 'រកមិនឃើញកិច្ចការ',
+  'task_no_due_date': 'គ្មានកាលកំណត់',
+  'task_overdue': 'ហួសកំណត់',
+  'task_detail_label': 'ស្លាក',
+  'task_detail_group': 'ក្រុម',
+  'task_detail_priority': 'អាទិភាព',
+  'task_detail_start_date': 'កាលបរិច្ឆេទចាប់ផ្តើម',
+  'task_detail_due_date': 'កាលបរិច្ឆេទផុតកំណត់',
+  'task_detail_assigned_to': 'ចាត់តាំងទៅ',
+  'task_detail_not_assigned': 'មិនទាន់ចាត់តាំង',
+  'task_detail_created_by': 'បង្កើតដោយ',
+  'task_detail_created': 'បង្កើតនៅ',
+
+  // ── Comments ──────────────────────────────────────────────────
+  'comment_title': 'មតិយោបល់',
+  'comment_empty_mine': 'មិនទាន់មានមតិយោបល់ — ចូររួមចំណែកដំបូង!',
+  'comment_empty': 'មិនទាន់មានមតិយោបល់។',
+  'comment_hint': 'សរសេរមតិយោបល់…',
+
+  // ── Progress ──────────────────────────────────────────────────
+  'progress_title': 'វឌ្ឍនភាព',
+  'progress_error': 'កំហុស: @error\n(ចុចដើម្បីព្យាយាមម្ដងទៀត)',
+  'progress_empty': 'មិនទាន់មានកំណត់ហេតុវឌ្ឍនភាព។',
+  'progress_delete_title': 'លុបវឌ្ឍនភាព',
+  'progress_delete_msg': 'លុបកំណត់ហេតុវឌ្ឍនភាពនេះ?',
+  'progress_edit': 'កែសម្រួលវឌ្ឍនភាព',
+  'progress_log': 'កត់ត្រាវឌ្ឍនភាព',
+  'progress_notes': 'កំណត់ចំណាំ *',
+  'progress_notes_hint': 'អ្វីដែលអ្នកបានធ្វើ?',
+  'progress_percent': 'វឌ្ឍនភាព % (0–100)',
+  'progress_hours': 'ម៉ោង (ស្រេចចិត្ត)',
+  'progress_hours_hint': 'ឧ. 2.5',
+  'progress_update': 'ធ្វើបច្ចុប្បន្នភាព',
+  'progress_save': 'រក្សាទុក',
+
+  // ── Members ───────────────────────────────────────────────────
+  'member_title': 'សមាជិក',
+  'member_empty_editable': 'មិនទាន់មានសមាជិក។ ចុច + ដើម្បីបន្ថែម។',
+  'member_empty': 'គ្មានសមាជិក។',
+  'member_add_title': 'បន្ថែមសមាជិក',
+  'member_add_confirm': 'បន្ថែម @name ទៅក្នុងកិច្ចការនេះ?',
+  'member_remove_title': 'លុបសមាជិក',
+  'member_remove_confirm': 'លុប @name ចេញពីកិច្ចការនេះ?',
+
+  // ── Picker ────────────────────────────────────────────────────
+  'picker_select_employee': 'ជ្រើសរើសបុគ្គលិក',
+  'picker_search_hint': 'ស្វែងរក...',
+  'picker_empty': 'រកមិនឃើញបុគ្គលិក។',
+
+  // ── Actions ───────────────────────────────────────────────────
+  'action_add': 'បន្ថែម',
+  'action_remove': 'លុបចេញ',
+  'action_edit': 'កែសម្រួល',
+  'action_delete': 'លុប',
+  'action_detail': 'ព័ត៌មានលម្អិត',
+
+  // ── Status ───────────────────────────────────────────────────
+  'status_all': 'ទាំងអស់',
+  'status_pending': 'កំពុងរង់ចាំ',
+  'status_assigned': 'បានចាត់តាំង',
+  'status_inprogress': 'កំពុងដំណើរការ',
+  'status_inreview': 'កំពុងពិនិត្យ',
+  'status_completed': 'បានបញ្ចប់',
+  'status_cancelled': 'បានលុបចោល',
+  'status_onhold': 'ផ្អាក',
+
+  // ── Priority ──────────────────────────────────────────────────
+  'priority_critical': 'ធ្ងន់ធ្ងរខ្លាំង',
+  'priority_high': 'ខ្ពស់',
+  'priority_medium': 'មធ្យម',
+  'priority_low': 'ទាប',
+
+  // ── Task card ─────────────────────────────────────────────────
+  'task_accept': 'ទទួលកិច្ចការ',
+  'task_due_today': 'ផុតកំណត់ថ្ងៃនេះ',
+  'task_due_date': 'ផុតកំណត់ @date',
+  'task_overdue_date': 'ហួសកំណត់: @date',
+  'task_done_date': 'បានបញ្ចប់: @date',
+
+  // ── Home ─────────────────────────────────────────────────────
+  'home_greeting_morning': 'អរុណសួស្តី',
+  'home_greeting_afternoon': 'ទិវាសួស្តី',
+  'home_greeting_evening': 'សាយណ្ហសួស្តី',
+
   // ── Navigation ────────────────────────────────────────────────
   'nav_dashboard': 'ផ្ទាំងគ្រប់គ្រង',
   'nav_tasks': 'កិច្ចការ',

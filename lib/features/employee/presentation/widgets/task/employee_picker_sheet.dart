@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
@@ -48,7 +49,7 @@ class _EmployeePickerSheetState extends State<EmployeePickerSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('Select Employee',
+              child: Text('picker_select_employee'.tr,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -61,7 +62,7 @@ class _EmployeePickerSheetState extends State<EmployeePickerSheet> {
             child: TextField(
               style: TextStyle(color: textColor, fontSize: 14),
               decoration: InputDecoration(
-                hintText: 'Search...',
+                hintText: 'picker_search_hint'.tr,
                 hintStyle: TextStyle(color: mutedColor),
                 prefixIcon: Icon(Icons.search, color: mutedColor, size: 18),
                 filled: true,
@@ -81,7 +82,7 @@ class _EmployeePickerSheetState extends State<EmployeePickerSheet> {
           Expanded(
             child: filtered.isEmpty
                 ? Center(
-                    child: Text('No employees found.',
+                    child: Text('picker_empty'.tr,
                         style: TextStyle(color: mutedColor)))
                 : ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),

@@ -32,7 +32,7 @@ class TasksPage extends StatelessWidget {
             child: Padding(
               padding: kPagePadding,
               child: Text(
-                'Tasks',
+                'nav_tasks'.tr,
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
