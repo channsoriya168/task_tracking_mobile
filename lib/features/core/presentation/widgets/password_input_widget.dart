@@ -55,7 +55,7 @@ class _PasswordInputWidgetState extends State<PasswordInputWidget> {
       prefixIcon: Icons.lock_outline_rounded,
       suffixIcon: IconButton(
         icon: Icon(
-          _obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+          _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
           size: 18,
           color: Colors.grey[500],
         ),

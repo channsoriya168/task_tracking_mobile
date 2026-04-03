@@ -51,14 +51,6 @@ class ProfileChangePasswordSheet extends StatelessWidget {
                   color: isDark ? Colors.white : kTextDark,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Enter your current password then choose a new one.',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white54 : kTextMuted,
-                ),
-              ),
               const SizedBox(height: 20),
 
               // ── Current password ───────────────────────────
@@ -79,19 +71,14 @@ class ProfileChangePasswordSheet extends StatelessWidget {
                 label: 'New Password',
                 hint: 'Enter new password',
                 isDark: isDark,
-                errorText:
-                    _newFieldError(err).isEmpty ? null : _newFieldError(err),
+                errorText: _newFieldError(err).isEmpty
+                    ? null
+                    : _newFieldError(err),
               ),
               if (_newFieldError(err).isEmpty) ...[
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      size: 12,
-                      color: isDark ? Colors.white38 : kTextMuted,
-                    ),
-                    const SizedBox(width: 5),
                     Expanded(
                       child: Text(
                         'Min 8 chars · uppercase · lowercase · number · special (e.g. Ditway@168)',

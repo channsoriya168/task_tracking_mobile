@@ -49,8 +49,9 @@ class ProfilePage extends StatelessWidget {
                   final name = profile?.fullName ?? auth?.fullName ?? '';
                   final role = profile?.primaryRole ?? auth?.primaryRole ?? '';
                   final email = profile?.email ?? '';
-                  final avatarLetter =
-                      name.isNotEmpty ? name[0].toUpperCase() : '?';
+                  final avatarLetter = name.isNotEmpty
+                      ? name[0].toUpperCase()
+                      : '?';
                   return ProfileHeader(
                     isDark: isDark,
                     name: name,
@@ -66,37 +67,49 @@ class ProfilePage extends StatelessWidget {
             ),
 
             // ── My Groups ──────────────────────────────────────────
-            SliverPadding(
-              padding: kPageSectionLargePadding,
-              sliver: SliverToBoxAdapter(
-                child: Text(
-                  'My Groups',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : kTextDark,
+            if (Get.find<AuthController>()
+                    .profile
+                    .value
+                    ?.taskGroups
+                    .isNotEmpty ??
+                false)
+              SliverPadding(
+                padding: kPageSectionLargePadding,
+                sliver: SliverToBoxAdapter(
+                  child: Text(
+                    'My Groups',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : kTextDark,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SliverPadding(
-              padding: kPageSectionPadding,
-              sliver: SliverToBoxAdapter(
-                child: Obx(() {
-                  final profile = Get.find<AuthController>().profile.value;
-                  final groups = profile?.taskGroups ?? [];
-                  if (groups.isEmpty) {
-                    return ProfileGroupEmptyState(isDark: isDark);
-                  }
-                  return Column(
-                    children: groups.map((g) {
-                      final map = g as Map<String, dynamic>? ?? {};
-                      return ProfileGroupCard(isDark: isDark, group: map);
-                    }).toList(),
-                  );
-                }),
+            if (Get.find<AuthController>()
+                    .profile
+                    .value
+                    ?.taskGroups
+                    .isNotEmpty ??
+                false)
+              SliverPadding(
+                padding: kPageSectionPadding,
+                sliver: SliverToBoxAdapter(
+                  child: Obx(() {
+                    final profile = Get.find<AuthController>().profile.value;
+                    final groups = profile?.taskGroups ?? [];
+                    if (groups.isEmpty) {
+                      return ProfileGroupEmptyState(isDark: isDark);
+                    }
+                    return Column(
+                      children: groups.map((g) {
+                        final map = g as Map<String, dynamic>? ?? {};
+                        return ProfileGroupCard(isDark: isDark, group: map);
+                      }).toList(),
+                    );
+                  }),
+                ),
               ),
-            ),
 
             // ── Personal Info ──────────────────────────────────────
             SliverPadding(
