@@ -569,21 +569,60 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
           );
         }
 
-        return Row(
-          children: [
-            for (int i = 0; i < task.allowedTransitions.length; i++) ...[
-              if (i > 0) const SizedBox(width: 8),
-              Expanded(
-                child: TaskTransitionButton(
-                  label: task.allowedTransitions[i].name,
-                  color: task.allowedTransitions[i].color,
-                  loading: activeId == task.allowedTransitions[i].id,
-                  onTap: () => _handleTransition(task.allowedTransitions[i]),
+        final transitions = task.allowedTransitions;
+        final useGrid = transitions.length > 2;
+
+        if (!useGrid) {
+          return Row(
+            children: [
+              for (int i = 0; i < transitions.length; i++) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(
+                  child: TaskTransitionButton(
+                    label: transitions[i].name,
+                    color: transitions[i].color,
+                    loading: activeId == transitions[i].id,
+                    onTap: () => _handleTransition(transitions[i]),
+                  ),
                 ),
-              ),
+              ],
             ],
-          ],
-        );
+          );
+        }
+
+        // 2-column grid for 3+ transitions
+        final rows = <Widget>[];
+        for (int i = 0; i < transitions.length; i += 2) {
+          final hasNext = i + 1 < transitions.length;
+          rows.add(
+            Row(
+              children: [
+                Expanded(
+                  child: TaskTransitionButton(
+                    label: transitions[i].name,
+                    color: transitions[i].color,
+                    loading: activeId == transitions[i].id,
+                    onTap: () => _handleTransition(transitions[i]),
+                  ),
+                ),
+                if (hasNext) ...[
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TaskTransitionButton(
+                      label: transitions[i + 1].name,
+                      color: transitions[i + 1].color,
+                      loading: activeId == transitions[i + 1].id,
+                      onTap: () => _handleTransition(transitions[i + 1]),
+                    ),
+                  ),
+                ] else
+                  const Expanded(child: SizedBox()),
+              ],
+            ),
+          );
+          if (i + 2 < transitions.length) rows.add(const SizedBox(height: 8));
+        }
+        return Column(mainAxisSize: MainAxisSize.min, children: rows);
       }),
     );
   }
