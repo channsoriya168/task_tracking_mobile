@@ -4,9 +4,6 @@ import 'package:task_tracking_mobile/app/utils/format_date.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_date_row.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_footer_row.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_card_title_row.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/task/employee_task_detail_sheet.dart';
 
@@ -15,8 +12,6 @@ class EmployeeTaskCard extends StatelessWidget {
     super.key,
     required this.task,
     required this.isDark,
-
-    /// Direct accept callback (used by home page for confirm-dialog flow).
     this.onAccept,
   });
 
@@ -26,8 +21,6 @@ class EmployeeTaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mutedColor = isDark ? Colors.white54 : kTextMuted;
-    final statusColor = task.status.color;
     final ctrl = Get.find<EmployeeTaskController>();
     final currentId = ctrl.currentEmployeeId;
 
@@ -38,124 +31,202 @@ class EmployeeTaskCard extends StatelessWidget {
         task.assignedToId != null && task.assignedToId == currentId;
     final isAssignedToOther = task.assignedToId != null && !isMyTask;
 
-    void openDetail({bool readOnly = false}) {
-      ctrl.prepareTaskDetail(task.id);
-      showEmployeeTaskDetailSheet(context, isDark, task, readOnly: readOnly);
-    }
-
-    final startLabel = task.startDate != null
-        ? formatDate(task.startDate!)
-        : (task.createdAt != null ? formatDate(task.createdAt!) : '');
-
-    final dividerColor = isDark
-        ? Colors.white.withValues(alpha: 0.07)
-        : Colors.black.withValues(alpha: 0.06);
-
-    // Available transitions from the API.
     final transitions =
         isMyTask ? task.allowedTransitions : <TaskStatusLookup>[];
     final primaryTransition =
         transitions.isNotEmpty ? transitions.first : null;
 
+    void openDetail({bool readOnly = false}) {
+      ctrl.prepareTaskDetail(task.id);
+      showEmployeeTaskDetailSheet(context, isDark, task, readOnly: readOnly);
+    }
+
+    final statusColor = task.status.color;
+    final cardBg = isDark ? kCardDark : Colors.white;
+    final shadowColor = Colors.black.withValues(alpha: isDark ? 0.3 : 0.08);
+
+    // Due date label
+    final now = DateTime.now();
+    final isOverdue = task.dueDate != null &&
+        task.dueDate!.isBefore(DateTime(now.year, now.month, now.day));
+    final isDueToday = task.dueDate != null &&
+        task.dueDate!.year == now.year &&
+        task.dueDate!.month == now.month &&
+        task.dueDate!.day == now.day;
+
+    String? dueDateLabel;
+    bool dueDateUrgent = false;
+    if (task.completedAt != null) {
+      dueDateLabel = 'Done: ${formatDate(task.completedAt!)}';
+    } else if (isDueToday) {
+      dueDateLabel = 'Due Today';
+      dueDateUrgent = true;
+    } else if (isOverdue) {
+      dueDateLabel = 'Overdue: ${formatDate(task.dueDate!)}';
+      dueDateUrgent = true;
+    } else if (task.dueDate != null) {
+      dueDateLabel = 'Due ${formatDate(task.dueDate!)}';
+    }
+
+    // Avatar: prefer assignee, fall back to creator
+    final avatarUrl =
+        task.assignedToProfileImageUrl ?? task.createdByProfileImageUrl;
+    final avatarName =
+        task.assignedToName ?? task.createdByEmployeeName ?? '';
+
     return GestureDetector(
-      // Pending/my tasks → interactive detail; others' tasks → read-only
       onTap: () => openDetail(readOnly: isAssignedToOther),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? kCardDark : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isPending
-                ? kPrimary.withValues(alpha: 0.35)
-                : isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : Colors.black.withValues(alpha: 0.07),
-            width: isPending ? 1.5 : 1,
-          ),
+          color: cardBg,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              color: shadowColor,
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           child: IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ── Left accent strip ──
+                // ── Left accent strip ──────────────────────────
                 Container(
-                  width: 4,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [statusColor, statusColor.withValues(alpha: 0.4)],
-                    ),
-                  ),
+                  width: 5,
+                  color: statusColor,
                 ),
-                // ── Content ──
+
+                // ── Card content ───────────────────────────────
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Main info area
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-                        child: Column(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ── Title row + priority dot ──────────
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TaskCardTitleRow(
-                              task: task,
-                              isDark: isDark,
-                              mutedColor: mutedColor,
+                            Expanded(
+                              child: Text(
+                                task.title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                                  height: 1.3,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            const SizedBox(height: 8),
-                            TaskCardDateRow(
-                              mutedColor: mutedColor,
-                              startLabel: startLabel,
-                              isStartFallback: task.startDate == null,
-                              dueDate: task.dueDate,
-                            ),
-                            const SizedBox(height: 8),
-                            TaskCardFooterRow(
-                              task: task,
-                              isDark: isDark,
-                              mutedColor: mutedColor,
-                              statusColor: statusColor,
-                              priorityColor: task.priority.color,
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 10,
+                              height: 10,
+                              margin: const EdgeInsets.only(top: 4),
+                              decoration: BoxDecoration(
+                                color: task.priority.color,
+                                shape: BoxShape.circle,
+                              ),
                             ),
                           ],
                         ),
-                      ),
 
-                      // ── Action area (varies by task state) ──
-                      if (isPending)
-                        // Unassigned — anyone in the group can accept
-                        _AcceptBar(
-                          isDark: isDark,
-                          dividerColor: dividerColor,
-                          onTap: onAccept ?? () => openDetail(),
-                        )
-                      else if (isAssignedToOther)
-                        // Already taken by someone else — read-only indicator
-                        _TakenBar(
-                          name: task.assignedToName ?? 'someone',
-                          isDark: isDark,
-                          dividerColor: dividerColor,
-                        )
-                      else if (primaryTransition != null)
-                        _StatusActionBar(
-                          label: 'Update Status',
-                          color: primaryTransition.color,
-                          isDark: isDark,
-                          dividerColor: dividerColor,
-                          onTap: () => openDetail(),
+                        // ── Description ───────────────────────
+                        if (task.description != null &&
+                            task.description!.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            task.description!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: isDark
+                                  ? Colors.white54
+                                  : const Color(0xFF8E8EA0),
+                              height: 1.4,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+
+                        // ── Due date ──────────────────────────
+                        if (dueDateLabel != null) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              if (dueDateUrgent)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: Icon(
+                                    Icons.access_time_rounded,
+                                    size: 13,
+                                    color: dueDateUrgent
+                                        ? const Color(0xFFFF6B35)
+                                        : (isDark
+                                            ? Colors.white38
+                                            : const Color(0xFF8E8EA0)),
+                                  ),
+                                ),
+                              Text(
+                                dueDateLabel,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: dueDateUrgent
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                  color: dueDateUrgent
+                                      ? const Color(0xFFFF6B35)
+                                      : (isDark
+                                          ? Colors.white38
+                                          : const Color(0xFF8E8EA0)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+
+                        const SizedBox(height: 12),
+
+                        // ── Bottom row: avatar + action ────────
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Avatar
+                            _Avatar(url: avatarUrl, name: avatarName),
+
+                            const Spacer(),
+
+                            // Action
+                            if (isPending)
+                              _AcceptButton(
+                                onTap: onAccept ?? () => openDetail(),
+                              )
+                            else if (isAssignedToOther)
+                              _StatusChip(
+                                label: task.status.name,
+                                color: statusColor,
+                              )
+                            else if (primaryTransition != null)
+                              _StatusChip(
+                                label: task.status.name,
+                                color: statusColor,
+                                onTap: () => openDetail(),
+                              )
+                            else if (!isPending && !isAssignedToOther)
+                              _StatusChip(
+                                label: task.status.name,
+                                color: statusColor,
+                              ),
+                          ],
                         ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -167,159 +238,99 @@ class EmployeeTaskCard extends StatelessWidget {
   }
 }
 
-// ── Accept bar: prominent, full-width — for unassigned group tasks ─────────────
+// ── Avatar ────────────────────────────────────────────────────────────────────
 
-class _AcceptBar extends StatelessWidget {
-  const _AcceptBar({
-    required this.isDark,
-    required this.dividerColor,
-    required this.onTap,
-  });
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.url, required this.name});
 
-  final bool isDark;
-  final Color dividerColor;
+  final String? url;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    return CircleAvatar(
+      radius: 14,
+      backgroundColor: kPrimary.withValues(alpha: 0.15),
+      backgroundImage: url != null ? NetworkImage(url!) : null,
+      child: url == null
+          ? Text(
+              letter,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: kPrimary,
+              ),
+            )
+          : null,
+    );
+  }
+}
+
+// ── Accept button ─────────────────────────────────────────────────────────────
+
+class _AcceptButton extends StatelessWidget {
+  const _AcceptButton({required this.onTap});
+
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Divider(height: 1, thickness: 1, color: dividerColor),
-        InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            color: kPrimary.withValues(alpha: isDark ? 0.18 : 0.06),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.check_circle_outline_rounded,
-                  size: 14,
-                  color: kPrimary,
-                ),
-                SizedBox(width: 6),
-                Text(
-                  'Accept Task',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: kPrimary,
-                  ),
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        decoration: BoxDecoration(
+          color: kPrimary,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: const Text(
+          'ACCEPT TASK',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            letterSpacing: 0.5,
           ),
         ),
-      ],
+      ),
     );
   }
 }
 
-// ── Taken bar: greyed out, shows who already accepted ─────────────────────────
+// ── Status chip ───────────────────────────────────────────────────────────────
 
-class _TakenBar extends StatelessWidget {
-  const _TakenBar({
-    required this.name,
-    required this.isDark,
-    required this.dividerColor,
-  });
-
-  final String name;
-  final bool isDark;
-  final Color dividerColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isDark ? Colors.white30 : Colors.black26;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Divider(height: 1, thickness: 1, color: dividerColor),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 7, 12, 7),
-          child: Row(
-            children: [
-              Icon(Icons.lock_outline_rounded, size: 12, color: color),
-              const SizedBox(width: 5),
-              Expanded(
-                child: Text(
-                  'Accepted by $name',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: color,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ── Status action bar: small chip for my-task status progression ──────────────
-
-class _StatusActionBar extends StatelessWidget {
-  const _StatusActionBar({
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({
     required this.label,
     required this.color,
-    required this.isDark,
-    required this.dividerColor,
-    required this.onTap,
+    this.onTap,
   });
 
   final String label;
   final Color color;
-  final bool isDark;
-  final Color dividerColor;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    const icon = Icons.arrow_circle_right_outlined;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Divider(height: 1, thickness: 1, color: dividerColor),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(8),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(icon, size: 13, color: color),
-                      const SizedBox(width: 4),
-                      Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: color,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: color,
+            letterSpacing: 0.3,
           ),
         ),
-      ],
+      ),
     );
   }
 }
