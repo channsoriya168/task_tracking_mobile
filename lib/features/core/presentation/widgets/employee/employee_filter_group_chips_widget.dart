@@ -29,7 +29,7 @@ class EmployeeFilterGroupChipsWidget extends StatelessWidget {
             children: [
               // ── "All" chip ──────────────────────────────────
               _FilterChip(
-                label: 'All',
+                label: 'employee_all'.tr,
                 isSelected: selected.isEmpty,
                 isDark: isDark,
                 icon: Icons.people_rounded,

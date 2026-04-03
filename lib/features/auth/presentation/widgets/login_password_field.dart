@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_form_field.dart';
 
@@ -18,7 +19,7 @@ class LoginPasswordField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoginFormField(
-      label: 'Password',
+      label: 'login_password_label'.tr,
       child: TextFormField(
         controller: controller,
         obscureText: obscure,
@@ -28,7 +29,7 @@ class LoginPasswordField extends StatelessWidget {
           fontSize: 15,
         ),
         decoration: loginInputDecoration(
-          hint: 'Enter your password',
+          hint: 'login_password_hint'.tr,
           icon: Icons.lock_outline_rounded,
           isDark: isDark,
           suffixIcon: IconButton(
@@ -43,8 +44,8 @@ class LoginPasswordField extends StatelessWidget {
           ),
         ),
         validator: (v) {
-          if (v == null || v.isEmpty) return 'Password is required';
-          if (v.length < 6) return 'At least 6 characters required';
+          if (v == null || v.isEmpty) return 'login_password_required'.tr;
+          if (v.length < 6) return 'login_password_min'.tr;
           return null;
         },
       ),

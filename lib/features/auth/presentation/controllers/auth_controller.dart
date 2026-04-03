@@ -105,7 +105,7 @@ class AuthController extends GetxController {
 
       Get.find<NavigationController>().changePage(0);
       Get.offAllNamed(AppRoutes.mainPage);
-      AppSnackbar.success('Welcome back, ${auth.fullName}!', '');
+      AppSnackbar.success('snack_welcome'.trParams({'name': auth.fullName}), '');
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
@@ -176,7 +176,7 @@ class AuthController extends GetxController {
       );
       clearChangePasswordForm();
       Get.back();
-      AppSnackbar.success('Success', 'Password changed successfully.');
+      AppSnackbar.success('snack_success'.tr, 'snack_pwd_changed'.tr);
     } catch (e) {
       changePasswordError.value = e.toString();
     } finally {
@@ -212,9 +212,9 @@ class AuthController extends GetxController {
     try {
       await updateProfileUsecase(image: file);
       await fetchProfile();
-      AppSnackbar.success('Success', 'Profile photo updated.');
+      AppSnackbar.success('snack_success'.tr, 'snack_photo_updated'.tr);
     } catch (e) {
-      AppSnackbar.error('Error', e.toString());
+      AppSnackbar.error('snack_error'.tr, e.toString());
     } finally {
       isUploadingImage.value = false;
     }
@@ -225,9 +225,9 @@ class AuthController extends GetxController {
     try {
       await updateProfileUsecase(removeImage: true);
       await fetchProfile();
-      AppSnackbar.success('Success', 'Profile photo removed.');
+      AppSnackbar.success('snack_success'.tr, 'snack_photo_removed'.tr);
     } catch (e) {
-      AppSnackbar.error('Error', e.toString());
+      AppSnackbar.error('snack_error'.tr, e.toString());
     } finally {
       isUploadingImage.value = false;
     }
@@ -241,7 +241,7 @@ class AuthController extends GetxController {
     await logoutUsecase();
     currentAuth.value = null;
     Get.find<NavigationController>().changePage(0);
-    AppSnackbar.success('Logged out', 'You have been logged out successfully.');
+    AppSnackbar.success('snack_logged_out'.tr, 'snack_logged_out_msg'.tr);
     Get.offAllNamed(AppRoutes.login);
   }
 

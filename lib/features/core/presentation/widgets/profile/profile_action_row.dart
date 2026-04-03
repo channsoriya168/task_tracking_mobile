@@ -29,10 +29,18 @@ class ProfileActionRow extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
             child: Row(
               children: [
-                Icon(icon, size: 20, color: iconColor),
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: iconColor.withAlpha(isDark ? 40 : 22),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, size: 18, color: iconColor),
+                ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
@@ -44,10 +52,20 @@ class ProfileActionRow extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 14,
-                  color: isDark ? Colors.grey[600] : Colors.grey[400],
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withAlpha(10)
+                        : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 12,
+                    color: isDark ? Colors.grey[500] : Colors.grey[400],
+                  ),
                 ),
               ],
             ),
@@ -56,10 +74,11 @@ class ProfileActionRow extends StatelessWidget {
         if (showDivider)
           Divider(
             height: 1,
-            indent: 48,
+            indent: 66,
+            endIndent: 16,
             color: isDark
-                ? Colors.white.withAlpha(15)
-                : Colors.black.withAlpha(10),
+                ? Colors.white.withAlpha(12)
+                : Colors.black.withAlpha(8),
           ),
       ],
     );

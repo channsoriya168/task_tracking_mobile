@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 class LoginButton extends StatelessWidget {
@@ -34,9 +35,9 @@ class LoginButton extends StatelessWidget {
                   color: Colors.white,
                 ),
               )
-            : const Text(
-                'Sign In',
-                style: TextStyle(
+            : Text(
+                'login_sign_in'.tr,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,

@@ -25,125 +25,237 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const avatarSize = 96.0;
+    const bannerHeight = 100.0;
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? kCardDark : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 60 : 15),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withAlpha(isDark ? 60 : 18),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
-      padding: kContentPaddingLarge,
       child: Column(
         children: [
-          GestureDetector(
-            onTap: isUploadingImage ? null : onEditTap,
-            child: Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                Container(
-                  width: 88,
-                  height: 88,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: kPrimary.withAlpha(30),
-                    border: Border.all(color: kPrimary.withAlpha(80), width: 2),
+          // ── Gradient banner ───────────────────────────────────
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.bottomCenter,
+            children: [
+              // Banner
+              Container(
+                height: bannerHeight,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF6C63FF), Color(0xFF9B8FFF)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  child: ClipOval(
-                    child: isUploadingImage
-                        ? const Center(
-                            child: SizedBox(
-                              width: 28,
-                              height: 28,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: kPrimary,
-                              ),
+                ),
+                child: Stack(
+                  children: [
+                    // Decorative circles
+                    Positioned(
+                      top: -20,
+                      right: -20,
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withAlpha(15),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -30,
+                      left: 30,
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withAlpha(10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Avatar overlapping the banner
+              Positioned(
+                bottom: -(avatarSize / 2),
+                child: GestureDetector(
+                  onTap: isUploadingImage ? null : onEditTap,
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        width: avatarSize,
+                        height: avatarSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isDark ? kCardDark : Colors.white,
+                          border: Border.all(
+                            color: isDark ? kCardDark : Colors.white,
+                            width: 4,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(30),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
-                          )
-                        : profileImageUrl != null && profileImageUrl!.isNotEmpty
-                            ? Image.network(
-                                profileImageUrl!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Center(
-                                  child: Text(
-                                    avatarLetter,
-                                    style: const TextStyle(
-                                      fontSize: 36,
-                                      fontWeight: FontWeight.bold,
-                                      color: kPrimary,
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: isUploadingImage
+                              ? Container(
+                                  color: kPrimary.withAlpha(20),
+                                  child: const Center(
+                                    child: SizedBox(
+                                      width: 28,
+                                      height: 28,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        color: kPrimary,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : Center(
-                                child: Text(
-                                  avatarLetter,
-                                  style: const TextStyle(
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold,
-                                    color: kPrimary,
-                                  ),
-                                ),
-                              ),
+                                )
+                              : profileImageUrl != null &&
+                                      profileImageUrl!.isNotEmpty
+                                  ? Image.network(
+                                      profileImageUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) =>
+                                          _AvatarFallback(
+                                        letter: avatarLetter,
+                                        isDark: isDark,
+                                      ),
+                                    )
+                                  : _AvatarFallback(
+                                      letter: avatarLetter,
+                                      isDark: isDark,
+                                    ),
+                        ),
+                      ),
+                      // Edit badge
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: kPrimary,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isDark ? kCardDark : Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt_rounded,
+                          size: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
+            ],
+          ),
+
+          // ── Name / role / email ────────────────────────────────
+          Padding(
+            padding: EdgeInsets.fromLTRB(24, avatarSize / 2 + 12, 24, 20),
+            child: Column(
+              children: [
+                Text(
+                  name.isEmpty ? '—' : name,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
                 Container(
-                  width: 28,
-                  height: 28,
-                  decoration: const BoxDecoration(
-                    color: kPrimary,
-                    shape: BoxShape.circle,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 5,
                   ),
-                  child: const Icon(
-                    Icons.edit_rounded,
-                    size: 14,
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF6C63FF), Color(0xFF9B8FFF)],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    role.isEmpty ? '—' : role,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ),
+                if (email.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.email_outlined,
+                        size: 13,
+                        color: isDark ? Colors.grey[500] : kTextMuted,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        email,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.grey[500] : kTextMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            name.isEmpty ? '—' : name,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : kTextDark,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: kPrimary.withAlpha(25),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              role.isEmpty ? '—' : role,
-              style: const TextStyle(
-                fontSize: 12,
-                color: kPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          if (email.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              email,
-              style: TextStyle(
-                fontSize: 13,
-                color: isDark ? Colors.grey[500] : kTextMuted,
-              ),
-            ),
-          ],
         ],
+      ),
+    );
+  }
+}
+
+class _AvatarFallback extends StatelessWidget {
+  const _AvatarFallback({required this.letter, required this.isDark});
+  final String letter;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: kPrimary.withAlpha(isDark ? 40 : 20),
+      child: Center(
+        child: Text(
+          letter,
+          style: const TextStyle(
+            fontSize: 38,
+            fontWeight: FontWeight.bold,
+            color: kPrimary,
+          ),
+        ),
       ),
     );
   }

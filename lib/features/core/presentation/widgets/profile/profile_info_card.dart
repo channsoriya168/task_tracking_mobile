@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_card.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_info_row.dart';
 
@@ -23,20 +25,26 @@ class ProfileInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      (Icons.person_rounded, 'Full Name', fullName.isEmpty ? '—' : fullName),
-      (Icons.email_rounded, 'Email', email.isEmpty ? '—' : email),
-      (Icons.phone_rounded, 'Phone', phone.isEmpty ? '—' : phone),
-      (Icons.location_on_rounded, 'Place of Birth', placeOfBirth.isEmpty ? '—' : placeOfBirth),
+      (
+        Icons.person_rounded,
+        'profile_full_name'.tr,
+        fullName.isEmpty ? '—' : fullName,
+      ),
+      (Icons.email_rounded, 'profile_email'.tr, email.isEmpty ? '—' : email),
+      (Icons.phone_rounded, 'profile_phone'.tr, phone.isEmpty ? '—' : phone),
+      (
+        Icons.location_on_rounded,
+        'profile_place_of_birth'.tr,
+        placeOfBirth.isEmpty ? '—' : placeOfBirth,
+      ),
       (
         Icons.cake_rounded,
-        'Date of Birth',
+        'profile_date_of_birth'.tr,
         dateOfBirth != null
             ? '${dateOfBirth!.day.toString().padLeft(2, '0')}/${dateOfBirth!.month.toString().padLeft(2, '0')}/${dateOfBirth!.year}'
             : '—',
       ),
     ];
-
-    final iconColor = isDark ? Colors.white54 : Colors.black45;
 
     return ProfileCard(
       isDark: isDark,
@@ -46,7 +54,7 @@ class ProfileInfoCard extends StatelessWidget {
           return ProfileInfoRow(
             isDark: isDark,
             icon: icon,
-            iconColor: iconColor,
+            iconColor: kPrimary,
             label: label,
             value: value,
             showDivider: i < items.length - 1,

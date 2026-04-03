@@ -44,11 +44,19 @@ class ProfileChangePasswordSheet extends StatelessWidget {
 
               // ── Title + subtitle ───────────────────────────
               Text(
-                'Change Password',
+                'change_pwd_title'.tr,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : kTextDark,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'change_pwd_subtitle'.tr,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? Colors.white54 : kTextMuted,
                 ),
               ),
               const SizedBox(height: 20),
@@ -56,8 +64,8 @@ class ProfileChangePasswordSheet extends StatelessWidget {
               // ── Current password ───────────────────────────
               PasswordInputWidget(
                 controller: ctrl.currentPasswordController,
-                label: 'Current Password',
-                hint: 'Enter current password',
+                label: 'change_pwd_current'.tr,
+                hint: 'change_pwd_current_hint'.tr,
                 isDark: isDark,
                 errorText: _currentFieldError(err).isEmpty
                     ? null
@@ -68,20 +76,25 @@ class ProfileChangePasswordSheet extends StatelessWidget {
               // ── New password ───────────────────────────────
               PasswordInputWidget(
                 controller: ctrl.newPasswordController,
-                label: 'New Password',
-                hint: 'Enter new password',
+                label: 'change_pwd_new'.tr,
+                hint: 'change_pwd_new_hint'.tr,
                 isDark: isDark,
-                errorText: _newFieldError(err).isEmpty
-                    ? null
-                    : _newFieldError(err),
+                errorText:
+                    _newFieldError(err).isEmpty ? null : _newFieldError(err),
               ),
               if (_newFieldError(err).isEmpty) ...[
                 const SizedBox(height: 6),
                 Row(
                   children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 12,
+                      color: isDark ? Colors.white38 : kTextMuted,
+                    ),
+                    const SizedBox(width: 5),
                     Expanded(
                       child: Text(
-                        'Min 8 chars · uppercase · lowercase · number · special (e.g. Ditway@168)',
+                        'change_pwd_hint'.tr,
                         style: TextStyle(
                           fontSize: 11,
                           color: isDark ? Colors.white38 : kTextMuted,
@@ -96,8 +109,8 @@ class ProfileChangePasswordSheet extends StatelessWidget {
               // ── Confirm password ───────────────────────────
               PasswordInputWidget(
                 controller: ctrl.confirmPasswordController,
-                label: 'Confirm New Password',
-                hint: 'Re-enter new password',
+                label: 'change_pwd_confirm'.tr,
+                hint: 'change_pwd_confirm_hint'.tr,
                 isDark: isDark,
                 errorText: _confirmFieldError(err).isEmpty
                     ? null
@@ -130,9 +143,9 @@ class ProfileChangePasswordSheet extends StatelessWidget {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Update Password',
-                          style: TextStyle(
+                      : Text(
+                          'change_pwd_btn'.tr,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -147,22 +160,21 @@ class ProfileChangePasswordSheet extends StatelessWidget {
   }
 
   String _currentFieldError(String err) {
-    if (err.contains('required')) return 'Current password is required.';
-    if (err.contains('incorrect')) return 'Current password is incorrect.';
+    if (err.contains('required')) return 'change_pwd_err_current_required'.tr;
+    if (err.contains('incorrect')) return 'change_pwd_err_current_incorrect'.tr;
     return '';
   }
 
   String _newFieldError(String err) {
-    if (err.contains('required')) return 'New password is required.';
-    if (err.contains('Min 8'))
-      return 'Min 8 chars · uppercase · lowercase · number · special.';
-    if (err.contains('match')) return 'Passwords do not match.';
+    if (err.contains('required')) return 'change_pwd_err_new_required'.tr;
+    if (err.contains('Min 8')) return 'change_pwd_err_new_weak'.tr;
+    if (err.contains('match')) return 'change_pwd_err_no_match'.tr;
     return '';
   }
 
   String _confirmFieldError(String err) {
-    if (err.contains('required')) return 'Please confirm your new password.';
-    if (err.contains('match')) return 'Passwords do not match.';
+    if (err.contains('required')) return 'change_pwd_err_confirm_required'.tr;
+    if (err.contains('match')) return 'change_pwd_err_no_match'.tr;
     return '';
   }
 }

@@ -21,7 +21,7 @@ class EmployeeHeaderWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Employees',
+                'employee_title'.tr,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -30,7 +30,7 @@ class EmployeeHeaderWidget extends StatelessWidget {
               ),
               Obx(
                 () => Text(
-                  '${ctrl.employees.length} members',
+                  'employee_members'.trParams({'count': '${ctrl.employees.length}'}),
                   style: TextStyle(
                     fontSize: 13,
                     color: isDark ? Colors.grey[500] : kTextMuted,
@@ -43,7 +43,7 @@ class EmployeeHeaderWidget extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: () => Get.to(() => const ManageTaskGroupWidget()),
             icon: const Icon(Icons.work_outline_rounded, size: 16),
-            label: const Text('Group'),
+            label: Text('employee_group_btn'.tr),
             style: OutlinedButton.styleFrom(
               foregroundColor: kPrimary,
               side: const BorderSide(color: kPrimary),

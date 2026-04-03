@@ -172,7 +172,7 @@ class EmployeeCardWidget extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        employee.role ?? 'No role',
+                        employee.role ?? 'employee_no_role'.tr,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,

@@ -27,7 +27,7 @@ class EmployeeMobilePage extends StatelessWidget {
           SearchBarWidget(
             isDark: isDark,
             onChanged: (v) => ctrl.searchQuery.value = v,
-            hintText: 'Search employees...',
+            hintText: 'employee_search_hint'.tr,
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
           ),
           SizedBox(height: 16),

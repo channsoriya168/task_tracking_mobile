@@ -29,7 +29,7 @@ class TaskGroupController extends GetxController {
     try {
       taskGroups.assignAll(await _getAllTaskGroups());
     } catch (_) {
-      AppSnackbar.error('Group', 'Failed to load groups.');
+      AppSnackbar.error('snack_label'.tr, 'snack_group_load_fail'.tr);
     }
   }
 
@@ -67,12 +67,12 @@ class TaskGroupController extends GetxController {
       );
       taskGroups.add(taskGroup);
       AppSnackbar.success(
-        'Task Group Added',
-        '"${taskGroup.name}" has been created.',
+        'snack_group_added'.tr,
+        'snack_group_added_msg'.trParams({'name': taskGroup.name}),
       );
       return true;
     } catch (_) {
-      AppSnackbar.error('Group', 'Failed to create group.');
+      AppSnackbar.error('snack_label'.tr, 'snack_group_create_fail'.tr);
       return false;
     }
   }
@@ -82,8 +82,8 @@ class TaskGroupController extends GetxController {
     if (i == -1) return;
     taskGroups[i] = updated;
     AppSnackbar.update(
-      'Task Group Updated',
-      '"${updated.name}" has been updated.',
+      'snack_group_updated'.tr,
+      'snack_group_updated_msg'.trParams({'name': updated.name}),
     );
   }
 
@@ -93,8 +93,8 @@ class TaskGroupController extends GetxController {
     taskGroups.removeWhere((p) => p.id == id);
     Get.find<EmployeeController>().fetchEmployees();
     AppSnackbar.delete(
-      'Task Group Deleted',
-      '"${taskGroup.name}" has been removed.',
+      'snack_group_deleted'.tr,
+      'snack_group_deleted_msg'.trParams({'name': taskGroup.name}),
     );
   }
 

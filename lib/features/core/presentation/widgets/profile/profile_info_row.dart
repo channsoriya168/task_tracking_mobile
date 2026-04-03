@@ -24,10 +24,18 @@ class ProfileInfoRow extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: iconColor),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: iconColor.withAlpha(isDark ? 40 : 22),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, size: 18, color: iconColor),
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -37,11 +45,12 @@ class ProfileInfoRow extends StatelessWidget {
                       label,
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark ? Colors.grey[600] : kTextMuted,
+                        color: isDark ? Colors.grey[500] : kTextMuted,
                         fontWeight: FontWeight.w500,
+                        letterSpacing: 0.2,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       value,
                       style: TextStyle(
@@ -59,10 +68,11 @@ class ProfileInfoRow extends StatelessWidget {
         if (showDivider)
           Divider(
             height: 1,
-            indent: 48,
+            indent: 66,
+            endIndent: 16,
             color: isDark
-                ? Colors.white.withAlpha(15)
-                : Colors.black.withAlpha(10),
+                ? Colors.white.withAlpha(12)
+                : Colors.black.withAlpha(8),
           ),
       ],
     );

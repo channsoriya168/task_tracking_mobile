@@ -19,68 +19,76 @@ class MainPage extends StatelessWidget {
   List<NavItem> _navItemsForRole(UserRole? role) {
     switch (role) {
       case UserRole.manager:
-        return const [
+        return [
           NavItem(
             icon: Icons.dashboard_rounded,
-            label: 'Dashboard',
-            page: ManagerDashboardPage(),
+            label: 'nav_dashboard'.tr,
+            page: const ManagerDashboardPage(),
           ),
           NavItem(
             icon: Icons.list_alt_rounded,
-            label: 'Tasks',
-            page: TaskPage(),
+            label: 'nav_tasks'.tr,
+            page: const TaskPage(),
           ),
           NavItem(
             icon: Icons.people_rounded,
-            label: 'Employees',
-            page: EmployeePage(),
+            label: 'nav_employees'.tr,
+            page: const EmployeePage(),
           ),
           NavItem(
             icon: Icons.person_rounded,
-            label: 'Profile',
-            page: ProfilePage(),
+            label: 'nav_profile'.tr,
+            page: const ProfilePage(),
           ),
         ];
       case UserRole.admin:
-        return const [
+        return [
           NavItem(
             icon: Icons.analytics_rounded,
-            label: 'Dashboard',
-            page: AdminDashboardPage(),
+            label: 'nav_dashboard'.tr,
+            page: const AdminDashboardPage(),
           ),
           NavItem(
             icon: Icons.list_alt_rounded,
-            label: 'Tasks',
-            page: TaskPage(),
+            label: 'nav_tasks'.tr,
+            page: const TaskPage(),
           ),
           NavItem(
             icon: Icons.people_rounded,
-            label: 'Employee',
-            page: EmployeePage(),
+            label: 'nav_employee'.tr,
+            page: const EmployeePage(),
           ),
           NavItem(
             icon: Icons.person_rounded,
-            label: 'Profile',
-            page: ProfilePage(),
+            label: 'nav_profile'.tr,
+            page: const ProfilePage(),
           ),
         ];
       case UserRole.employee:
-        return const [
-          NavItem(icon: Icons.home, label: 'Home', page: HomePage()),
+        return [
+          NavItem(
+            icon: Icons.home,
+            label: 'nav_home'.tr,
+            page: const HomePage(),
+          ),
           NavItem(
             icon: Icons.task_rounded,
-            label: 'My Tasks',
-            page: TasksPage(),
+            label: 'nav_my_tasks'.tr,
+            page: const TasksPage(),
           ),
           NavItem(
             icon: Icons.person_rounded,
-            label: 'Profile',
-            page: ProfilePage(),
+            label: 'nav_profile'.tr,
+            page: const ProfilePage(),
           ),
         ];
       default:
-        return const [
-          NavItem(icon: Icons.home_rounded, label: 'Home', page: ProfilePage()),
+        return [
+          NavItem(
+            icon: Icons.home_rounded,
+            label: 'nav_home'.tr,
+            page: const ProfilePage(),
+          ),
         ];
     }
   }
@@ -90,7 +98,7 @@ class MainPage extends StatelessWidget {
     final auth = Get.find<AuthController>();
 
     return Obx(() {
-      final role = auth.role; // reads currentAuth.value → reactive
+      final role = auth.role;
       final navItems = _navItemsForRole(role);
 
       // Reset nav index when role changes to avoid out-of-bounds

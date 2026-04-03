@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_form_field.dart';
 
@@ -14,7 +15,7 @@ class LoginPhoneField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LoginFormField(
-      label: 'Phone Number',
+      label: 'login_phone_label'.tr,
       child: TextFormField(
         controller: controller,
         keyboardType: TextInputType.phone,
@@ -24,15 +25,15 @@ class LoginPhoneField extends StatelessWidget {
           fontSize: 15,
         ),
         decoration: loginInputDecoration(
-          hint: '0884311016',
+          hint: 'login_phone_hint'.tr,
           icon: Icons.phone_outlined,
           isDark: isDark,
         ),
         validator: (v) {
-          if (v == null || v.trim().isEmpty) return 'Phone number is required';
+          if (v == null || v.trim().isEmpty) return 'login_phone_required'.tr;
           final digits = v.trim().replaceAll(RegExp(r'\D'), '');
           if (digits.length < 9 || digits.length > 12) {
-            return 'Enter a valid phone number';
+            return 'login_phone_invalid'.tr;
           }
           return null;
         },

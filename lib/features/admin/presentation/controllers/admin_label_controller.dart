@@ -34,7 +34,7 @@ class AdminLabelController extends GetxController {
     try {
       labels.assignAll(await _getAll());
     } catch (_) {
-      AppSnackbar.error('Labels', 'Failed to load labels.');
+      AppSnackbar.error('snack_label'.tr, 'snack_label_load_fail'.tr);
     } finally {
       isLoading.value = false;
     }
@@ -62,10 +62,10 @@ class AdminLabelController extends GetxController {
             : descriptionCtrl.text.trim(),
       );
       labels.add(created);
-      AppSnackbar.success('Label Added', '"${created.name}" has been created.');
+      AppSnackbar.success('snack_label_added'.tr, 'snack_label_added_msg'.trParams({'name': created.name}));
       return true;
     } catch (_) {
-      AppSnackbar.error('Labels', 'Failed to create label.');
+      AppSnackbar.error('snack_label'.tr, 'snack_label_create_fail'.tr);
       return false;
     } finally {
       isSaving.value = false;
@@ -90,10 +90,10 @@ class AdminLabelController extends GetxController {
       );
       final i = labels.indexWhere((l) => l.id == id);
       if (i != -1) labels[i] = updated;
-      AppSnackbar.update('Label Updated', '"${updated.name}" has been updated.');
+      AppSnackbar.update('snack_label_updated'.tr, 'snack_label_updated_msg'.trParams({'name': updated.name}));
       return true;
     } catch (_) {
-      AppSnackbar.error('Labels', 'Failed to update label.');
+      AppSnackbar.error('snack_label'.tr, 'snack_label_update_fail'.tr);
       return false;
     } finally {
       isSaving.value = false;
@@ -106,9 +106,9 @@ class AdminLabelController extends GetxController {
     try {
       await _delete(id);
       labels.removeWhere((l) => l.id == id);
-      AppSnackbar.delete('Label Deleted', '"${label.name}" has been removed.');
+      AppSnackbar.delete('snack_label_deleted'.tr, 'snack_label_deleted_msg'.trParams({'name': label.name}));
     } catch (_) {
-      AppSnackbar.error('Labels', 'Failed to delete label.');
+      AppSnackbar.error('snack_label'.tr, 'snack_label_delete_fail'.tr);
     }
   }
 

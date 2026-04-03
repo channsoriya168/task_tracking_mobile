@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
-/// Shows a reusable delete confirmation dialog
-/// Returns true if user confirms, false if cancelled, null if dismissed
+/// Shows a reusable delete confirmation dialog.
+/// Returns true if user confirms, false if cancelled, null if dismissed.
 Future<bool?> showConfirmDeleteDialog(
   BuildContext context, {
-  String title = 'Delete Item',
-  String message =
-      'Are you sure you want to delete this item? This action cannot be undone.',
-  String confirmText = 'Delete',
-  String cancelText = 'Cancel',
+  String? title,
+  String? message,
+  String? confirmText,
+  String? cancelText,
 }) async {
   final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -24,7 +24,7 @@ Future<bool?> showConfirmDeleteDialog(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            title,
+            title ?? 'dialog_delete_title'.tr,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -34,7 +34,7 @@ Future<bool?> showConfirmDeleteDialog(
           ),
           const SizedBox(height: 12),
           Text(
-            message,
+            message ?? 'dialog_delete_message'.tr,
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.grey[400] : kTextMuted,
@@ -55,7 +55,7 @@ Future<bool?> showConfirmDeleteDialog(
             ),
           ),
           child: Text(
-            cancelText,
+            cancelText ?? 'dialog_cancel'.tr,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -75,7 +75,7 @@ Future<bool?> showConfirmDeleteDialog(
             ),
           ),
           child: Text(
-            confirmText,
+            confirmText ?? 'dialog_delete_confirm'.tr,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ),

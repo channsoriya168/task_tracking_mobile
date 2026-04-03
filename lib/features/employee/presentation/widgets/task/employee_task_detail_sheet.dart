@@ -92,7 +92,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     _loadingId.value = null;
     if (success && mounted) {
       Navigator.pop(context);
-      AppSnackbar.success('Task Accepted', 'You have accepted "${task.title}"');
+      AppSnackbar.success('snack_task_accepted'.tr, 'snack_task_accepted_msg'.trParams({'title': task.title}));
       Get.find<NavigationController>().changePage(1);
     }
   }
@@ -104,7 +104,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     _loadingId.value = null;
     if (success && mounted) {
       Navigator.pop(context);
-      AppSnackbar.update('Status Updated', 'Task status changed to "${newStatus.name}"');
+      AppSnackbar.update('snack_status_updated'.tr, 'snack_status_updated_msg'.trParams({'status': newStatus.name}));
     }
   }
 

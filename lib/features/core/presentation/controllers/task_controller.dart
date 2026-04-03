@@ -118,8 +118,8 @@ class TaskController extends GetxController {
       return await _fetchTaskItemById(id);
     } catch (e) {
       AppSnackbar.error(
-        'Error',
-        AppSnackbar.parseApiError(e, fallback: 'Could not load task.'),
+        'snack_error'.tr,
+        AppSnackbar.parseApiError(e, fallback: 'snack_task_load_fail'.tr),
       );
       return null;
     }
@@ -218,12 +218,12 @@ class TaskController extends GetxController {
       await fetchTasks();
       _refreshDashboard();
       _clearForm();
-      AppSnackbar.success('Task Created', '"$title" has been created.');
+      AppSnackbar.success('snack_task_created'.tr, 'snack_task_created_msg'.trParams({'title': title}));
       return true;
     } catch (e) {
       AppSnackbar.error(
-        'Create Failed',
-        AppSnackbar.parseApiError(e, fallback: 'Could not create task.'),
+        'snack_error'.tr,
+        AppSnackbar.parseApiError(e, fallback: 'snack_task_create_fail'.tr),
       );
       return false;
     }
@@ -263,12 +263,12 @@ class TaskController extends GetxController {
       await fetchTasks();
       _refreshDashboard();
       _clearForm();
-      AppSnackbar.success('Task Updated', '"$title" has been updated.');
+      AppSnackbar.success('snack_task_updated'.tr, 'snack_task_updated_msg'.trParams({'title': title}));
       return true;
     } catch (e) {
       AppSnackbar.error(
-        'Update Failed',
-        AppSnackbar.parseApiError(e, fallback: 'Could not update task.'),
+        'snack_error'.tr,
+        AppSnackbar.parseApiError(e, fallback: 'snack_task_update_fail'.tr),
       );
       return false;
     }
@@ -281,13 +281,13 @@ class TaskController extends GetxController {
       _applyStatusFilter();
       _refreshDashboard();
       AppSnackbar.success(
-        'Task Deleted',
-        '"${taskItem.title}" has been deleted.',
+        'snack_task_deleted'.tr,
+        'snack_task_deleted_msg'.trParams({'title': taskItem.title}),
       );
     } catch (e) {
       AppSnackbar.error(
-        'Delete Failed',
-        AppSnackbar.parseApiError(e, fallback: 'Could not delete task.'),
+        'snack_error'.tr,
+        AppSnackbar.parseApiError(e, fallback: 'snack_task_delete_fail'.tr),
       );
     }
   }

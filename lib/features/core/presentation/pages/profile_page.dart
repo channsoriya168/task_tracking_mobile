@@ -10,6 +10,42 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/
 import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_info_card.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_settings_card.dart';
 
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.label, required this.isDark});
+  final String label;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 18,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF6C63FF), Color(0xFF9B8FFF)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white : kTextDark,
+            letterSpacing: 0.1,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// Shared profile page used by all user roles (Employee, Manager, Admin).
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -28,11 +64,12 @@ class ProfilePage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               sliver: SliverToBoxAdapter(
                 child: Text(
-                  'Profile',
+                  'profile_title'.tr,
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : kTextDark,
+                    letterSpacing: -0.3,
                   ),
                 ),
               ),
@@ -76,13 +113,9 @@ class ProfilePage extends StatelessWidget {
               SliverPadding(
                 padding: kPageSectionLargePadding,
                 sliver: SliverToBoxAdapter(
-                  child: Text(
-                    'My Groups',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : kTextDark,
-                    ),
+                  child: _SectionTitle(
+                    label: 'profile_my_groups'.tr,
+                    isDark: isDark,
                   ),
                 ),
               ),
@@ -115,13 +148,9 @@ class ProfilePage extends StatelessWidget {
             SliverPadding(
               padding: kPageSectionLargePadding,
               sliver: SliverToBoxAdapter(
-                child: Text(
-                  'Personal Info',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : kTextDark,
-                  ),
+                child: _SectionTitle(
+                  label: 'profile_personal_info'.tr,
+                  isDark: isDark,
                 ),
               ),
             ),
@@ -147,13 +176,9 @@ class ProfilePage extends StatelessWidget {
             SliverPadding(
               padding: kPageSectionLargePadding,
               sliver: SliverToBoxAdapter(
-                child: Text(
-                  'Settings',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : kTextDark,
-                  ),
+                child: _SectionTitle(
+                  label: 'profile_settings'.tr,
+                  isDark: isDark,
                 ),
               ),
             ),
@@ -168,13 +193,9 @@ class ProfilePage extends StatelessWidget {
             SliverPadding(
               padding: kPageSectionLargePadding,
               sliver: SliverToBoxAdapter(
-                child: Text(
-                  'Account',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : kTextDark,
-                  ),
+                child: _SectionTitle(
+                  label: 'profile_account'.tr,
+                  isDark: isDark,
                 ),
               ),
             ),

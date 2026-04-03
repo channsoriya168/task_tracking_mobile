@@ -27,7 +27,7 @@ class ProfileActionCard extends StatelessWidget {
               isDark: isDark,
               icon: Icons.lock_outline_rounded,
               iconColor: const Color(0xFF6C63FF),
-              label: 'Change Password',
+              label: 'profile_change_password'.tr,
               showDivider: true,
               onTap: () {
                 authCtrl.clearChangePasswordForm();
@@ -43,15 +43,15 @@ class ProfileActionCard extends StatelessWidget {
             isDark: isDark,
             icon: Icons.logout_rounded,
             iconColor: kHighPriority,
-            label: 'Sign Out',
+            label: 'profile_sign_out'.tr,
             labelColor: kHighPriority,
             showDivider: false,
             onTap: () async {
               final confirmed = await showConfirmDeleteDialog(
                 context,
-                title: 'Sign Out',
-                message: 'Are you sure you want to sign out?',
-                confirmText: 'Sign Out',
+                title: 'signout_title'.tr,
+                message: 'signout_message'.tr,
+                confirmText: 'signout_confirm'.tr,
               );
               if (confirmed == true) Get.find<AuthController>().logout();
             },

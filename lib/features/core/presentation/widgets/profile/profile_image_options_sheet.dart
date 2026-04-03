@@ -31,7 +31,7 @@ void showProfileImageOptions(bool isDark, AuthController authCtrl) {
                 color: isDark ? Colors.white70 : Colors.black87,
               ),
               title: Text(
-                'Camera',
+                'img_camera'.tr,
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
               ),
               onTap: () {
@@ -45,7 +45,7 @@ void showProfileImageOptions(bool isDark, AuthController authCtrl) {
                 color: isDark ? Colors.white70 : Colors.black87,
               ),
               title: Text(
-                'Gallery',
+                'img_gallery'.tr,
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
               ),
               onTap: () {
@@ -56,9 +56,9 @@ void showProfileImageOptions(bool isDark, AuthController authCtrl) {
             if (hasImage)
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: const Text(
-                  'Remove photo',
-                  style: TextStyle(color: Colors.red),
+                title: Text(
+                  'img_remove'.tr,
+                  style: const TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   Get.back();

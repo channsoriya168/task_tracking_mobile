@@ -23,17 +23,12 @@ class AppSnackbar {
 
   /// Extracts a human-readable message from a backend error.
   /// Handles DioException response bodies with `message` or `errors` fields.
-  static String parseApiError(
-    Object? err, {
-    String fallback = 'Something went wrong.',
-  }) {
+  static String parseApiError(Object? err, {String? fallback}) {
     if (err is DioException) {
       final data = err.response?.data;
       if (data is Map) {
-        // Single message field: { "message": "Email already exists." }
         if (data['message'] is String) return data['message'] as String;
 
-        // ASP.NET validation: { "errors": { "Email": ["msg"] } }
         if (data['errors'] is Map) {
           final errors = data['errors'] as Map;
           final messages = errors.values
@@ -45,12 +40,11 @@ class AppSnackbar {
           if (messages.isNotEmpty) return messages;
         }
 
-        // title field fallback
         if (data['title'] is String) return data['title'] as String;
       }
       if (err.message != null) return err.message!;
     }
-    return fallback;
+    return fallback ?? 'snack_something_wrong'.tr;
   }
 
   static void _show(String title, String message, Color color, IconData icon) {

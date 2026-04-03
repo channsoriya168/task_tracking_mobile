@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 class LoginHeadline extends StatelessWidget {
@@ -11,7 +12,7 @@ class LoginHeadline extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Welcome back',
+          'login_welcome'.tr,
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.w800,
@@ -21,7 +22,7 @@ class LoginHeadline extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          'Enter your phone number to continue',
+          'login_subtitle'.tr,
           style: TextStyle(
             fontSize: 15,
             color: isDark ? Colors.white54 : kTextMuted,

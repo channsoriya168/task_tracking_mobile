@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/app/controllers/language_controller.dart';
 import 'package:task_tracking_mobile/app/routes/app_pages.dart';
 import 'package:task_tracking_mobile/app/routes/app_routes.dart';
 import 'package:task_tracking_mobile/app/themes/dark_theme.dart';
 import 'package:task_tracking_mobile/app/themes/light_theme.dart';
+import 'package:task_tracking_mobile/app/translations/app_translations.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 
 void main() async {
@@ -14,7 +16,15 @@ void main() async {
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp();
 
+  // Read persisted locale before the first frame to avoid a flash.
+  final savedIsKhmer = await LanguageController.readSavedIsKhmer();
+
   Get.put<ThemeController>(ThemeController(), permanent: true);
+  Get.put<LanguageController>(
+    LanguageController(initialIsKhmer: savedIsKhmer),
+    permanent: true,
+  );
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color.fromARGB(0, 245, 16, 16),
@@ -30,10 +40,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCtrl = Get.find<ThemeController>();
+    final langCtrl = Get.find<LanguageController>();
     return Obx(
       () => GetMaterialApp(
         title: 'TaskFlow',
         debugShowCheckedModeBanner: false,
+        translations: AppTranslations(),
+        locale: langCtrl.currentLocale,
+        fallbackLocale: const Locale('en', 'US'),
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: themeCtrl.isDark ? ThemeMode.dark : ThemeMode.light,

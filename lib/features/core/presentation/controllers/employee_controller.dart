@@ -48,7 +48,7 @@ class EmployeeController extends GetxController {
       isLoading.value = true;
       employees.value = await _repository.fetchEmployees();
     } catch (_) {
-      AppSnackbar.error('Error', 'Failed to load employees.');
+      AppSnackbar.error('snack_error'.tr, 'snack_emp_load_failed'.tr);
     } finally {
       isLoading.value = false;
     }
@@ -78,9 +78,9 @@ class EmployeeController extends GetxController {
     try {
       await _repository.deleteEmployee(id);
       employees.removeWhere((e) => e.id == id);
-      AppSnackbar.delete('Employee Deleted', 'Employee has been removed.');
+      AppSnackbar.delete('snack_emp_deleted'.tr, 'snack_emp_deleted_msg'.tr);
     } catch (e) {
-      AppSnackbar.error('Error', e.toString());
+      AppSnackbar.error('snack_error'.tr, e.toString());
     }
   }
 
@@ -254,11 +254,11 @@ class EmployeeController extends GetxController {
       resetConfirmPasswordCtrl.clear();
       Get.back();
       AppSnackbar.success(
-        'Password Reset',
-        'Password has been reset successfully.',
+        'snack_reset_pwd'.tr,
+        'snack_pwd_changed'.tr,
       );
     } catch (e) {
-      AppSnackbar.error('Reset Password', AppSnackbar.parseApiError(e));
+      AppSnackbar.error('snack_reset_pwd'.tr, AppSnackbar.parseApiError(e));
     } finally {
       isResettingPassword.value = false;
     }
@@ -314,7 +314,7 @@ class EmployeeController extends GetxController {
         role: selectedRole.value,
       );
       Get.back();
-      AppSnackbar.success('Employee Added', 'New employee has been created.');
+      AppSnackbar.success('snack_emp_added'.tr, 'snack_emp_added_msg'.tr);
       await fetchEmployees();
     } catch (e) {
       _handleApiError(e, label: 'Create Employee');
@@ -368,7 +368,7 @@ class EmployeeController extends GetxController {
       );
       Get.back();
       await fetchEmployees();
-      AppSnackbar.update('Employee Updated', 'Changes have been saved.');
+      AppSnackbar.update('snack_emp_updated'.tr, 'snack_emp_updated_msg'.tr);
     } catch (e) {
       _handleApiError(e, label: 'Edit Employee');
     } finally {
