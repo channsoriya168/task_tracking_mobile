@@ -31,30 +31,11 @@ class EmployeeCardWidget extends StatelessWidget {
     return r == 'manager' || r == 'admin';
   }
 
-  static Color _roleColor(String? role) {
-    switch (role?.toLowerCase()) {
-      case 'admin':
-        return const Color(0xFFEF4444);
-      case 'manager':
-        return const Color(0xFF8B5CF6);
-      default:
-        return const Color(0xFF10B981);
-    }
-  }
-
-  static String _roleLabel(String? role) {
-    final r = role?.toLowerCase() ?? '';
-    if (r == 'admin') return 'Admin';
-    if (r == 'manager') return 'Manager';
-    return 'Employee';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final accent = taskGroup?.color ?? kPrimary;
+    const accent = kPrimary;
     final protected = _isProtected;
     final hasPhone = employee.phone != null && employee.phone!.isNotEmpty;
-    final roleColor = _roleColor(employee.role);
     final hasGroups = employee.taskGroups.isNotEmpty || taskGroup != null;
 
     return GestureDetector(
@@ -83,7 +64,7 @@ class EmployeeCardWidget extends StatelessWidget {
             ),
             if (!isDark)
               BoxShadow(
-                color: accent.withAlpha(18),
+                color: kPrimary.withAlpha(18),
                 blurRadius: 20,
                 offset: const Offset(0, 6),
               ),
@@ -97,29 +78,22 @@ class EmployeeCardWidget extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        accent.withAlpha(180),
-                        accent,
-                      ],
-                    ),
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle),
                   child: Container(
+                    padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
+                      color: isDark ? Colors.white.withAlpha(18) : Colors.white,
                       border: Border.all(
-                        color: isDark ? kCardDark : Colors.white,
+                        color: isDark
+                            ? Colors.white.withAlpha(30)
+                            : kPrimary.withAlpha(40),
                         width: 2,
                       ),
                     ),
                     child: EmployeeAvatarWidget(
                       name: employee.fullName,
-                      color: accent,
+                      color: kPrimary,
                       radius: 26,
                       imagePath: employee.profileImageUrl,
                     ),
@@ -180,10 +154,6 @@ class EmployeeCardWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (!employee.isActive) ...[
-                        const SizedBox(width: 6),
-                        _InactiveBadge(isDark: isDark),
-                      ],
                     ],
                   ),
 
@@ -196,17 +166,17 @@ class EmployeeCardWidget extends StatelessWidget {
                         width: 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: roleColor,
+                          color: accent,
                           shape: BoxShape.circle,
                         ),
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        _roleLabel(employee.role),
+                        employee.role ?? 'No role',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: roleColor,
+                          color: accent,
                         ),
                       ),
                     ],
@@ -248,17 +218,16 @@ class EmployeeCardWidget extends StatelessWidget {
                       runSpacing: 4,
                       children: [
                         if (employee.taskGroups.isNotEmpty)
-                          ...employee.taskGroups.take(2).map(
+                          ...employee.taskGroups
+                              .take(2)
+                              .map(
                                 (g) => _GroupChip(
                                   name: g.groupName,
-                                  color: g.groupColor,
+                                  isDark: isDark,
                                 ),
                               )
                         else if (taskGroup != null)
-                          _GroupChip(
-                            name: taskGroup!.name,
-                            color: accent,
-                          ),
+                          _GroupChip(name: taskGroup!.name, isDark: isDark),
                       ],
                     ),
                   ],
@@ -290,48 +259,27 @@ class EmployeeCardWidget extends StatelessWidget {
   }
 }
 
-// ── Inactive Badge ────────────────────────────────────────────
-class _InactiveBadge extends StatelessWidget {
-  const _InactiveBadge({required this.isDark});
+// ── Group Chip ────────────────────────────────────────────────
+class _GroupChip extends StatelessWidget {
+  const _GroupChip({required this.name, required this.isDark});
+  final String name;
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.grey.withAlpha(isDark ? 40 : 20),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.grey.withAlpha(isDark ? 60 : 40),
-        ),
-      ),
-      child: Text(
-        'Inactive',
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-          color: isDark ? Colors.grey[400] : Colors.grey[500],
-        ),
-      ),
-    );
-  }
-}
+    final bg = isDark ? Colors.white.withAlpha(14) : kPrimary.withAlpha(18);
+    final border = isDark ? Colors.white.withAlpha(28) : kPrimary.withAlpha(55);
+    final dotColor = isDark ? Colors.white.withAlpha(140) : kPrimary;
+    final textColor = isDark
+        ? Colors.white.withAlpha(180)
+        : const Color(0xFF4B47CC);
 
-// ── Group Chip ────────────────────────────────────────────────
-class _GroupChip extends StatelessWidget {
-  const _GroupChip({required this.name, required this.color});
-  final String name;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withAlpha(22),
+        color: bg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withAlpha(70)),
+        border: Border.all(color: border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -339,10 +287,7 @@ class _GroupChip extends StatelessWidget {
           Container(
             width: 5,
             height: 5,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
           ),
           const SizedBox(width: 4),
           Text(
@@ -350,7 +295,7 @@ class _GroupChip extends StatelessWidget {
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: color,
+              color: textColor,
             ),
           ),
         ],

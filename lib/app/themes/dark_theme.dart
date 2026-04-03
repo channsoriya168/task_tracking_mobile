@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:task_tracking_mobile/app/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/app/utils/constants.dart';
 
 final ThemeData darkTheme = ThemeData(
@@ -9,19 +9,14 @@ final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
   ).copyWith(surface: kBgDark, surfaceContainerHighest: kCardDark),
   scaffoldBackgroundColor: kBgDark,
-  textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+  textTheme: AppTextStyles.textTheme(ThemeData.dark().textTheme),
   appBarTheme: AppBarTheme(
     backgroundColor: Colors.transparent,
     elevation: 0,
     scrolledUnderElevation: 0,
     centerTitle: false,
     iconTheme: const IconThemeData(color: Colors.white),
-    titleTextStyle: GoogleFonts.inter(
-      color: Colors.white,
-      fontSize: 26,
-      fontWeight: FontWeight.bold,
-      letterSpacing: -0.5,
-    ),
+    titleTextStyle: AppTextStyles.appBarTitle(color: Colors.white),
   ),
   cardTheme: CardThemeData(
     color: kCardDark,
@@ -57,7 +52,7 @@ final ThemeData darkTheme = ThemeData(
       elevation: 0,
       padding: kButtonPadding,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+      textStyle: AppTextStyles.buttonLabel(),
     ),
   ),
   chipTheme: ChipThemeData(
