@@ -1,8 +1,8 @@
 // ── Employee Card + Role Badge ────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/enums/user_role.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
@@ -24,6 +24,12 @@ class EmployeeCardWidget extends StatelessWidget {
   final Employee employee;
   final Group? taskGroup;
 
+  String? _genderName() {
+    if (employee.genderId == null) return null;
+    final match = ctrl.genders.where((g) => g.id == employee.genderId).toList();
+    return match.isNotEmpty ? match.first.name : null;
+  }
+
   bool get _isProtected {
     final authRole = Get.find<AuthController>().role;
     if (authRole != UserRole.manager) return false;
@@ -37,6 +43,7 @@ class EmployeeCardWidget extends StatelessWidget {
     final protected = _isProtected;
     final hasPhone = employee.phone != null && employee.phone!.isNotEmpty;
     final hasGroups = employee.groups.isNotEmpty || taskGroup != null;
+    final genderName = _genderName();
 
     return GestureDetector(
       onTap: () => showEmployeeMenuSheet(
@@ -181,6 +188,30 @@ class EmployeeCardWidget extends StatelessWidget {
                       ),
                     ],
                   ),
+
+                  // Gender
+                  if (genderName != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.wc_rounded,
+                          size: 11,
+                          color: isDark ? Colors.grey[500] : kTextMuted,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          genderName,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark
+                                ? Colors.grey[400]
+                                : const Color(0xFF6B7280),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
 
                   // Phone
                   if (hasPhone) ...[

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_progress.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_empty_state_widget.dart';
@@ -66,8 +66,8 @@ class TaskDetailProgressItem extends StatelessWidget {
     final barColor = pct == 100
         ? const Color(0xFF2ED573)
         : pct >= 60
-            ? kPrimary
-            : const Color(0xFFFFA502);
+        ? kPrimary
+        : const Color(0xFFFFA502);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -94,8 +94,7 @@ class TaskDetailProgressItem extends StatelessWidget {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: barColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),

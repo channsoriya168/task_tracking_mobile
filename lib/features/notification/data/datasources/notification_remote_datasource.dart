@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:task_tracking_mobile/app/services/api_client.dart';
-import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/network/api_client.dart';
+import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/notification/data/models/notification_model.dart';
 
 class NotificationRemoteDatasource {

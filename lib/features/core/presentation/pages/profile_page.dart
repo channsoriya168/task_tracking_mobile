@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_action_card.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_group_card.dart';
@@ -104,11 +104,7 @@ class ProfilePage extends StatelessWidget {
             ),
 
             // ── My Groups ──────────────────────────────────────────
-            if (Get.find<AuthController>()
-                    .profile
-                    .value
-                    ?.groups
-                    .isNotEmpty ??
+            if (Get.find<AuthController>().profile.value?.groups.isNotEmpty ??
                 false)
               SliverPadding(
                 padding: kPageSectionLargePadding,
@@ -119,11 +115,7 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-            if (Get.find<AuthController>()
-                    .profile
-                    .value
-                    ?.groups
-                    .isNotEmpty ??
+            if (Get.find<AuthController>().profile.value?.groups.isNotEmpty ??
                 false)
               SliverPadding(
                 padding: kPageSectionPadding,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_empty_state_widget.dart';

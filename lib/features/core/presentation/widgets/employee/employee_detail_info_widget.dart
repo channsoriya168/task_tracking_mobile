@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 
 class EmployeeDetailInfoListWidget extends StatelessWidget {
   const EmployeeDetailInfoListWidget({
@@ -19,6 +21,15 @@ class EmployeeDetailInfoListWidget extends StatelessWidget {
     final mutedColor = isDark ? Colors.white38 : kTextMuted;
     final dividerColor = isDark ? Colors.white10 : const Color(0xFFF3F4F6);
 
+    String? genderName;
+    if (employee.genderId != null) {
+      final empCtrl = Get.find<EmployeeController>();
+      final match = empCtrl.genders
+          .where((g) => g.id == employee.genderId)
+          .toList();
+      if (match.isNotEmpty) genderName = match.first.name;
+    }
+
     final rows = <_InfoRowData>[
       _InfoRowData(
         icon: Icons.email_outlined,
@@ -30,6 +41,12 @@ class EmployeeDetailInfoListWidget extends StatelessWidget {
           icon: Icons.phone_outlined,
           label: 'Phone',
           value: employee.phone!,
+        ),
+      if (genderName != null)
+        _InfoRowData(
+          icon: Icons.wc_outlined,
+          label: 'emp_form_gender_label'.tr,
+          value: genderName,
         ),
       if (employee.dateOfBirth != null)
         _InfoRowData(

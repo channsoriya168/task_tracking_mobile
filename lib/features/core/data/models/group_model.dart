@@ -1,64 +1,31 @@
-import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:task_tracking_mobile/features/core/data/models/json_converters.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 
+part 'group_model.g.dart';
+
+@JsonSerializable()
+@ColorConverter()
 class GroupModel extends Group {
   GroupModel({
     required super.id,
     required super.name,
     super.color,
     super.description,
-    super.isActive,
+    @JsonKey(defaultValue: true) super.isActive,
     super.createdAt,
     super.updatedAt,
   });
 
-  factory GroupModel.fromJson(Map<String, dynamic> json) {
-    return GroupModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      color: _parseColor(json['color'] as String?),
-      description: json['description'] as String?,
-      isActive: json['isActive'] as bool? ?? true,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
-          : null,
-    );
-  }
+  factory GroupModel.fromJson(Map<String, dynamic> json) =>
+      _$GroupModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'color': _colorToHex(color),
-      'description': description,
-      'isActive': isActive,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$GroupModelToJson(this);
 
-  /// For create/update request body (only mutable fields)
-  Map<String, dynamic> toRequestJson() {
-    return {
-      'name': name,
-      if (color != null) 'color': _colorToHex(color),
-      if (description != null) 'description': description,
-    };
-  }
-
-  static Color? _parseColor(String? hex) {
-    if (hex == null || hex.isEmpty) return null;
-    final sanitized = hex.replaceAll('#', '');
-    final value = int.tryParse(
-      sanitized.length == 6 ? 'FF$sanitized' : sanitized,
-      radix: 16,
-    );
-    return value != null ? Color(value) : null;
-  }
-
-  static String? _colorToHex(Color? color) {
-    if (color == null) return null;
-    return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
-  }
+  /// Subset of fields sent in create/update requests.
+  Map<String, dynamic> toRequestJson() => {
+        'name': name,
+        if (color != null) 'color': const ColorConverter().toJson(color),
+        if (description != null) 'description': description,
+      };
 }

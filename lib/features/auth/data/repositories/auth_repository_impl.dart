@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/app/services/storage_service.dart';
-import 'package:task_tracking_mobile/app/utils/dio_error_mapper.dart';
-import 'package:task_tracking_mobile/app/utils/validators.dart';
+import 'package:task_tracking_mobile/core/network/storage_service.dart';
+import 'package:task_tracking_mobile/core/utils/dio_error_mapper.dart';
+import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
@@ -15,7 +15,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final StorageService _storage;
 
   AuthRepositoryImpl(this._remote, [StorageService? storage])
-      : _storage = storage ?? StorageService();
+    : _storage = storage ?? StorageService();
 
   // ── Login ────────────────────────────────────────────────
   @override

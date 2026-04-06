@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/services/push_notification_service.dart';
+import 'package:task_tracking_mobile/core/network/push_notification_service.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_tracking_mobile/app/routes/app_routes.dart';
-import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
+import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/change_password_usecase.dart';
@@ -15,8 +15,8 @@ import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase
 import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/update_profile_usecase.dart';
-import 'package:task_tracking_mobile/app/enums/user_role.dart';
-import 'package:task_tracking_mobile/app/utils/validators.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 
@@ -105,7 +105,10 @@ class AuthController extends GetxController {
 
       Get.find<NavigationController>().changePage(0);
       Get.offAllNamed(AppRoutes.mainPage);
-      AppSnackbar.success('snack_welcome'.trParams({'name': auth.fullName}), '');
+      AppSnackbar.success(
+        'snack_welcome'.trParams({'name': auth.fullName}),
+        '',
+      );
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

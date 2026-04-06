@@ -5,9 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/routes/app_routes.dart';
-import 'package:task_tracking_mobile/app/services/api_client.dart';
-import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
+import 'package:task_tracking_mobile/core/network/api_client.dart';
+import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 
 class PushNotificationService extends GetxService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -29,7 +29,8 @@ class PushNotificationService extends GetxService {
     // Create the Android notification channel
     await _localNotifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_channel);
 
     // iOS foreground presentation options
@@ -42,18 +43,16 @@ class PushNotificationService extends GetxService {
     }
 
     // Initialize flutter_local_notifications
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
     await _localNotifications.initialize(
-      const InitializationSettings(
-        android: androidSettings,
-        iOS: iosSettings,
-      ),
+      const InitializationSettings(android: androidSettings, iOS: iosSettings),
       onDidReceiveNotificationResponse: _onNotificationTap,
     );
 

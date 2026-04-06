@@ -54,7 +54,10 @@ class AppBinding extends Bindings {
       TaskItemRepositoryImpl(TaskItemRemoteDatasource()),
       permanent: true,
     );
-    Get.put<LookupRepository>(LookupRepositoryImpl(LookupRemoteDatasource()));
+    Get.put<LookupRepository>(
+      LookupRepositoryImpl(LookupRemoteDatasource()),
+      permanent: true,
+    );
     Get.put<LabelRepository>(
       LabelRepositoryImpl(LabelRemoteDatasource()),
       permanent: true,
@@ -100,6 +103,7 @@ class AppBinding extends Bindings {
         CreateEmployeeUsecase(Get.find<EmployeeRepository>()),
         UpdateEmployeeUsecase(Get.find<EmployeeRepository>()),
         ResetEmployeePasswordUsecase(Get.find<EmployeeRepository>()),
+        Get.find<LookupRepository>(),
       ),
       fenix: true,
     );

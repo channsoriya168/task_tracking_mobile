@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_tile.dart';
 
@@ -122,10 +122,7 @@ class NotificationPage extends StatelessWidget {
                 onDismissed: () {
                   controller.deleteNotification(notification.id);
                 },
-              ).animate().fadeIn(
-                    duration: 300.ms,
-                    delay: (index * 50).ms,
-                  );
+              ).animate().fadeIn(duration: 300.ms, delay: (index * 50).ms);
             },
           ),
         );

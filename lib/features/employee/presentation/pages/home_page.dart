@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_filter_bar_widget.dart';
@@ -37,85 +37,85 @@ class HomePage extends StatelessWidget {
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-            // ── Greeting header ───────────────────────────────
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 8, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _greeting(),
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? Colors.white54 : kTextMuted,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Obx(
-                            () => Text(
-                              authCtrl.profile.value?.fullName ?? '',
+              // ── Greeting header ───────────────────────────────
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 8, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _greeting(),
                               style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -0.5,
-                                color: isDark ? Colors.white : kTextDark,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white54 : kTextMuted,
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 2),
+                            Obx(
+                              () => Text(
+                                authCtrl.profile.value?.fullName ?? '',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: -0.5,
+                                  color: isDark ? Colors.white : kTextDark,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    // ── Notification bell ──────────────────────
-                    const NotificationBellWidget(),
-                  ],
+                      // ── Notification bell ──────────────────────
+                      const NotificationBellWidget(),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // ── Sticky: calendar + filter + search ────────────
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _StickyToolbarDelegate(
-                isDark: isDark,
-                homeCtrl: homeCtrl,
+              // ── Sticky: calendar + filter + search ────────────
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyToolbarDelegate(
+                  isDark: isDark,
+                  homeCtrl: homeCtrl,
+                ),
               ),
-            ),
 
-            // ── Task list / shimmer / empty ───────────────────
-            Obx(() {
-              if (homeCtrl.isLoading.value && homeCtrl.allTasks.isEmpty) {
+              // ── Task list / shimmer / empty ───────────────────
+              Obx(() {
+                if (homeCtrl.isLoading.value && homeCtrl.allTasks.isEmpty) {
+                  return SliverPadding(
+                    padding: kPageBottomPadding,
+                    sliver: SliverList.separated(
+                      itemCount: 5,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (_, __) => _TaskCardShimmer(isDark: isDark),
+                    ),
+                  );
+                }
+                final tasks = homeCtrl.filteredTasks;
+                if (tasks.isEmpty) {
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: TaskEmptyState(isDark: isDark),
+                  );
+                }
                 return SliverPadding(
                   padding: kPageBottomPadding,
                   sliver: SliverList.separated(
-                    itemCount: 5,
+                    itemCount: tasks.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (_, __) => _TaskCardShimmer(isDark: isDark),
+                    itemBuilder: (_, i) =>
+                        EmployeeTaskCard(task: tasks[i], isDark: isDark),
                   ),
                 );
-              }
-              final tasks = homeCtrl.filteredTasks;
-              if (tasks.isEmpty) {
-                return SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: TaskEmptyState(isDark: isDark),
-                );
-              }
-              return SliverPadding(
-                padding: kPageBottomPadding,
-                sliver: SliverList.separated(
-                  itemCount: tasks.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (_, i) =>
-                      EmployeeTaskCard(task: tasks[i], isDark: isDark),
-                ),
-              );
-            }),
-          ],
+              }),
+            ],
           ),
         ),
       ),
@@ -214,65 +214,84 @@ class _TaskCardShimmer extends StatelessWidget {
         ),
         child: IntrinsicHeight(
           child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ── Left accent strip ──
-            Container(
-              width: 5,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white24 : Colors.grey.shade400,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── Left accent strip ──
+              Container(
+                width: 5,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white24 : Colors.grey.shade400,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    bottomLeft: Radius.circular(16),
+                  ),
                 ),
               ),
-            ),
-            // ── Content ──
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Title + priority dot
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: _ShimmerBox(
-                            isDark: isDark,
-                            width: double.infinity,
-                            height: 16,
+              // ── Content ──
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Title + priority dot
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: _ShimmerBox(
+                              isDark: isDark,
+                              width: double.infinity,
+                              height: 16,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        _ShimmerBox(isDark: isDark, width: 10, height: 10, radius: 5),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    // Description line 1
-                    _ShimmerBox(isDark: isDark, width: double.infinity, height: 12),
-                    const SizedBox(height: 5),
-                    // Description line 2
-                    _ShimmerBox(isDark: isDark, width: 180, height: 12),
-                    const SizedBox(height: 10),
-                    // Due date
-                    _ShimmerBox(isDark: isDark, width: 100, height: 12),
-                    const SizedBox(height: 14),
-                    // Avatar + action button
-                    Row(
-                      children: [
-                        _ShimmerBox(isDark: isDark, width: 28, height: 28, radius: 14),
-                        const Spacer(),
-                        _ShimmerBox(isDark: isDark, width: 90, height: 32, radius: 10),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 8),
+                          _ShimmerBox(
+                            isDark: isDark,
+                            width: 10,
+                            height: 10,
+                            radius: 5,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // Description line 1
+                      _ShimmerBox(
+                        isDark: isDark,
+                        width: double.infinity,
+                        height: 12,
+                      ),
+                      const SizedBox(height: 5),
+                      // Description line 2
+                      _ShimmerBox(isDark: isDark, width: 180, height: 12),
+                      const SizedBox(height: 10),
+                      // Due date
+                      _ShimmerBox(isDark: isDark, width: 100, height: 12),
+                      const SizedBox(height: 14),
+                      // Avatar + action button
+                      Row(
+                        children: [
+                          _ShimmerBox(
+                            isDark: isDark,
+                            width: 28,
+                            height: 28,
+                            radius: 14,
+                          ),
+                          const Spacer(),
+                          _ShimmerBox(
+                            isDark: isDark,
+                            width: 90,
+                            height: 32,
+                            radius: 10,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
           ),
         ),
       ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class CircularIconButton extends StatelessWidget {
   final IconData icon;
   final bool isDark;
   final VoidCallback onTap;
-  
+
   const CircularIconButton({
     super.key,
     required this.icon,
@@ -36,11 +36,7 @@ class CircularIconButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
-          icon,
-          size: 22,
-          color: isDark ? Colors.white : kTextDark,
-        ),
+        child: Icon(icon, size: 22, color: isDark ? Colors.white : kTextDark),
       ),
     );
   }

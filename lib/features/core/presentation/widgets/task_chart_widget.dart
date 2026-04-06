@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 
@@ -91,7 +91,9 @@ class TaskChartWidget extends StatelessWidget {
                           margin: EdgeInsets.zero,
                           series: [
                             DoughnutSeries<_ChartData, String>(
-                              dataSource: dataWithColor.where((d) => d.count > 0).toList(),
+                              dataSource: dataWithColor
+                                  .where((d) => d.count > 0)
+                                  .toList(),
                               xValueMapper: (d, _) => d.label,
                               yValueMapper: (d, _) => d.count,
                               pointColorMapper: (d, _) => d.color,

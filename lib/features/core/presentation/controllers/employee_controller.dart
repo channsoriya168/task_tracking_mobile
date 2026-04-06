@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
-import 'package:task_tracking_mobile/app/utils/validators.dart';
+import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_validator.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/lookup_gender.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/employee_repository.dart';
+import 'package:task_tracking_mobile/features/core/domain/repositories/lookup_repository.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/reset_employee_password_usecase.dart';
@@ -21,12 +23,14 @@ class EmployeeController extends GetxController {
     this._createEmployee,
     this._updateEmployee,
     this._resetPasswordUsecase,
+    this._lookupRepository,
   );
 
   final EmployeeRepository _repository;
   final CreateEmployeeUsecase _createEmployee;
   final UpdateEmployeeUsecase _updateEmployee;
   final ResetEmployeePasswordUsecase _resetPasswordUsecase;
+  final LookupRepository _lookupRepository;
 
   // ── List state ────────────────────────────────────────────────
   final RxList<Employee> employees = <Employee>[].obs;
@@ -37,10 +41,22 @@ class EmployeeController extends GetxController {
 
   RxList<Group> get Groups => Get.find<GroupController>().groups;
 
+  // ── Gender lookup ──────────────────────────────────────────────
+  final RxList<LookupGender> genders = <LookupGender>[].obs;
+
+  Future<void> fetchGenders() async {
+    try {
+      genders.value = await _lookupRepository.fetchGenders();
+    } catch (e) {
+      debugPrint('[EmployeeController] fetchGenders error: $e');
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
     fetchEmployees();
+    fetchGenders();
     ever(selectedTaskGroupId, (_) => fetchEmployees());
   }
 
@@ -90,6 +106,7 @@ class EmployeeController extends GetxController {
   final placeCtrl = TextEditingController();
 
   final RxString selectedRole = 'Employee'.obs;
+  final Rxn<String> selectedGenderId = Rxn<String>();
 
   final Rx<DateTime?> formDob = Rx(null);
   final Rxn<String> selectedGroupId = Rxn<String>();
@@ -165,6 +182,7 @@ class EmployeeController extends GetxController {
     phoneCtrl.text = _toLocalDigits(employee.phone ?? '');
     placeCtrl.text = employee.placeOfBirth ?? '';
     selectedRole.value = employee.role ?? 'Employee';
+    selectedGenderId.value = employee.genderId;
     formDob.value = employee.dateOfBirth;
     selectedGroupId.value = employee.groups.isNotEmpty
         ? employee.groups.first.groupId
@@ -185,6 +203,7 @@ class EmployeeController extends GetxController {
     placeCtrl.clear();
     formDob.value = null;
     selectedGroupId.value = null;
+    selectedGenderId.value = null;
     selectedRole.value = 'Employee';
     profileImage.value = null;
     showPassword.value = false;
@@ -280,6 +299,7 @@ class EmployeeController extends GetxController {
       password: password,
       confirmPassword: confirmPassword,
       dob: formDob.value,
+      genderId: selectedGenderId.value,
       groupId: selectedGroupId.value,
     );
     if (errors.isNotEmpty) {
@@ -299,6 +319,7 @@ class EmployeeController extends GetxController {
             ? null
             : placeCtrl.text.trim(),
         dateOfBirth: formDob.value,
+        genderId: selectedGenderId.value,
         groupIds: selectedGroupId.value != null
             ? [selectedGroupId.value!]
             : null,
@@ -329,6 +350,7 @@ class EmployeeController extends GetxController {
       email: email,
       phone: phone,
       dob: formDob.value,
+      genderId: selectedGenderId.value,
       groupId: selectedGroupId.value,
       password: password,
       confirmPassword: confirmPassword,
@@ -349,6 +371,7 @@ class EmployeeController extends GetxController {
             ? null
             : placeCtrl.text.trim(),
         dateOfBirth: formDob.value,
+        genderId: selectedGenderId.value,
         groupIds: selectedGroupId.value != null
             ? [selectedGroupId.value!]
             : null,

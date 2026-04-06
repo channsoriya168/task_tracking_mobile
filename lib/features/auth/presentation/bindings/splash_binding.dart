@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/services/push_notification_service.dart';
+import 'package:task_tracking_mobile/core/network/push_notification_service.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';

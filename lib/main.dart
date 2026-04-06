@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/controllers/language_controller.dart';
-import 'package:task_tracking_mobile/app/routes/app_pages.dart';
-import 'package:task_tracking_mobile/app/routes/app_routes.dart';
-import 'package:task_tracking_mobile/app/themes/dark_theme.dart';
-import 'package:task_tracking_mobile/app/themes/light_theme.dart';
-import 'package:task_tracking_mobile/app/translations/app_translations.dart';
+import 'package:task_tracking_mobile/core/controllers/language_controller.dart';
+import 'package:task_tracking_mobile/routes/app_pages.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
+import 'package:task_tracking_mobile/core/themes/dark_theme.dart';
+import 'package:task_tracking_mobile/core/themes/light_theme.dart';
+import 'package:task_tracking_mobile/core/translations/app_translations.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
 
 void main() async {

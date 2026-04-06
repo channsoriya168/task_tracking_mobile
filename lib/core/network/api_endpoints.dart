@@ -38,6 +38,7 @@ abstract class ApiEndpoints {
   // ── Lookups ───────────────────────────────────────────────
   static const String lookupTaskPriorities = '/api/v1/lookups/task-priorities';
   static const String lookupTaskStatuses = '/api/v1/lookups/task-item-statuses';
+  static const String lookupGenders = '/api/v1/lookups/genders';
   // ── Labels ────────────────────────────────────────────────
   static const String labels = '/api/v1/Labels';
   static String labelById(String id) => '/api/v1/Labels/$id';

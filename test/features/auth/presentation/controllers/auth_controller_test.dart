@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
@@ -70,18 +70,17 @@ class _StubAuthRepository implements AuthRepository {
 
 // ── Auth helper ──────────────────────────────────────────────────────────────
 
-final _futureExp =
-    DateTime.now().add(const Duration(days: 365 * 10));
+final _futureExp = DateTime.now().add(const Duration(days: 365 * 10));
 
 Auth _makeAuth({String role = 'Manager'}) => Auth(
-      userId: 'u1',
-      fullName: 'Alice Smith',
-      phoneNumber: '+85512345678',
-      roles: [role],
-      accessToken: 'access_token',
-      refreshToken: 'refresh_token',
-      accessTokenExpiration: _futureExp,
-    );
+  userId: 'u1',
+  fullName: 'Alice Smith',
+  phoneNumber: '+85512345678',
+  roles: [role],
+  accessToken: 'access_token',
+  refreshToken: 'refresh_token',
+  accessTokenExpiration: _futureExp,
+);
 
 // ── Test setup ───────────────────────────────────────────────────────────────
 
@@ -98,15 +97,18 @@ AuthController _buildController(_StubAuthRepository repo) {
 /// widget tree).  The returned future completes once [fn] itself finishes.
 Future<void> _guardedRun(Future<void> Function() fn) async {
   final completer = Completer<void>();
-  runZonedGuarded(() async {
-    try {
-      await fn();
-    } finally {
+  runZonedGuarded(
+    () async {
+      try {
+        await fn();
+      } finally {
+        if (!completer.isCompleted) completer.complete();
+      }
+    },
+    (_, __) {
       if (!completer.isCompleted) completer.complete();
-    }
-  }, (_, __) {
-    if (!completer.isCompleted) completer.complete();
-  });
+    },
+  );
   await completer.future;
 }
 
@@ -191,8 +193,7 @@ void main() {
     });
 
     test('clears errorMessage at the start of each login attempt', () async {
-      final repo = _StubAuthRepository()
-        ..loginError = Exception('first error');
+      final repo = _StubAuthRepository()..loginError = Exception('first error');
       final ctrl = _buildController(repo);
 
       // First attempt fails and sets errorMessage.
@@ -227,17 +228,19 @@ void main() {
       expect(ctrl.currentAuth.value, auth);
     });
 
-    test('returns false and clears currentAuth when session is invalid',
-        () async {
-      final repo = _StubAuthRepository()
-        ..checkAuthError = Exception('No session found');
-      final ctrl = _buildController(repo);
+    test(
+      'returns false and clears currentAuth when session is invalid',
+      () async {
+        final repo = _StubAuthRepository()
+          ..checkAuthError = Exception('No session found');
+        final ctrl = _buildController(repo);
 
-      final result = await ctrl.checkAuth();
+        final result = await ctrl.checkAuth();
 
-      expect(result, isFalse);
-      expect(ctrl.currentAuth.value, isNull);
-    });
+        expect(result, isFalse);
+        expect(ctrl.currentAuth.value, isNull);
+      },
+    );
   });
 
   // ──────────────────────────────────────────────────────────────────────────

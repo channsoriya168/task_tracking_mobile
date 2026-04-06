@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/app/services/api_client.dart';
-import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/network/api_client.dart';
+import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/core/data/models/employee_model.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 
@@ -34,6 +34,7 @@ class EmployeeRemoteDatasource {
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,
+    String? genderId,
     List<String>? groupIds,
     String? profileImagePath,
     String? role,
@@ -51,6 +52,7 @@ class EmployeeRemoteDatasource {
         MapEntry('placeOfBirth', placeOfBirth),
       if (dateOfBirth != null)
         MapEntry('dateOfBirth', dateOfBirth.toIso8601String().split('T').first),
+      if (genderId != null && genderId.isNotEmpty) MapEntry('gender', genderId),
       if (role != null && role.isNotEmpty) MapEntry('role', role),
     ]);
 
@@ -91,6 +93,7 @@ class EmployeeRemoteDatasource {
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,
+    String? genderId,
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
@@ -113,6 +116,7 @@ class EmployeeRemoteDatasource {
         MapEntry('password', password),
       if (confirmPassword != null && confirmPassword.isNotEmpty)
         MapEntry('confirmPassword', confirmPassword),
+      if (genderId != null && genderId.isNotEmpty) MapEntry('gender', genderId),
       if (role != null && role.isNotEmpty) MapEntry('role', role),
     ]);
 

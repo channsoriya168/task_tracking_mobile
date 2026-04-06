@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
 
 class UserModel {
   final String id;
@@ -35,12 +35,12 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'email': email,
-        'role': role.name,
-        'avatarLetter': avatarLetter,
-      };
+    'id': id,
+    'name': name,
+    'email': email,
+    'role': role.name,
+    'avatarLetter': avatarLetter,
+  };
 
   String get roleLabel {
     switch (role) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 /// Reusable status badge pill — color driven by [kStatusColors].
 class StatusBadgeWidget extends StatelessWidget {

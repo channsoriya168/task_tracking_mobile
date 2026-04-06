@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:task_tracking_mobile/app/services/api_client.dart';
-import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/network/api_client.dart';
+import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/auth/data/models/auth_model.dart';
 import 'package:task_tracking_mobile/features/auth/data/models/employee_profile_model.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';

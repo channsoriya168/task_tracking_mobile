@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/enums/user_role.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_detail_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_comments_tab_widget.dart';
@@ -88,8 +88,9 @@ class TaskDetailTabSection extends StatelessWidget {
                             '$label (${counts[i]})',
                             style: TextStyle(
                               fontSize: 11,
-                              fontWeight:
-                                  active ? FontWeight.w600 : FontWeight.w500,
+                              fontWeight: active
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
                               color: active ? Colors.white : mutedColor,
                             ),
                           ),
@@ -114,22 +115,22 @@ class TaskDetailTabSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: switch (selected) {
                 0 => TaskDetailMembersTab(
-                    members: ctrl.members,
-                    loading: ctrl.membersLoading.value,
-                    isDark: isDark,
-                  ),
+                  members: ctrl.members,
+                  loading: ctrl.membersLoading.value,
+                  isDark: isDark,
+                ),
                 1 => TaskDetailCommentsTab(
-                    comments: ctrl.comments,
-                    loading: ctrl.commentsLoading.value,
-                    isDark: isDark,
-                    ctrl: ctrl,
-                    canComment: canComment,
-                  ),
+                  comments: ctrl.comments,
+                  loading: ctrl.commentsLoading.value,
+                  isDark: isDark,
+                  ctrl: ctrl,
+                  canComment: canComment,
+                ),
                 _ => TaskDetailProgressTab(
-                    progresses: ctrl.progresses,
-                    loading: ctrl.progressesLoading.value,
-                    isDark: isDark,
-                  ),
+                  progresses: ctrl.progresses,
+                  loading: ctrl.progressesLoading.value,
+                  isDark: isDark,
+                ),
               },
             ),
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/splash_controller.dart';
 
 class SplashPage extends GetView<SplashController> {
@@ -28,17 +28,17 @@ class SplashPage extends GetView<SplashController> {
 
               // ── Logo ─────────────────────────────────────────────
               SizedBox(
-                width: logoSize,
-                child: Image.asset(
-                  'assets/images/logo.jpg',
-                  fit: BoxFit.contain,
-                  errorBuilder: (ctx, err, st) => Icon(
-                    Icons.business_rounded,
-                    size: logoSize * 0.60,
-                    color: kPrimary,
-                  ),
-                ),
-              )
+                    width: logoSize,
+                    child: Image.asset(
+                      'assets/images/logo.jpg',
+                      fit: BoxFit.contain,
+                      errorBuilder: (ctx, err, st) => Icon(
+                        Icons.business_rounded,
+                        size: logoSize * 0.60,
+                        color: kPrimary,
+                      ),
+                    ),
+                  )
                   .animate()
                   .fadeIn(duration: 600.ms, curve: Curves.easeOut)
                   .scale(

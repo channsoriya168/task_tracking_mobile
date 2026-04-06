@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({super.key, required this.isDark, required this.child});

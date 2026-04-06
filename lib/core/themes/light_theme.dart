@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/themes/app_text_styles.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
-final ThemeData darkTheme = ThemeData(
+final ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     seedColor: kPrimary,
-    brightness: Brightness.dark,
-  ).copyWith(surface: kBgDark, surfaceContainerHighest: kCardDark),
-  scaffoldBackgroundColor: kBgDark,
-  textTheme: AppTextStyles.textTheme(ThemeData.dark().textTheme),
+    brightness: Brightness.light,
+  ),
+  scaffoldBackgroundColor: kBgLight,
+  textTheme: AppTextStyles.textTheme(),
   appBarTheme: AppBarTheme(
     backgroundColor: Colors.transparent,
     elevation: 0,
     scrolledUnderElevation: 0,
     centerTitle: false,
-    iconTheme: const IconThemeData(color: Colors.white),
-    titleTextStyle: AppTextStyles.appBarTitle(color: Colors.white),
+    iconTheme: const IconThemeData(color: kTextDark),
+    titleTextStyle: AppTextStyles.appBarTitle(color: kTextDark),
   ),
   cardTheme: CardThemeData(
-    color: kCardDark,
+    color: Colors.white,
     elevation: 0,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: kCardDark,
+    fillColor: Colors.white,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide.none,
@@ -43,7 +43,7 @@ final ThemeData darkTheme = ThemeData(
       borderSide: const BorderSide(color: kHighPriority, width: 1),
     ),
     contentPadding: kInputPadding,
-    hintStyle: const TextStyle(color: Color(0xFF4A4A6A)),
+    hintStyle: const TextStyle(color: kTextMuted),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -64,9 +64,9 @@ final ThemeData darkTheme = ThemeData(
     elevation: 4,
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: kCardDark,
+    backgroundColor: Colors.white,
     selectedItemColor: kPrimary,
-    unselectedItemColor: Color(0xFF4A4A6A),
+    unselectedItemColor: kTextMuted,
     showUnselectedLabels: true,
     type: BottomNavigationBarType.fixed,
     elevation: 0,

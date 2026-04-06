@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_comment.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_detail_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_detail_avatar_widget.dart';
@@ -89,7 +89,9 @@ class TaskDetailCommentsTab extends StatelessWidget {
                                   Text(
                                     formatDate(comments[i].createdAt!),
                                     style: TextStyle(
-                                        fontSize: 10, color: mutedColor),
+                                      fontSize: 10,
+                                      color: mutedColor,
+                                    ),
                                   ),
                                 ],
                               ],

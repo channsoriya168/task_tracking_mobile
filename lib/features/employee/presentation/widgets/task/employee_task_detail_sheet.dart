@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
@@ -92,7 +92,10 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     _loadingId.value = null;
     if (success && mounted) {
       Navigator.pop(context);
-      AppSnackbar.success('snack_task_accepted'.tr, 'snack_task_accepted_msg'.trParams({'title': task.title}));
+      AppSnackbar.success(
+        'snack_task_accepted'.tr,
+        'snack_task_accepted_msg'.trParams({'title': task.title}),
+      );
       Get.find<NavigationController>().changePage(1);
     }
   }
@@ -104,7 +107,10 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     _loadingId.value = null;
     if (success && mounted) {
       Navigator.pop(context);
-      AppSnackbar.update('snack_status_updated'.tr, 'snack_status_updated_msg'.trParams({'status': newStatus.name}));
+      AppSnackbar.update(
+        'snack_status_updated'.tr,
+        'snack_status_updated_msg'.trParams({'status': newStatus.name}),
+      );
     }
   }
 
@@ -317,7 +323,9 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
         if (task.groupName != null || task.labelName != null) ...[
           TaskDetailRow(
             icon: Icons.label_outline_rounded,
-            label: task.labelName != null ? 'task_detail_label'.tr : 'task_detail_group'.tr,
+            label: task.labelName != null
+                ? 'task_detail_label'.tr
+                : 'task_detail_group'.tr,
             isDark: isDark,
             child: TaskLabelChip(
               name: task.labelName ?? task.groupName!,

@@ -1,7 +1,8 @@
 import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/app/utils/dio_error_mapper.dart';
+import 'package:task_tracking_mobile/core/utils/dio_error_mapper.dart';
 import 'package:task_tracking_mobile/features/core/data/datasources/remote/lookup_remote_datasource.dart';
+import 'package:task_tracking_mobile/features/core/domain/entities/lookup_gender.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_priority.dart';
 import 'package:task_tracking_mobile/features/core/domain/repositories/lookup_repository.dart';
@@ -28,6 +29,15 @@ class LookupRepositoryImpl implements LookupRepository {
       throw Exception(mapDioError(e));
     } catch (e) {
       rethrow;
+    }
+  }
+
+  @override
+  Future<List<LookupGender>> fetchGenders() async {
+    try {
+      return await _datasource.getGenders();
+    } on DioException catch (e) {
+      throw Exception(mapDioError(e));
     }
   }
 }

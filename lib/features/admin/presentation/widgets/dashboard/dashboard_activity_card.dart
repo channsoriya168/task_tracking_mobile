@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 const kDashboardActivity = [
   ('Task assigned to John',        'Engineering', '2 min ago',  Icons.assignment_rounded,   kPrimary),

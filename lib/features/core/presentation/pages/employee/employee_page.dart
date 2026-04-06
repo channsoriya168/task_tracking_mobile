@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/responsive.dart';
+import 'package:task_tracking_mobile/core/utils/responsive.dart';
 import 'package:task_tracking_mobile/features/core/presentation/pages/employee/employee_mobile_page.dart';
 import 'package:task_tracking_mobile/features/core/presentation/pages/employee/employee_tablet_page.dart';
 

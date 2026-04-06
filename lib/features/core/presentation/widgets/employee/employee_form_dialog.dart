@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/enums/user_role.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/date_picker_widget.dart';
@@ -115,6 +115,8 @@ class ManagerEmployeeFormDialog extends StatelessWidget {
                         hint: 'emp_form_place_hint'.tr,
                         isDark: isDark,
                       ),
+                      _gap,
+                      _GenderSelector(controller: controller, isDark: isDark),
 
                       // ── Section: Account ─────────────────────────
                       Obx(() {
@@ -358,6 +360,117 @@ class _Footer extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ── Gender selector ────────────────────────────────────────────────────────────
+
+class _GenderSelector extends StatelessWidget {
+  const _GenderSelector({required this.controller, required this.isDark});
+
+  final EmployeeController controller;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final genders = controller.genders;
+      if (genders.isEmpty) return const SizedBox.shrink();
+
+      final selected = controller.selectedGenderId.value;
+      final errorText = controller.fieldErrors['gender'];
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.grey[400] : kTextMuted,
+              ),
+              children: [
+                TextSpan(text: 'emp_form_gender_label'.tr),
+                const TextSpan(
+                  text: ' *',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: selected,
+            isExpanded: true,
+            decoration: InputDecoration(
+              hintText: 'emp_form_gender_hint'.tr,
+              hintStyle: TextStyle(
+                color: isDark ? Colors.grey[600] : Colors.grey[400],
+                fontSize: 14,
+              ),
+              errorText: errorText,
+              filled: true,
+              fillColor: isDark ? kSurfaceDark : kBgLight,
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 14,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: errorText != null
+                      ? Colors.red
+                      : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: errorText != null ? Colors.red : kPrimary,
+                  width: 1.5,
+                ),
+              ),
+            ),
+            dropdownColor: isDark ? kCardDark : Colors.white,
+            style: TextStyle(
+              color: isDark ? Colors.white : kTextDark,
+              fontSize: 14,
+            ),
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: isDark ? Colors.grey[500] : Colors.grey[500],
+            ),
+            items: [
+              DropdownMenuItem<String>(
+                value: null,
+                child: Text(
+                  'emp_form_gender_hint'.tr,
+                  style: TextStyle(
+                    color: isDark ? Colors.grey[600] : Colors.grey[400],
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              ...genders.map(
+                (g) =>
+                    DropdownMenuItem<String>(value: g.id, child: Text(g.name)),
+              ),
+            ],
+            onChanged: (value) {
+              controller.selectedGenderId.value = value;
+              if (value != null) controller.fieldErrors.remove('gender');
+            },
+          ),
+        ],
+      );
+    });
   }
 }
 

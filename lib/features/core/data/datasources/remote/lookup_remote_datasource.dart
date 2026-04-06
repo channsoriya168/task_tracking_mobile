@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/app/services/api_client.dart';
-import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/network/api_client.dart';
+import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
+import 'package:task_tracking_mobile/features/core/data/models/lookup_gender_model.dart';
 import 'package:task_tracking_mobile/features/core/data/models/taksk_priority_model.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_status_model.dart';
 
@@ -20,6 +21,14 @@ class LookupRemoteDatasource {
     final list = response.data as List<dynamic>;
     return list
         .map((e) => TaskItemStatusModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<LookupGenderModel>> getGenders() async {
+    final response = await _dio.get(ApiEndpoints.lookupGenders);
+    final list = response.data as List<dynamic>;
+    return list
+        .map((e) => LookupGenderModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 }

@@ -26,6 +26,7 @@ class Employee {
   final String? profileImageUrl;
   final String? placeOfBirth;
   final DateTime? dateOfBirth;
+  final String? genderId;
   final DateTime createdAt;
   final DateTime? updatedAt;
   final List<EmployeeGroup> groups;
@@ -40,6 +41,7 @@ class Employee {
     this.profileImageUrl,
     this.placeOfBirth,
     this.dateOfBirth,
+    this.genderId,
     required this.createdAt,
     this.updatedAt,
     required this.groups,

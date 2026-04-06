@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/controllers/language_controller.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/controllers/language_controller.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 // ── Language data ─────────────────────────────────────────────────────────────
 const _kEnFlag = '🇬🇧';

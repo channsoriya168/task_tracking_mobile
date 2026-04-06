@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 /// Shows a reusable delete confirmation dialog.
 /// Returns true if user confirms, false if cancelled, null if dismissed.

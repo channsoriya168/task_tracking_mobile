@@ -21,6 +21,13 @@ const Map<String, String> enUS = {
   'notification_decline': 'Decline',
   'notification_accept': 'Accept',
 
+  'task_title': 'Tasks',
+  'task_create_labels': 'Create Labels',
+  'labels': 'Labels',
+  'no_labels_get': 'No labels yet',
+  'label_empty_hint': 'Tap + to create your first label',
+  'label_delete_title': 'Delete Label',
+  'label_delete_confirm': 'Delete label "@name"?',
   // ── Task detail ───────────────────────────────────────────────
   'task_empty': 'No tasks found',
   'task_no_due_date': 'No due date',
@@ -185,6 +192,8 @@ const Map<String, String> enUS = {
   'emp_form_confirm_password_hint': 'Re-enter password',
   'emp_form_btn_save': 'Save Changes',
   'emp_form_btn_add': 'Add Employee',
+  'emp_form_gender_label': 'Gender',
+  'emp_form_gender_hint': 'Select gender',
 
   // ── Employee ──────────────────────────────────────────────────
   'employee_title': 'Employees',

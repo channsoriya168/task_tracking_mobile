@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/create_label_usecase.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/delete_label_usecase.dart';
@@ -62,7 +62,10 @@ class AdminLabelController extends GetxController {
             : descriptionCtrl.text.trim(),
       );
       labels.add(created);
-      AppSnackbar.success('snack_label_added'.tr, 'snack_label_added_msg'.trParams({'name': created.name}));
+      AppSnackbar.success(
+        'snack_label_added'.tr,
+        'snack_label_added_msg'.trParams({'name': created.name}),
+      );
       return true;
     } catch (_) {
       AppSnackbar.error('snack_label'.tr, 'snack_label_create_fail'.tr);
@@ -90,7 +93,10 @@ class AdminLabelController extends GetxController {
       );
       final i = labels.indexWhere((l) => l.id == id);
       if (i != -1) labels[i] = updated;
-      AppSnackbar.update('snack_label_updated'.tr, 'snack_label_updated_msg'.trParams({'name': updated.name}));
+      AppSnackbar.update(
+        'snack_label_updated'.tr,
+        'snack_label_updated_msg'.trParams({'name': updated.name}),
+      );
       return true;
     } catch (_) {
       AppSnackbar.error('snack_label'.tr, 'snack_label_update_fail'.tr);
@@ -106,7 +112,10 @@ class AdminLabelController extends GetxController {
     try {
       await _delete(id);
       labels.removeWhere((l) => l.id == id);
-      AppSnackbar.delete('snack_label_deleted'.tr, 'snack_label_deleted_msg'.trParams({'name': label.name}));
+      AppSnackbar.delete(
+        'snack_label_deleted'.tr,
+        'snack_label_deleted_msg'.trParams({'name': label.name}),
+      );
     } catch (_) {
       AppSnackbar.error('snack_label'.tr, 'snack_label_delete_fail'.tr);
     }

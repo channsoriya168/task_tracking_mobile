@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class TaskDetailTabLoader extends StatelessWidget {
   const TaskDetailTabLoader({super.key});

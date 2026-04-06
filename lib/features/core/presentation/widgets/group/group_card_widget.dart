@@ -1,12 +1,13 @@
 // ── Position Card ─────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/action_button.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/group/group_dialog.dart';
+
+enum _GroupCardMenuAction { edit, delete }
 
 class GroupCardWidget extends StatelessWidget {
   const GroupCardWidget({
@@ -23,6 +24,15 @@ class GroupCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final menuBgColor = isDark ? kCardDark : Colors.white;
+    final menuBorderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
+    final menuShadowColor = isDark
+        ? Colors.black.withValues(alpha: 0.35)
+        : Colors.black.withValues(alpha: 0.12);
+    final menuTextColor = isDark ? Colors.white : kTextDark;
+
     return Dismissible(
       key: ValueKey(group.id),
       direction: DismissDirection.endToStart,
@@ -37,113 +47,178 @@ class GroupCardWidget extends StatelessWidget {
       ),
       confirmDismiss: (_) => _confirmDelete(context),
       onDismissed: (_) => ctrl.deleteGroup(group.id),
-      child: GestureDetector(
-        onTap: () => showGroupDialog(context, ctrl, isDark, group),
-        child: Container(
-          decoration: BoxDecoration(
-            color: isDark ? kCardDark : kBgLight,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: (group.color ?? kPrimary).withAlpha(isDark ? 30 : 20),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Row(
-              children: [
-                // Left accent bar — stretches with content
-                Container(
-                  width: 5,
-                  color: group.color ?? kPrimary,
-                ),
-                const SizedBox(width: 14),
-                // Icon avatar
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: (group.color ?? kPrimary).withAlpha(
-                      isDark ? 40 : 25,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? kCardDark : kBgLight,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: (group.color ?? kPrimary).withAlpha(isDark ? 30 : 20),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  // Left accent bar — stretches with content
+                  Container(width: 5, color: group.color ?? kPrimary),
+                  const SizedBox(width: 14),
+                  // Icon avatar
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: (group.color ?? kPrimary).withAlpha(
+                        isDark ? 40 : 25,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    child: Icon(
+                      Icons.group_rounded,
+                      color: group.color ?? kPrimary,
+                      size: 22,
+                    ),
                   ),
-                  child: Icon(
-                    Icons.group_rounded,
-                    color: group.color ?? kPrimary,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          group.name,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : kTextDark,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.people_alt_rounded,
-                              size: 12,
-                              color: isDark ? Colors.grey[500] : kTextMuted,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            group.name,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white : kTextDark,
                             ),
-                            const SizedBox(width: 4),
+                          ),
+
+                          const SizedBox(height: 4),
+                          if (group.description != null &&
+                              group.description!.isNotEmpty) ...[
+                            const SizedBox(height: 4),
                             Text(
-                              '$employeeCount ${employeeCount == 1 ? 'group_member'.tr : 'group_members'.tr}',
+                              group.description!,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: isDark ? Colors.grey[500] : kTextMuted,
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  PopupMenuButton<_GroupCardMenuAction>(
+                    icon: Icon(
+                      Icons.more_vert_rounded,
+                      color: isDark ? Colors.grey[300] : kTextMuted,
+                    ),
+                    color: menuBgColor,
+                    surfaceTintColor: Colors.transparent,
+                    elevation: 8,
+                    shadowColor: menuShadowColor,
+                    position: PopupMenuPosition.under,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: BorderSide(color: menuBorderColor),
+                    ),
+                    tooltip: 'actions'.tr,
+                    onSelected: (action) async {
+                      if (action == _GroupCardMenuAction.edit) {
+                        showGroupDialog(context, ctrl, isDark, group);
+                        return;
+                      }
+
+                      final confirmed = await _confirmDelete(context);
+                      if (confirmed == true) ctrl.deleteGroup(group.id);
+                    },
+                    itemBuilder: (menuContext) => [
+                      PopupMenuItem<_GroupCardMenuAction>(
+                        value: _GroupCardMenuAction.edit,
+                        height: 42,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.edit_rounded,
+                              size: 14,
+                              color: group.color ?? kPrimary,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'edit'.tr,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: menuTextColor,
+                              ),
                             ),
                           ],
                         ),
-                        if (group.description != null &&
-                            group.description!.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            group.description!,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? Colors.grey[500] : kTextMuted,
+                      ),
+                      PopupMenuItem<_GroupCardMenuAction>(
+                        value: _GroupCardMenuAction.delete,
+                        height: 42,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.delete_rounded,
+                              size: 14,
+                              color: kHighPriority,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ],
-                    ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'delete'.tr,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: kHighPriority,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+              Divider(
+                // height: 16,
+                thickness: 1,
+                color: isDark ? Colors.grey[700] : Colors.grey[300],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(
+                      Icons.people_alt_rounded,
+                      size: 12,
+                      color: isDark ? Colors.grey[500] : kTextMuted,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$employeeCount ${employeeCount == 1 ? 'group_member'.tr : 'group_members'.tr}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.grey[500] : kTextMuted,
+                      ),
+                    ),
+                  ],
                 ),
-                ActionButton(
-                  icon: Icons.edit_rounded,
-                  color: group.color ?? kPrimary,
-                  onTap: () => showGroupDialog(context, ctrl, isDark, group),
-                ),
-                const SizedBox(width: 6),
-                ActionButton(
-                  icon: Icons.delete_rounded,
-                  color: kHighPriority,
-                  onTap: () async {
-                    final confirmed = await _confirmDelete(context);
-                    if (confirmed == true) ctrl.deleteGroup(group.id);
-                  },
-                ),
-                const SizedBox(width: 8),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

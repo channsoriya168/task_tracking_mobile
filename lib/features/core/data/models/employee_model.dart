@@ -12,6 +12,7 @@ class EmployeeModel extends Employee {
     super.profileImageUrl,
     super.placeOfBirth,
     super.dateOfBirth,
+    super.genderId,
     required super.createdAt,
     super.updatedAt,
     required super.groups,
@@ -48,7 +49,15 @@ class EmployeeModel extends Employee {
           ? DateTime.tryParse(json['updatedAt'] as String)
           : null,
       groups: groups,
+      genderId: _parseGenderId(json['gender']),
     );
+  }
+
+  static String? _parseGenderId(dynamic value) {
+    if (value == null) return null;
+    final n = value is int ? value : int.tryParse(value.toString());
+    if (n == null || n == 0) return null;
+    return n.toString();
   }
 
   static int _extractRole(dynamic value) {

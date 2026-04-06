@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_progress.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_progress_controller.dart';
 
@@ -41,18 +41,23 @@ class TaskProgressSection extends StatelessWidget {
             children: [
               Icon(Icons.timeline_rounded, size: 16, color: mutedColor),
               const SizedBox(width: 8),
-              Text('progress_title'.tr,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: textColor)),
+              Text(
+                'progress_title'.tr,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
               const Spacer(),
               if (error.isNotEmpty && !loading) ...[
                 GestureDetector(
                   onTap: () => ctrl.fetchTaskProgresses(taskId),
-                  child: Icon(Icons.refresh_rounded,
-                      size: 18,
-                      color: Colors.red.withValues(alpha: 0.7)),
+                  child: Icon(
+                    Icons.refresh_rounded,
+                    size: 18,
+                    color: Colors.red.withValues(alpha: 0.7),
+                  ),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -66,7 +71,8 @@ class TaskProgressSection extends StatelessWidget {
                       color: kPrimary.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                       border: Border.all(
-                          color: kPrimary.withValues(alpha: 0.3)),
+                        color: kPrimary.withValues(alpha: 0.3),
+                      ),
                     ),
                     alignment: Alignment.center,
                     child: const Icon(Icons.add, size: 16, color: kPrimary),
@@ -78,9 +84,10 @@ class TaskProgressSection extends StatelessWidget {
           if (loading)
             const Center(
               child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2)),
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
             )
           else if (error.isNotEmpty && progresses.isEmpty)
             GestureDetector(
@@ -88,13 +95,16 @@ class TaskProgressSection extends StatelessWidget {
               child: Text(
                 'progress_error'.trParams({'error': error}),
                 style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.red.withValues(alpha: 0.8)),
+                  fontSize: 12,
+                  color: Colors.red.withValues(alpha: 0.8),
+                ),
               ),
             )
           else if (progresses.isEmpty)
-            Text('progress_empty'.tr,
-                style: TextStyle(fontSize: 13, color: mutedColor))
+            Text(
+              'progress_empty'.tr,
+              style: TextStyle(fontSize: 13, color: mutedColor),
+            )
           else
             Column(
               children: progresses.asMap().entries.map((entry) {
@@ -118,25 +128,32 @@ class TaskProgressSection extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(
-      BuildContext context, TaskProgress progress) async {
+    BuildContext context,
+    TaskProgress progress,
+  ) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: isDark ? kCardDark : Colors.white,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('progress_delete_title'.tr,
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : kTextDark)),
-        content: Text('progress_delete_msg'.tr,
-            style: TextStyle(color: isDark ? Colors.white70 : kTextMuted)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'progress_delete_title'.tr,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white : kTextDark,
+          ),
+        ),
+        content: Text(
+          'progress_delete_msg'.tr,
+          style: TextStyle(color: isDark ? Colors.white70 : kTextMuted),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('dialog_cancel'.tr,
-                style: TextStyle(
-                    color: isDark ? Colors.white54 : kTextMuted)),
+            child: Text(
+              'dialog_cancel'.tr,
+              style: TextStyle(color: isDark ? Colors.white54 : kTextMuted),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -145,7 +162,8 @@ class TaskProgressSection extends StatelessWidget {
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: Text('action_delete'.tr),
           ),
@@ -155,8 +173,10 @@ class TaskProgressSection extends StatelessWidget {
     if (ok == true) await ctrl.deleteProgress(taskId, progress.id);
   }
 
-  Future<void> _showProgressSheet(BuildContext context,
-      {TaskProgress? editing}) async {
+  Future<void> _showProgressSheet(
+    BuildContext context, {
+    TaskProgress? editing,
+  }) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -216,9 +236,10 @@ class _ProgressItem extends StatelessWidget {
                 Text(
                   progress.notes ?? '',
                   style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: textColor),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 // Progress bar + percentage number
@@ -232,7 +253,8 @@ class _ProgressItem extends StatelessWidget {
                           minHeight: 6,
                           backgroundColor: barBg,
                           valueColor: const AlwaysStoppedAnimation<Color>(
-                              kPrimary),
+                            kPrimary,
+                          ),
                         ),
                       ),
                     ),
@@ -240,9 +262,10 @@ class _ProgressItem extends StatelessWidget {
                     Text(
                       '$pct%',
                       style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: kPrimary,
+                      ),
                     ),
                   ],
                 ),
@@ -250,19 +273,27 @@ class _ProgressItem extends StatelessWidget {
                 // Time + hours
                 Row(
                   children: [
-                    Icon(Icons.access_time_rounded,
-                        size: 11, color: mutedColor),
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 11,
+                      color: mutedColor,
+                    ),
                     const SizedBox(width: 3),
                     Text(
-                      formatDate(progress.loggedAt ??
-                          progress.createdAt ??
-                          DateTime.now()),
+                      formatDate(
+                        progress.loggedAt ??
+                            progress.createdAt ??
+                            DateTime.now(),
+                      ),
                       style: TextStyle(fontSize: 11, color: mutedColor),
                     ),
                     if (progress.hoursWorked != null) ...[
                       const SizedBox(width: 8),
-                      Icon(Icons.hourglass_bottom_rounded,
-                          size: 11, color: mutedColor),
+                      Icon(
+                        Icons.hourglass_bottom_rounded,
+                        size: 11,
+                        color: mutedColor,
+                      ),
                       const SizedBox(width: 3),
                       Text(
                         '${progress.hoursWorked!.toStringAsFixed(1)}h',
@@ -279,11 +310,15 @@ class _ProgressItem extends StatelessWidget {
             width: 36,
             child: canEdit
                 ? PopupMenuButton<_ProgressAction>(
-                    icon: Icon(Icons.more_vert_rounded,
-                        size: 18, color: mutedColor),
+                    icon: Icon(
+                      Icons.more_vert_rounded,
+                      size: 18,
+                      color: mutedColor,
+                    ),
                     color: isDark ? kCardDark : Colors.white,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     padding: EdgeInsets.zero,
                     onSelected: (action) {
                       if (action == _ProgressAction.edit) onEdit();
@@ -294,15 +329,19 @@ class _ProgressItem extends StatelessWidget {
                         value: _ProgressAction.edit,
                         child: Row(
                           children: [
-                            Icon(Icons.edit_outlined,
-                                size: 16, color: kPrimary),
+                            Icon(
+                              Icons.edit_outlined,
+                              size: 16,
+                              color: kPrimary,
+                            ),
                             const SizedBox(width: 8),
-                            Text('Edit',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: isDark
-                                        ? Colors.white
-                                        : kTextDark)),
+                            Text(
+                              'Edit',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark ? Colors.white : kTextDark,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -310,12 +349,16 @@ class _ProgressItem extends StatelessWidget {
                         value: _ProgressAction.delete,
                         child: Row(
                           children: [
-                            const Icon(Icons.delete_outline_rounded,
-                                size: 16, color: Colors.red),
+                            const Icon(
+                              Icons.delete_outline_rounded,
+                              size: 16,
+                              color: Colors.red,
+                            ),
                             const SizedBox(width: 8),
-                            const Text('Delete',
-                                style: TextStyle(
-                                    fontSize: 13, color: Colors.red)),
+                            const Text(
+                              'Delete',
+                              style: TextStyle(fontSize: 13, color: Colors.red),
+                            ),
                           ],
                         ),
                       ),
@@ -344,6 +387,7 @@ class _ProgressSheet extends StatefulWidget {
   final String taskId;
   final TaskProgressController ctrl;
   final bool isDark;
+
   /// Non-null when editing an existing record.
   final TaskProgress? editing;
 
@@ -368,12 +412,12 @@ class _ProgressSheetState extends State<_ProgressSheet> {
     super.initState();
     final p = widget.editing;
     _pctCtrl = TextEditingController(
-        text: p != null ? '${p.progressPercentage}' : '0');
+      text: p != null ? '${p.progressPercentage}' : '0',
+    );
     _notesCtrl = TextEditingController(text: p?.notes ?? '');
     _hoursCtrl = TextEditingController(
-        text: p?.hoursWorked != null
-            ? p!.hoursWorked!.toStringAsFixed(1)
-            : '');
+      text: p?.hoursWorked != null ? p!.hoursWorked!.toStringAsFixed(1) : '',
+    );
   }
 
   @override
@@ -441,8 +485,9 @@ class _ProgressSheetState extends State<_ProgressSheet> {
     );
 
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: bg,
@@ -464,16 +509,21 @@ class _ProgressSheetState extends State<_ProgressSheet> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(isEdit ? 'progress_edit'.tr : 'progress_log'.tr,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: textColor)),
+            Text(
+              isEdit ? 'progress_edit'.tr : 'progress_log'.tr,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: textColor,
+              ),
+            ),
             const SizedBox(height: 16),
 
             // Notes (required) — shown first
-            Text('progress_notes'.tr,
-                style: TextStyle(fontSize: 13, color: mutedColor)),
+            Text(
+              'progress_notes'.tr,
+              style: TextStyle(fontSize: 13, color: mutedColor),
+            ),
             const SizedBox(height: 6),
             TextField(
               controller: _notesCtrl,
@@ -491,7 +541,9 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                 filled: true,
                 fillColor: fieldFill,
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 12),
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 border: border,
                 enabledBorder: _notesError != null ? errorBorder : border,
                 focusedBorder: _notesError != null ? errorBorder : border,
@@ -506,15 +558,17 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('progress_percent'.tr,
-                          style: TextStyle(fontSize: 13, color: mutedColor)),
+                      Text(
+                        'progress_percent'.tr,
+                        style: TextStyle(fontSize: 13, color: mutedColor),
+                      ),
                       const SizedBox(height: 6),
                       TextField(
                         controller: _pctCtrl,
                         style: TextStyle(color: textColor, fontSize: 14),
                         keyboardType: TextInputType.number,
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
+                          FilteringTextInputFormatter.digitsOnly,
                         ],
                         decoration: InputDecoration(
                           hintText: '0',
@@ -522,7 +576,9 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                           filled: true,
                           fillColor: fieldFill,
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 12),
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
                           border: border,
                         ),
                       ),
@@ -534,21 +590,26 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('progress_hours'.tr,
-                          style: TextStyle(fontSize: 13, color: mutedColor)),
+                      Text(
+                        'progress_hours'.tr,
+                        style: TextStyle(fontSize: 13, color: mutedColor),
+                      ),
                       const SizedBox(height: 6),
                       TextField(
                         controller: _hoursCtrl,
                         style: TextStyle(color: textColor, fontSize: 14),
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                          decimal: true,
+                        ),
                         decoration: InputDecoration(
                           hintText: 'progress_hours_hint'.tr,
                           hintStyle: TextStyle(color: mutedColor),
                           filled: true,
                           fillColor: fieldFill,
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 12),
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
                           border: border,
                         ),
                       ),
@@ -567,17 +628,22 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       side: BorderSide(
-                          color: isDark
-                              ? Colors.white24
-                              : Colors.black.withValues(alpha: 0.15)),
+                        color: isDark
+                            ? Colors.white24
+                            : Colors.black.withValues(alpha: 0.15),
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    child: Text('dialog_cancel'.tr,
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: mutedColor)),
+                    child: Text(
+                      'dialog_cancel'.tr,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: mutedColor,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -590,19 +656,25 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: _saving
                         ? const SizedBox(
                             width: 18,
                             height: 18,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
                           )
-                        : Text(isEdit ? 'progress_update'.tr : 'progress_save'.tr,
+                        : Text(
+                            isEdit ? 'progress_update'.tr : 'progress_save'.tr,
                             style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600)),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
               ],

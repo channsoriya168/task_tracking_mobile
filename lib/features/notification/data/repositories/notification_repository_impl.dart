@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/app/utils/dio_error_mapper.dart';
+import 'package:task_tracking_mobile/core/utils/dio_error_mapper.dart';
 import 'package:task_tracking_mobile/features/notification/data/datasources/notification_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
 import 'package:task_tracking_mobile/features/notification/domain/repositories/notification_repository.dart';

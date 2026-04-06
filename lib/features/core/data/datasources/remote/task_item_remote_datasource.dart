@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/app/services/api_client.dart';
-import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/network/api_client.dart';
+import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_item_model.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_comment_model.dart';
 import 'package:task_tracking_mobile/features/core/data/models/task_member_model.dart';
@@ -117,8 +117,9 @@ class TaskItemRemoteDatasource {
   // ── Progress ──────────────────────────────────────────────────────────────
 
   Future<List<TaskProgressModel>> getTaskProgresses(String taskItemId) async {
-    final response =
-        await _dio.get(ApiEndpoints.taskItemProgresses(taskItemId));
+    final response = await _dio.get(
+      ApiEndpoints.taskItemProgresses(taskItemId),
+    );
     final raw = response.data;
     // Guard: API may return null or a wrapped object instead of a plain array
     final List dataList;
@@ -150,8 +151,10 @@ class TaskItemRemoteDatasource {
       hoursWorked: hoursWorked,
       status: status,
     );
-    await _dio.post(ApiEndpoints.taskItemProgresses(taskItemId),
-        data: body.toJson());
+    await _dio.post(
+      ApiEndpoints.taskItemProgresses(taskItemId),
+      data: body.toJson(),
+    );
   }
 
   Future<void> updateTaskProgress(
@@ -176,9 +179,9 @@ class TaskItemRemoteDatasource {
     );
   }
 
-  Future<void> deleteTaskProgress(
-      String taskItemId, String progressId) async {
-    await _dio
-        .delete(ApiEndpoints.taskItemProgressById(taskItemId, progressId));
+  Future<void> deleteTaskProgress(String taskItemId, String progressId) async {
+    await _dio.delete(
+      ApiEndpoints.taskItemProgressById(taskItemId, progressId),
+    );
   }
 }

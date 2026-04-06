@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/app/services/api_client.dart';
-import 'package:task_tracking_mobile/app/utils/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/network/api_client.dart';
+import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/core/data/models/label_model.dart';
 
 class LabelRemoteDatasource {
@@ -14,10 +14,7 @@ class LabelRemoteDatasource {
         .toList();
   }
 
-  Future<LabelModel> create({
-    required String name,
-    String? description,
-  }) async {
+  Future<LabelModel> create({required String name, String? description}) async {
     final response = await _dio.post(
       ApiEndpoints.labels,
       data: {

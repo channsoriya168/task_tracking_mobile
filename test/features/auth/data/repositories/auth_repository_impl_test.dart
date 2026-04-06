@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:task_tracking_mobile/app/services/storage_service.dart';
+import 'package:task_tracking_mobile/core/network/storage_service.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
@@ -113,24 +113,24 @@ final _futureExpiration = DateTime.now().add(const Duration(days: 365));
 final _pastExpiration = DateTime.now().subtract(const Duration(hours: 1));
 
 Auth _makeAuth({String role = 'Manager'}) => Auth(
-      userId: 'u1',
-      fullName: 'Alice',
-      phoneNumber: '+85512345678',
-      roles: [role],
-      accessToken: 'access_token',
-      refreshToken: 'refresh_token',
-      accessTokenExpiration: _futureExpiration,
-    );
+  userId: 'u1',
+  fullName: 'Alice',
+  phoneNumber: '+85512345678',
+  roles: [role],
+  accessToken: 'access_token',
+  refreshToken: 'refresh_token',
+  accessTokenExpiration: _futureExpiration,
+);
 
 DioException _makeDioError(int statusCode, {String? message}) => DioException(
-      requestOptions: RequestOptions(path: '/test'),
-      response: Response(
-        requestOptions: RequestOptions(path: '/test'),
-        statusCode: statusCode,
-        data: message != null ? {'message': message} : null,
-      ),
-      type: DioExceptionType.badResponse,
-    );
+  requestOptions: RequestOptions(path: '/test'),
+  response: Response(
+    requestOptions: RequestOptions(path: '/test'),
+    statusCode: statusCode,
+    data: message != null ? {'message': message} : null,
+  ),
+  type: DioExceptionType.badResponse,
+);
 
 void main() {
   // ──────────────────────────────────────────────────────────────────────────
@@ -223,10 +223,7 @@ void main() {
       final storage = _FakeStorageService(); // all null by default
       final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), storage);
 
-      await expectLater(
-        () => repo.checkAuth(),
-        throwsA(isA<Exception>()),
-      );
+      await expectLater(() => repo.checkAuth(), throwsA(isA<Exception>()));
     });
 
     test('returns Auth from storage when token is still valid', () async {
@@ -247,8 +244,7 @@ void main() {
 
     test('calls refreshToken when token is expired', () async {
       final refreshedAuth = _makeAuth();
-      final remote = _FakeRemoteDatasource()
-        ..refreshResult = refreshedAuth;
+      final remote = _FakeRemoteDatasource()..refreshResult = refreshedAuth;
 
       final storage = _FakeStorageService();
       await storage.saveToken('old_token');
@@ -261,17 +257,19 @@ void main() {
       expect(auth.accessToken, refreshedAuth.accessToken);
     });
 
-    test('throws when token and refreshToken are missing from storage', () async {
-      final storage = _FakeStorageService();
-      await storage.saveTokenExpiration(_futureExpiration); // expiration set but no tokens
+    test(
+      'throws when token and refreshToken are missing from storage',
+      () async {
+        final storage = _FakeStorageService();
+        await storage.saveTokenExpiration(
+          _futureExpiration,
+        ); // expiration set but no tokens
 
-      final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), storage);
+        final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), storage);
 
-      await expectLater(
-        () => repo.checkAuth(),
-        throwsA(isA<Exception>()),
-      );
-    });
+        await expectLater(() => repo.checkAuth(), throwsA(isA<Exception>()));
+      },
+    );
   });
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -280,10 +278,7 @@ void main() {
       final storage = _FakeStorageService(); // all null
       final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), storage);
 
-      await expectLater(
-        () => repo.refreshToken(),
-        throwsA(isA<Exception>()),
-      );
+      await expectLater(() => repo.refreshToken(), throwsA(isA<Exception>()));
     });
 
     test('returns refreshed Auth and saves new session', () async {
@@ -311,10 +306,7 @@ void main() {
 
       final repo = AuthRepositoryImpl(remote, storage);
 
-      expect(
-        () => repo.refreshToken(),
-        throwsA('Token expired'),
-      );
+      expect(() => repo.refreshToken(), throwsA('Token expired'));
     });
   });
 
@@ -349,14 +341,10 @@ void main() {
     });
 
     test('maps DioException on fetch failure', () async {
-      final remote = _FakeRemoteDatasource()
-        ..profileError = _makeDioError(500);
+      final remote = _FakeRemoteDatasource()..profileError = _makeDioError(500);
       final repo = AuthRepositoryImpl(remote, _FakeStorageService());
 
-      expect(
-        () => repo.fetchProfile(),
-        throwsA(contains('Server error')),
-      );
+      expect(() => repo.fetchProfile(), throwsA(contains('Server error')));
     });
   });
 
@@ -409,12 +397,12 @@ void main() {
   // ──────────────────────────────────────────────────────────────────────────
   group('AuthRepositoryImpl – updateProfile()', () {
     test('completes without error on success', () async {
-      final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), _FakeStorageService());
-
-      await expectLater(
-        repo.updateProfile(removeImage: true),
-        completes,
+      final repo = AuthRepositoryImpl(
+        _FakeRemoteDatasource(),
+        _FakeStorageService(),
       );
+
+      await expectLater(repo.updateProfile(removeImage: true), completes);
     });
 
     test('maps DioException on update failure', () async {
@@ -422,10 +410,7 @@ void main() {
         ..updateProfileError = _makeDioError(403);
       final repo = AuthRepositoryImpl(remote, _FakeStorageService());
 
-      expect(
-        () => repo.updateProfile(),
-        throwsA('Access denied.'),
-      );
+      expect(() => repo.updateProfile(), throwsA('Access denied.'));
     });
   });
 }

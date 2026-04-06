@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/enums/user_role.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/admin/presentation/pages/label/admin_label_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
@@ -9,7 +9,6 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/search_b
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/show_task_dialog.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_header_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_list_widget.dart';
 
 class TaskMobilePage extends StatelessWidget {
@@ -26,20 +25,25 @@ class TaskMobilePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: TaskHeaderWidget(isDark: isDark, ctrl: ctrl),
-              ),
-              Obx(() {
-                if (auth.role != UserRole.admin) return const SizedBox.shrink();
-                return Padding(
-                  padding: const EdgeInsets.only(top: 12, right: 12),
-                  child: OutlinedButton.icon(
+          Padding(
+            padding: kPagePaddingHorizontal,
+            child: Row(
+              children: [
+                Text(
+                  'task_title'.tr,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                ),
+                Spacer(),
+                Obx(() {
+                  if (auth.role != UserRole.admin)
+                    return const SizedBox.shrink();
+                  return OutlinedButton.icon(
                     onPressed: () => Get.to(() => const AdminLabelPage()),
-                    icon: const Icon(Icons.label_outline_rounded, size: 16),
-                    label: const Text('Labels'),
+                    label: Text('task_create_labels'.tr),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: kPrimary,
                       side: const BorderSide(color: kPrimary),
@@ -51,10 +55,10 @@ class TaskMobilePage extends StatelessWidget {
                         vertical: 8,
                       ),
                     ),
-                  ),
-                );
-              }),
-            ],
+                  );
+                }),
+              ],
+            ),
           ),
 
           // ── Week calendar ──────────────────────────────────

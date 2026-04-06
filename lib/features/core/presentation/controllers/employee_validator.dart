@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/validators.dart';
+import 'package:task_tracking_mobile/core/utils/validators.dart';
 
 /// Validates employee form inputs and returns a map of field-key → error message.
 /// An empty map means all inputs are valid.
@@ -14,6 +14,7 @@ class EmployeeValidator {
     required String confirmPassword,
     required DateTime? dob,
     required String? groupId,
+    required String? genderId,
   }) {
     final errors = <String, String>{};
 
@@ -37,6 +38,7 @@ class EmployeeValidator {
     }
 
     if (dob == null) errors['dob'] = 'Date of birth is required.';
+    if (genderId == null) errors['gender'] = 'Please select a gender.';
     if (groupId == null) errors['taskGroup'] = 'Please select a task group.';
 
     return errors;
@@ -48,6 +50,7 @@ class EmployeeValidator {
     required String phone,
     required DateTime? dob,
     required String? groupId,
+    required String? genderId,
     String password = '',
     String confirmPassword = '',
   }) {
@@ -76,6 +79,7 @@ class EmployeeValidator {
     }
 
     if (dob == null) errors['dob'] = 'Date of birth is required.';
+    if (genderId == null) errors['gender'] = 'Please select a gender.';
     if (groupId == null) errors['taskGroup'] = 'Please select a task group.';
 
     return errors;

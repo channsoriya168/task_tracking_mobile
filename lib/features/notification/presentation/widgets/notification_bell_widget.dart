@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/routes/app_routes.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 
 /// A bell icon with an unread badge — drop it into any AppBar's actions.

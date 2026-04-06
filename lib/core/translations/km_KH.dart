@@ -21,6 +21,13 @@ const Map<String, String> kmKH = {
   'notification_decline': 'បដិសេធ',
   'notification_accept': 'ទទួល',
 
+  'task_title': 'កិច្ចការ',
+  'task_create_labels': 'បង្កើតស្លាក',
+  'labels': 'ស្លាក',
+  'no_labels_get': 'មិនមានស្លាកទេ',
+  'label_empty_hint': 'ចុច + ដើម្បីបង្កើតស្លាកដំបូងរបស់អ្នក',
+  'label_delete_title': 'លុបស្លាក',
+  'label_delete_confirm': 'លុបស្លាក "@name"?',
   // ── Task detail ───────────────────────────────────────────────
   'task_empty': 'រកមិនឃើញកិច្ចការ',
   'task_no_due_date': 'គ្មានកាលកំណត់',
@@ -186,6 +193,8 @@ const Map<String, String> kmKH = {
   'emp_form_confirm_password_hint': 'បញ្ចូលពាក្យសម្ងាត់ម្ដងទៀត',
   'emp_form_btn_save': 'រក្សាទុកការផ្លាស់ប្ដូរ',
   'emp_form_btn_add': 'បន្ថែមបុគ្គលិក',
+  'emp_form_gender_label': 'ភេទ',
+  'emp_form_gender_hint': 'ជ្រើសរើសភេទ',
 
   // ── Employee ──────────────────────────────────────────────────
   'employee_title': 'បុគ្គលិក',

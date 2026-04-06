@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class DropdownWidget<T> extends StatelessWidget {
   const DropdownWidget({
@@ -44,12 +44,7 @@ class DropdownWidget<T> extends StatelessWidget {
                 (e) => DropdownMenuItem(
                   value: e,
                   child: leadingBuilder != null
-                      ? Row(
-                          children: [
-                            leadingBuilder!(e),
-                            Text(label(e)),
-                          ],
-                        )
+                      ? Row(children: [leadingBuilder!(e), Text(label(e))])
                       : Text(label(e)),
                 ),
               )

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_comment.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/task_comment_controller.dart';
@@ -58,9 +58,7 @@ class TaskCommentsTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    canComment
-                        ? 'comment_empty_mine'.tr
-                        : 'comment_empty'.tr,
+                    canComment ? 'comment_empty_mine'.tr : 'comment_empty'.tr,
                     style: TextStyle(fontSize: 13, color: mutedColor),
                   ),
                 ],

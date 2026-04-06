@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/app/utils/format_date.dart';
-import 'package:task_tracking_mobile/app/utils/constants.dart';
+import 'package:task_tracking_mobile/core/utils/format_date.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_task_controller.dart';
@@ -25,16 +25,17 @@ class EmployeeTaskCard extends StatelessWidget {
     final currentId = ctrl.currentEmployeeId;
 
     final terminalStatuses = {'cancelled', 'completed'};
-    final isPending = task.assignedToId == null &&
+    final isPending =
+        task.assignedToId == null &&
         !terminalStatuses.contains(task.status.name.toLowerCase());
     final isMyTask =
         task.assignedToId != null && task.assignedToId == currentId;
     final isAssignedToOther = task.assignedToId != null && !isMyTask;
 
-    final transitions =
-        isMyTask ? task.allowedTransitions : <TaskStatusLookup>[];
-    final primaryTransition =
-        transitions.isNotEmpty ? transitions.first : null;
+    final transitions = isMyTask
+        ? task.allowedTransitions
+        : <TaskStatusLookup>[];
+    final primaryTransition = transitions.isNotEmpty ? transitions.first : null;
 
     void openDetail({bool readOnly = false}) {
       ctrl.prepareTaskDetail(task.id);
@@ -47,9 +48,11 @@ class EmployeeTaskCard extends StatelessWidget {
 
     // Due date label
     final now = DateTime.now();
-    final isOverdue = task.dueDate != null &&
+    final isOverdue =
+        task.dueDate != null &&
         task.dueDate!.isBefore(DateTime(now.year, now.month, now.day));
-    final isDueToday = task.dueDate != null &&
+    final isDueToday =
+        task.dueDate != null &&
         task.dueDate!.year == now.year &&
         task.dueDate!.month == now.month &&
         task.dueDate!.day == now.day;
@@ -57,22 +60,27 @@ class EmployeeTaskCard extends StatelessWidget {
     String? dueDateLabel;
     bool dueDateUrgent = false;
     if (task.completedAt != null) {
-      dueDateLabel = 'task_done_date'.trParams({'date': formatDate(task.completedAt!)});
+      dueDateLabel = 'task_done_date'.trParams({
+        'date': formatDate(task.completedAt!),
+      });
     } else if (isDueToday) {
       dueDateLabel = 'task_due_today'.tr;
       dueDateUrgent = true;
     } else if (isOverdue) {
-      dueDateLabel = 'task_overdue_date'.trParams({'date': formatDate(task.dueDate!)});
+      dueDateLabel = 'task_overdue_date'.trParams({
+        'date': formatDate(task.dueDate!),
+      });
       dueDateUrgent = true;
     } else if (task.dueDate != null) {
-      dueDateLabel = 'task_due_date'.trParams({'date': formatDate(task.dueDate!)});
+      dueDateLabel = 'task_due_date'.trParams({
+        'date': formatDate(task.dueDate!),
+      });
     }
 
     // Avatar: prefer assignee, fall back to creator
     final avatarUrl =
         task.assignedToProfileImageUrl ?? task.createdByProfileImageUrl;
-    final avatarName =
-        task.assignedToName ?? task.createdByEmployeeName ?? '';
+    final avatarName = task.assignedToName ?? task.createdByEmployeeName ?? '';
 
     return GestureDetector(
       onTap: () => openDetail(readOnly: isAssignedToOther),
@@ -95,10 +103,7 @@ class EmployeeTaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // ── Left accent strip ──────────────────────────
-                Container(
-                  width: 5,
-                  color: statusColor,
-                ),
+                Container(width: 5, color: statusColor),
 
                 // ── Card content ───────────────────────────────
                 Expanded(
@@ -117,7 +122,9 @@ class EmployeeTaskCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF1A1A2E),
                                   height: 1.3,
                                 ),
                                 maxLines: 2,
@@ -169,8 +176,8 @@ class EmployeeTaskCard extends StatelessWidget {
                                     color: dueDateUrgent
                                         ? const Color(0xFFFF6B35)
                                         : (isDark
-                                            ? Colors.white38
-                                            : const Color(0xFF8E8EA0)),
+                                              ? Colors.white38
+                                              : const Color(0xFF8E8EA0)),
                                   ),
                                 ),
                               Text(
@@ -183,8 +190,8 @@ class EmployeeTaskCard extends StatelessWidget {
                                   color: dueDateUrgent
                                       ? const Color(0xFFFF6B35)
                                       : (isDark
-                                          ? Colors.white38
-                                          : const Color(0xFF8E8EA0)),
+                                            ? Colors.white38
+                                            : const Color(0xFF8E8EA0)),
                                 ),
                               ),
                             ],
@@ -301,11 +308,7 @@ class _AcceptButton extends StatelessWidget {
 // ── Status chip ───────────────────────────────────────────────────────────────
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({
-    required this.label,
-    required this.color,
-    this.onTap,
-  });
+  const _StatusChip({required this.label, required this.color, this.onTap});
 
   final String label;
   final Color color;
