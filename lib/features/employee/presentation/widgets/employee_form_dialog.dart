@@ -14,8 +14,8 @@ import 'package:task_tracking_mobile/features/employee/presentation/widgets/phon
 const _gap = SizedBox(height: 16);
 const _gapSm = SizedBox(height: 12);
 
-class ManagerEmployeeFormDialog extends StatelessWidget {
-  const ManagerEmployeeFormDialog({super.key, required this.controller});
+class EmployeeFormDialog extends StatelessWidget {
+  const EmployeeFormDialog({super.key, required this.controller});
 
   final EmployeeController controller;
 

@@ -5,6 +5,7 @@ import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/group_chip_widget.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_avatar_widget.dart';
@@ -189,30 +190,6 @@ class EmployeeCardWidget extends StatelessWidget {
                     ],
                   ),
 
-                  // Gender
-                  if (genderName != null) ...[
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.wc_rounded,
-                          size: 11,
-                          color: isDark ? Colors.grey[500] : kTextMuted,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          genderName,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: isDark
-                                ? Colors.grey[400]
-                                : const Color(0xFF6B7280),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-
                   // Phone
                   if (hasPhone) ...[
                     const SizedBox(height: 4),
@@ -252,13 +229,16 @@ class EmployeeCardWidget extends StatelessWidget {
                           ...employee.groups
                               .take(2)
                               .map(
-                                (g) => _GroupChip(
+                                (g) => GroupChipWidget(
                                   name: g.groupName,
                                   isDark: isDark,
                                 ),
                               )
                         else if (taskGroup != null)
-                          _GroupChip(name: taskGroup!.name, isDark: isDark),
+                          GroupChipWidget(
+                            name: taskGroup!.name,
+                            isDark: isDark,
+                          ),
                       ],
                     ),
                   ],
@@ -285,51 +265,6 @@ class EmployeeCardWidget extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// ── Group Chip ────────────────────────────────────────────────
-class _GroupChip extends StatelessWidget {
-  const _GroupChip({required this.name, required this.isDark});
-  final String name;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = isDark ? Colors.white.withAlpha(14) : kPrimary.withAlpha(18);
-    final border = isDark ? Colors.white.withAlpha(28) : kPrimary.withAlpha(55);
-    final dotColor = isDark ? Colors.white.withAlpha(140) : kPrimary;
-    final textColor = isDark
-        ? Colors.white.withAlpha(180)
-        : const Color(0xFF4B47CC);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: border),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 5,
-            height: 5,
-            decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            name,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-          ),
-        ],
       ),
     );
   }

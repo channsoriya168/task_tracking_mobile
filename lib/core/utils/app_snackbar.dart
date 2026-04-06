@@ -52,7 +52,7 @@ class AppSnackbar {
       Get.snackbar(
         title,
         message,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: color.withAlpha(220),
         colorText: Colors.white,
         icon: Icon(icon, color: Colors.white, size: 20),

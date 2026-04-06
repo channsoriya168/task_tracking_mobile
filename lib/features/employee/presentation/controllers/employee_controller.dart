@@ -98,12 +98,12 @@ class EmployeeController extends GetxController {
   }
 
   // ── Form state ────────────────────────────────────────────────
-  final nameCtrl = TextEditingController();
-  final emailCtrl = TextEditingController();
-  final passwordCtrl = TextEditingController();
-  final confirmPasswordCtrl = TextEditingController();
-  final phoneCtrl = TextEditingController();
-  final placeCtrl = TextEditingController();
+  final TextEditingController nameCtrl = TextEditingController();
+  final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController passwordCtrl = TextEditingController();
+  final TextEditingController confirmPasswordCtrl = TextEditingController();
+  final TextEditingController phoneCtrl = TextEditingController();
+  final TextEditingController placeCtrl = TextEditingController();
 
   final RxString selectedRole = 'Employee'.obs;
   final Rxn<String> selectedGenderId = Rxn<String>();
@@ -122,8 +122,9 @@ class EmployeeController extends GetxController {
   final RxBool removeProfileImage = false.obs;
 
   // ── Reset password form ───────────────────────────────────────
-  final resetPasswordCtrl = TextEditingController();
-  final resetConfirmPasswordCtrl = TextEditingController();
+  final TextEditingController resetPasswordCtrl = TextEditingController();
+  final TextEditingController resetConfirmPasswordCtrl =
+      TextEditingController();
   final RxBool showResetPassword = false.obs;
   final RxBool showResetConfirmPassword = false.obs;
   final RxBool isResettingPassword = false.obs;
@@ -166,7 +167,7 @@ class EmployeeController extends GetxController {
     _resetForm();
     selectedGroupId.value = preselectedGroupId;
     await Get.bottomSheet(
-      ManagerEmployeeFormDialog(controller: this),
+      EmployeeFormDialog(controller: this),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     );
@@ -188,7 +189,7 @@ class EmployeeController extends GetxController {
         ? employee.groups.first.groupId
         : null;
     await Get.bottomSheet(
-      ManagerEmployeeFormDialog(controller: this),
+      EmployeeFormDialog(controller: this),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     );
