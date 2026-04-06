@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/admin/presentation/pages/home/admin_dashboard_page.dart';
-import 'package:task_tracking_mobile/features/core/data/models/nav_item.dart';
-import 'package:task_tracking_mobile/features/core/presentation/pages/employee/employee_page.dart';
-import 'package:task_tracking_mobile/features/core/presentation/pages/task/task_page.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/tasks/task_page.dart';
-import 'package:task_tracking_mobile/features/manager/presentation/pages/dashboard/manager_dashboard_page.dart';
+import 'package:task_tracking_mobile/features/dashboard/pages/admin/admin_dashboard_page.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/nav_item.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/pages/employee_page.dart';
+import 'package:task_tracking_mobile/features/task/presentation/pages/admin_and_manager/task_page.dart';
+import 'package:task_tracking_mobile/features/task/presentation/pages/employee_task_page.dart';
+import 'package:task_tracking_mobile/features/dashboard/pages/manager_dashboard_page.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/pages/home_page.dart';
+import 'package:task_tracking_mobile/features/dashboard/pages/employee_home_page.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/pages/profile_page.dart';
 
 class MainPage extends StatelessWidget {
@@ -69,12 +69,12 @@ class MainPage extends StatelessWidget {
           NavItem(
             icon: Icons.home,
             label: 'nav_home'.tr,
-            page: const HomePage(),
+            page: const EmployeeHomePage(),
           ),
           NavItem(
             icon: Icons.task_rounded,
             label: 'nav_my_tasks'.tr,
-            page: const TasksPage(),
+            page: const EmployeeTaskPage(),
           ),
           NavItem(
             icon: Icons.person_rounded,

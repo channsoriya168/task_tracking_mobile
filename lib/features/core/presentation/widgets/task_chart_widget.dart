@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
-import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
+import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/lookup/domain/entities/task_item_status.dart';
 
 class _ChartData {
   _ChartData(this.label, this.count, this.color);
