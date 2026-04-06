@@ -1,14 +1,10 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/core/network/storage_service.dart';
+import 'package:task_tracking_mobile/core/network/local/storage_service.dart';
 import 'package:task_tracking_mobile/core/utils/dio_error_mapper.dart';
 import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
-import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
-import 'dart:developer' as developer;
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource _remote;
@@ -53,16 +49,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  // ── Fetch profile ─────────────────────────────────────────
-  @override
-  Future<EmployeeProfile?> fetchProfile() async {
-    try {
-      return await _remote.fetchProfile();
-    } on DioException catch (e) {
-      throw mapDioError(e);
-    }
-  }
-
   // ── Check auth ────────────────────────────────────────────
   @override
   Future<Auth> checkAuth() async {
@@ -90,37 +76,6 @@ class AuthRepositoryImpl implements AuthRepository {
       refreshToken: storedRefreshToken,
       accessTokenExpiration: expiration,
     );
-  }
-
-  // ── Change password ───────────────────────────────────────
-  @override
-  Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmNewPassword,
-  }) async {
-    try {
-      await _remote.changePassword(
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-        confirmNewPassword: confirmNewPassword,
-      );
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 400) {
-        throw 'Current password is incorrect.';
-      }
-      throw mapDioError(e);
-    }
-  }
-
-  // ── Update profile ────────────────────────────────────────
-  @override
-  Future<void> updateProfile({File? image, bool removeImage = false}) async {
-    try {
-      await _remote.updateProfile(image: image, removeImage: removeImage);
-    } on DioException catch (e) {
-      throw mapDioError(e);
-    }
   }
 
   // ── Helpers ───────────────────────────────────────────────

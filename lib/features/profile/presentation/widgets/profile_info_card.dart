@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_card.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_info_row.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_card.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_info_row.dart';
 
 class ProfileInfoCard extends StatelessWidget {
   const ProfileInfoCard({
     super.key,
     required this.isDark,
-    required this.fullName,
     required this.email,
     required this.phone,
     required this.placeOfBirth,
@@ -16,7 +15,6 @@ class ProfileInfoCard extends StatelessWidget {
   });
 
   final bool isDark;
-  final String fullName;
   final String email;
   final String phone;
   final String placeOfBirth;
@@ -25,25 +23,21 @@ class ProfileInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      (
-        Icons.person_rounded,
-        'profile_full_name'.tr,
-        fullName.isEmpty ? '—' : fullName,
-      ),
-      (Icons.email_rounded, 'profile_email'.tr, email.isEmpty ? '—' : email),
+      if (email.isNotEmpty) (Icons.email_rounded, 'profile_email'.tr, email),
       (Icons.phone_rounded, 'profile_phone'.tr, phone.isEmpty ? '—' : phone),
       (
         Icons.location_on_rounded,
         'profile_place_of_birth'.tr,
         placeOfBirth.isEmpty ? '—' : placeOfBirth,
       ),
-      (
-        Icons.cake_rounded,
-        'profile_date_of_birth'.tr,
-        dateOfBirth != null
-            ? '${dateOfBirth!.day.toString().padLeft(2, '0')}/${dateOfBirth!.month.toString().padLeft(2, '0')}/${dateOfBirth!.year}'
-            : '—',
-      ),
+      if (dateOfBirth != null)
+        (
+          Icons.cake_rounded,
+          'profile_date_of_birth'.tr,
+          dateOfBirth != null
+              ? '${dateOfBirth!.day.toString().padLeft(2, '0')}/${dateOfBirth!.month.toString().padLeft(2, '0')}/${dateOfBirth!.year}'
+              : '—',
+        ),
     ];
 
     return ProfileCard(

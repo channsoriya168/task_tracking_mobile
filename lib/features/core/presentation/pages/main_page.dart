@@ -11,7 +11,7 @@ import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth
 import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/home_page.dart';
-import 'package:task_tracking_mobile/features/core/presentation/pages/profile_page.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/pages/profile_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});

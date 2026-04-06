@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
-import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
@@ -38,7 +38,7 @@ class TaskCardWidget extends StatelessWidget {
     // Only the task creator can edit or delete
     String? currentEmployeeId;
     try {
-      currentEmployeeId = Get.find<AuthController>().profile.value?.employeeId;
+      currentEmployeeId = Get.find<ProfileController>().profile.value?.employeeId;
     } catch (_) {}
     final isOwner =
         currentEmployeeId != null &&

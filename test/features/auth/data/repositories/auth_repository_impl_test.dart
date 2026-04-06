@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:task_tracking_mobile/core/network/storage_service.dart';
+import 'package:task_tracking_mobile/core/network/local/storage_service.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
-import 'package:task_tracking_mobile/features/auth/domain/entities/employee_profile.dart';
 
 // ── Fake datasource ──────────────────────────────────────────────────────────
 
@@ -17,14 +14,6 @@ class _FakeRemoteDatasource extends AuthRemoteDatasource {
 
   Auth? refreshResult;
   Object? refreshError;
-
-  EmployeeProfile? profileResult;
-  Object? profileError;
-
-  Object? changePasswordError;
-  String? capturedChangePasswordCurrent;
-
-  Object? updateProfileError;
 
   _FakeRemoteDatasource() : super.withDio(Dio());
 
@@ -39,27 +28,6 @@ class _FakeRemoteDatasource extends AuthRemoteDatasource {
   Future<Auth> refreshToken(String accessToken, String refreshToken) async {
     if (refreshError != null) throw refreshError!;
     return refreshResult!;
-  }
-
-  @override
-  Future<EmployeeProfile?> fetchProfile() async {
-    if (profileError != null) throw profileError!;
-    return profileResult;
-  }
-
-  @override
-  Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmNewPassword,
-  }) async {
-    capturedChangePasswordCurrent = currentPassword;
-    if (changePasswordError != null) throw changePasswordError!;
-  }
-
-  @override
-  Future<void> updateProfile({File? image, bool removeImage = false}) async {
-    if (updateProfileError != null) throw updateProfileError!;
   }
 }
 
@@ -220,7 +188,7 @@ void main() {
   // ──────────────────────────────────────────────────────────────────────────
   group('AuthRepositoryImpl – checkAuth()', () {
     test('throws when no token expiration in storage', () async {
-      final storage = _FakeStorageService(); // all null by default
+      final storage = _FakeStorageService();
       final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), storage);
 
       await expectLater(() => repo.checkAuth(), throwsA(isA<Exception>()));
@@ -249,7 +217,7 @@ void main() {
       final storage = _FakeStorageService();
       await storage.saveToken('old_token');
       await storage.saveRefreshToken('old_refresh');
-      await storage.saveTokenExpiration(_pastExpiration); // expired
+      await storage.saveTokenExpiration(_pastExpiration);
 
       final repo = AuthRepositoryImpl(remote, storage);
       final auth = await repo.checkAuth();
@@ -261,9 +229,7 @@ void main() {
       'throws when token and refreshToken are missing from storage',
       () async {
         final storage = _FakeStorageService();
-        await storage.saveTokenExpiration(
-          _futureExpiration,
-        ); // expiration set but no tokens
+        await storage.saveTokenExpiration(_futureExpiration);
 
         final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), storage);
 
@@ -275,7 +241,7 @@ void main() {
   // ──────────────────────────────────────────────────────────────────────────
   group('AuthRepositoryImpl – refreshToken()', () {
     test('throws when no tokens in storage', () async {
-      final storage = _FakeStorageService(); // all null
+      final storage = _FakeStorageService();
       final repo = AuthRepositoryImpl(_FakeRemoteDatasource(), storage);
 
       await expectLater(() => repo.refreshToken(), throwsA(isA<Exception>()));
@@ -307,110 +273,6 @@ void main() {
       final repo = AuthRepositoryImpl(remote, storage);
 
       expect(() => repo.refreshToken(), throwsA('Token expired'));
-    });
-  });
-
-  // ──────────────────────────────────────────────────────────────────────────
-  group('AuthRepositoryImpl – fetchProfile()', () {
-    test('returns profile from datasource', () async {
-      final profile = EmployeeProfile(
-        userId: 'u1',
-        fullName: 'Alice',
-        phoneNumber: '+85512345678',
-        roles: ['Manager'],
-        employeeId: 'e1',
-        email: 'alice@example.com',
-        isActive: true,
-        taskGroups: [],
-      );
-      final remote = _FakeRemoteDatasource()..profileResult = profile;
-      final repo = AuthRepositoryImpl(remote, _FakeStorageService());
-
-      final result = await repo.fetchProfile();
-
-      expect(result?.userId, 'u1');
-    });
-
-    test('returns null when datasource returns null', () async {
-      final remote = _FakeRemoteDatasource()..profileResult = null;
-      final repo = AuthRepositoryImpl(remote, _FakeStorageService());
-
-      final result = await repo.fetchProfile();
-
-      expect(result, isNull);
-    });
-
-    test('maps DioException on fetch failure', () async {
-      final remote = _FakeRemoteDatasource()..profileError = _makeDioError(500);
-      final repo = AuthRepositoryImpl(remote, _FakeStorageService());
-
-      expect(() => repo.fetchProfile(), throwsA(contains('Server error')));
-    });
-  });
-
-  // ──────────────────────────────────────────────────────────────────────────
-  group('AuthRepositoryImpl – changePassword()', () {
-    test('delegates to datasource', () async {
-      final remote = _FakeRemoteDatasource();
-      final repo = AuthRepositoryImpl(remote, _FakeStorageService());
-
-      await repo.changePassword(
-        currentPassword: 'old',
-        newPassword: 'New@1234',
-        confirmNewPassword: 'New@1234',
-      );
-
-      expect(remote.capturedChangePasswordCurrent, 'old');
-    });
-
-    test('throws string message for 400 (wrong current password)', () async {
-      final remote = _FakeRemoteDatasource()
-        ..changePasswordError = _makeDioError(400);
-      final repo = AuthRepositoryImpl(remote, _FakeStorageService());
-
-      expect(
-        () => repo.changePassword(
-          currentPassword: 'wrong',
-          newPassword: 'New@1234',
-          confirmNewPassword: 'New@1234',
-        ),
-        throwsA('Current password is incorrect.'),
-      );
-    });
-
-    test('maps non-400 DioException to error message', () async {
-      final remote = _FakeRemoteDatasource()
-        ..changePasswordError = _makeDioError(500);
-      final repo = AuthRepositoryImpl(remote, _FakeStorageService());
-
-      expect(
-        () => repo.changePassword(
-          currentPassword: 'pass',
-          newPassword: 'New@1234',
-          confirmNewPassword: 'New@1234',
-        ),
-        throwsA(contains('Server error')),
-      );
-    });
-  });
-
-  // ──────────────────────────────────────────────────────────────────────────
-  group('AuthRepositoryImpl – updateProfile()', () {
-    test('completes without error on success', () async {
-      final repo = AuthRepositoryImpl(
-        _FakeRemoteDatasource(),
-        _FakeStorageService(),
-      );
-
-      await expectLater(repo.updateProfile(removeImage: true), completes);
-    });
-
-    test('maps DioException on update failure', () async {
-      final remote = _FakeRemoteDatasource()
-        ..updateProfileError = _makeDioError(403);
-      final repo = AuthRepositoryImpl(remote, _FakeStorageService());
-
-      expect(() => repo.updateProfile(), throwsA('Access denied.'));
     });
   });
 }

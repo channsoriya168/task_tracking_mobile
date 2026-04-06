@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_task_statuses_usecase.dart';
@@ -34,7 +34,7 @@ class HomeController extends GetxController {
   // ── Computed ─────────────────────────────────────────────────────────────
 
   String get employeeName =>
-      Get.find<AuthController>().profile.value?.fullName ?? '';
+      Get.find<ProfileController>().profile.value?.fullName ?? '';
 
   /// All group tasks filtered by status and search query.
   /// Date filtering is handled by the API — no client-side date re-filter.
@@ -67,7 +67,7 @@ class HomeController extends GetxController {
   // ── Private helpers ───────────────────────────────────────────────────────
 
   String? get _employeeGroupId {
-    final profile = Get.find<AuthController>().profile.value;
+    final profile = Get.find<ProfileController>().profile.value;
     if (profile == null || profile.groups.isEmpty) return null;
     final first = profile.groups.first;
     if (first is Map<String, dynamic>) {
@@ -125,7 +125,7 @@ class HomeController extends GetxController {
 
   Future<bool> acceptTask(TaskItem task) async {
     final employeeId =
-        Get.find<AuthController>().profile.value?.employeeId ?? '';
+        Get.find<ProfileController>().profile.value?.employeeId ?? '';
     if (employeeId.isEmpty || task.allowedTransitions.isEmpty) return false;
     final newStatus = task.allowedTransitions.first;
     try {

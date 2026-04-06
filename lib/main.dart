@@ -9,7 +9,7 @@ import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/core/themes/dark_theme.dart';
 import 'package:task_tracking_mobile/core/themes/light_theme.dart';
 import 'package:task_tracking_mobile/core/translations/app_translations.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
+import 'package:task_tracking_mobile/core/controllers/theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

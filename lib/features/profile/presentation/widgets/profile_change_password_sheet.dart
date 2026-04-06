@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
-import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/password_input_widget.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 
 class ProfileChangePasswordSheet extends StatelessWidget {
   const ProfileChangePasswordSheet({super.key, required this.isDark});
@@ -11,7 +11,7 @@ class ProfileChangePasswordSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<AuthController>();
+    final ctrl = Get.find<ProfileController>();
 
     return Padding(
       padding: EdgeInsets.only(
@@ -67,9 +67,16 @@ class ProfileChangePasswordSheet extends StatelessWidget {
                 label: 'change_pwd_current'.tr,
                 hint: 'change_pwd_current_hint'.tr,
                 isDark: isDark,
-                errorText: _currentFieldError(err).isEmpty
+                errorText:
+                    _currentFieldError(
+                      err,
+                      ctrl.currentPasswordController.text.trim().isEmpty,
+                    ).isEmpty
                     ? null
-                    : _currentFieldError(err),
+                    : _currentFieldError(
+                        err,
+                        ctrl.currentPasswordController.text.trim().isEmpty,
+                      ),
               ),
               const SizedBox(height: 12),
 
@@ -80,9 +87,20 @@ class ProfileChangePasswordSheet extends StatelessWidget {
                 hint: 'change_pwd_new_hint'.tr,
                 isDark: isDark,
                 errorText:
-                    _newFieldError(err).isEmpty ? null : _newFieldError(err),
+                    _newFieldError(
+                      err,
+                      ctrl.newPasswordController.text.isEmpty,
+                    ).isEmpty
+                    ? null
+                    : _newFieldError(
+                        err,
+                        ctrl.newPasswordController.text.isEmpty,
+                      ),
               ),
-              if (_newFieldError(err).isEmpty) ...[
+              if (_newFieldError(
+                err,
+                ctrl.newPasswordController.text.isEmpty,
+              ).isEmpty) ...[
                 const SizedBox(height: 6),
                 Row(
                   children: [
@@ -112,9 +130,16 @@ class ProfileChangePasswordSheet extends StatelessWidget {
                 label: 'change_pwd_confirm'.tr,
                 hint: 'change_pwd_confirm_hint'.tr,
                 isDark: isDark,
-                errorText: _confirmFieldError(err).isEmpty
+                errorText:
+                    _confirmFieldError(
+                      err,
+                      ctrl.confirmPasswordController.text.isEmpty,
+                    ).isEmpty
                     ? null
-                    : _confirmFieldError(err),
+                    : _confirmFieldError(
+                        err,
+                        ctrl.confirmPasswordController.text.isEmpty,
+                      ),
               ),
               const SizedBox(height: 20),
 
@@ -125,7 +150,7 @@ class ProfileChangePasswordSheet extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: ctrl.isChangingPassword.value
                       ? null
-                      : ctrl.submitChangePassword,
+                      : ctrl.changePassword,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimary,
                     foregroundColor: Colors.white,
@@ -159,21 +184,26 @@ class ProfileChangePasswordSheet extends StatelessWidget {
     );
   }
 
-  String _currentFieldError(String err) {
-    if (err.contains('required')) return 'change_pwd_err_current_required'.tr;
+  String _currentFieldError(String err, bool isCurrentPasswordEmpty) {
+    if (err.contains('required') && isCurrentPasswordEmpty) {
+      return 'change_pwd_err_current_required'.tr;
+    }
     if (err.contains('incorrect')) return 'change_pwd_err_current_incorrect'.tr;
     return '';
   }
 
-  String _newFieldError(String err) {
-    if (err.contains('required')) return 'change_pwd_err_new_required'.tr;
+  String _newFieldError(String err, bool isNewPasswordEmpty) {
+    if (err.contains('required') && isNewPasswordEmpty) {
+      return 'change_pwd_err_new_required'.tr;
+    }
     if (err.contains('Min 8')) return 'change_pwd_err_new_weak'.tr;
-    if (err.contains('match')) return 'change_pwd_err_no_match'.tr;
     return '';
   }
 
-  String _confirmFieldError(String err) {
-    if (err.contains('required')) return 'change_pwd_err_confirm_required'.tr;
+  String _confirmFieldError(String err, bool isConfirmPasswordEmpty) {
+    if (err.contains('required') && isConfirmPasswordEmpty) {
+      return 'change_pwd_err_confirm_required'.tr;
+    }
     if (err.contains('match')) return 'change_pwd_err_no_match'.tr;
     return '';
   }

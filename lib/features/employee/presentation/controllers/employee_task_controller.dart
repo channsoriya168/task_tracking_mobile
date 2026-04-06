@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_item_status.dart';
@@ -40,7 +40,7 @@ class EmployeeTaskController extends GetxController {
   // ── Computed ─────────────────────────────────────────────────────────────
 
   String? get currentEmployeeId =>
-      Get.find<AuthController>().profile.value?.employeeId;
+      Get.find<ProfileController>().profile.value?.employeeId;
 
   List<TaskItem> get filteredTasks {
     if (filterStatusId.value == null) return myTasks.toList();
@@ -76,7 +76,7 @@ class EmployeeTaskController extends GetxController {
   // ── Private helpers ──────────────────────────────────────────────────────
 
   String? get _employeeGroupId {
-    final profile = Get.find<AuthController>().profile.value;
+    final profile = Get.find<ProfileController>().profile.value;
     if (profile == null || profile.groups.isEmpty) return null;
     final first = profile.groups.first;
     if (first is Map<String, dynamic>) {

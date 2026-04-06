@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/core/data/datasources/local/theme_local_datasource.dart';
+import 'package:task_tracking_mobile/core/network/local/theme_storage.dart';
 
 class ThemeController extends GetxController {
   final _isDark = false.obs;
-  final _datasource = ThemeLocalDatasource();
+  final _datasource = ThemeStorage();
 
   bool get isDark => _isDark.value;
 

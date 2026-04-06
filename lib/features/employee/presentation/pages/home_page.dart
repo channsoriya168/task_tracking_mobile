@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
-import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/task/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeCtrl = Get.find<HomeController>();
-    final authCtrl = Get.find<AuthController>();
+    final profileCtrl = Get.find<ProfileController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
                             const SizedBox(height: 2),
                             Obx(
                               () => Text(
-                                authCtrl.profile.value?.fullName ?? '',
+                                profileCtrl.profile.value?.fullName ?? '',
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,

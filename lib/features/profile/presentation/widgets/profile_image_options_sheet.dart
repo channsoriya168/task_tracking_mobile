@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 
-void showProfileImageOptions(bool isDark, AuthController authCtrl) {
-  final hasImage = authCtrl.profile.value?.profileImageUrl?.isNotEmpty == true;
+void showProfileImageOptions(bool isDark, ProfileController profileCtrl) {
+  final hasImage =
+      profileCtrl.profile.value?.profileImageUrl?.isNotEmpty == true;
   Get.bottomSheet(
     Container(
       decoration: BoxDecoration(
@@ -36,7 +37,7 @@ void showProfileImageOptions(bool isDark, AuthController authCtrl) {
               ),
               onTap: () {
                 Get.back();
-                authCtrl.pickAndUploadProfileImage(ImageSource.camera);
+                profileCtrl.pickAndUploadProfileImage(ImageSource.camera);
               },
             ),
             ListTile(
@@ -50,7 +51,7 @@ void showProfileImageOptions(bool isDark, AuthController authCtrl) {
               ),
               onTap: () {
                 Get.back();
-                authCtrl.pickAndUploadProfileImage(ImageSource.gallery);
+                profileCtrl.pickAndUploadProfileImage(ImageSource.gallery);
               },
             ),
             if (hasImage)
@@ -62,7 +63,7 @@ void showProfileImageOptions(bool isDark, AuthController authCtrl) {
                 ),
                 onTap: () {
                   Get.back();
-                  authCtrl.removeProfileImage();
+                  profileCtrl.removeProfileImage();
                 },
               ),
             const SizedBox(height: 16),

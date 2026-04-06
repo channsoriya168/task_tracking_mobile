@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
-import 'storage_service.dart';
+import 'local/storage_service.dart';
 
 class ApiClient {
   static final ApiClient instance = ApiClient._internal();

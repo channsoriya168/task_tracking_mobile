@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ThemeLocalDatasource {
+class ThemeStorage {
   static const _key = 'is_dark';
   final _storage = FlutterSecureStorage();
 

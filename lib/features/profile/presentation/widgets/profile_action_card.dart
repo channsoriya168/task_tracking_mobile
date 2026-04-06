@@ -4,9 +4,9 @@ import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_action_row.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_card.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_change_password_sheet.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_action_row.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_card.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_change_password_sheet.dart';
 
 class ProfileActionCard extends StatelessWidget {
   const ProfileActionCard({super.key, required this.isDark});
@@ -30,7 +30,6 @@ class ProfileActionCard extends StatelessWidget {
               label: 'profile_change_password'.tr,
               showDivider: true,
               onTap: () {
-                authCtrl.clearChangePasswordForm();
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -53,7 +52,7 @@ class ProfileActionCard extends StatelessWidget {
                 message: 'signout_message'.tr,
                 confirmText: 'signout_confirm'.tr,
               );
-              if (confirmed == true) Get.find<AuthController>().logout();
+              if (confirmed == true) authCtrl.logout();
             },
           ),
         ],

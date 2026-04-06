@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/rail_item_widget.dart';
 
@@ -74,7 +75,7 @@ class NavigationRailWidget extends StatelessWidget {
             // Profile avatar
             Obx(() {
               final authCtrl = Get.find<AuthController>();
-              final profile = authCtrl.profile.value;
+              final profile = Get.find<ProfileController>().profile.value;
               final auth = authCtrl.currentAuth.value;
               final name = profile?.fullName ?? auth?.fullName ?? '';
               final imageUrl = profile?.profileImageUrl;

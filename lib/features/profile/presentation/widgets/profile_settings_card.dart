@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/language_switcher_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/profile/profile_card.dart';
+import 'package:task_tracking_mobile/core/controllers/theme_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_card.dart';
 
 class ProfileSettingsCard extends StatelessWidget {
   const ProfileSettingsCard({super.key, required this.isDark});

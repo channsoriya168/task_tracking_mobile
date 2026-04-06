@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/core/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/core/domain/usecases/fetch_employees_usecase.dart';
@@ -25,10 +25,10 @@ class TaskMemberController extends GetxController {
   final RxList<Employee> groupEmployees = <Employee>[].obs;
 
   String? get currentEmployeeId =>
-      Get.find<AuthController>().profile.value?.employeeId;
+      Get.find<ProfileController>().profile.value?.employeeId;
 
   String? get _employeeGroupId {
-    final profile = Get.find<AuthController>().profile.value;
+    final profile = Get.find<ProfileController>().profile.value;
     if (profile == null || profile.groups.isEmpty) return null;
     final first = profile.groups.first;
     if (first is Map<String, dynamic>) {
