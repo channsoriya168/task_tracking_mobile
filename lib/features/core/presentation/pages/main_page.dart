@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/dashboard/pages/admin/admin_dashboard_page.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/pages/employee_page.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/pages/notification_page.dart';
 import 'package:task_tracking_mobile/features/task/presentation/pages/admin_and_manager/task_page.dart';
 import 'package:task_tracking_mobile/features/task/presentation/pages/employee_task_page.dart';
 import 'package:task_tracking_mobile/features/dashboard/pages/manager_dashboard_page.dart';
@@ -36,6 +37,11 @@ class MainPage extends StatelessWidget {
             page: const EmployeePage(),
           ),
           NavItem(
+            icon: Icons.notifications_rounded,
+            label: 'nav_notifications'.tr,
+            page: const NotificationPage(),
+          ),
+          NavItem(
             icon: Icons.person_rounded,
             label: 'nav_profile'.tr,
             page: const ProfilePage(),
@@ -59,6 +65,11 @@ class MainPage extends StatelessWidget {
             page: const EmployeePage(),
           ),
           NavItem(
+            icon: Icons.notifications_rounded,
+            label: 'nav_notifications'.tr,
+            page: const NotificationPage(),
+          ),
+          NavItem(
             icon: Icons.person_rounded,
             label: 'nav_profile'.tr,
             page: const ProfilePage(),
@@ -75,6 +86,11 @@ class MainPage extends StatelessWidget {
             icon: Icons.task_rounded,
             label: 'nav_my_tasks'.tr,
             page: const EmployeeTaskPage(),
+          ),
+          NavItem(
+            icon: Icons.notifications_rounded,
+            label: 'nav_notifications'.tr,
+            page: const NotificationPage(),
           ),
           NavItem(
             icon: Icons.person_rounded,

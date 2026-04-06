@@ -129,6 +129,7 @@ const Map<String, String> enUS = {
   'nav_employee': 'Employee',
   'nav_my_tasks': 'My Tasks',
   'nav_profile': 'Profile',
+  'nav_notifications': 'Notifications',
   'nav_home': 'Home',
 
   // ── Profile ───────────────────────────────────────────────────

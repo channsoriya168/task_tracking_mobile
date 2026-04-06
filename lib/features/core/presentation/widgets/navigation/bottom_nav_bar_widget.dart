@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
@@ -89,6 +90,7 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inactiveColor = isDark ? Colors.grey[500]! : Colors.grey[500]!;
+    final isNotificationItem = item.icon == Icons.notifications_rounded;
 
     return GestureDetector(
       onTap: onTap,
@@ -97,30 +99,24 @@ class _NavItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // ── Icon indicator ───────────────────────────────────
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 280),
-            curve: Curves.easeInOutCubic,
-            width: 52,
-            height: 30,
-            decoration: BoxDecoration(
-              color: isSelected && item.label != 'Profile'
-                  ? kPrimary
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Center(
-              child: item.label == 'Profile'
-                  ? _ProfileAvatar(isSelected: isSelected)
-                  : AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: Icon(
-                        item.icon,
-                        key: ValueKey(isSelected),
-                        size: 20,
-                        color: isSelected ? Colors.white : inactiveColor,
-                      ),
+          Center(
+            child: item.label == 'Profile'
+                ? _ProfileAvatar(isSelected: isSelected)
+                : isNotificationItem
+                ? _NotificationIconWithBadge(
+                    icon: item.icon,
+                    isSelected: isSelected,
+                    inactiveColor: inactiveColor,
+                  )
+                : AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      item.icon,
+                      key: ValueKey(isSelected),
+                      size: 20,
+                      color: isSelected ? kPrimary : inactiveColor,
                     ),
-            ),
+                  ),
           ),
           const SizedBox(height: 3),
           // ── Label ────────────────────────────────────────────
@@ -137,6 +133,76 @@ class _NavItem extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _NotificationIconWithBadge extends StatelessWidget {
+  const _NotificationIconWithBadge({
+    required this.icon,
+    required this.isSelected,
+    required this.inactiveColor,
+  });
+
+  final IconData icon;
+  final bool isSelected;
+  final Color inactiveColor;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!Get.isRegistered<NotificationController>()) {
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: Icon(
+          icon,
+          key: ValueKey(isSelected),
+          size: 20,
+          color: isSelected ? kPrimary : inactiveColor,
+        ),
+      );
+    }
+
+    final notificationController = Get.find<NotificationController>();
+
+    return Obx(() {
+      final count = notificationController.unreadCount.value;
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: Icon(
+              icon,
+              key: ValueKey(isSelected),
+              size: 20,
+              color: isSelected ? kPrimary : inactiveColor,
+            ),
+          ),
+          if (count > 0 && !isSelected)
+            Positioned(
+              right: -7,
+              top: -7,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF4757),
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Text(
+                  count > 99 ? '99+' : count.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
+                    height: 1,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+        ],
+      );
+    });
   }
 }
 

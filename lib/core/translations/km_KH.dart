@@ -130,6 +130,7 @@ const Map<String, String> kmKH = {
   'nav_my_tasks': 'កិច្ចការរបស់ខ្ញុំ',
   'nav_profile': 'ប្រវត្តិរូប',
   'nav_home': 'ទំព័រដើម',
+  'nav_notifications': 'ការជូនដំណឹង',
 
   // ── Profile ───────────────────────────────────────────────────
   'profile_title': 'ប្រវត្តិរូប',
