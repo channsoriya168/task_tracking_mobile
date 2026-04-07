@@ -10,7 +10,7 @@ import 'package:task_tracking_mobile/features/task/domain/entities/task_member.d
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
-import 'package:task_tracking_mobile/features/dashboard/controllers/home_controller.dart';
+import 'package:task_tracking_mobile/features/dashboard/controllers/employee_home_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_member_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_comment_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_progress_controller.dart';
@@ -89,7 +89,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
   Future<void> _handleAccept() async {
     if (_loadingId.value != null) return;
     _loadingId.value = -1;
-    final success = await Get.find<HomeController>().acceptTask(task);
+    final success = await Get.find<EmployeeHomeController>().acceptTask(task);
     _loadingId.value = null;
     if (success && mounted) {
       Navigator.pop(context);

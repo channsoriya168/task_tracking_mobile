@@ -22,25 +22,33 @@ class BottomNavBarWidget extends StatelessWidget {
       () => Container(
         margin: kNavMargin,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(28),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.grey[900]!.withAlpha(230)
-                    : Colors.white.withAlpha(240),
-                borderRadius: BorderRadius.circular(24),
+                    ? const Color(0xFF1C1C2E).withAlpha(235)
+                    : Colors.white.withAlpha(245),
+                borderRadius: BorderRadius.circular(28),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withAlpha(18),
-                  width: 0.8,
+                  color: isDark
+                      ? Colors.white.withAlpha(12)
+                      : Colors.black.withAlpha(10),
+                  width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    blurRadius: 20,
+                    blurRadius: 32,
+                    spreadRadius: -4,
+                    offset: const Offset(0, 8),
+                    color: Colors.black.withAlpha(isDark ? 120 : 35),
+                  ),
+                  BoxShadow(
+                    blurRadius: 8,
                     spreadRadius: -2,
-                    offset: const Offset(0, 6),
-                    color: Colors.black.withAlpha(isDark ? 100 : 30),
+                    offset: const Offset(0, 2),
+                    color: kPrimary.withAlpha(isDark ? 30 : 15),
                   ),
                 ],
               ),
@@ -48,12 +56,13 @@ class BottomNavBarWidget extends StatelessWidget {
                 bottom: false,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
+                    horizontal: 6,
                     vertical: 10,
                   ),
                   child: Row(
                     children: List.generate(items.length, (i) {
-                      final isSelected = navController.selectedIndex.value == i;
+                      final isSelected =
+                          navController.selectedIndex.value == i;
                       return Expanded(
                         child: _NavItem(
                           item: items[i],
@@ -89,48 +98,72 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inactiveColor = isDark ? Colors.grey[500]! : Colors.grey[500]!;
+    final inactiveColor =
+        isDark ? Colors.grey.shade500 : const Color(0xFF9E9E9E);
     final isNotificationItem = item.icon == Icons.notifications_rounded;
+    final isProfileItem = item.label == 'Profile';
+
+    Widget iconWidget;
+    if (isProfileItem) {
+      iconWidget = _ProfileAvatar(isSelected: isSelected);
+    } else if (isNotificationItem) {
+      iconWidget = _NotificationIconWithBadge(
+        icon: item.icon,
+        isSelected: isSelected,
+        inactiveColor: inactiveColor,
+      );
+    } else {
+      iconWidget = Icon(
+        item.icon,
+        size: 22,
+        color: isSelected ? kPrimary : inactiveColor,
+      );
+    }
 
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ── Icon indicator ───────────────────────────────────
-          Center(
-            child: item.label == 'Profile'
-                ? _ProfileAvatar(isSelected: isSelected)
-                : isNotificationItem
-                ? _NotificationIconWithBadge(
-                    icon: item.icon,
-                    isSelected: isSelected,
-                    inactiveColor: inactiveColor,
-                  )
-                : AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      item.icon,
-                      key: ValueKey(isSelected),
-                      size: 20,
-                      color: isSelected ? kPrimary : inactiveColor,
-                    ),
-                  ),
-          ),
-          const SizedBox(height: 3),
-          // ── Label ────────────────────────────────────────────
-          AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 280),
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-              color: isSelected ? kPrimary : inactiveColor,
-              letterSpacing: isSelected ? 0.2 : 0,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? kPrimary.withAlpha(isDark ? 35 : 22)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              transitionBuilder: (child, animation) => ScaleTransition(
+                scale: animation,
+                child: FadeTransition(opacity: animation, child: child),
+              ),
+              child: KeyedSubtree(
+                key: ValueKey('${item.icon}_$isSelected'),
+                child: iconWidget,
+              ),
             ),
-            child: Text(item.label),
-          ),
-        ],
+            const SizedBox(height: 3),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 220),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected ? kPrimary : inactiveColor,
+                letterSpacing: isSelected ? 0.3 : 0,
+              ),
+              child: Text(
+                item.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -150,14 +183,10 @@ class _NotificationIconWithBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!Get.isRegistered<NotificationController>()) {
-      return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        child: Icon(
-          icon,
-          key: ValueKey(isSelected),
-          size: 20,
-          color: isSelected ? kPrimary : inactiveColor,
-        ),
+      return Icon(
+        icon,
+        size: 22,
+        color: isSelected ? kPrimary : inactiveColor,
       );
     }
 
@@ -168,25 +197,23 @@ class _NotificationIconWithBadge extends StatelessWidget {
       return Stack(
         clipBehavior: Clip.none,
         children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            child: Icon(
-              icon,
-              key: ValueKey(isSelected),
-              size: 20,
-              color: isSelected ? kPrimary : inactiveColor,
-            ),
+          Icon(
+            icon,
+            size: 22,
+            color: isSelected ? kPrimary : inactiveColor,
           ),
-          if (count > 0 && !isSelected)
+          if (count > 0)
             Positioned(
-              right: -7,
-              top: -7,
+              right: -6,
+              top: -5,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                constraints:
+                    const BoxConstraints(minWidth: 15, minHeight: 15),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF4757),
-                  borderRadius: BorderRadius.circular(9),
+                  color: const Color(0xFFFF3B30),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.white, width: 1),
                 ),
                 child: Text(
                   count > 99 ? '99+' : count.toString(),
@@ -221,16 +248,15 @@ class _ProfileAvatar extends StatelessWidget {
       final imageUrl = profile?.profileImageUrl;
       final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
 
-      return Container(
-        width: 24,
-        height: 24,
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        width: 26,
+        height: 26,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isSelected
-              ? Colors.white.withAlpha(40)
-              : kPrimary.withAlpha(25),
+          color: isSelected ? kPrimary.withAlpha(18) : Colors.transparent,
           border: Border.all(
-            color: isSelected ? kPrimary : kPrimary.withAlpha(100),
+            color: isSelected ? kPrimary : kPrimary.withAlpha(80),
             width: isSelected ? 2 : 1.5,
           ),
         ),
@@ -243,9 +269,9 @@ class _ProfileAvatar extends StatelessWidget {
                     child: Text(
                       letter,
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : kPrimary,
+                        color: kPrimary,
                       ),
                     ),
                   ),
@@ -254,11 +280,9 @@ class _ProfileAvatar extends StatelessWidget {
                   child: Text(
                     letter,
                     style: TextStyle(
-                      fontSize: 9,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: isSelected
-                          ? const Color.fromARGB(255, 172, 20, 20)
-                          : kPrimary,
+                      color: kPrimary,
                     ),
                   ),
                 ),

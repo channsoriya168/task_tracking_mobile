@@ -6,9 +6,8 @@ import 'package:task_tracking_mobile/features/profile/presentation/controllers/p
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
-import 'package:task_tracking_mobile/features/dashboard/controllers/home_controller.dart';
+import 'package:task_tracking_mobile/features/dashboard/controllers/employee_home_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/employee_task_card.dart';
-import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_bell_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_empty_state.dart';
 
 class EmployeeHomePage extends StatelessWidget {
@@ -23,7 +22,7 @@ class EmployeeHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeCtrl = Get.find<HomeController>();
+    final homeCtrl = Get.find<EmployeeHomeController>();
     final profileCtrl = Get.find<ProfileController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -70,8 +69,6 @@ class EmployeeHomePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // ── Notification bell ──────────────────────
-                      const NotificationBellWidget(),
                     ],
                   ),
                 ),
@@ -129,7 +126,7 @@ class _StickyToolbarDelegate extends SliverPersistentHeaderDelegate {
   const _StickyToolbarDelegate({required this.isDark, required this.homeCtrl});
 
   final bool isDark;
-  final HomeController homeCtrl;
+  final EmployeeHomeController homeCtrl;
 
   // WeekCalendar: padding-top 16 + card ~132  =  148
   // FilterBar: 52

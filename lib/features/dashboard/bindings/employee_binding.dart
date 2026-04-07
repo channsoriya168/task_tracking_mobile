@@ -15,7 +15,7 @@ import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_pr
 import 'package:task_tracking_mobile/features/task/domain/usecases/remove_task_member_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_status_usecase.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
-import 'package:task_tracking_mobile/features/dashboard/controllers/home_controller.dart';
+import 'package:task_tracking_mobile/features/dashboard/controllers/employee_home_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_member_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_comment_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_progress_controller.dart';
@@ -47,8 +47,8 @@ class EmployeeBinding extends Bindings {
       fenix: true,
     );
 
-    Get.lazyPut<HomeController>(
-      () => HomeController(
+    Get.lazyPut<EmployeeHomeController>(
+      () => EmployeeHomeController(
         FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
         FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
         AssignTaskItemUsecase(Get.find<TaskItemRepository>()),

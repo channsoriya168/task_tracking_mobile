@@ -7,13 +7,13 @@ import 'package:task_tracking_mobile/features/task/domain/usecases/assign_task_i
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_status_usecase.dart';
 
-class HomeController extends GetxController {
+class EmployeeHomeController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
   final FetchTaskStatusesUsecase _fetchStatuses;
   final AssignTaskItemUsecase _assignTask;
   final UpdateTaskItemStatusUsecase _updateStatus;
 
-  HomeController(
+  EmployeeHomeController(
     this._fetchTaskItems,
     this._fetchStatuses,
     this._assignTask,
@@ -55,13 +55,34 @@ class HomeController extends GetxController {
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
 
+  Worker? _profileWorker;
+
   @override
   void onInit() {
     super.onInit();
     final now = DateTime.now();
     selectedDate.value = DateTime(now.year, now.month, now.day);
-    fetchTasks();
     fetchStatuses();
+
+    final profileCtrl = Get.find<ProfileController>();
+    if (profileCtrl.profile.value != null) {
+      fetchTasks();
+    } else {
+      // Profile hasn't loaded yet — wait for it, then fetch tasks once.
+      _profileWorker = ever(profileCtrl.profile, (profile) {
+        if (profile != null) {
+          _profileWorker?.dispose();
+          _profileWorker = null;
+          fetchTasks();
+        }
+      });
+    }
+  }
+
+  @override
+  void onClose() {
+    _profileWorker?.dispose();
+    super.onClose();
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────

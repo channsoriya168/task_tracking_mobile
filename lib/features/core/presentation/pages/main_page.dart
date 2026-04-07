@@ -78,7 +78,7 @@ class MainPage extends StatelessWidget {
       case UserRole.employee:
         return [
           NavItem(
-            icon: Icons.home,
+            icon: Icons.home_rounded,
             label: 'nav_home'.tr,
             page: const EmployeeHomePage(),
           ),

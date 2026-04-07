@@ -6,7 +6,7 @@ import 'package:task_tracking_mobile/features/lookup/domain/entities/task_item_s
 import 'package:task_tracking_mobile/features/lookup/domain/usecases/fetch_task_statuses_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_status_usecase.dart';
-import 'package:task_tracking_mobile/features/dashboard/controllers/home_controller.dart';
+import 'package:task_tracking_mobile/features/dashboard/controllers/employee_home_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_member_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_comment_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_progress_controller.dart';
@@ -165,8 +165,8 @@ class EmployeeTaskController extends GetxController {
     try {
       await _updateStatus(task.id, newStatus.id);
       await fetchTasks();
-      if (Get.isRegistered<HomeController>()) {
-        await Get.find<HomeController>().fetchTasks();
+      if (Get.isRegistered<EmployeeHomeController>()) {
+        await Get.find<EmployeeHomeController>().fetchTasks();
       }
       selectStatus(newStatus);
       return true;
