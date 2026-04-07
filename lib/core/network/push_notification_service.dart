@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/core/network/api_client.dart';
 import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class PushNotificationService extends GetxService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -16,36 +18,42 @@ class PushNotificationService extends GetxService {
 
   String? _currentToken;
 
-  // ── Notification channel (Android) ─────────────────────────
+  // ── Constants ─────────────────────────────────────────────
+  static const _channelId = 'task_tracking_notifications';
+  static const _channelName = 'Task Notifications';
+  static const _channelDescription =
+      'Notifications for task updates, comments, and reminders.';
+  static const _appIcon = '@mipmap/ic_launcher';
+
+  // ── Android Notification Channel ──────────────────────────
   static const _channel = AndroidNotificationChannel(
-    'task_tracking_notifications',
-    'Task Notifications',
-    description: 'Notifications for task updates, comments, and reminders.',
+    _channelId,
+    _channelName,
+    description: _channelDescription,
     importance: Importance.high,
   );
 
   // ── Initialization ────────────────────────────────────────
   Future<PushNotificationService> init() async {
-    // Create the Android notification channel
+    await _setupAndroidChannel();
+    await _setupLocalNotifications();
+    await _setupIosForegroundOptions();
+    _setupMessageListeners();
+    await _checkInitialMessage();
+    _setupTokenRefreshListener();
+    return this;
+  }
+
+  Future<void> _setupAndroidChannel() async {
     await _localNotifications
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >()
         ?.createNotificationChannel(_channel);
+  }
 
-    // iOS foreground presentation options
-    if (Platform.isIOS) {
-      await _messaging.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-    }
-
-    // Initialize flutter_local_notifications
-    const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
+  Future<void> _setupLocalNotifications() async {
+    const androidSettings = AndroidInitializationSettings(_appIcon);
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -55,14 +63,23 @@ class PushNotificationService extends GetxService {
       const InitializationSettings(android: androidSettings, iOS: iosSettings),
       onDidReceiveNotificationResponse: _onNotificationTap,
     );
+  }
 
-    // Listen for foreground messages
+  Future<void> _setupIosForegroundOptions() async {
+    if (!Platform.isIOS) return;
+    await _messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  void _setupMessageListeners() {
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-
-    // Listen for notification taps when app is in background
     FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationOpen);
+  }
 
-    // Check if app was opened from a terminated notification
+  Future<void> _checkInitialMessage() async {
     final initialMessage = await _messaging.getInitialMessage();
     if (initialMessage != null) {
       // Delay slightly to let the app initialize navigation
@@ -70,27 +87,26 @@ class PushNotificationService extends GetxService {
         _handleNotificationOpen(initialMessage);
       });
     }
+  }
 
-    // Listen for token refresh
+  void _setupTokenRefreshListener() {
     _messaging.onTokenRefresh.listen((newToken) {
       if (_currentToken != null) {
         _registerTokenWithBackend(newToken);
       }
     });
-
-    return this;
   }
 
   // ── Permission Request ────────────────────────────────────
   Future<bool> requestPermission() async {
     final settings = await _messaging.requestPermission(
       alert: true,
-      announcement: false,
       badge: true,
+      sound: true,
+      announcement: false,
       carPlay: false,
       criticalAlert: false,
       provisional: false,
-      sound: true,
     );
     return settings.authorizationStatus == AuthorizationStatus.authorized ||
         settings.authorizationStatus == AuthorizationStatus.provisional;
@@ -101,13 +117,13 @@ class PushNotificationService extends GetxService {
   Future<void> registerToken() async {
     final granted = await requestPermission();
     if (!granted) {
-      debugPrint('Push notification permission not granted');
+      debugPrint('[FCM] Permission not granted');
       return;
     }
 
     final token = await _messaging.getToken();
     if (token == null) {
-      debugPrint('Failed to get FCM token');
+      debugPrint('[FCM] Failed to get token');
       return;
     }
 
@@ -117,18 +133,18 @@ class PushNotificationService extends GetxService {
 
   /// Call before logout to unregister FCM token from backend.
   Future<void> unregisterToken() async {
-    if (_currentToken != null) {
-      try {
-        await ApiClient.instance.dio.delete(
-          ApiEndpoints.deviceTokens,
-          queryParameters: {'token': _currentToken},
-        );
-        debugPrint('FCM token unregistered from backend');
-      } catch (e) {
-        debugPrint('Failed to unregister FCM token: $e');
-      }
+    if (_currentToken == null) return;
+    try {
+      await ApiClient.instance.dio.delete(
+        ApiEndpoints.deviceTokens,
+        queryParameters: {'token': _currentToken},
+      );
+      debugPrint('[FCM] Token unregistered');
+    } catch (e) {
+      debugPrint('[FCM] Failed to unregister token: $e');
+    } finally {
+      _currentToken = null;
     }
-    _currentToken = null;
   }
 
   Future<void> _registerTokenWithBackend(String token) async {
@@ -142,50 +158,52 @@ class PushNotificationService extends GetxService {
         },
       );
       _currentToken = token;
-      debugPrint('FCM token registered with backend');
+      debugPrint('[FCM] Token registered');
     } catch (e) {
-      debugPrint('Failed to register FCM token: $e');
+      debugPrint('[FCM] Failed to register token: $e');
     }
   }
 
-  // ── Foreground Message Handler ────────────────────────────
+  // ── Notification Display ──────────────────────────────────
   void _handleForegroundMessage(RemoteMessage message) {
     final notification = message.notification;
-    final title = notification?.title;
-    final body = notification?.body;
-    final effectiveBody = (body != null && body == title) ? null : body;
-    print(
-      'Foreground message received: ${message.messageId}, title: $title, body: $effectiveBody',
-    );
     if (notification == null) return;
 
     _localNotifications.show(
       notification.hashCode,
-      title,
-      effectiveBody,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
-        ),
-        iOS: const DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
+      notification.title,
+      notification.body,
+      _buildNotificationDetails(),
       payload: jsonEncode(message.data),
+    );
+  }
+
+  NotificationDetails _buildNotificationDetails() {
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+        _channelId,
+        _channelName,
+        channelDescription: _channelDescription,
+        importance: Importance.high,
+        priority: Priority.high,
+        // Small icon shown in the status bar (monochrome)
+        icon: _appIcon,
+        // Large icon shown on the right side of the notification (full color)
+        largeIcon: const DrawableResourceAndroidBitmap(_appIcon),
+        // Accent color applied to the small icon and notification
+        color: kPrimary,
+      ),
+      iOS: const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
     );
   }
 
   // ── Notification Tap Handlers ─────────────────────────────
   void _handleNotificationOpen(RemoteMessage message) {
-    final data = message.data;
-    _navigateFromNotification(data);
+    _navigateFromNotification(message.data);
   }
 
   void _onNotificationTap(NotificationResponse response) {
@@ -194,13 +212,11 @@ class PushNotificationService extends GetxService {
       final data = jsonDecode(response.payload!) as Map<String, dynamic>;
       _navigateFromNotification(data);
     } catch (_) {
-      // Fallback: just go to notifications page
       Get.toNamed(AppRoutes.notifications);
     }
   }
 
   void _navigateFromNotification(Map<String, dynamic> data) {
-    // Navigate to notifications list — the user can see details there
     Get.toNamed(AppRoutes.notifications);
   }
 }
