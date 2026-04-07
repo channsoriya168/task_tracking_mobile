@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
@@ -91,9 +90,14 @@ class EmployeeTaskPage extends StatelessWidget {
                 }
                 final tasks = ctrl.filteredTasks;
                 if (tasks.isEmpty) {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: TaskEmptyState(isDark: isDark),
+                  return SliverPadding(
+                    padding: kPageBottomPadding,
+                    sliver: SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 280,
+                        child: TaskEmptyState(isDark: isDark),
+                      ),
+                    ),
                   );
                 }
                 return SliverPadding(

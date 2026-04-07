@@ -7,6 +7,8 @@ import 'package:task_tracking_mobile/features/auth/presentation/pages/splash_pag
 import 'package:task_tracking_mobile/features/core/presentation/bindings/app_binding.dart';
 import 'package:task_tracking_mobile/features/core/presentation/pages/main_page.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/pages/notification_page.dart';
+import 'package:task_tracking_mobile/features/task/presentation/pages/employee_task_detail.dart';
+import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 
 class AppPages {
   static final routes = [
@@ -25,6 +27,17 @@ class AppPages {
     GetPage(
       name: AppRoutes.notifications,
       page: () => const NotificationPage(),
+    ),
+    GetPage(
+      name: AppRoutes.taskDetail,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return EmployeeTaskDetailPage(
+          task: args['task'] as TaskItem,
+          isDark: args['isDark'] as bool,
+          readOnly: (args['readOnly'] as bool?) ?? false,
+        );
+      },
     ),
   ];
 }

@@ -8,6 +8,7 @@ class TaskCommentController extends GetxController {
   final RxBool commentsLoading = false.obs;
   final TextEditingController commentTextController = TextEditingController();
   final RxBool isSendingComment = false.obs;
+  final RxInt isSelectedTab = 0.obs;
 
   @override
   void onClose() {

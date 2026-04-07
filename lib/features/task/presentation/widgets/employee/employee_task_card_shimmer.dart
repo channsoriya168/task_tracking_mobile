@@ -30,85 +30,90 @@ class EmployeeTaskCardShimmer extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ── Left accent strip ──
-            Container(
-              width: 5,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white24 : Colors.grey.shade400,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Left accent strip ──
+                Container(
+                  width: 5,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white24 : Colors.grey.shade400,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            // ── Content ──
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Title + priority dot
-                    Row(
+                // ── Content ──
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: _ShimmerBox(
-                            isDark: isDark,
-                            width: double.infinity,
-                            height: 16,
-                          ),
+                        // Title + priority dot
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: _ShimmerBox(
+                                isDark: isDark,
+                                width: double.infinity,
+                                height: 16,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            _ShimmerBox(
+                              isDark: isDark,
+                              width: 10,
+                              height: 10,
+                              radius: 5,
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(height: 8),
+                        // Description line 1
                         _ShimmerBox(
                           isDark: isDark,
-                          width: 10,
-                          height: 10,
-                          radius: 5,
+                          width: double.infinity,
+                          height: 12,
+                        ),
+                        const SizedBox(height: 5),
+                        // Description line 2 (shorter)
+                        _ShimmerBox(isDark: isDark, width: 180, height: 12),
+                        const SizedBox(height: 10),
+                        // Due date
+                        _ShimmerBox(isDark: isDark, width: 100, height: 12),
+                        const SizedBox(height: 14),
+                        // Bottom row: avatar + action button
+                        Row(
+                          children: [
+                            _ShimmerBox(
+                              isDark: isDark,
+                              width: 28,
+                              height: 28,
+                              radius: 14,
+                            ),
+                            const Spacer(),
+                            _ShimmerBox(
+                              isDark: isDark,
+                              width: 90,
+                              height: 32,
+                              radius: 10,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    // Description line 1
-                    _ShimmerBox(
-                      isDark: isDark,
-                      width: double.infinity,
-                      height: 12,
-                    ),
-                    const SizedBox(height: 5),
-                    // Description line 2 (shorter)
-                    _ShimmerBox(isDark: isDark, width: 180, height: 12),
-                    const SizedBox(height: 10),
-                    // Due date
-                    _ShimmerBox(isDark: isDark, width: 100, height: 12),
-                    const SizedBox(height: 14),
-                    // Bottom row: avatar + action button
-                    Row(
-                      children: [
-                        _ShimmerBox(
-                          isDark: isDark,
-                          width: 28,
-                          height: 28,
-                          radius: 14,
-                        ),
-                        const Spacer(),
-                        _ShimmerBox(
-                          isDark: isDark,
-                          width: 90,
-                          height: 32,
-                          radius: 10,
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

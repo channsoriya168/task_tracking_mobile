@@ -20,24 +20,12 @@ import 'package:task_tracking_mobile/features/task/presentation/widgets/employee
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_progress_section.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_sheet_widgets.dart';
 
-Future<void> showEmployeeTaskDetailSheet(
-  BuildContext context,
-  bool isDark,
-  TaskItem task, {
-  bool readOnly = false,
-}) => showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  backgroundColor: Colors.transparent,
-  builder: (_) =>
-      _EmployeeTaskDetailSheet(task: task, isDark: isDark, readOnly: readOnly),
-);
-
-class _EmployeeTaskDetailSheet extends StatefulWidget {
-  const _EmployeeTaskDetailSheet({
+class EmployeeTaskDetailPage extends StatefulWidget {
+  const EmployeeTaskDetailPage({
+    super.key,
     required this.task,
     required this.isDark,
-    required this.readOnly,
+    this.readOnly = false,
   });
 
   final TaskItem task;
@@ -45,11 +33,10 @@ class _EmployeeTaskDetailSheet extends StatefulWidget {
   final bool readOnly;
 
   @override
-  State<_EmployeeTaskDetailSheet> createState() =>
-      _EmployeeTaskDetailSheetState();
+  State<EmployeeTaskDetailPage> createState() => _EmployeeTaskDetailPageState();
 }
 
-class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
+class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
   int _selectedTab = 0;
 
   /// ID of the transition currently in flight. -1 = Accept. null = idle.
@@ -92,7 +79,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     final success = await Get.find<EmployeeHomeController>().acceptTask(task);
     _loadingId.value = null;
     if (success && mounted) {
-      Navigator.pop(context);
+      Get.back();
       AppSnackbar.success(
         'snack_task_accepted'.tr,
         'snack_task_accepted_msg'.trParams({'title': task.title}),
@@ -107,7 +94,7 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
     final success = await ctrl.transitionTask(task, newStatus);
     _loadingId.value = null;
     if (success && mounted) {
-      Navigator.pop(context);
+      Get.back();
       AppSnackbar.update(
         'snack_status_updated'.tr,
         'snack_status_updated_msg'.trParams({'status': newStatus.name}),
@@ -209,220 +196,187 @@ class _EmployeeTaskDetailSheetState extends State<_EmployeeTaskDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.85,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (_, scrollController) => Container(
-        decoration: BoxDecoration(
-          color: isDark ? kCardDark : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+    return Scaffold(
+      backgroundColor: isDark ? kCardDark : Colors.white,
+      appBar: AppBar(
+        backgroundColor: isDark ? kCardDark : Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 18,
+            color: isDark ? Colors.white : kTextDark,
+          ),
+          onPressed: Get.back,
         ),
-        child: Column(
-          children: [
-            Expanded(child: _buildBody(scrollController)),
-            _buildBottomBar(),
-          ],
+        title: Text(
+          'task_detail_title'.tr,
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Divider(height: 1, color: divColor),
         ),
       ),
-    );
-  }
-
-  Widget _buildBody(ScrollController scrollController) {
-    return ListView(
-      controller: scrollController,
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-      children: [
-        // ── Handle + close ────────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 4),
-          child: Row(
+      bottomNavigationBar: _buildBottomBar(),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+        children: [
+          // ── Title + status ────────────────────────────────────
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Spacer(),
               Container(
-                width: 40,
-                height: 4,
+                width: 4,
+                height: 52,
+                margin: const EdgeInsets.only(right: 12, top: 2),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[700] : Colors.grey[300],
+                  color: task.status.color,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const Spacer(),
-              InkWell(
-                onTap: () => Navigator.pop(context),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.06),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.close_rounded,
-                    size: 16,
-                    color: isDark ? Colors.white60 : kTextMuted,
+              Expanded(
+                child: Text(
+                  task.title,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                    height: 1.3,
                   ),
                 ),
+              ),
+              const SizedBox(width: 12),
+              StatusBadgeWidget(
+                label: task.status.name,
+                color: task.status.color,
+                isDark: isDark,
               ),
             ],
           ),
-        ),
 
-        const SizedBox(height: 12),
-
-        // ── Title + status ────────────────────────────────────
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 4,
-              height: 52,
-              margin: const EdgeInsets.only(right: 12, top: 2),
-              decoration: BoxDecoration(
-                color: task.status.color,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                task.title,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
-                  height: 1.3,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            StatusBadgeWidget(
-              label: task.status.name,
-              color: task.status.color,
-              isDark: isDark,
+          // ── Description ───────────────────────────────────────
+          if ((task.description ?? '').isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(
+              task.description!,
+              style: TextStyle(fontSize: 14, color: mutedColor, height: 1.6),
             ),
           ],
-        ),
 
-        // ── Description ───────────────────────────────────────
-        if ((task.description ?? '').isNotEmpty) ...[
-          const SizedBox(height: 10),
-          Text(
-            task.description!,
-            style: TextStyle(fontSize: 14, color: mutedColor, height: 1.6),
-          ),
-        ],
+          const SizedBox(height: 20),
+          Divider(height: 1, color: divColor),
+          const SizedBox(height: 20),
 
-        const SizedBox(height: 20),
-        Divider(height: 1, color: divColor),
-        const SizedBox(height: 20),
-
-        // ── Detail rows ───────────────────────────────────────
-        if (task.groupName != null || task.labelName != null) ...[
-          TaskDetailRow(
-            icon: Icons.label_outline_rounded,
-            label: task.labelName != null
-                ? 'task_detail_label'.tr
-                : 'task_detail_group'.tr,
-            isDark: isDark,
-            child: TaskLabelChip(
-              name: task.labelName ?? task.groupName!,
-              color: task.status.color,
+          // ── Detail rows ───────────────────────────────────────
+          if (task.groupName != null || task.labelName != null) ...[
+            TaskDetailRow(
+              icon: Icons.label_outline_rounded,
+              label: task.labelName != null
+                  ? 'task_detail_label'.tr
+                  : 'task_detail_group'.tr,
               isDark: isDark,
+              child: TaskLabelChip(
+                name: task.labelName ?? task.groupName!,
+                color: task.status.color,
+                isDark: isDark,
+              ),
+            ),
+            const SizedBox(height: 14),
+          ],
+          TaskDetailRow(
+            icon: Icons.flag_outlined,
+            label: 'task_detail_priority'.tr,
+            isDark: isDark,
+            child: Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: task.priority.color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  task.priority.name,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 14),
-        ],
-        TaskDetailRow(
-          icon: Icons.flag_outlined,
-          label: 'task_detail_priority'.tr,
-          isDark: isDark,
-          child: Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: task.priority.color,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                task.priority.name,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (task.startDate != null) ...[
-          const SizedBox(height: 14),
-          TaskDetailRow(
-            icon: Icons.play_circle_outline_rounded,
-            label: 'task_detail_start_date'.tr,
-            isDark: isDark,
-            child: _dateText(formatDate(task.startDate!)),
-          ),
-        ],
-        if (task.dueDate != null) ...[
-          const SizedBox(height: 14),
-          TaskDetailRow(
-            icon: Icons.event_rounded,
-            label: 'task_detail_due_date'.tr,
-            isDark: isDark,
-            child: _dateText(formatDate(task.dueDate!)),
-          ),
-        ],
-        const SizedBox(height: 14),
-        TaskDetailRow(
-          icon: Icons.person_outline_rounded,
-          label: 'task_detail_assigned_to'.tr,
-          isDark: isDark,
-          child: task.assignedToName != null
-              ? TaskAssigneeRow(
-                  name: task.assignedToName!,
-                  isDark: isDark,
-                  imageUrl: task.assignedToProfileImageUrl,
-                )
-              : Text(
-                  'task_detail_not_assigned'.tr,
-                  style: TextStyle(fontSize: 14, color: mutedColor),
-                ),
-        ),
-        if (task.createdByEmployeeName != null) ...[
-          const SizedBox(height: 14),
-          TaskDetailRow(
-            icon: Icons.person_add_alt_1_outlined,
-            label: 'task_detail_created_by'.tr,
-            isDark: isDark,
-            child: TaskAssigneeRow(
-              name: task.createdByEmployeeName!,
+          if (task.startDate != null) ...[
+            const SizedBox(height: 14),
+            TaskDetailRow(
+              icon: Icons.play_circle_outline_rounded,
+              label: 'task_detail_start_date'.tr,
               isDark: isDark,
-              imageUrl: task.createdByProfileImageUrl,
+              child: _dateText(formatDate(task.startDate!)),
             ),
+          ],
+          if (task.dueDate != null) ...[
+            const SizedBox(height: 14),
+            TaskDetailRow(
+              icon: Icons.event_rounded,
+              label: 'task_detail_due_date'.tr,
+              isDark: isDark,
+              child: _dateText(formatDate(task.dueDate!)),
+            ),
+          ],
+          const SizedBox(height: 14),
+          TaskDetailRow(
+            icon: Icons.person_outline_rounded,
+            label: 'task_detail_assigned_to'.tr,
+            isDark: isDark,
+            child: task.assignedToName != null
+                ? TaskAssigneeRow(
+                    name: task.assignedToName!,
+                    isDark: isDark,
+                    imageUrl: task.assignedToProfileImageUrl,
+                  )
+                : Text(
+                    'task_detail_not_assigned'.tr,
+                    style: TextStyle(fontSize: 14, color: mutedColor),
+                  ),
           ),
+          if (task.createdByEmployeeName != null) ...[
+            const SizedBox(height: 14),
+            TaskDetailRow(
+              icon: Icons.person_add_alt_1_outlined,
+              label: 'task_detail_created_by'.tr,
+              isDark: isDark,
+              child: TaskAssigneeRow(
+                name: task.createdByEmployeeName!,
+                isDark: isDark,
+                imageUrl: task.createdByProfileImageUrl,
+              ),
+            ),
+          ],
+          const SizedBox(height: 14),
+          TaskDetailRow(
+            icon: Icons.access_time_rounded,
+            label: 'task_detail_created'.tr,
+            isDark: isDark,
+            child: _dateText(formatDate(task.createdAt ?? DateTime.now())),
+          ),
+
+          const SizedBox(height: 20),
+          Divider(height: 1, color: divColor),
+          const SizedBox(height: 16),
+
+          _buildTabSection(),
         ],
-        const SizedBox(height: 14),
-        TaskDetailRow(
-          icon: Icons.access_time_rounded,
-          label: 'task_detail_created'.tr,
-          isDark: isDark,
-          child: _dateText(formatDate(task.createdAt ?? DateTime.now())),
-        ),
-
-        const SizedBox(height: 20),
-        Divider(height: 1, color: divColor),
-        const SizedBox(height: 16),
-
-        _buildTabSection(),
-      ],
+      ),
     );
   }
 

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_tile.dart';
+import 'package:task_tracking_mobile/features/task/domain/repositories/task_item_repository.dart';
+import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/show_task_detail_sheet.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -114,9 +120,12 @@ class NotificationPage extends StatelessWidget {
               final notification = controller.notifications[index];
               return NotificationTile(
                 notification: notification,
-                onTap: () {
+                onTap: () async {
                   if (!notification.isRead) {
                     controller.markAsRead(notification.id);
+                  }
+                  if (notification.taskId != null) {
+                    await _openTaskDetail(context, notification.taskId!);
                   }
                 },
                 onDismissed: () {
@@ -128,5 +137,56 @@ class NotificationPage extends StatelessWidget {
         );
       }),
     );
+  }
+
+  Future<void> _openTaskDetail(BuildContext context, String taskId) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    TaskItemRepository? repo;
+    try {
+      repo = Get.find<TaskItemRepository>();
+    } catch (_) {
+      return;
+    }
+
+    // Show loading while fetching task
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    try {
+      final task = await repo.fetchTaskItemById(taskId);
+      if (Get.isDialogOpen ?? false) Get.back();
+
+      if (!context.mounted) return;
+
+      final role = Get.find<AuthController>().role;
+      if (role == UserRole.employee) {
+        if (Get.isRegistered<EmployeeTaskController>()) {
+          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId);
+        }
+        Get.toNamed(
+          AppRoutes.taskDetail,
+          arguments: {'task': task, 'isDark': isDark, 'readOnly': false},
+        );
+      } else {
+        await showTaskDetailSheet(
+          context,
+          isDark,
+          task,
+          fetchDetail: repo.fetchTaskItemById,
+        );
+      }
+    } catch (_) {
+      if (Get.isDialogOpen ?? false) Get.back();
+      Get.snackbar(
+        'Error',
+        'Could not load task details.',
+        backgroundColor: const Color(0xFFFF4757),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 }

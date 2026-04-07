@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/lookup/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/employee_task_detail_sheet.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class EmployeeTaskCard extends StatelessWidget {
   const EmployeeTaskCard({
@@ -39,7 +39,10 @@ class EmployeeTaskCard extends StatelessWidget {
 
     void openDetail({bool readOnly = false}) {
       ctrl.prepareTaskDetail(task.id);
-      showEmployeeTaskDetailSheet(context, isDark, task, readOnly: readOnly);
+      Get.toNamed(
+        AppRoutes.taskDetail,
+        arguments: {'task': task, 'isDark': isDark, 'readOnly': readOnly},
+      );
     }
 
     final statusColor = task.status.color;

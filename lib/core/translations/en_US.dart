@@ -38,6 +38,7 @@ const Map<String, String> enUS = {
   'label_create_btn': 'Create Label',
   'label_save_btn': 'Save Changes',
   // ── Task detail ───────────────────────────────────────────────
+  'task_detail_title': 'Task Detail',
   'task_empty': 'No tasks found',
   'task_no_due_date': 'No due date',
   'task_overdue': 'Overdue',

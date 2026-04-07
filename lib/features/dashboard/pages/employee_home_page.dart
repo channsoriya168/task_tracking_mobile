@@ -97,9 +97,14 @@ class EmployeeHomePage extends StatelessWidget {
                 }
                 final tasks = homeCtrl.filteredTasks;
                 if (tasks.isEmpty) {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: TaskEmptyState(isDark: isDark),
+                  return SliverPadding(
+                    padding: kPageBottomPadding,
+                    sliver: SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 280,
+                        child: TaskEmptyState(isDark: isDark),
+                      ),
+                    ),
                   );
                 }
                 return SliverPadding(

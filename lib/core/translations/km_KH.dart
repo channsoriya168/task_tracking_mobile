@@ -41,6 +41,7 @@ const Map<String, String> kmKH = {
   'task_empty': 'រកមិនឃើញកិច្ចការ',
   'task_no_due_date': 'គ្មានកាលកំណត់',
   'task_overdue': 'ហួសកំណត់',
+  'task_detail_title': 'លម្អិតភារកិច្ច',
   'task_detail_label': 'ស្លាក',
   'task_detail_group': 'ក្រុម',
   'task_detail_priority': 'អាទិភាព',

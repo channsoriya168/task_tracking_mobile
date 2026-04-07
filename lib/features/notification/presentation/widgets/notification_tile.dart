@@ -3,7 +3,7 @@ import 'package:task_tracking_mobile/features/notification/domain/entities/notif
 
 class NotificationTile extends StatelessWidget {
   final NotificationEntity notification;
-  final VoidCallback onTap;
+  final Future<void> Function() onTap;
   final VoidCallback onDismissed;
 
   const NotificationTile({
