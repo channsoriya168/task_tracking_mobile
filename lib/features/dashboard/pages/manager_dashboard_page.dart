@@ -11,7 +11,6 @@ import 'package:task_tracking_mobile/features/dashboard/widgets/dashboard_task_c
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_empty_state.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_shimmer_widget.dart';
-import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_bell_widget.dart';
 
 class ManagerDashboardPage extends StatelessWidget {
   const ManagerDashboardPage({super.key});
@@ -54,7 +53,6 @@ class ManagerDashboardPage extends StatelessWidget {
                   color: textColor,
                 ),
               ),
-              actions: const [NotificationBellWidget(), SizedBox(width: 8)],
             ),
 
             // ── Week Calendar ─────────────────────────────────

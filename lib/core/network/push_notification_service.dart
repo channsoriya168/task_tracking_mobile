@@ -151,12 +151,18 @@ class PushNotificationService extends GetxService {
   // ── Foreground Message Handler ────────────────────────────
   void _handleForegroundMessage(RemoteMessage message) {
     final notification = message.notification;
+    final title = notification?.title;
+    final body = notification?.body;
+    final effectiveBody = (body != null && body == title) ? null : body;
+    print(
+      'Foreground message received: ${message.messageId}, title: $title, body: $effectiveBody',
+    );
     if (notification == null) return;
 
     _localNotifications.show(
       notification.hashCode,
-      notification.title,
-      notification.body,
+      title,
+      effectiveBody,
       NotificationDetails(
         android: AndroidNotificationDetails(
           _channel.id,
