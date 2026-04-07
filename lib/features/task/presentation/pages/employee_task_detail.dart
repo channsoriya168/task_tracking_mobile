@@ -20,7 +20,7 @@ import 'package:task_tracking_mobile/features/task/presentation/widgets/employee
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_progress_section.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_sheet_widgets.dart';
 
-class EmployeeTaskDetailPage extends StatefulWidget {
+class EmployeeTaskDetailPage extends StatelessWidget {
   const EmployeeTaskDetailPage({
     super.key,
     required this.task,
@@ -32,25 +32,11 @@ class EmployeeTaskDetailPage extends StatefulWidget {
   final bool isDark;
   final bool readOnly;
 
-  @override
-  State<EmployeeTaskDetailPage> createState() => _EmployeeTaskDetailPageState();
-}
-
-class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
-  int _selectedTab = 0;
-
-  /// ID of the transition currently in flight. -1 = Accept. null = idle.
-  final _loadingId = Rxn<int>();
-
   EmployeeTaskController get ctrl => Get.find<EmployeeTaskController>();
   EmployeeTaskMemberController get memberCtrl =>
       Get.find<EmployeeTaskMemberController>();
   TaskCommentController get commentCtrl => Get.find<TaskCommentController>();
   TaskProgressController get progressCtrl => Get.find<TaskProgressController>();
-
-  bool get isDark => widget.isDark;
-  TaskItem get task => widget.task;
-  bool get readOnly => widget.readOnly;
 
   Color get textColor => isDark ? Colors.white : kTextDark;
   Color get mutedColor => isDark ? Colors.white38 : kTextMuted;
@@ -74,11 +60,11 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
       (_isPending || _isMyTask);
 
   Future<void> _handleAccept() async {
-    if (_loadingId.value != null) return;
-    _loadingId.value = -1;
+    if (ctrl.transitionLoadingId.value != null) return;
+    ctrl.transitionLoadingId.value = -1;
     final success = await Get.find<EmployeeHomeController>().acceptTask(task);
-    _loadingId.value = null;
-    if (success && mounted) {
+    ctrl.transitionLoadingId.value = null;
+    if (success) {
       Get.back();
       AppSnackbar.success(
         'snack_task_accepted'.tr,
@@ -89,11 +75,11 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
   }
 
   Future<void> _handleTransition(TaskStatusLookup newStatus) async {
-    if (_loadingId.value != null) return;
-    _loadingId.value = newStatus.id;
+    if (ctrl.transitionLoadingId.value != null) return;
+    ctrl.transitionLoadingId.value = newStatus.id;
     final success = await ctrl.transitionTask(task, newStatus);
-    _loadingId.value = null;
-    if (success && mounted) {
+    ctrl.transitionLoadingId.value = null;
+    if (success) {
       Get.back();
       AppSnackbar.update(
         'snack_status_updated'.tr,
@@ -105,8 +91,9 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
   // ── Member helpers ───────────────────────────────────────────────────────
 
   Future<void> _onAddMember(List<TaskMember> currentMembers) async {
-    if (memberCtrl.groupEmployees.isEmpty)
+    if (memberCtrl.groupEmployees.isEmpty) {
       await memberCtrl.fetchGroupEmployees();
+    }
 
     final addedIds = currentMembers.map((m) => m.employeeId).toSet();
     final available = memberCtrl.groupEmployees
@@ -115,15 +102,12 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
         )
         .toList();
 
-    if (!mounted) return;
-
-    final selected = await showModalBottomSheet<Employee>(
-      context: context,
+    final selected = await Get.bottomSheet<Employee>(
+      EmployeePickerSheet(employees: available, isDark: isDark),
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => EmployeePickerSheet(employees: available, isDark: isDark),
     );
-    if (selected == null || !mounted) return;
+    if (selected == null) return;
 
     final ok = await _confirmDialog(
       title: 'member_add_title'.tr,
@@ -148,9 +132,8 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
     required String content,
     required String confirmLabel,
     Color confirmColor = kPrimary,
-  }) => showDialog<bool>(
-    context: context,
-    builder: (_) => AlertDialog(
+  }) => Get.dialog<bool>(
+    AlertDialog(
       backgroundColor: isDark ? kCardDark : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
@@ -170,14 +153,14 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: () => Get.back(result: false),
           child: Text(
             'Cancel',
             style: TextStyle(color: isDark ? Colors.white54 : kTextMuted),
           ),
         ),
         ElevatedButton(
-          onPressed: () => Navigator.pop(context, true),
+          onPressed: () => Get.back(result: true),
           style: ElevatedButton.styleFrom(
             backgroundColor: confirmColor,
             foregroundColor: Colors.white,
@@ -223,7 +206,7 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
           child: Divider(height: 1, color: divColor),
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(),
+      bottomNavigationBar: _buildBottomBar(context),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
         children: [
@@ -399,6 +382,7 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
         : Colors.black.withValues(alpha: 0.07);
 
     return Obx(() {
+      final selectedTab = ctrl.selectedTab.value;
       final counts = [
         memberCtrl.currentTaskMembers.length,
         commentCtrl.currentTaskComments.length,
@@ -420,11 +404,11 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
             child: Row(
               children: List.generate(_tabs.length, (i) {
                 final (icon, label) = _tabs[i];
-                final active = _selectedTab == i;
+                final active = selectedTab == i;
                 final muted = isDark ? Colors.white38 : kTextMuted;
                 return Expanded(
                   child: GestureDetector(
-                    onTap: () => setState(() => _selectedTab = i),
+                    onTap: () => ctrl.selectedTab.value = i,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -471,15 +455,15 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
               borderRadius: BorderRadius.circular(12),
               child: Padding(
                 padding: const EdgeInsets.all(14),
-                child: switch (_selectedTab) {
+                child: switch (selectedTab) {
                   0 => TaskMembersSection(
                     ctrl: memberCtrl,
                     isDark: isDark,
                     textColor: textColor,
                     mutedColor: mutedColor,
                     canEdit: canManageMembers,
-                    onAdd: (members) => _onAddMember(members),
-                    onRemove: (member) => _onRemoveMember(member),
+                    onAdd: _onAddMember,
+                    onRemove: _onRemoveMember,
                   ),
                   1 => TaskCommentsTab(
                     ctrl: commentCtrl,
@@ -508,7 +492,7 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
 
   // ── Bottom action bar ────────────────────────────────────────────────────
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(BuildContext context) {
     if (!_hasActions) return const SizedBox.shrink();
 
     final bottomPad = MediaQuery.of(context).padding.bottom;
@@ -520,7 +504,7 @@ class _EmployeeTaskDetailPageState extends State<EmployeeTaskDetailPage> {
         border: Border(top: BorderSide(color: divColor)),
       ),
       child: Obx(() {
-        final activeId = _loadingId.value;
+        final activeId = ctrl.transitionLoadingId.value;
 
         if (_isPending) {
           return TaskTransitionButton(

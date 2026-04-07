@@ -37,6 +37,10 @@ class EmployeeTaskController extends GetxController {
   final RxString errorMessage = ''.obs;
   final RxBool actionLoading = false.obs;
 
+  // ── Detail sheet UI state ────────────────────────────────────────────────
+  final RxInt selectedTab = 0.obs;
+  final Rxn<int> transitionLoadingId = Rxn<int>();
+
   // ── Computed ─────────────────────────────────────────────────────────────
 
   String? get currentEmployeeId =>
@@ -147,6 +151,8 @@ class EmployeeTaskController extends GetxController {
 
   void prepareTaskDetail(String taskId) {
     actionLoading.value = false;
+    selectedTab.value = 0;
+    transitionLoadingId.value = null;
     final memberCtrl = Get.find<EmployeeTaskMemberController>();
     final commentCtrl = Get.find<TaskCommentController>();
     final progressCtrl = Get.find<TaskProgressController>();
