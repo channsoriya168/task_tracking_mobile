@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
@@ -374,6 +373,43 @@ class _ProgressItem extends StatelessWidget {
 
 enum _ProgressAction { edit, delete }
 
+// ── Step button (- / +) ───────────────────────────────────────────────────────
+
+class _StepBtn extends StatelessWidget {
+  const _StepBtn({
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.1),
+          ),
+        ),
+        child: Icon(icon, size: 18, color: kPrimary),
+      ),
+    );
+  }
+}
+
 // ── Add / Edit progress sheet ─────────────────────────────────────────────────
 
 class _ProgressSheet extends StatefulWidget {
@@ -396,7 +432,7 @@ class _ProgressSheet extends StatefulWidget {
 }
 
 class _ProgressSheetState extends State<_ProgressSheet> {
-  late final TextEditingController _pctCtrl;
+  late int _pct;
   late final TextEditingController _notesCtrl;
   late final TextEditingController _hoursCtrl;
   String? _notesError;
@@ -411,9 +447,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
   void initState() {
     super.initState();
     final p = widget.editing;
-    _pctCtrl = TextEditingController(
-      text: p != null ? '${p.progressPercentage}' : '0',
-    );
+    _pct = p?.progressPercentage ?? 0;
     _notesCtrl = TextEditingController(text: p?.notes ?? '');
     _hoursCtrl = TextEditingController(
       text: p?.hoursWorked != null ? p!.hoursWorked!.toStringAsFixed(1) : '',
@@ -422,7 +456,6 @@ class _ProgressSheetState extends State<_ProgressSheet> {
 
   @override
   void dispose() {
-    _pctCtrl.dispose();
     _notesCtrl.dispose();
     _hoursCtrl.dispose();
     super.dispose();
@@ -437,9 +470,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
     }
     setState(() => _notesError = null);
 
-    // Percentage: default 0 if empty or invalid
-    final pct = int.tryParse(_pctCtrl.text.trim()) ?? 0;
-    final clampedPct = pct.clamp(0, 100);
+    final clampedPct = _pct.clamp(0, 100);
     final hours = double.tryParse(_hoursCtrl.text.trim());
 
     setState(() => _saving = true);
@@ -493,14 +524,14 @@ class _ProgressSheetState extends State<_ProgressSheet> {
           color: bg,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
               child: Container(
-                width: 40,
+                width: 36,
                 height: 4,
                 decoration: BoxDecoration(
                   color: isDark ? Colors.grey[700] : Colors.grey[300],
@@ -508,27 +539,27 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               isEdit ? 'progress_edit'.tr : 'progress_log'.tr,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: textColor,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // Notes (required) — shown first
             Text(
               'progress_notes'.tr,
-              style: TextStyle(fontSize: 13, color: mutedColor),
+              style: TextStyle(fontSize: 12, color: mutedColor),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             TextField(
               controller: _notesCtrl,
-              style: TextStyle(color: textColor, fontSize: 14),
-              maxLines: 3,
+              style: TextStyle(color: textColor, fontSize: 13),
+              maxLines: 2,
               onChanged: (_) {
                 if (_notesError != null) {
                   setState(() => _notesError = null);
@@ -549,76 +580,101 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                 focusedBorder: _notesError != null ? errorBorder : border,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // Percentage + Hours on one row
+            // Percentage stepper + slider
             Row(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'progress_percent'.tr,
-                        style: TextStyle(fontSize: 13, color: mutedColor),
-                      ),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: _pctCtrl,
-                        style: TextStyle(color: textColor, fontSize: 14),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        decoration: InputDecoration(
-                          hintText: '0',
-                          hintStyle: TextStyle(color: mutedColor),
-                          filled: true,
-                          fillColor: fieldFill,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          border: border,
-                        ),
-                      ),
-                    ],
-                  ),
+                Text(
+                  'progress_percent'.tr,
+                  style: TextStyle(fontSize: 12, color: mutedColor),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'progress_hours'.tr,
-                        style: TextStyle(fontSize: 13, color: mutedColor),
-                      ),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: _hoursCtrl,
-                        style: TextStyle(color: textColor, fontSize: 14),
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'progress_hours_hint'.tr,
-                          hintStyle: TextStyle(color: mutedColor),
-                          filled: true,
-                          fillColor: fieldFill,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          border: border,
-                        ),
-                      ),
-                    ],
+                const Spacer(),
+                Text(
+                  '$_pct%',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: kPrimary,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                // Minus button
+                _StepBtn(
+                  icon: Icons.remove_rounded,
+                  isDark: isDark,
+                  onTap: () => setState(
+                    () => _pct = (_pct - 1).clamp(0, 100),
+                  ),
+                ),
+                // Slider
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 3,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 7,
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 14,
+                      ),
+                      activeTrackColor: kPrimary,
+                      inactiveTrackColor: isDark
+                          ? Colors.white.withValues(alpha: 0.12)
+                          : Colors.black.withValues(alpha: 0.08),
+                      thumbColor: kPrimary,
+                      overlayColor: kPrimary.withValues(alpha: 0.15),
+                    ),
+                    child: Slider(
+                      value: _pct.toDouble(),
+                      min: 0,
+                      max: 100,
+                      divisions: 100,
+                      onChanged: (v) => setState(() => _pct = v.round()),
+                    ),
+                  ),
+                ),
+                // Plus button
+                _StepBtn(
+                  icon: Icons.add_rounded,
+                  isDark: isDark,
+                  onTap: () => setState(
+                    () => _pct = (_pct + 1).clamp(0, 100),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Hours
+            Text(
+              'progress_hours'.tr,
+              style: TextStyle(fontSize: 12, color: mutedColor),
+            ),
+            const SizedBox(height: 4),
+            TextField(
+              controller: _hoursCtrl,
+              style: TextStyle(color: textColor, fontSize: 13),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: InputDecoration(
+                hintText: 'progress_hours_hint'.tr,
+                hintStyle: TextStyle(color: mutedColor),
+                filled: true,
+                fillColor: fieldFill,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                border: border,
+              ),
+            ),
+            const SizedBox(height: 16),
 
             Row(
               children: [
@@ -626,7 +682,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       side: BorderSide(
                         color: isDark
                             ? Colors.white24
@@ -654,7 +710,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                       backgroundColor: kPrimary,
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
