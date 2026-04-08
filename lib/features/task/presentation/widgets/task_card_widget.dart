@@ -79,17 +79,6 @@ class TaskCardWidget extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ── Left accent strip ──
-                Container(
-                  width: 4,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [statusColor, statusColor.withValues(alpha: 0.4)],
-                    ),
-                  ),
-                ),
                 // ── Content ──
                 Expanded(
                   child: Column(
@@ -101,10 +90,27 @@ class TaskCardWidget extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TaskCardTitleRow(
-                              task: task,
-                              isDark: isDark,
-                              mutedColor: mutedColor,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: TaskCardTitleRow(
+                                    task: task,
+                                    isDark: isDark,
+                                    mutedColor: mutedColor,
+                                  ),
+                                ),
+                                if (ctrl != null && isOwner)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: TaskCardActionsRow(
+                                      task: task,
+                                      isDark: isDark,
+                                      ctrl: ctrl,
+                                      canEdit: isOwner,
+                                    ),
+                                  ),
+                              ],
                             ),
                             const SizedBox(height: 8),
                             TaskCardDateRow(
@@ -124,15 +130,6 @@ class TaskCardWidget extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // ── Action bar (manager only) ──
-                      if (ctrl != null)
-                        TaskCardActionsRow(
-                          task: task,
-                          isDark: isDark,
-                          ctrl: ctrl,
-                          fetchDetail: fetchDetail,
-                          canEdit: isOwner,
-                        ),
                     ],
                   ),
                 ),
