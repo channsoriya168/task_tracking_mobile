@@ -18,6 +18,13 @@ class NotificationTile extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final isRead = notification.isRead;
+    final accent = _accentColor;
+    final cardColor = isDark
+        ? (isRead ? const Color(0xFF151B2E) : const Color(0xFF1A2238))
+        : (isRead ? Colors.white : const Color(0xFFF6FAFF));
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : accent.withValues(alpha: isRead ? 0.08 : 0.22);
 
     return Dismissible(
       key: Key(notification.id),
@@ -27,100 +34,148 @@ class NotificationTile extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: const Color(0xFFFF4757),
+          gradient: const LinearGradient(
+            colors: [Color(0xFFFF6B6B), Color(0xFFFF3D5A)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete_rounded, color: Colors.white, size: 24),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Delete',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
+              ),
+            ),
+            SizedBox(width: 8),
+            Icon(Icons.delete_rounded, color: Colors.white, size: 22),
+          ],
+        ),
       ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           decoration: BoxDecoration(
-            color: isRead
-                ? (isDark ? const Color(0xFF1A1A2E) : Colors.white)
-                : (isDark
-                    ? const Color(0xFF1A1A2E).withValues(alpha: 0.8)
-                    : const Color(0xFFF0EEFF)),
+            color: cardColor,
             borderRadius: BorderRadius.circular(16),
-            border: isRead
-                ? null
-                : Border.all(
-                    color: const Color(0xFF6C63FF).withValues(alpha: 0.3),
-                    width: 1,
-                  ),
+            border: Border.all(color: borderColor, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.24)
+                    : const Color(0xFF0F172A).withValues(alpha: 0.06),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Icon ────────────────────────────────
+              if (!isRead)
+                Container(
+                  width: 4,
+                  height: 56,
+                  margin: const EdgeInsets.only(right: 12, top: 2),
+                  decoration: BoxDecoration(
+                    color: accent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+
               Container(
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: _iconColor.withValues(alpha: 0.15),
+                  gradient: LinearGradient(
+                    colors: [
+                      accent.withValues(alpha: 0.18),
+                      accent.withValues(alpha: 0.08),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: accent.withValues(alpha: 0.28),
+                    width: 1,
+                  ),
                 ),
-                child: Icon(_icon, color: _iconColor, size: 22),
+                child: Icon(_icon, color: accent, size: 22),
               ),
               const SizedBox(width: 14),
 
-              // ── Content ─────────────────────────────
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       notification.title,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: isRead ? FontWeight.w400 : FontWeight.w600,
-                        color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: isRead ? FontWeight.w600 : FontWeight.w700,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                        height: 1.25,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (notification.message != null &&
                         notification.message!.isNotEmpty) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
                       Text(
                         notification.message!,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: isDark
-                              ? Colors.white70
-                              : const Color(0xFF8E8EA0),
+                              ? Colors.white.withValues(alpha: 0.72)
+                              : const Color(0xFF475569),
+                          height: 1.35,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
-                    const SizedBox(height: 6),
-                    Text(
-                      _relativeTime(notification.createdAt),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 11,
-                        color: isDark
-                            ? Colors.white38
-                            : const Color(0xFFB0B0C0),
-                      ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.schedule_rounded,
+                          size: 14,
+                          color: isDark
+                              ? Colors.white54
+                              : const Color(0xFF64748B),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _relativeTime(notification.createdAt),
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: isDark
+                                ? Colors.white54
+                                : const Color(0xFF64748B),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (!isRead)
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: accent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),
               ),
-
-              // ── Unread dot ──────────────────────────
-              if (!isRead)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4, left: 8),
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF6C63FF),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
             ],
           ),
         ),
@@ -144,18 +199,18 @@ class NotificationTile extends StatelessWidget {
     }
   }
 
-  Color get _iconColor {
+  Color get _accentColor {
     switch (notification.type) {
       case NotificationType.taskStatusChanged:
-        return const Color(0xFF6C63FF);
+        return const Color(0xFF0EA5E9);
       case NotificationType.taskCommented:
-        return const Color(0xFF3498DB);
+        return const Color(0xFF8B5CF6);
       case NotificationType.taskDueDateApproaching:
-        return const Color(0xFFFFA502);
+        return const Color(0xFFF97316);
       case NotificationType.taskAddedToGroup:
-        return const Color(0xFF2ED573);
+        return const Color(0xFF14B8A6);
       case NotificationType.taskCompleted:
-        return const Color(0xFF2ED573);
+        return const Color(0xFF22C55E);
     }
   }
 

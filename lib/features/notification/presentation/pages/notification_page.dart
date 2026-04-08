@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_tile.dart';
 import 'package:task_tracking_mobile/features/task/domain/repositories/task_item_repository.dart';
@@ -111,32 +112,118 @@ class NotificationPage extends StatelessWidget {
             await controller.fetchUnreadCount();
           },
           color: kPrimary,
-          child: ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-            itemCount: controller.notifications.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final notification = controller.notifications[index];
-              return NotificationTile(
-                notification: notification,
-                onTap: () async {
-                  if (!notification.isRead) {
-                    controller.markAsRead(notification.id);
+          child: Builder(
+            builder: (context) {
+              final listItems = _buildListItems(controller.notifications);
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                itemCount: listItems.length,
+                itemBuilder: (context, index) {
+                  final item = listItems[index];
+
+                  if (item.header != null) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        top: index == 0 ? 4 : 10,
+                        bottom: 8,
+                      ),
+                      child: Text(
+                        item.header!,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: isDark
+                              ? Colors.white70
+                              : const Color(0xFF334155),
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    );
                   }
-                  if (notification.taskId != null) {
-                    await _openTaskDetail(context, notification.taskId!);
-                  }
+
+                  final notification = item.notification!;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child:
+                        NotificationTile(
+                          notification: notification,
+                          onTap: () async {
+                            if (!notification.isRead) {
+                              controller.markAsRead(notification.id);
+                            }
+                            if (notification.taskId != null) {
+                              await _openTaskDetail(
+                                context,
+                                notification.taskId!,
+                              );
+                            }
+                          },
+                          onDismissed: () {
+                            controller.deleteNotification(notification.id);
+                          },
+                        ).animate().fadeIn(
+                          duration: 300.ms,
+                          delay: (item.animationIndex * 50).ms,
+                        ),
+                  );
                 },
-                onDismissed: () {
-                  controller.deleteNotification(notification.id);
-                },
-              ).animate().fadeIn(duration: 300.ms, delay: (index * 50).ms);
+              );
             },
           ),
         );
       }),
     );
+  }
+
+  List<_NotificationListItem> _buildListItems(
+    List<NotificationEntity> notifications,
+  ) {
+    final items = <_NotificationListItem>[];
+    DateTime? currentDay;
+    var animationIndex = 0;
+
+    for (final notification in notifications) {
+      final createdAt = notification.createdAt;
+      final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
+
+      if (currentDay == null || !DateUtils.isSameDay(currentDay, day)) {
+        items.add(_NotificationListItem.header(_dayLabel(day)));
+        currentDay = day;
+      }
+
+      items.add(
+        _NotificationListItem.notification(notification, animationIndex),
+      );
+      animationIndex++;
+    }
+
+    return items;
+  }
+
+  String _dayLabel(DateTime day) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    if (DateUtils.isSameDay(day, today)) return 'Today';
+    if (DateUtils.isSameDay(day, yesterday)) return 'Yesterday';
+
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    return '${months[day.month - 1]} ${day.day}, ${day.year}';
   }
 
   Future<void> _openTaskDetail(BuildContext context, String taskId) async {
@@ -189,4 +276,19 @@ class NotificationPage extends StatelessWidget {
       );
     }
   }
+}
+
+class _NotificationListItem {
+  final String? header;
+  final NotificationEntity? notification;
+  final int animationIndex;
+
+  const _NotificationListItem.header(this.header)
+    : notification = null,
+      animationIndex = 0;
+
+  const _NotificationListItem.notification(
+    this.notification,
+    this.animationIndex,
+  ) : header = null;
 }
