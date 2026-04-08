@@ -86,6 +86,7 @@ class AuthController extends GetxController {
       final auth = await checkAuthUsecase();
       currentAuth.value = auth;
       Get.find<ProfileController>().fetchProfile();
+      _registerPushToken();
       return true;
     } catch (_) {
       currentAuth.value = null;
