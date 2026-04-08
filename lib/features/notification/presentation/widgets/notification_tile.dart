@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/widgets/delete_notification_dialog.dart';
 
 class NotificationTile extends StatelessWidget {
   final NotificationEntity notification;
@@ -18,17 +21,19 @@ class NotificationTile extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final isRead = notification.isRead;
+    final message = notification.message;
     final accent = _accentColor;
     final cardColor = isDark
-        ? (isRead ? const Color(0xFF151B2E) : const Color(0xFF1A2238))
-        : (isRead ? Colors.white : const Color(0xFFF6FAFF));
+        ? (isRead ? kBgDark : const Color(0xFF1A2238))
+        : (isRead ? kBgLight : const Color(0xFFF6FAFF));
     final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : accent.withValues(alpha: isRead ? 0.08 : 0.22);
+        ? Colors.white.withValues(alpha: isRead ? 0.07 : 0.12)
+        : (isRead ? const Color(0xFFE2E8F0) : accent.withValues(alpha: 0.28));
 
     return Dismissible(
       key: Key(notification.id),
       direction: DismissDirection.endToStart,
+      confirmDismiss: (_) => DeleteNotificationDialog.show(context),
       onDismissed: (_) => onDismissed(),
       background: Container(
         alignment: Alignment.centerRight,
@@ -61,7 +66,7 @@ class NotificationTile extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
           decoration: BoxDecoration(
             color: cardColor,
             borderRadius: BorderRadius.circular(16),
@@ -69,47 +74,18 @@ class NotificationTile extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: isDark
-                    ? Colors.black.withValues(alpha: 0.24)
-                    : const Color(0xFF0F172A).withValues(alpha: 0.06),
-                blurRadius: 14,
-                offset: const Offset(0, 6),
+                    ? Colors.black.withValues(alpha: 0.28)
+                    : const Color(0xFF0F172A).withValues(alpha: 0.07),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (!isRead)
-                Container(
-                  width: 4,
-                  height: 56,
-                  margin: const EdgeInsets.only(right: 12, top: 2),
-                  decoration: BoxDecoration(
-                    color: accent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      accent.withValues(alpha: 0.18),
-                      accent.withValues(alpha: 0.08),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: accent.withValues(alpha: 0.28),
-                    width: 1,
-                  ),
-                ),
-                child: Icon(_icon, color: accent, size: 22),
-              ),
+              Icon(_icon, color: accent, size: 22),
               const SizedBox(width: 14),
 
               Expanded(
@@ -126,11 +102,10 @@ class NotificationTile extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (notification.message != null &&
-                        notification.message!.isNotEmpty) ...[
+                    if (message != null && message.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Text(
-                        notification.message!,
+                        message,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.72)
@@ -218,19 +193,23 @@ class NotificationTile extends StatelessWidget {
     final now = DateTime.now();
     final diff = now.difference(dateTime);
 
-    if (diff.inSeconds < 60) return 'Just now';
+    if (diff.inSeconds < 60) return 'notif_time_just_now'.tr;
     if (diff.inMinutes < 60) {
-      return '${diff.inMinutes}m ago';
+      return 'notif_time_minutes'.trParams({'count': '${diff.inMinutes}'});
     }
     if (diff.inHours < 24) {
-      return '${diff.inHours}h ago';
+      return 'notif_time_hours'.trParams({'count': '${diff.inHours}'});
     }
     if (diff.inDays < 7) {
-      return '${diff.inDays}d ago';
+      return 'notif_time_days'.trParams({'count': '${diff.inDays}'});
     }
     if (diff.inDays < 30) {
-      return '${(diff.inDays / 7).floor()}w ago';
+      return 'notif_time_weeks'.trParams({
+        'count': '${(diff.inDays / 7).floor()}',
+      });
     }
-    return '${(diff.inDays / 30).floor()}mo ago';
+    return 'notif_time_months'.trParams({
+      'count': '${(diff.inDays / 30).floor()}',
+    });
   }
 }

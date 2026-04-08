@@ -9,9 +9,11 @@ const Color kLowPriority = Color(0xFF2ED573);
 
 const Color kBgLight = Colors.white;
 const Color kBgDark = Color(0xFF0F0E17);
+const Color kSurfaceLight = Color(0xFFF5F3FF);
 const Color kCardDark = Color(0xFF1A1A2E);
 const Color kSurfaceDark = Color(0xFF16213E);
 const Color kTextDark = Color(0xFF1A1A2E);
+const Color kTextLight = Colors.white;
 const Color kTextMuted = Color(0xFF8E8EA0);
 
 // ── Padding ────────────────────────────────────────────

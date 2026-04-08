@@ -21,6 +21,33 @@ const Map<String, String> enUS = {
   'notification_decline': 'Decline',
   'notification_accept': 'Accept',
 
+  // ── Notification page ─────────────────────────────────────
+  'notif_mark_all': 'Read all',
+  'notif_mark_all_confirm_title': 'Read All Notifications',
+  'notif_mark_all_confirm_msg':
+      'All notifications will be marked as read. Continue?',
+  'notif_mark_all_confirm_btn': 'Read All',
+  'notif_filter_all': 'All',
+  'notif_filter_unread': 'Unread',
+  'notif_unread_count': '@count unread notification(s)',
+  'notif_all_caught_up': 'All caught up!',
+  'notif_all_caught_up_sub':
+      "You'll see task updates and reminders here.",
+  'notif_unread_empty': 'No unread notifications',
+  'notif_unread_empty_sub': "You've read all your notifications.",
+  'notif_error_title': 'Something went wrong',
+  'notif_retry': 'Try Again',
+  'notif_today': 'Today',
+  'notif_yesterday': 'Yesterday',
+  'notif_delete_title': 'Delete Notification',
+  'notif_delete_msg': 'Are you sure you want to delete this notification?',
+  'notif_time_just_now': 'Just now',
+  'notif_time_minutes': '@countm ago',
+  'notif_time_hours': '@counth ago',
+  'notif_time_days': '@countd ago',
+  'notif_time_weeks': '@countw ago',
+  'notif_time_months': '@countmo ago',
+
   'task_title': 'Tasks',
   'task_create_labels': 'Create Labels',
   'labels': 'Labels',

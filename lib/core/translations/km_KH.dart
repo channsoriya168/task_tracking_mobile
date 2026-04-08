@@ -21,6 +21,33 @@ const Map<String, String> kmKH = {
   'notification_decline': 'បដិសេធ',
   'notification_accept': 'ទទួល',
 
+  // ── Notification page ─────────────────────────────────────
+  'notif_mark_all': 'អានទាំងអស់',
+  'notif_mark_all_confirm_title': 'អានការជូនដំណឹងទាំងអស់',
+  'notif_mark_all_confirm_msg':
+      'ការជូនដំណឹងទាំងអស់នឹងត្រូវបានកំណត់ថាបានអាន។ បន្តទេ?',
+  'notif_mark_all_confirm_btn': 'អានទាំងអស់',
+  'notif_filter_all': 'ទាំងអស់',
+  'notif_filter_unread': 'មិនទាន់អាន',
+  'notif_unread_count': '@count ការជូនដំណឹងមិនទាន់អាន',
+  'notif_all_caught_up': 'បានអានទាំងអស់ហើយ!',
+  'notif_all_caught_up_sub':
+      'អ្នកនឹងឃើញការធ្វើបច្ចុប្បន្នភាពកិច្ចការ និងការរំលឹកនៅទីនេះ។',
+  'notif_unread_empty': 'គ្មានការជូនដំណឹងមិនទាន់អាន',
+  'notif_unread_empty_sub': 'អ្នកបានអានការជូនដំណឹងទាំងអស់ហើយ។',
+  'notif_error_title': 'មានបញ្ហាកើតឡើង',
+  'notif_retry': 'ព្យាយាមម្ដងទៀត',
+  'notif_today': 'ថ្ងៃនេះ',
+  'notif_yesterday': 'ម្សិលមិញ',
+  'notif_delete_title': 'លុបការជូនដំណឹង',
+  'notif_delete_msg': 'តើអ្នកប្រាកដថាចង់លុបការជូនដំណឹងនេះ?',
+  'notif_time_just_now': 'ឥឡូវនេះ',
+  'notif_time_minutes': '@count នាទីមុន',
+  'notif_time_hours': '@count ម៉ោងមុន',
+  'notif_time_days': '@count ថ្ងៃមុន',
+  'notif_time_weeks': '@count សប្តាហ៍មុន',
+  'notif_time_months': '@count ខែមុន',
+
   'task_title': 'កិច្ចការ',
   'task_create_labels': 'បង្កើតស្លាក',
   'labels': 'ស្លាក',

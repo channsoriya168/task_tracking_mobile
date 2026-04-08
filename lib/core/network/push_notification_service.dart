@@ -6,9 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/network/api_client.dart';
 import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/task/domain/repositories/task_item_repository.dart';
+import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/show_task_detail_sheet.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class PushNotificationService extends GetxService {
@@ -217,6 +222,56 @@ class PushNotificationService extends GetxService {
   }
 
   void _navigateFromNotification(Map<String, dynamic> data) {
-    Get.toNamed(AppRoutes.notifications);
+    final taskId = data['taskId'] as String?;
+    if (taskId != null && taskId.isNotEmpty) {
+      _openTaskDetail(taskId);
+    } else {
+      Get.toNamed(AppRoutes.notifications);
+    }
+  }
+
+  Future<void> _openTaskDetail(String taskId) async {
+    TaskItemRepository? repo;
+    try {
+      repo = Get.find<TaskItemRepository>();
+    } catch (_) {
+      Get.toNamed(AppRoutes.notifications);
+      return;
+    }
+
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    try {
+      final task = await repo.fetchTaskItemById(taskId);
+      if (Get.isDialogOpen ?? false) Get.back();
+
+      final context = Get.context;
+      if (context == null) return;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final role = Get.find<AuthController>().role;
+
+      if (role == UserRole.employee) {
+        if (Get.isRegistered<EmployeeTaskController>()) {
+          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId);
+        }
+        Get.toNamed(
+          AppRoutes.taskDetail,
+          arguments: {'task': task, 'isDark': isDark, 'readOnly': false},
+        );
+      } else {
+        await showTaskDetailSheet(
+          context,
+          isDark,
+          task,
+          fetchDetail: repo.fetchTaskItemById,
+        );
+      }
+    } catch (_) {
+      if (Get.isDialogOpen ?? false) Get.back();
+      Get.toNamed(AppRoutes.notifications);
+    }
   }
 }

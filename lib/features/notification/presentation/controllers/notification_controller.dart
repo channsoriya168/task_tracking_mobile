@@ -1,23 +1,45 @@
+import 'dart:async';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
 import 'package:task_tracking_mobile/features/notification/domain/repositories/notification_repository.dart';
+import 'package:task_tracking_mobile/features/task/domain/repositories/task_item_repository.dart';
+import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/show_task_detail_sheet.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class NotificationController extends GetxController {
   final NotificationRepository _repository;
 
   NotificationController(this._repository);
 
+  StreamSubscription<RemoteMessage>? _fcmSubscription;
+
   final RxList<NotificationEntity> notifications = <NotificationEntity>[].obs;
   final RxInt unreadCount = 0.obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxBool showUnreadOnly = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchNotifications();
     fetchUnreadCount();
+    _fcmSubscription = FirebaseMessaging.onMessage.listen((_) {
+      fetchNotifications();
+      fetchUnreadCount();
+    });
+  }
+
+  @override
+  void onClose() {
+    _fcmSubscription?.cancel();
+    super.onClose();
   }
 
   Future<void> fetchNotifications() async {
@@ -44,7 +66,6 @@ class NotificationController extends GetxController {
   Future<void> markAsRead(String notificationId) async {
     try {
       await _repository.markAsRead(notificationId);
-      // Optimistic update
       final idx = notifications.indexWhere((n) => n.id == notificationId);
       if (idx != -1) {
         final old = notifications[idx];
@@ -78,23 +99,25 @@ class NotificationController extends GetxController {
   Future<void> markAllAsRead() async {
     try {
       await _repository.markAllAsRead();
-      // Optimistic update
-      notifications.assignAll(
-        notifications.map(
-          (n) => NotificationEntity(
-            id: n.id,
-            recipientId: n.recipientId,
-            taskId: n.taskId,
-            type: n.type,
-            typeName: n.typeName,
-            title: n.title,
-            message: n.message,
-            isRead: true,
-            readAt: n.readAt ?? DateTime.now(),
-            createdAt: n.createdAt,
-          ),
-        ),
-      );
+      // .toList() materialises the mapped values before assignAll clears the
+      // underlying list — without it the lazy iterable maps over an empty list.
+      final updated = notifications
+          .map(
+            (n) => NotificationEntity(
+              id: n.id,
+              recipientId: n.recipientId,
+              taskId: n.taskId,
+              type: n.type,
+              typeName: n.typeName,
+              title: n.title,
+              message: n.message,
+              isRead: true,
+              readAt: n.readAt ?? DateTime.now(),
+              createdAt: n.createdAt,
+            ),
+          )
+          .toList();
+      notifications.assignAll(updated);
       unreadCount.value = 0;
     } catch (e) {
       Get.snackbar(
@@ -119,6 +142,57 @@ class NotificationController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to delete notification.',
+        backgroundColor: const Color(0xFFFF4757),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+
+  Future<void> openTaskDetail(String taskId) async {
+    TaskItemRepository? repo;
+    try {
+      repo = Get.find<TaskItemRepository>();
+    } catch (_) {
+      Get.toNamed(AppRoutes.notifications);
+      return;
+    }
+
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    try {
+      final task = await repo.fetchTaskItemById(taskId);
+      if (Get.isDialogOpen ?? false) Get.back();
+
+      final context = Get.context;
+      if (context == null) return;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final role = Get.find<AuthController>().role;
+
+      if (role == UserRole.employee) {
+        if (Get.isRegistered<EmployeeTaskController>()) {
+          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId);
+        }
+        Get.toNamed(
+          AppRoutes.taskDetail,
+          arguments: {'task': task, 'isDark': isDark, 'readOnly': false},
+        );
+      } else {
+        await showTaskDetailSheet(
+          context,
+          isDark,
+          task,
+          fetchDetail: repo.fetchTaskItemById,
+        );
+      }
+    } catch (_) {
+      if (Get.isDialogOpen ?? false) Get.back();
+      Get.snackbar(
+        'Error',
+        'Could not load task details.',
         backgroundColor: const Color(0xFFFF4757),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
