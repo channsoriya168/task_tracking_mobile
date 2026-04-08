@@ -2,143 +2,58 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
-import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
 
-enum _Filter { day, week, month }
-
-class TaskLineChartWidget extends StatefulWidget {
+class TaskLineChartWidget extends StatelessWidget {
   const TaskLineChartWidget({super.key, required this.isDark});
   final bool isDark;
 
   @override
-  State<TaskLineChartWidget> createState() => _TaskLineChartWidgetState();
-}
-
-class _TaskLineChartWidgetState extends State<TaskLineChartWidget> {
-  _Filter _filter = _Filter.day;
-
-  List<TaskItem> _applyFilter(List<TaskItem> tasks) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    return tasks.where((t) {
-      if (t.createdAt == null) return false;
-      final created = DateTime(
-        t.createdAt!.year,
-        t.createdAt!.month,
-        t.createdAt!.day,
-      );
-      return switch (_filter) {
-        _Filter.day => created == today,
-        _Filter.week =>
-          !created.isBefore(today.subtract(const Duration(days: 6))) &&
-              !created.isAfter(today),
-        _Filter.month =>
-          !created.isBefore(today.subtract(const Duration(days: 29))) &&
-              !created.isAfter(today),
-      };
-    }).toList();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isDark = widget.isDark;
     final textColor = isDark ? Colors.white : kTextDark;
     final labelColor = isDark ? Colors.grey[400]! : kTextMuted;
-    final chipBg = isDark
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.black.withValues(alpha: 0.04);
 
     return Obx(() {
       final taskCtrl = Get.find<TaskController>();
-      final filtered = _applyFilter(taskCtrl.tasks);
-      final pending = filtered
-          .where((t) => t.status.name.toLowerCase() == 'pending')
+      // allTasks is already server-filtered by the selected date — use it as-is.
+      final filtered = taskCtrl.allTasks;
+      int count(String name) => filtered
+          .where((t) => t.status.name.toLowerCase() == name.toLowerCase())
           .length;
-      final inProgress = filtered
-          .where((t) => t.status.name.toLowerCase() == 'inprogress')
-          .length;
-      final done = filtered
-          .where((t) => t.status.name.toLowerCase() == 'completed')
-          .length;
-      final fail = filtered
-          .where((t) => t.status.name.toLowerCase() == 'cancelled')
-          .length;
-      final total = pending + inProgress + done + fail;
+
+      final pending    = count('Pending');
+      final assigned   = count('Assigned');
+      final inProgress = count('InProgress');
+      final inReview   = count('InReview');
+      final completed  = count('Completed');
+      final cancelled  = count('Cancelled');
+      final onHold     = count('OnHold');
+
+      final total =
+          pending + assigned + inProgress + inReview + completed + cancelled + onHold;
 
       final data = [
-        _StatusData('Pending', pending, kMediumPriority),
+        _StatusData('Pending',     pending,    kMediumPriority),
+        _StatusData('Assigned',    assigned,   const Color(0xFF00BCD4)),
         _StatusData('In Progress', inProgress, kPrimary),
-        _StatusData('Complete', done, kLowPriority),
-        _StatusData('Fail', fail, kHighPriority),
+        _StatusData('In Review',   inReview,   const Color(0xFFAB47BC)),
+        _StatusData('Completed',   completed,  kLowPriority),
+        _StatusData('Cancelled',   cancelled,  kHighPriority),
+        _StatusData('On Hold',     onHold,     const Color(0xFF8E8EA0)),
       ];
       final chartData = data.where((d) => d.value > 0).toList();
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Title + Filter dropdown ──────────────────────
-          Row(
-            children: [
-              Text(
-                'Task Summary',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  color: chipBg,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.black.withValues(alpha: 0.08),
-                  ),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<_Filter>(
-                    value: _filter,
-                    isDense: true,
-                    icon: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 16,
-                      color: labelColor,
-                    ),
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                    dropdownColor: isDark
-                        ? const Color(0xFF2A2A3A)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    items: const [
-                      DropdownMenuItem(value: _Filter.day, child: Text('Day')),
-                      DropdownMenuItem(
-                        value: _Filter.week,
-                        child: Text('Week'),
-                      ),
-                      DropdownMenuItem(
-                        value: _Filter.month,
-                        child: Text('Month'),
-                      ),
-                    ],
-                    onChanged: (f) {
-                      if (f != null) setState(() => _filter = f);
-                    },
-                  ),
-                ),
-              ),
-            ],
+          // ── Title ───────────────────────────────────────
+          Text(
+            'Task Summary',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
 
           const SizedBox(height: 4),
