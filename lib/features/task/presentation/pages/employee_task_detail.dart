@@ -82,15 +82,18 @@ class EmployeeTaskDetailPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BuildBottomBarWidget(
-        hasActions: _hasActions,
-        isDark: isDark,
-        divColor: divColor,
-        ctrl: ctrl,
-        isPending: _isPending,
-        task: task,
-        context: context,
-      ),
+      bottomNavigationBar:
+          task.dueDate != null && task.dueDate!.isAfter(DateTime.now())
+          ? BuildBottomBarWidget(
+              hasActions: _hasActions,
+              isDark: isDark,
+              divColor: divColor,
+              ctrl: ctrl,
+              isPending: _isPending,
+              task: task,
+              context: context,
+            )
+          : null,
       body: RefreshIndicator(
         color: kPrimary,
         onRefresh: () => Future.wait([

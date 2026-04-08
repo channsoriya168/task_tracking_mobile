@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
+import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_member.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_member_controller.dart';
 
@@ -17,6 +18,7 @@ class TaskMembersSection extends StatelessWidget {
     required this.canEdit,
     required this.onAdd,
     required this.onRemove,
+    required this.task,
   });
 
   final EmployeeTaskMemberController ctrl;
@@ -26,6 +28,7 @@ class TaskMembersSection extends StatelessWidget {
   final bool canEdit;
   final void Function(List<TaskMember>) onAdd;
   final void Function(TaskMember) onRemove;
+  final TaskItem task;
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_progress.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_progress_controller.dart';
 
@@ -16,6 +17,7 @@ class TaskProgressSection extends StatelessWidget {
     required this.textColor,
     required this.mutedColor,
     required this.canEdit,
+    required this.task,
   });
 
   final TaskProgressController ctrl;
@@ -24,6 +26,7 @@ class TaskProgressSection extends StatelessWidget {
   final Color textColor;
   final Color mutedColor;
   final bool canEdit;
+  final TaskItem task;
 
   @override
   Widget build(BuildContext context) {
@@ -607,9 +610,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                 _StepBtn(
                   icon: Icons.remove_rounded,
                   isDark: isDark,
-                  onTap: () => setState(
-                    () => _pct = (_pct - 1).clamp(0, 100),
-                  ),
+                  onTap: () => setState(() => _pct = (_pct - 1).clamp(0, 100)),
                 ),
                 // Slider
                 Expanded(
@@ -642,9 +643,7 @@ class _ProgressSheetState extends State<_ProgressSheet> {
                 _StepBtn(
                   icon: Icons.add_rounded,
                   isDark: isDark,
-                  onTap: () => setState(
-                    () => _pct = (_pct + 1).clamp(0, 100),
-                  ),
+                  onTap: () => setState(() => _pct = (_pct + 1).clamp(0, 100)),
                 ),
               ],
             ),

@@ -163,17 +163,38 @@ class TabSectionWidget extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: switch (selectedTab) {
-                  0 => TaskMembersSection(
-                    ctrl: memberCtrl,
-                    isDark: isDark,
-                    textColor: textColor,
-                    mutedColor: mutedColor,
-                    canEdit: canManageMembers,
-                    onAdd: (members) =>
-                        memberCtrl.handleAddMember(task.id, members, isDark),
-                    onRemove: (member) =>
-                        memberCtrl.handleRemoveMember(task.id, member, isDark),
-                  ),
+                  0 =>
+                    task.dueDate != null &&
+                            task.dueDate!.isBefore(DateTime.now())
+                        ? Center(
+                            child: Text(
+                              'task_expired'.tr,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark
+                                    ? Colors.white54
+                                    : const Color(0xFF64748B),
+                              ),
+                            ),
+                          )
+                        : TaskMembersSection(
+                            ctrl: memberCtrl,
+                            isDark: isDark,
+                            textColor: textColor,
+                            mutedColor: mutedColor,
+                            canEdit: canManageMembers,
+                            onAdd: (members) => memberCtrl.handleAddMember(
+                              task.id,
+                              members,
+                              isDark,
+                            ),
+                            onRemove: (member) => memberCtrl.handleRemoveMember(
+                              task.id,
+                              member,
+                              isDark,
+                            ),
+                            task: task,
+                          ),
                   1 => TaskCommentsTab(
                     ctrl: commentCtrl,
                     isDark: isDark,
@@ -181,15 +202,31 @@ class TabSectionWidget extends StatelessWidget {
                     canComment:
                         task.assignedToId == ctrl.currentEmployeeId &&
                         !readOnly,
+                    task: task,
                   ),
-                  _ => TaskProgressSection(
-                    ctrl: progressCtrl,
-                    taskId: task.id,
-                    isDark: isDark,
-                    textColor: textColor,
-                    mutedColor: mutedColor,
-                    canEdit: canManageMembers,
-                  ),
+                  _ =>
+                    task.dueDate != null &&
+                            task.dueDate!.isBefore(DateTime.now())
+                        ? Center(
+                            child: Text(
+                              'This task cannot be edited (due date has passed)',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark
+                                    ? Colors.white54
+                                    : const Color(0xFF64748B),
+                              ),
+                            ),
+                          )
+                        : TaskProgressSection(
+                            ctrl: progressCtrl,
+                            taskId: task.id,
+                            isDark: isDark,
+                            textColor: textColor,
+                            mutedColor: mutedColor,
+                            canEdit: canManageMembers,
+                            task: task,
+                          ),
                 },
               ),
             ),

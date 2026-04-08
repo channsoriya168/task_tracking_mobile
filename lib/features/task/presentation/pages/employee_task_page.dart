@@ -28,45 +28,48 @@ class EmployeeTaskPage extends StatelessWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               // ── Title ──────────────────────────────────────────
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: kPagePaddingHorizontal,
-                  child: Text(
-                    'nav_tasks'.tr,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : kTextDark,
-                    ),
+              //appbar SliverToBoxAdapter(
+              SliverAppBar(
+                pinned: true,
+                backgroundColor: isDark ? kBgDark : kBgLight,
+                elevation: 0,
+                title: Text(
+                  'nav_tasks'.tr,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                ),
+                //Week calendar and Status filter bar
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(170),
+                  child: Column(
+                    children: [
+                      // ── Week calendar ──────────────────────────────────
+                      Padding(
+                        padding: kPageSectionPadding,
+                        child: Obx(
+                          () => WeekCalendarWidget(
+                            isDark: isDark,
+                            selectedDate: ctrl.taskSelectedDate.value,
+                            onDateSelected: ctrl.selectTaskDate,
+                          ),
+                        ),
+                      ),
+
+                      // ── Status filter bar ──────────────────────────────
+                      EmployeeTaskFilterBarWidget(
+                        isDark: isDark,
+                        filterStatus: ctrl.filterStatus,
+                        taskStatus: ctrl.taskStatus,
+                        allTasks: ctrl.myTasks,
+                        onSelectStatus: ctrl.selectStatus,
+                      ),
+                    ],
                   ),
                 ),
               ),
-
-              // ── Week calendar ──────────────────────────────────
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: kPageSectionPadding,
-                  child: Obx(
-                    () => WeekCalendarWidget(
-                      isDark: isDark,
-                      selectedDate: ctrl.taskSelectedDate.value,
-                      onDateSelected: ctrl.selectTaskDate,
-                    ),
-                  ),
-                ),
-              ),
-
-              // ── Status filter bar ──────────────────────────────
-              SliverToBoxAdapter(
-                child: EmployeeTaskFilterBarWidget(
-                  isDark: isDark,
-                  filterStatus: ctrl.filterStatus,
-                  taskStatus: ctrl.taskStatus,
-                  allTasks: ctrl.myTasks,
-                  onSelectStatus: ctrl.selectStatus,
-                ),
-              ),
-
               // ── Search bar ─────────────────────────────────────
               SliverToBoxAdapter(
                 child: SearchBarWidget(

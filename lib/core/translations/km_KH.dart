@@ -73,6 +73,7 @@ const Map<String, String> kmKH = {
   'task_empty': 'រកមិនឃើញកិច្ចការ',
   'task_no_due_date': 'គ្មានកាលកំណត់',
   'task_overdue': 'ហួសកំណត់',
+  'task_expired': 'មិនអាចកែសម្រួលកិច្ចការនេះបានទេ (រយៈពេលផុតកំណត់ហើយ)',
   'task_detail_title': 'លម្អិតភារកិច្ច',
   'task_detail_label': 'ស្លាក',
   'task_detail_group': 'ក្រុម',
@@ -145,6 +146,7 @@ const Map<String, String> kmKH = {
 
   // ── Task card ─────────────────────────────────────────────────
   'task_accept': 'ទទួលកិច្ចការ',
+  'task_new': 'ថ្មី',
   'task_due_today': 'ផុតកំណត់ថ្ងៃនេះ',
   'task_due_date': 'ផុតកំណត់ @date',
   'task_overdue_date': 'ហួសកំណត់: @date',

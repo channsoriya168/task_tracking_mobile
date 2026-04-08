@@ -45,9 +45,11 @@ class EmployeeTaskCard extends StatelessWidget {
       );
     }
 
+    final isNew =
+        task.createdAt != null &&
+        DateTime.now().difference(task.createdAt!).inHours < 24;
+
     final statusColor = task.status.color;
-    final cardBg = isDark ? kCardDark : Colors.white;
-    final shadowColor = Colors.black.withValues(alpha: isDark ? 0.3 : 0.08);
 
     // Due date label
     final now = DateTime.now();
@@ -89,11 +91,14 @@ class EmployeeTaskCard extends StatelessWidget {
       onTap: () => openDetail(readOnly: isAssignedToOther),
       child: Container(
         decoration: BoxDecoration(
-          color: cardBg,
+          color: isDark ? kCardDark : Colors.white,
+          // border: Border.all(color: kPrimary, width: 0.2),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: shadowColor,
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.25)
+                  : Colors.black.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -105,9 +110,6 @@ class EmployeeTaskCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ── Left accent strip ──────────────────────────
-                Container(width: 5, color: statusColor),
-
                 // ── Card content ───────────────────────────────
                 Expanded(
                   child: Padding(
@@ -115,7 +117,7 @@ class EmployeeTaskCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ── Title row + priority dot ──────────
+                        // ── Title row + new badge + priority dot ──
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -134,16 +136,28 @@ class EmployeeTaskCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 10,
-                              height: 10,
-                              margin: const EdgeInsets.only(top: 4),
-                              decoration: BoxDecoration(
-                                color: task.priority.color,
-                                shape: BoxShape.circle,
+                            if (isNew) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF22C55E),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  'task_new'.tr,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
 
@@ -213,7 +227,7 @@ class EmployeeTaskCard extends StatelessWidget {
                             const Spacer(),
 
                             // Action
-                            if (isPending)
+                            if (isPending && !isOverdue)
                               _AcceptButton(
                                 onTap: onAccept ?? () => openDetail(),
                               )

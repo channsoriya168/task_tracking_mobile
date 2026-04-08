@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_comment.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_comment_controller.dart';
@@ -13,12 +14,14 @@ class TaskCommentsTab extends StatelessWidget {
     required this.isDark,
     required this.taskId,
     required this.canComment,
+    required this.task,
   });
 
   final TaskCommentController ctrl;
   final bool isDark;
   final String taskId;
   final bool canComment;
+  final TaskItem task;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +75,8 @@ class TaskCommentsTab extends StatelessWidget {
               mutedColor: mutedColor,
               bubbleBg: bubbleBg,
             ),
-          if (canComment)
+          if (canComment &&
+              (task.dueDate == null || task.dueDate!.isAfter(DateTime.now())))
             _CommentInput(
               ctrl: ctrl,
               taskId: taskId,

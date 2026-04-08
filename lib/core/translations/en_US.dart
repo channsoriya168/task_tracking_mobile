@@ -31,8 +31,7 @@ const Map<String, String> enUS = {
   'notif_filter_unread': 'Unread',
   'notif_unread_count': '@count unread notification(s)',
   'notif_all_caught_up': 'All caught up!',
-  'notif_all_caught_up_sub':
-      "You'll see task updates and reminders here.",
+  'notif_all_caught_up_sub': "You'll see task updates and reminders here.",
   'notif_unread_empty': 'No unread notifications',
   'notif_unread_empty_sub': "You've read all your notifications.",
   'notif_error_title': 'Something went wrong',
@@ -74,6 +73,7 @@ const Map<String, String> enUS = {
   'task_empty': 'No tasks found',
   'task_no_due_date': 'No due date',
   'task_overdue': 'Overdue',
+  'task_expired': 'This task cannot be edited (due date has passed)',
   'task_detail_label': 'Label',
   'task_detail_group': 'Group',
   'task_detail_priority': 'Priority',
