@@ -38,7 +38,7 @@ class AdminDashboardMobilePage extends StatelessWidget {
                 backgroundColor: isDark ? kBgDark : kBgLight,
                 floating: true,
                 title: Text(
-                  'Dashboard',
+                  'nav_dashboard'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -112,7 +112,7 @@ class AdminDashboardMobilePage extends StatelessWidget {
                       onChanged: (v) => adminTaskCtrl.searchQuery.value = v,
                       style: TextStyle(fontSize: 14, color: textColor),
                       decoration: InputDecoration(
-                        hintText: 'Search tasks…',
+                        hintText: 'dashboard_search_hint'.tr,
                         hintStyle: TextStyle(fontSize: 14, color: mutedColor),
                         prefixIcon: Icon(
                           Icons.search_rounded,
@@ -137,7 +137,7 @@ class AdminDashboardMobilePage extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        'Tasks',
+                        'task_title'.tr,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -163,29 +163,6 @@ class AdminDashboardMobilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (adminTaskCtrl.taskSelectedDate.value != null) ...[
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () => adminTaskCtrl.selectTaskDate(null),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.close_rounded,
-                                size: 13,
-                                color: mutedColor,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                'Clear date',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: mutedColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -207,7 +184,7 @@ class AdminDashboardMobilePage extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'No tasks found',
+                              'task_empty'.tr,
                               style: TextStyle(fontSize: 14, color: mutedColor),
                             ),
                           ],

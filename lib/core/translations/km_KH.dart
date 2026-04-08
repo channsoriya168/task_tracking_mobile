@@ -145,6 +145,12 @@ const Map<String, String> kmKH = {
   'task_overdue_date': 'ហួសកំណត់: @date',
   'task_done_date': 'បានបញ្ចប់: @date',
 
+  // ── Dashboard ────────────────────────────────────────────────
+  'dashboard_search_hint': 'ស្វែងរកកិច្ចការ…',
+  'dashboard_task_summary': 'សង្ខេបកិច្ចការ',
+  'dashboard_total_tasks': 'កិច្ចការសរុប @count',
+  'dashboard_no_data': 'គ្មានទិន្នន័យ',
+
   // ── Home ─────────────────────────────────────────────────────
   'home_greeting_morning': 'អរុណសួស្តី',
   'home_greeting_afternoon': 'ទិវាសួស្តី',

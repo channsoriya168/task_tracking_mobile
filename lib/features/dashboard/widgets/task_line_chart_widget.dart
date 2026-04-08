@@ -33,13 +33,13 @@ class TaskLineChartWidget extends StatelessWidget {
           pending + assigned + inProgress + inReview + completed + cancelled + onHold;
 
       final data = [
-        _StatusData('Pending',     pending,    kMediumPriority),
-        _StatusData('Assigned',    assigned,   const Color(0xFF00BCD4)),
-        _StatusData('In Progress', inProgress, kPrimary),
-        _StatusData('In Review',   inReview,   const Color(0xFFAB47BC)),
-        _StatusData('Completed',   completed,  kLowPriority),
-        _StatusData('Cancelled',   cancelled,  kHighPriority),
-        _StatusData('On Hold',     onHold,     const Color(0xFF8E8EA0)),
+        _StatusData('status_pending',    pending,    kMediumPriority),
+        _StatusData('status_assigned',   assigned,   const Color(0xFF00BCD4)),
+        _StatusData('status_inprogress', inProgress, kPrimary),
+        _StatusData('status_inreview',   inReview,   const Color(0xFFAB47BC)),
+        _StatusData('status_completed',  completed,  kLowPriority),
+        _StatusData('status_cancelled',  cancelled,  kHighPriority),
+        _StatusData('status_onhold',     onHold,     const Color(0xFF8E8EA0)),
       ];
       final chartData = data.where((d) => d.value > 0).toList();
 
@@ -48,7 +48,7 @@ class TaskLineChartWidget extends StatelessWidget {
         children: [
           // ── Title ───────────────────────────────────────
           Text(
-            'Task Summary',
+            'dashboard_task_summary'.tr,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -58,7 +58,7 @@ class TaskLineChartWidget extends StatelessWidget {
 
           const SizedBox(height: 4),
           Text(
-            '$total tasks total',
+            'dashboard_total_tasks'.trParams({'count': '$total'}),
             style: TextStyle(fontSize: 12, color: labelColor),
           ),
           const SizedBox(height: 16),
@@ -72,7 +72,7 @@ class TaskLineChartWidget extends StatelessWidget {
                 child: total == 0
                     ? Center(
                         child: Text(
-                          'No data',
+                          'dashboard_no_data'.tr,
                           style: TextStyle(color: labelColor, fontSize: 13),
                         ),
                       )
@@ -92,7 +92,7 @@ class TaskLineChartWidget extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  'Tasks',
+                                  'task_title'.tr,
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: labelColor,
@@ -176,7 +176,7 @@ class _LegendItem extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              label,
+              label.tr,
               style: TextStyle(
                 fontSize: 12,
                 color: isDark ? Colors.white70 : kTextDark,
