@@ -124,7 +124,9 @@ class _WeekCalendarState extends State<WeekCalendarWidget> {
               final isToday = _isSameDay(day, today);
 
               return GestureDetector(
-                onTap: () => widget.onDateSelected(isSelected ? null : day),
+                onTap: () {
+                  if (!isSelected) widget.onDateSelected(day);
+                },
                 child: SizedBox(
                   width: 36,
                   height: 36,
