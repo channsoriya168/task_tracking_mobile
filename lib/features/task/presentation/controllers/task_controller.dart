@@ -79,7 +79,6 @@ class TaskController extends GetxController {
 
   int countByStatus(String statusName) {
     if (statusName == 'All') return allTasks.length;
-    developer.log('Counting tasks with status: $allTasks');
     return allTasks
         .where((t) => t.status.name.toLowerCase() == statusName.toLowerCase())
         .length;
