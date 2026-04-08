@@ -71,15 +71,6 @@ class NotificationTile extends StatelessWidget {
             color: cardColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: borderColor, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.28)
-                    : const Color(0xFF0F172A).withValues(alpha: 0.07),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,

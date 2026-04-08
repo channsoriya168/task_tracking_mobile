@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/label/presentation/pages/label_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
@@ -31,9 +32,7 @@ class TaskMobilePage extends StatelessWidget {
               children: [
                 Text(
                   'task_title'.tr,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  style: AppTextStyles.appBarTitle(
                     color: isDark ? Colors.white : kTextDark,
                   ),
                 ),

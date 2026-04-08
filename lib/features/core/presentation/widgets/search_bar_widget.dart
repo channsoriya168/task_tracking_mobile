@@ -20,7 +20,7 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: kPageSectionPadding,
+      padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 8),
       child: Container(
         height: 44,
         decoration: BoxDecoration(

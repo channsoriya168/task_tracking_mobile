@@ -1,6 +1,7 @@
 // ── Header ────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/pages/group_page.dart';
@@ -14,37 +15,26 @@ class EmployeeHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 16, 0),
+      padding: kPagePaddingHorizontal,
       child: Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'employee_title'.tr,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : kTextDark,
-                ),
-              ),
-              Obx(
-                () => Text(
-                  'employee_members'.trParams({
-                    'count': '${ctrl.employees.length}',
-                  }),
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? Colors.grey[500] : kTextMuted,
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            'employee_title'.tr,
+            style: AppTextStyles.appBarTitle(
+              color: isDark ? Colors.white : kTextDark,
+            ),
           ),
           const Spacer(),
           OutlinedButton.icon(
             onPressed: () => Get.to(() => const GroupPage()),
-            label: Text('employee_create_group_btn'.tr),
+            label: Text(
+              'employee_create_group_btn'.tr,
+              style: TextStyle(
+                fontFamily: Get.locale?.languageCode == 'km'
+                    ? 'Siemreap'
+                    : 'Kantumruy Pro',
+              ),
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: kPrimary,
               side: const BorderSide(color: kPrimary),

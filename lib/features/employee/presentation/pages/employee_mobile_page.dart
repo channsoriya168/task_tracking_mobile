@@ -22,7 +22,7 @@ class EmployeeMobilePage extends StatelessWidget {
       body: Column(
         children: [
           EmployeeHeaderWidget(isDark: isDark, ctrl: ctrl),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
           EmployeeFilterGroupChipsWidget(isDark: isDark, ctrl: ctrl),
           SearchBarWidget(
             isDark: isDark,

@@ -39,11 +39,13 @@ abstract class AppTextStyles {
   );
 
   static TextStyle appBarTitle({Color? color}) => _font(
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: FontWeight.bold,
     letterSpacing: -0.5,
     color: color,
   );
+  static TextStyle sectionHeader({Color? color}) =>
+      _font(fontSize: 16, fontWeight: FontWeight.w600, color: color);
 
   static TextStyle buttonLabel() =>
       _font(fontSize: 15, fontWeight: FontWeight.w600);

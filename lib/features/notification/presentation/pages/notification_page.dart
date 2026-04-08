@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/filter_pill_widget.dart';
@@ -37,11 +38,8 @@ class NotificationPage extends StatelessWidget {
                       children: [
                         Text(
                           'notification_title'.tr,
-                          style: TextStyle(
-                            color: isDark ? kTextLight : kTextDark,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.3,
+                          style: AppTextStyles.appBarTitle(
+                            color: isDark ? Colors.white : kTextDark,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -59,6 +57,9 @@ class NotificationPage extends StatelessWidget {
                                   : kTextDark.withValues(alpha: 0.70),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
+                              fontFamily: Get.locale?.languageCode == 'km'
+                                  ? 'Siemreap'
+                                  : 'Kantumruy Pro',
                             ),
                           );
                         }),
@@ -71,7 +72,8 @@ class NotificationPage extends StatelessWidget {
                         return const SizedBox.shrink();
                       }
                       return GestureDetector(
-                        onTap: () => MarkAllReadDialog.show(context, controller),
+                        onTap: () =>
+                            MarkAllReadDialog.show(context, controller),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
@@ -158,5 +160,4 @@ class NotificationPage extends StatelessWidget {
       ),
     );
   }
-
 }

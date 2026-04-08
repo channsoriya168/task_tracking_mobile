@@ -27,7 +27,7 @@ class TaskListWidget extends StatelessWidget {
       if (tasks.isEmpty) return TaskEmptyState(isDark: isDark);
 
       return ListView.builder(
-        padding: kPageBottomPadding,
+        padding: kPagePaddingHorizontal,
         itemCount: tasks.length,
         itemBuilder: (_, i) {
           final task = tasks[i];
