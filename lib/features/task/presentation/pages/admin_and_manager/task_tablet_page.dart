@@ -112,12 +112,13 @@ class _FilterPanel extends StatelessWidget {
             return ListView(
               padding: EdgeInsets.zero,
               children: statusItems.map((status) {
-                final label = status?.name ?? 'All';
-                final selected = current == label;
-                final count = counts[label] ?? 0;
+                final key = status?.name ?? 'All';
+                final displayLabel = status?.localizedName ?? 'status_all'.tr;
+                final selected = current == key;
+                final count = counts[key] ?? 0;
                 return _FilterTile(
                   isDark: isDark,
-                  label: label,
+                  label: displayLabel,
                   count: count,
                   selected: selected,
                   onTap: () => ctrl.selectStatus(status),

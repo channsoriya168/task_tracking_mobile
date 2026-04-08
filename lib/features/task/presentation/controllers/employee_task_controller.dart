@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
@@ -163,6 +164,37 @@ class EmployeeTaskController extends GetxController {
     memberCtrl.fetchGroupEmployees();
     commentCtrl.fetchTaskComments(taskId);
     progressCtrl.fetchTaskProgresses(taskId);
+  }
+
+  // ── Detail actions ───────────────────────────────────────────────────────
+
+  Future<void> handleAccept(TaskItem task) async {
+    if (transitionLoadingId.value != null) return;
+    transitionLoadingId.value = -1;
+    final success = await Get.find<EmployeeHomeController>().acceptTask(task);
+    transitionLoadingId.value = null;
+    if (success) {
+      Get.back();
+      AppSnackbar.success(
+        'snack_task_accepted'.tr,
+        'snack_task_accepted_msg'.trParams({'title': task.title}),
+      );
+      Get.find<NavigationController>().changePage(1);
+    }
+  }
+
+  Future<void> handleTransition(TaskItem task, TaskStatusLookup newStatus) async {
+    if (transitionLoadingId.value != null) return;
+    transitionLoadingId.value = newStatus.id;
+    final success = await transitionTask(task, newStatus);
+    transitionLoadingId.value = null;
+    if (success) {
+      Get.back();
+      AppSnackbar.update(
+        'snack_status_updated'.tr,
+        'snack_status_updated_msg'.trParams({'status': newStatus.localizedName}),
+      );
+    }
   }
 
   // ── Status transitions ───────────────────────────────────────────────────

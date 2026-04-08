@@ -26,7 +26,7 @@ class TaskDetailStatusPriorityRow extends StatelessWidget {
             border: Border.all(color: statusColor.withValues(alpha: 0.35)),
           ),
           child: Text(
-            task.status.name,
+            task.status.localizedName,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -45,7 +45,7 @@ class TaskDetailStatusPriorityRow extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          task.priority.name,
+          task.priority.localizedName,
           style: TextStyle(
             fontSize: 12,
             color: isDark ? Colors.white54 : kTextMuted,

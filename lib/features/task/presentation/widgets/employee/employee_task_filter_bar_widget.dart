@@ -53,13 +53,14 @@ class EmployeeTaskFilterBarWidget extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 8),
             itemBuilder: (_, i) {
               final status = statusItems[i];
-              final label = status?.name ?? 'All';
-              final isSelected = selected == label;
-              final count = counts[label] ?? 0;
+              final key = status?.name ?? 'All';
+              final displayLabel = status?.localizedName ?? 'status_all'.tr;
+              final isSelected = selected == key;
+              final count = counts[key] ?? 0;
 
               return FilterChipWidget(
                 isDark: isDark,
-                filter: label,
+                filter: displayLabel,
                 count: count,
                 selected: isSelected,
                 onTap: () => onSelectStatus(status),

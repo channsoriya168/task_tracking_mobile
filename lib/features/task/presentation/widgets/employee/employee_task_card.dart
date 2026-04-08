@@ -219,18 +219,18 @@ class EmployeeTaskCard extends StatelessWidget {
                               )
                             else if (isAssignedToOther)
                               _StatusChip(
-                                label: task.status.name,
+                                label: task.status.localizedName,
                                 color: statusColor,
                               )
                             else if (primaryTransition != null)
                               _StatusChip(
-                                label: task.status.name,
+                                label: task.status.localizedName,
                                 color: statusColor,
                                 onTap: () => openDetail(),
                               )
                             else if (!isPending && !isAssignedToOther)
                               _StatusChip(
-                                label: task.status.name,
+                                label: task.status.localizedName,
                                 color: statusColor,
                               ),
                           ],

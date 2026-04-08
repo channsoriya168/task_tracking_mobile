@@ -30,7 +30,7 @@ class EmployeeTaskPage extends StatelessWidget {
               // ── Title ──────────────────────────────────────────
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: kPagePadding,
+                  padding: kPagePaddingHorizontal,
                   child: Text(
                     'nav_tasks'.tr,
                     style: TextStyle(

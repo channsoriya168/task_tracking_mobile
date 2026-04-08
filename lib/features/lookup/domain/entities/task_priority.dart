@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/features/lookup/domain/entities/lookup_item.dart';
 
 class TaskPriority extends LookupItem {
   const TaskPriority({required super.id, required super.name});
+
+  String get localizedName => switch (name.toLowerCase()) {
+    'critical' => 'priority_critical'.tr,
+    'high'     => 'priority_high'.tr,
+    'medium'   => 'priority_medium'.tr,
+    'low'      => 'priority_low'.tr,
+    _          => name,
+  };
 
   @override
   bool operator ==(Object other) => other is TaskPriority && other.id == id;

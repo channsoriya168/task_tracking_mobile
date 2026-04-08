@@ -25,7 +25,7 @@ class TaskCardFooterRow extends StatelessWidget {
       children: [
         // ── Status badge ────────────────────────────────────────
         StatusBadgeWidget(
-          label: task.status.name,
+          label: task.status.localizedName,
           color: statusColor,
           isDark: isDark,
         ),
@@ -42,7 +42,7 @@ class TaskCardFooterRow extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          task.priority.name,
+          task.priority.localizedName,
           style: TextStyle(
             fontSize: 11,
             color: mutedColor,
