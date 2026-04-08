@@ -151,6 +151,12 @@ const Map<String, String> enUS = {
   'task_overdue_date': 'Overdue: @date',
   'task_done_date': 'Done: @date',
 
+  // ── Dashboard ────────────────────────────────────────────────
+  'dashboard_search_hint': 'Search tasks…',
+  'dashboard_task_summary': 'Task Summary',
+  'dashboard_total_tasks': '@count tasks total',
+  'dashboard_no_data': 'No data',
+
   // ── Home ─────────────────────────────────────────────────────
   'home_greeting_morning': 'Good morning',
   'home_greeting_afternoon': 'Good afternoon',
