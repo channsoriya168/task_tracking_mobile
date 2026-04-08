@@ -93,7 +93,36 @@ class NotificationTile extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (message != null && message.isNotEmpty) ...[
+                    if (notification.type == NotificationType.taskCommented &&
+                        message != null &&
+                        message.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: isDark ? 0.12 : 0.07),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border(
+                            left: BorderSide(color: accent, width: 3),
+                          ),
+                        ),
+                        child: Text(
+                          message,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.80)
+                                : const Color(0xFF334155),
+                            height: 1.4,
+                            fontStyle: FontStyle.italic,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ] else if (message != null && message.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Text(
                         message,
@@ -107,7 +136,16 @@ class NotificationTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: _TypeBadge(
+                        type: notification.type,
+                        accent: accent,
+                        isDark: isDark,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Icon(
@@ -202,5 +240,64 @@ class NotificationTile extends StatelessWidget {
     return 'notif_time_months'.trParams({
       'count': '${(diff.inDays / 30).floor()}',
     });
+  }
+}
+
+class _TypeBadge extends StatelessWidget {
+  final NotificationType type;
+  final Color accent;
+  final bool isDark;
+
+  const _TypeBadge({
+    required this.type,
+    required this.accent,
+    required this.isDark,
+  });
+
+  (IconData, String) get _label {
+    switch (type) {
+      case NotificationType.taskCommented:
+        return (Icons.comment_rounded, 'notif_type_comment'.tr);
+      case NotificationType.taskStatusChanged:
+        return (Icons.swap_horiz_rounded, 'notif_type_status_changed'.tr);
+      case NotificationType.taskDueDateApproaching:
+        return (Icons.warning_amber_rounded, 'notif_type_due_soon'.tr);
+      case NotificationType.taskAddedToGroup:
+        return (Icons.group_add_rounded, 'notif_type_added_to_team'.tr);
+      case NotificationType.taskCompleted:
+        return (Icons.check_circle_rounded, 'notif_type_completed'.tr);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, label) = _label;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: isDark ? 0.15 : 0.10),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: accent.withValues(alpha: isDark ? 0.35 : 0.30),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: accent),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: accent,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

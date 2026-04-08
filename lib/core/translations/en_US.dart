@@ -47,6 +47,11 @@ const Map<String, String> enUS = {
   'notif_time_days': '@countd ago',
   'notif_time_weeks': '@countw ago',
   'notif_time_months': '@countmo ago',
+  'notif_type_comment': 'Comment',
+  'notif_type_status_changed': 'Status Changed',
+  'notif_type_due_soon': 'Due Soon',
+  'notif_type_added_to_team': 'Added to Team',
+  'notif_type_completed': 'Completed',
 
   'task_title': 'Tasks',
   'task_create_labels': 'Create Labels',
@@ -140,6 +145,7 @@ const Map<String, String> enUS = {
 
   // ── Task card ─────────────────────────────────────────────────
   'task_accept': 'ACCEPT TASK',
+  'task_new': 'NEW',
   'task_due_today': 'Due Today',
   'task_due_date': 'Due @date',
   'task_overdue_date': 'Overdue: @date',

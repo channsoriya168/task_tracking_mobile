@@ -47,6 +47,11 @@ const Map<String, String> kmKH = {
   'notif_time_days': '@count ថ្ងៃមុន',
   'notif_time_weeks': '@count សប្តាហ៍មុន',
   'notif_time_months': '@count ខែមុន',
+  'notif_type_comment': 'មតិយោបល់',
+  'notif_type_status_changed': 'ស្ថានភាពផ្លាស់ប្ដូរ',
+  'notif_type_due_soon': 'ជិតដល់ថ្ងៃកំណត់',
+  'notif_type_added_to_team': 'បានបន្ថែមក្នុងក្រុម',
+  'notif_type_completed': 'បានបញ្ចប់',
 
   'task_title': 'កិច្ចការ',
   'task_create_labels': 'បង្កើតស្លាក',

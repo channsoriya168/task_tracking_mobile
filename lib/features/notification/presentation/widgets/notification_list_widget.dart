@@ -58,7 +58,11 @@ class NotificationListWidget extends StatelessWidget {
                 }
                 final taskId = notification.taskId;
                 if (taskId != null && taskId.isNotEmpty) {
-                  await controller.openTaskDetail(taskId);
+                  final initialTab = notification.type ==
+                      NotificationType.taskCommented
+                      ? 1
+                      : 0;
+                  await controller.openTaskDetail(taskId, initialTab: initialTab);
                 }
               },
               onDismissed: () {

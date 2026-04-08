@@ -36,31 +36,35 @@ class TaskTabletPage extends StatelessWidget {
 
           // ── Right Panel: Calendar + Task List ─────────────
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ManagerTaskHeaderWidget(isDark: isDark, ctrl: ctrl),
+            child: RefreshIndicator(
+              color: kPrimary,
+              onRefresh: () => ctrl.fetchTasks(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ManagerTaskHeaderWidget(isDark: isDark, ctrl: ctrl),
 
-                // Week calendar
-                Padding(
-                  padding: kPageSectionPadding,
-                  child: Obx(
-                    () => WeekCalendarWidget(
-                      isDark: isDark,
-                      selectedDate: ctrl.taskSelectedDate.value,
-                      onDateSelected: ctrl.selectTaskDate,
+                  // Week calendar
+                  Padding(
+                    padding: kPageSectionPadding,
+                    child: Obx(
+                      () => WeekCalendarWidget(
+                        isDark: isDark,
+                        selectedDate: ctrl.taskSelectedDate.value,
+                        onDateSelected: ctrl.selectTaskDate,
+                      ),
                     ),
                   ),
-                ),
 
-                SearchBarWidget(
-                  isDark: isDark,
-                  onChanged: (value) => ctrl.searchQuery.value = value,
-                ),
-                Expanded(
-                  child: TaskListWidget(isDark: isDark, taskController: ctrl),
-                ),
-              ],
+                  SearchBarWidget(
+                    isDark: isDark,
+                    onChanged: (value) => ctrl.searchQuery.value = value,
+                  ),
+                  Expanded(
+                    child: TaskListWidget(isDark: isDark, taskController: ctrl),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

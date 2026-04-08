@@ -64,35 +64,31 @@ class NotificationController extends GetxController {
   }
 
   Future<void> markAsRead(String notificationId) async {
+    // Update locally first for instant UI feedback
+    final idx = notifications.indexWhere((n) => n.id == notificationId);
+    if (idx != -1) {
+      final old = notifications[idx];
+      if (old.isRead) return; // already read — nothing to do
+      notifications[idx] = NotificationEntity(
+        id: old.id,
+        recipientId: old.recipientId,
+        taskId: old.taskId,
+        type: old.type,
+        typeName: old.typeName,
+        title: old.title,
+        message: old.message,
+        isRead: true,
+        readAt: DateTime.now(),
+        createdAt: old.createdAt,
+      );
+      unreadCount.value = (unreadCount.value - 1).clamp(0, 999);
+    }
+
+    // Sync with backend (fire-and-forget; no revert on failure)
     try {
       await _repository.markAsRead(notificationId);
-      final idx = notifications.indexWhere((n) => n.id == notificationId);
-      if (idx != -1) {
-        final old = notifications[idx];
-        if (!old.isRead) {
-          notifications[idx] = NotificationEntity(
-            id: old.id,
-            recipientId: old.recipientId,
-            taskId: old.taskId,
-            type: old.type,
-            typeName: old.typeName,
-            title: old.title,
-            message: old.message,
-            isRead: true,
-            readAt: DateTime.now(),
-            createdAt: old.createdAt,
-          );
-          unreadCount.value = (unreadCount.value - 1).clamp(0, 999);
-        }
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to mark notification as read.',
-        backgroundColor: const Color(0xFFFF4757),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+    } catch (_) {
+      // silently ignore — local state already updated
     }
   }
 
@@ -149,7 +145,7 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future<void> openTaskDetail(String taskId) async {
+  Future<void> openTaskDetail(String taskId, {int initialTab = 0}) async {
     TaskItemRepository? repo;
     try {
       repo = Get.find<TaskItemRepository>();
@@ -174,11 +170,16 @@ class NotificationController extends GetxController {
 
       if (role == UserRole.employee) {
         if (Get.isRegistered<EmployeeTaskController>()) {
-          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId);
+          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId, initialTab: initialTab);
         }
         Get.toNamed(
           AppRoutes.taskDetail,
-          arguments: {'task': task, 'isDark': isDark, 'readOnly': false},
+          arguments: {
+            'task': task,
+            'isDark': isDark,
+            'readOnly': false,
+            'initialTab': initialTab,
+          },
         );
       } else {
         await showTaskDetailSheet(

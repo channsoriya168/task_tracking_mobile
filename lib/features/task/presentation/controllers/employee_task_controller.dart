@@ -150,9 +150,9 @@ class EmployeeTaskController extends GetxController {
 
   // ── Detail sheet ─────────────────────────────────────────────────────────
 
-  void prepareTaskDetail(String taskId) {
+  void prepareTaskDetail(String taskId, {int initialTab = 0}) {
     actionLoading.value = false;
-    selectedTab.value = 0;
+    selectedTab.value = initialTab;
     transitionLoadingId.value = null;
     final memberCtrl = Get.find<EmployeeTaskMemberController>();
     final commentCtrl = Get.find<TaskCommentController>();

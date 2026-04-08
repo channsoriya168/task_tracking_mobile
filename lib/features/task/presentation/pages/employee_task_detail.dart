@@ -91,33 +91,41 @@ class EmployeeTaskDetailPage extends StatelessWidget {
         task: task,
         context: context,
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-        children: [
-          // ── Header card ───────────────────────────────────────
-          HeaderCardWidget(task: task, isDark: isDark),
+      body: RefreshIndicator(
+        color: kPrimary,
+        onRefresh: () => Future.wait([
+          memberCtrl.fetchTaskMembers(task.id),
+          commentCtrl.fetchTaskComments(task.id),
+          progressCtrl.fetchTaskProgresses(task.id),
+        ]),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          children: [
+            // ── Header card ───────────────────────────────────────
+            HeaderCardWidget(task: task, isDark: isDark),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // ── Info card ─────────────────────────────────────────
-          _buildInfoCard(),
+            // ── Info card ─────────────────────────────────────────
+            _buildInfoCard(),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // ── Tabs ──────────────────────────────────────────────
-          TabSectionWidget(
-            readOnly: readOnly,
-            task: task,
-            ctrl: ctrl,
-            memberCtrl: memberCtrl,
-            commentCtrl: commentCtrl,
-            progressCtrl: progressCtrl,
-            isDark: isDark,
-            tabs: _tabs,
-            textColor: textColor,
-            mutedColor: mutedColor,
-          ),
-        ],
+            // ── Tabs ──────────────────────────────────────────────
+            TabSectionWidget(
+              readOnly: readOnly,
+              task: task,
+              ctrl: ctrl,
+              memberCtrl: memberCtrl,
+              commentCtrl: commentCtrl,
+              progressCtrl: progressCtrl,
+              isDark: isDark,
+              tabs: _tabs,
+              textColor: textColor,
+              mutedColor: mutedColor,
+            ),
+          ],
+        ),
       ),
     );
   }

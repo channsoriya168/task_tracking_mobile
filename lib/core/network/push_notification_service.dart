@@ -11,6 +11,8 @@ import 'package:task_tracking_mobile/core/network/api_client.dart';
 import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
+import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/task/domain/repositories/task_item_repository.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/show_task_detail_sheet.dart';
@@ -219,14 +221,39 @@ class PushNotificationService extends GetxService {
 
   void _navigateFromNotification(Map<String, dynamic> data) {
     final taskId = data['taskId'] as String?;
-    if (taskId != null && taskId.isNotEmpty) {
-      _openTaskDetail(taskId);
-    } else {
+    final notificationId = (data['notificationId'] ?? data['id']) as String?;
+
+    if (taskId == null || taskId.isEmpty) {
       Get.toNamed(AppRoutes.notifications);
+      return;
     }
+
+    // 1. Try reading type directly from FCM data payload
+    final typeValue = int.tryParse(data['type']?.toString() ?? '');
+    int initialTab = typeValue == NotificationType.taskCommented.value ? 1 : 0;
+
+    // 2. Fallback: look up the cached notification when type isn't in FCM data
+    if (typeValue == null &&
+        notificationId != null &&
+        Get.isRegistered<NotificationController>()) {
+      try {
+        final cached = Get.find<NotificationController>()
+            .notifications
+            .firstWhere((n) => n.id == notificationId);
+        if (cached.type == NotificationType.taskCommented) initialTab = 1;
+      } catch (_) {
+        // not in local cache — keep initialTab = 0
+      }
+    }
+
+    _openTaskDetail(taskId, initialTab: initialTab, notificationId: notificationId);
   }
 
-  Future<void> _openTaskDetail(String taskId) async {
+  Future<void> _openTaskDetail(
+    String taskId, {
+    int initialTab = 0,
+    String? notificationId,
+  }) async {
     TaskItemRepository? repo;
     try {
       repo = Get.find<TaskItemRepository>();
@@ -249,13 +276,23 @@ class PushNotificationService extends GetxService {
       final isDark = Theme.of(context).brightness == Brightness.dark;
       final role = Get.find<AuthController>().role;
 
+      if (notificationId != null &&
+          Get.isRegistered<NotificationController>()) {
+        Get.find<NotificationController>().markAsRead(notificationId);
+      }
+
       if (role == UserRole.employee) {
         if (Get.isRegistered<EmployeeTaskController>()) {
-          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId);
+          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId, initialTab: initialTab);
         }
         Get.toNamed(
           AppRoutes.taskDetail,
-          arguments: {'task': task, 'isDark': isDark, 'readOnly': false},
+          arguments: {
+            'task': task,
+            'isDark': isDark,
+            'readOnly': false,
+            'initialTab': initialTab,
+          },
         );
       } else {
         await showTaskDetailSheet(
