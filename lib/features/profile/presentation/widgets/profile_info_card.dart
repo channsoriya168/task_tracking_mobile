@@ -44,12 +44,11 @@ class ProfileInfoCard extends StatelessWidget {
       isDark: isDark,
       child: Column(
         children: List.generate(items.length, (i) {
-          final (icon, label, value) = items[i];
+          final (icon, _, value) = items[i];
           return ProfileInfoRow(
             isDark: isDark,
             icon: icon,
             iconColor: kPrimary,
-            label: label,
             value: value,
             showDivider: i < items.length - 1,
           );

@@ -151,7 +151,7 @@ class ProfileSettingsCard extends StatelessWidget {
   }
 }
 
-/// Circular icon container for settings rows.
+/// Icon for settings rows - no background.
 class _SettingIcon extends StatelessWidget {
   const _SettingIcon({required this.icon, required this.isDark});
   final IconData icon;
@@ -159,14 +159,10 @@ class _SettingIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: kPrimary.withAlpha(isDark ? 35 : 20),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Icon(icon, color: kPrimary, size: 18),
+    return Icon(
+      icon,
+      color: kPrimary,
+      size: 20,
     );
   }
 }
