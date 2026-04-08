@@ -16,7 +16,6 @@ import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_it
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/dashboard/controllers/manager_dashboard_controller.dart';
-import 'dart:developer' as developer;
 
 class TaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
@@ -136,13 +135,6 @@ class TaskController extends GetxController {
         SelectedDate: taskSelectedDate.value,
       );
       allTasks.assignAll(result);
-      developer.log('All tasks (${result.length}): ${result.map((t) => {
-        'id': t.id,
-        'title': t.title,
-        'status': t.status.name,
-        'priority': t.priority.name,
-        'dueDate': t.dueDate?.toIso8601String(),
-      }).toList()}', name: 'TaskController');
       _applyStatusFilter();
     } catch (e) {
       errorMessage.value = e.toString();
