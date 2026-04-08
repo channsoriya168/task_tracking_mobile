@@ -17,14 +17,6 @@ class SectionTitleWidget extends StatelessWidget {
         Container(
           width: 4,
           height: 18,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF6C63FF), Color(0xFF9B8FFF)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-            borderRadius: BorderRadius.circular(2),
-          ),
         ),
         const SizedBox(width: 10),
         Text(

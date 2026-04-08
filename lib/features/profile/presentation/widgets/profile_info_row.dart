@@ -7,7 +7,6 @@ class ProfileInfoRow extends StatelessWidget {
     required this.isDark,
     required this.icon,
     required this.iconColor,
-    required this.label,
     required this.value,
     required this.showDivider,
   });
@@ -15,7 +14,6 @@ class ProfileInfoRow extends StatelessWidget {
   final bool isDark;
   final IconData icon;
   final Color iconColor;
-  final String label;
   final String value;
   final bool showDivider;
 
@@ -30,10 +28,6 @@ class ProfileInfoRow extends StatelessWidget {
               Container(
                 width: 36,
                 height: 36,
-                decoration: BoxDecoration(
-                  color: iconColor.withAlpha(isDark ? 40 : 22),
-                  borderRadius: BorderRadius.circular(10),
-                ),
                 child: Icon(icon, size: 18, color: iconColor),
               ),
               const SizedBox(width: 14),
@@ -41,16 +35,6 @@ class ProfileInfoRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isDark ? Colors.grey[500] : kTextMuted,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
                     Text(
                       value,
                       style: TextStyle(
