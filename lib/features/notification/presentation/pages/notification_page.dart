@@ -44,7 +44,9 @@ class NotificationPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Obx(() {
-                          final count = controller.unreadCount.value;
+                          final count = controller.showUnreadOnly.value
+                              ? controller.unreadCount.value
+                              : controller.notifications.length;
                           return Text(
                             count == 0
                                 ? 'notif_all_caught_up'.tr
