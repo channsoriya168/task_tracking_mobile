@@ -62,7 +62,7 @@ class EmployeeHomePage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
-                                  letterSpacing: -0.5,
+                                  letterSpacing: kLs(-0.5),
                                   color: isDark ? Colors.white : kTextDark,
                                 ),
                               ),

@@ -68,7 +68,7 @@ class HeaderCardWidget extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     color: textColor,
                     height: 1.3,
-                    letterSpacing: -0.3,
+                    letterSpacing: kLs(-0.3),
                   ),
                 ),
                 // ── Description ──

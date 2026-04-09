@@ -158,7 +158,7 @@ class EmployeeCardWidget extends StatelessWidget {
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: isDark ? Colors.white : kTextDark,
-                            letterSpacing: 0.1,
+                            letterSpacing: kLs(0.1),
                           ),
                         ),
                       ),

@@ -73,7 +73,7 @@ class LanguageSwitcherPill extends StatelessWidget {
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white : kTextDark,
-                    letterSpacing: 0.3,
+                    letterSpacing: kLs(0.3),
                   ),
                 ),
               ),
@@ -216,7 +216,7 @@ class _FlagSegment extends StatelessWidget {
                 color: isSelected
                     ? Colors.white
                     : (isDark ? Colors.white38 : kTextMuted),
-                letterSpacing: 0.2,
+                letterSpacing: kLs(0.2),
               ),
             ),
           ],

@@ -21,47 +21,47 @@ class ProfilePage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final authCtrl = Get.find<AuthController>();
     final profileCtrl = Get.find<ProfileController>();
+    final bg = isDark ? kBgDark : Colors.white;
 
     return SafeArea(
       child: ColoredBox(
-        color: isDark ? kBgDark : kBgLight,
+        color: bg,
         child: RefreshIndicator(
-          onRefresh: () async {
-            await profileCtrl.fetchProfile();
-          },
+          onRefresh: () async => profileCtrl.fetchProfile(),
+          color: kPrimary,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              // ── Title ─────────────────────────────────────────────
+              // ── Page title ──────────────────────────────────────
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
                 sliver: SliverToBoxAdapter(
                   child: Text(
                     'profile_title'.tr,
                     style: TextStyle(
                       fontSize: 26,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : kTextDark,
-                      letterSpacing: -0.3,
+                      letterSpacing: kLs(-0.6),
                     ),
                   ),
                 ),
               ),
 
-              // ── Profile header ─────────────────────────────────────
+              // ── Profile header ─ padded, flat on bg ────────────
               SliverPadding(
-                padding: kPagePadding,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 sliver: SliverToBoxAdapter(
                   child: Obx(() {
                     final auth = authCtrl.currentAuth.value;
                     final profile = profileCtrl.profile.value;
-                    final name = profile?.fullName ?? auth?.fullName ?? '';
+                    final name =
+                        profile?.fullName ?? auth?.fullName ?? '';
                     final role =
                         profile?.primaryRole ?? auth?.primaryRole ?? '';
                     final email = profile?.email ?? '';
-                    final avatarLetter = name.isNotEmpty
-                        ? name[0].toUpperCase()
-                        : '?';
+                    final avatarLetter =
+                        name.isNotEmpty ? name[0].toUpperCase() : '?';
                     return ProfileHeader(
                       isDark: isDark,
                       name: name,
@@ -77,39 +77,67 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              // ── My Groups ──────────────────────────────────────────
-              if (profileCtrl.profile.value?.groups.isNotEmpty ?? false)
-                SliverPadding(
-                  padding: kPageSectionLargePadding,
-                  sliver: SliverToBoxAdapter(
-                    child: SectionTitleWidget(
-                      label: 'profile_my_groups'.tr,
-                      isDark: isDark,
-                    ),
+              // ── Full-width divider after profile ────────────────
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Divider(
+                    height: 1,
+                    color: isDark
+                        ? Colors.white.withAlpha(12)
+                        : const Color(0xFFD1D1D6),
                   ),
                 ),
-              if (profileCtrl.profile.value?.groups.isNotEmpty ?? false)
-                SliverPadding(
-                  padding: kPageSectionPadding,
-                  sliver: SliverToBoxAdapter(
-                    child: Obx(() {
-                      final groups = profileCtrl.profile.value?.groups ?? [];
-                      if (groups.isEmpty) {
-                        return ProfileGroupEmptyState(isDark: isDark);
-                      }
-                      return Column(
-                        children: groups.map((g) {
-                          final map = g as Map<String, dynamic>? ?? {};
-                          return ProfileGroupCard(isDark: isDark, group: map);
-                        }).toList(),
-                      );
-                    }),
-                  ),
-                ),
+              ),
 
-              // ── Personal Info ──────────────────────────────────────
+              // ── My Groups — label (padded) + section (full-width)
               SliverPadding(
-                padding: kPageSectionLargePadding,
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                sliver: SliverToBoxAdapter(
+                  child: SectionTitleWidget(
+                    label: 'profile_my_groups'.tr,
+                    isDark: isDark,
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Obx(() {
+                  final groups = profileCtrl.profile.value?.groups ?? [];
+                  if (groups.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ProfileGroupEmptyState(isDark: isDark),
+                    );
+                  }
+                  return Container(
+                    color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
+                    child: Column(
+                      children: List.generate(groups.length, (i) {
+                        final map =
+                            groups[i] as Map<String, dynamic>? ?? {};
+                        return Column(
+                          children: [
+                            ProfileGroupCard(isDark: isDark, group: map),
+                            if (i < groups.length - 1)
+                              Divider(
+                                height: 1,
+                                indent: 0,
+                                endIndent: 0,
+                                color: isDark
+                                    ? Colors.white.withAlpha(10)
+                                    : Colors.grey.shade200,
+                              ),
+                          ],
+                        );
+                      }),
+                    ),
+                  );
+                }),
+              ),
+
+              // ── Personal Info ───────────────────────────────────
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                 sliver: SliverToBoxAdapter(
                   child: SectionTitleWidget(
                     label: 'profile_personal_info'.tr,
@@ -117,26 +145,25 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: kPageSectionPadding,
-                sliver: SliverToBoxAdapter(
-                  child: Obx(() {
-                    final auth = authCtrl.currentAuth.value;
-                    final profile = profileCtrl.profile.value;
-                    return ProfileInfoCard(
-                      isDark: isDark,
-                      email: profile?.email ?? '',
-                      phone: profile?.phoneNumber ?? auth?.phoneNumber ?? '',
-                      placeOfBirth: profile?.placeOfBirth ?? '',
-                      dateOfBirth: profile?.dateOfBirth,
-                    );
-                  }),
-                ),
+              // full-width white section
+              SliverToBoxAdapter(
+                child: Obx(() {
+                  final auth = authCtrl.currentAuth.value;
+                  final profile = profileCtrl.profile.value;
+                  return ProfileInfoCard(
+                    isDark: isDark,
+                    email: profile?.email ?? '',
+                    phone:
+                        profile?.phoneNumber ?? auth?.phoneNumber ?? '',
+                    placeOfBirth: profile?.placeOfBirth ?? '',
+                    dateOfBirth: profile?.dateOfBirth,
+                  );
+                }),
               ),
 
-              // ── Settings ───────────────────────────────────────────
+              // ── Settings ────────────────────────────────────────
               SliverPadding(
-                padding: kPageSectionLargePadding,
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                 sliver: SliverToBoxAdapter(
                   child: SectionTitleWidget(
                     label: 'profile_settings'.tr,
@@ -144,16 +171,13 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: kPageSectionPadding,
-                sliver: SliverToBoxAdapter(
-                  child: ProfileSettingsCard(isDark: isDark),
-                ),
+              SliverToBoxAdapter(
+                child: ProfileSettingsCard(isDark: isDark),
               ),
 
-              // ── Account ────────────────────────────────────────────
+              // ── Account ─────────────────────────────────────────
               SliverPadding(
-                padding: kPageSectionLargePadding,
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                 sliver: SliverToBoxAdapter(
                   child: SectionTitleWidget(
                     label: 'profile_account'.tr,
@@ -161,11 +185,8 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: kPageSectionPadding,
-                sliver: SliverToBoxAdapter(
-                  child: ProfileActionCard(isDark: isDark),
-                ),
+              SliverToBoxAdapter(
+                child: ProfileActionCard(isDark: isDark),
               ),
 
               const SliverPadding(padding: EdgeInsets.only(bottom: 40)),

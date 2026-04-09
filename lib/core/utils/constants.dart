@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+// ── Letter-spacing helper ────────────────────────────────
+// Returns 0 for Khmer locale — Khmer script breaks visually with any spacing.
+double kLs(double spacing) =>
+    Get.locale?.languageCode == 'km' ? 0.0 : spacing;
 
 // ── Colors ──────────────────────────────────────────────
 const Color kPrimary = Color(0xFF6C63FF);

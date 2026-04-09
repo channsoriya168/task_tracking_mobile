@@ -46,7 +46,7 @@ class NotificationTile extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
@@ -54,7 +54,7 @@ class NotificationTile extends StatelessWidget {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 0.2,
+                letterSpacing: kLs(0.2),
               ),
             ),
             SizedBox(width: 8),
@@ -293,7 +293,7 @@ class _TypeBadge extends StatelessWidget {
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: accent,
-              letterSpacing: 0.2,
+              letterSpacing: kLs(0.2),
             ),
           ),
         ],

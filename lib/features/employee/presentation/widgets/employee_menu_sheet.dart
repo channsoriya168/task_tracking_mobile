@@ -451,7 +451,7 @@ class _StatusBadge extends StatelessWidget {
           fontSize: 10,
           fontWeight: FontWeight.w600,
           color: color,
-          letterSpacing: 0.2,
+          letterSpacing: kLs(0.2),
         ),
       ),
     );

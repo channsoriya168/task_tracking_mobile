@@ -136,7 +136,7 @@ class _InfoListRow extends StatelessWidget {
                     fontSize: 11,
                     color: mutedColor,
                     fontWeight: FontWeight.w500,
-                    letterSpacing: 0.3,
+                    letterSpacing: kLs(0.3),
                   ),
                 ),
                 const SizedBox(height: 3),

@@ -239,10 +239,10 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                     ),
                     child: Text(
                       isEditing ? 'Update Task' : 'Create Task',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
-                        letterSpacing: 0.2,
+                        letterSpacing: kLs(0.2),
                       ),
                     ),
                   ),

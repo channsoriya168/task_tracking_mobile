@@ -12,23 +12,14 @@ class SectionTitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 4,
-          height: 18,
-        ),
-        const SizedBox(width: 10),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: isDark ? Colors.white : kTextDark,
-            letterSpacing: 0.1,
-          ),
-        ),
-      ],
+    return Text(
+      label.toUpperCase(),
+      style: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: isDark ? Colors.white38 : kTextMuted,
+        letterSpacing: kLs(1.2),
+      ),
     );
   }
 }

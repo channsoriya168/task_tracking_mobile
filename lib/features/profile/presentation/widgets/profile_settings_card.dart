@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/language_switcher_widget.dart';
 import 'package:task_tracking_mobile/core/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_card.dart';
 
 class ProfileSettingsCard extends StatelessWidget {
   const ProfileSettingsCard({super.key, required this.isDark});
@@ -13,65 +12,48 @@ class ProfileSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeCtrl = Get.find<ThemeController>();
-    return ProfileCard(
-      isDark: isDark,
+
+    return Container(
+      color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
       child: Column(
         children: [
-          // ── Dark Mode row ────────────────────────────────────
+          // ── Dark Mode ────────────────────────────────────────
           Obx(() {
             final dark = themeCtrl.isDark;
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 14,
+              ),
               child: Row(
                 children: [
-                  _SettingIcon(
-                    icon: dark
-                        ? Icons.wb_sunny_rounded
-                        : Icons.nightlight_round,
-                    isDark: isDark,
+                  Icon(
+                    dark
+                        ? Icons.nightlight_round
+                        : Icons.wb_sunny_rounded,
+                    size: 20,
+                    color: kPrimary,
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'profile_dark_mode'.tr,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : kTextDark,
-                          ),
-                        ),
-                        Text(
-                          dark ? 'Dark' : 'Light',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDark ? Colors.white38 : kTextMuted,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      'profile_dark_mode'.tr,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.white : kTextDark,
+                      ),
                     ),
                   ),
-                  // Custom animated toggle
                   GestureDetector(
                     onTap: themeCtrl.toggle,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
-                      width: 50,
-                      height: 28,
+                      width: 48,
+                      height: 26,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(13),
                         color: dark ? kPrimary : Colors.grey.shade300,
-                        boxShadow: [
-                          BoxShadow(
-                            color: dark
-                                ? kPrimary.withAlpha(60)
-                                : Colors.black.withAlpha(20),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
                       ),
                       child: AnimatedAlign(
                         duration: const Duration(milliseconds: 250),
@@ -82,8 +64,8 @@ class ProfileSettingsCard extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(3),
                           child: Container(
-                            width: 22,
-                            height: 22,
+                            width: 20,
+                            height: 20,
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -92,7 +74,7 @@ class ProfileSettingsCard extends StatelessWidget {
                               dark
                                   ? Icons.nightlight_round
                                   : Icons.wb_sunny_rounded,
-                              size: 13,
+                              size: 12,
                               color: dark ? kPrimary : Colors.orange,
                             ),
                           ),
@@ -107,38 +89,35 @@ class ProfileSettingsCard extends StatelessWidget {
 
           Divider(
             height: 1,
-            indent: 16,
-            endIndent: 16,
-            color: isDark ? Colors.white10 : Colors.grey.shade100,
+            indent: 0,
+            endIndent: 0,
+            color: isDark
+                ? Colors.white.withAlpha(10)
+                : Colors.grey.shade200,
           ),
 
-          // ── Language row ─────────────────────────────────────
+          // ── Language ─────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 14,
+            ),
             child: Row(
               children: [
-                _SettingIcon(icon: Icons.language_rounded, isDark: isDark),
-                const SizedBox(width: 14),
+                Icon(
+                  Icons.language_rounded,
+                  size: 20,
+                  color: kPrimary,
+                ),
+                const SizedBox(width: 16),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'profile_language'.tr,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : kTextDark,
-                        ),
-                      ),
-                      Text(
-                        'English / ខ្មែរ',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white38 : kTextMuted,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'profile_language'.tr,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : kTextDark,
+                    ),
                   ),
                 ),
                 LanguageSwitcherSegment(isDark: isDark),
@@ -147,22 +126,6 @@ class ProfileSettingsCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Icon for settings rows - no background.
-class _SettingIcon extends StatelessWidget {
-  const _SettingIcon({required this.icon, required this.isDark});
-  final IconData icon;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    return Icon(
-      icon,
-      color: kPrimary,
-      size: 20,
     );
   }
 }
