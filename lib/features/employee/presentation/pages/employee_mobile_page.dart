@@ -22,7 +22,7 @@ class EmployeeMobilePage extends StatelessWidget {
       body: Column(
         children: [
           EmployeeHeaderWidget(isDark: isDark, ctrl: ctrl),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           EmployeeFilterGroupChipsWidget(isDark: isDark, ctrl: ctrl),
           SearchBarWidget(
             isDark: isDark,
@@ -30,7 +30,7 @@ class EmployeeMobilePage extends StatelessWidget {
             hintText: 'employee_search_hint'.tr,
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
           ),
-          SizedBox(height: 16),
+          // SizedBox(height: 16),
           Expanded(
             child: EmployeeListWidget(isDark: isDark, ctrl: ctrl),
           ),

@@ -66,23 +66,27 @@ Future<void> showGroupDialog(
 
             // ── Header ────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+              padding: const EdgeInsets.fromLTRB(20, 0, 4, 12),
               child: Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        existing == null
-                            ? 'group_dialog_new'.tr
-                            : 'group_dialog_edit'.tr,
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : kTextDark,
-                        ),
+                  Expanded(
+                    child: Text(
+                      existing == null
+                          ? 'group_dialog_new'.tr
+                          : 'group_dialog_edit'.tr,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : kTextDark,
                       ),
-                    ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
                   ),
                 ],
               ),
@@ -235,39 +239,8 @@ Future<void> showGroupDialog(
                 ),
                 child: Row(
                   children: [
-                    // Cancel
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: ctrl.isSaving.value
-                            ? null
-                            : () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          side: BorderSide(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.2)
-                                : Colors.grey[300]!,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          foregroundColor: isDark
-                              ? Colors.grey[300]
-                              : Colors.grey[700],
-                        ),
-                        child: Text(
-                          'dialog_cancel'.tr,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
                     // Save
                     Expanded(
-                      flex: 2,
                       child: ElevatedButton(
                         onPressed:
                             ctrl.isSaving.value || nameText.value.trim().isEmpty

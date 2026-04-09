@@ -3,7 +3,6 @@ import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/show_task_dialog.dart';
 
 class TaskCardActionsRow extends StatelessWidget {
   const TaskCardActionsRow({
@@ -45,7 +44,7 @@ class TaskCardActionsRow extends StatelessWidget {
       onSelected: (action) async {
         switch (action) {
           case _TaskCardAction.edit:
-            showTaskDialog(context, isDark, task: task);
+            ctrl.showTaskSheet(task);
             break;
           case _TaskCardAction.delete:
             final ok = await showConfirmDeleteDialog(

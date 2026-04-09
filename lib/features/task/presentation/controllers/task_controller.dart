@@ -16,6 +16,7 @@ import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_it
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/dashboard/controllers/manager_dashboard_controller.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_bottom_sheet.dart';
 
 class TaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;
@@ -60,13 +61,14 @@ class TaskController extends GetxController {
   final Rxn<DateTime> currentDate = Rxn<DateTime>();
 
   final RxBool isLoading = false.obs;
+  final RxBool isSaving = false.obs;
   final RxString errorMessage = ''.obs;
 
   final titleTextEditor = TextEditingController();
   final descTextEditor = TextEditingController();
   final RxString titleText = ''.obs;
   final selectedCategory = ''.obs;
-  final selectedGroupId = Rxn<String>(); 
+  final selectedGroupId = Rxn<String>();
   final selectedPriority = Rxn<TaskPriority>();
   final selectedLabel = Rxn<Label>();
   final selectedDueDate = Rxn<DateTime>();
@@ -76,6 +78,15 @@ class TaskController extends GetxController {
 
   /// Tasks are already server-filtered; expose as-is.
   List<TaskItem> get filteredTasks => tasks.toList();
+
+  bool get isEditing => editingTask.value != null;
+
+  bool get canSubmit =>
+      titleText.value.trim().isNotEmpty &&
+      selectedGroupId.value != null &&
+      selectedPriority.value != null &&
+      selectedLabel.value != null &&
+      selectedDueDate.value != null;
 
   int countByStatus(String statusName) {
     if (statusName == 'All') return allTasks.length;
@@ -192,6 +203,11 @@ class TaskController extends GetxController {
     } catch (_) {}
   }
 
+  //show task sheet
+  void showTaskSheet([TaskItem? task]) {
+    TaskBottomSheet.showTaskSheet(Get.isDarkMode, task: task);
+  }
+
   /// Returns true on success, false on failure.
   Future<bool> createTask() async {
     final title = titleTextEditor.text.trim();
@@ -199,6 +215,7 @@ class TaskController extends GetxController {
     final groupId = selectedGroupId.value;
     if (title.isEmpty || priority == null || groupId == null) return false;
 
+    isSaving.value = true;
     try {
       final now = DateTime.now();
       final model = TaskItemModel(
@@ -217,7 +234,7 @@ class TaskController extends GetxController {
       await _createTaskItem(model);
       await fetchTasks();
       _refreshDashboard();
-      _clearForm();
+      // _clearForm();
       AppSnackbar.success(
         'snack_task_created'.tr,
         'snack_task_created_msg'.trParams({'title': title}),
@@ -229,6 +246,8 @@ class TaskController extends GetxController {
         AppSnackbar.parseApiError(e, fallback: 'snack_task_create_fail'.tr),
       );
       return false;
+    } finally {
+      isSaving.value = false;
     }
   }
 
@@ -259,13 +278,11 @@ class TaskController extends GetxController {
       dueDate: selectedDueDate.value,
     );
 
+    isSaving.value = true;
     try {
       await _updateTaskItem(updated);
-      final i = tasks.indexWhere((t) => t.id == original.id);
-      if (i != -1) tasks[i] = updated;
       await fetchTasks();
       _refreshDashboard();
-      _clearForm();
       AppSnackbar.success(
         'snack_task_updated'.tr,
         'snack_task_updated_msg'.trParams({'title': title}),
@@ -277,6 +294,8 @@ class TaskController extends GetxController {
         AppSnackbar.parseApiError(e, fallback: 'snack_task_update_fail'.tr),
       );
       return false;
+    } finally {
+      isSaving.value = false;
     }
   }
 
@@ -336,17 +355,5 @@ class TaskController extends GetxController {
     try {
       Get.find<ManagerDashboardController>().fetchTasks();
     } catch (_) {}
-  }
-
-  void _clearForm() {
-    editingTask.value = null;
-    titleTextEditor.clear();
-    descTextEditor.clear();
-    selectedLabel.value = null;
-    selectedGroupId.value = null;
-    selectedCategory.value = '';
-    selectedPriority.value = null;
-    selectedStartDate.value = null;
-    selectedDueDate.value = null;
   }
 }

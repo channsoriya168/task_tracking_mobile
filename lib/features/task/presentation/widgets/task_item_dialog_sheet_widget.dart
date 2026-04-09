@@ -59,7 +59,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                 children: [
                   Obx(
                     () => Text(
-                      ctrl.editingTask.value != null ? 'Edit Task' : 'New Task',
+                      ctrl.editingTask.value != null ? 'task_form_edit'.tr : 'task_form_new'.tr,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -90,7 +90,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Label
-              FieldLabelWidget('Label', isDark: isDark, isRequired: true),
+              FieldLabelWidget('task_detail_label'.tr, isDark: isDark, isRequired: true),
               const SizedBox(height: 8),
               Obx(
                 () => DropdownWidget<Label>(
@@ -105,8 +105,8 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
 
               TextFieldWidget(
                 controller: ctrl.titleTextEditor,
-                label: 'Title',
-                hint: 'Enter task title',
+                label: 'task_form_title_label'.tr,
+                hint: 'task_form_title_hint'.tr,
                 isDark: isDark,
                 isRequired: true,
               ),
@@ -114,8 +114,8 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
 
               TextFieldWidget(
                 controller: ctrl.descTextEditor,
-                label: 'Description',
-                hint: 'Enter task description',
+                label: 'task_form_desc_label'.tr,
+                hint: 'task_form_desc_hint'.tr,
                 isDark: isDark,
                 maxLines: 3,
               ),
@@ -130,7 +130,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FieldLabelWidget(
-                          'Group',
+                          'task_detail_group'.tr,
                           isDark: isDark,
                           isRequired: true,
                         ),
@@ -161,7 +161,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FieldLabelWidget(
-                          'Priority',
+                          'task_detail_priority'.tr,
                           isDark: isDark,
                           isRequired: true,
                         ),
@@ -185,13 +185,13 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               const SizedBox(height: 14),
 
               // Due Date
-              FieldLabelWidget('Due Date', isDark: isDark, isRequired: true),
+              FieldLabelWidget('task_detail_due_date'.tr, isDark: isDark, isRequired: true),
               const SizedBox(height: 8),
               Obx(
                 () => DatePickerFieldWidget(
                   isDark: isDark,
                   value: ctrl.selectedDueDate.value,
-                  hint: 'Select due date',
+                  hint: 'task_form_due_date_hint'.tr,
                   firstDate: ctrl.currentDate.value ?? DateTime.now(),
                   onPick: (d) => ctrl.selectedDueDate.value = d,
                   onClear: () => ctrl.selectedDueDate.value = null,
@@ -201,25 +201,12 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
 
               // Submit button
               Obx(() {
-                // Read all .value upfront so every field is tracked
-                // regardless of short-circuit evaluation.
-                final title = ctrl.titleText.value.trim();
-                final groupId = ctrl.selectedGroupId.value;
-                final priority = ctrl.selectedPriority.value;
-                final label = ctrl.selectedLabel.value;
-                final dueDate = ctrl.selectedDueDate.value;
-                final isEditing = ctrl.editingTask.value != null;
-                final canSubmit =
-                    title.isNotEmpty &&
-                    groupId != null &&
-                    priority != null &&
-                    label != null &&
-                    dueDate != null;
-
+                final isEditing = ctrl.isEditing;
+                final isSaving = ctrl.isSaving.value;
                 return SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: canSubmit
+                    onPressed: ctrl.canSubmit && !isSaving
                         ? () async {
                             final ok = isEditing
                                 ? await ctrl.updateTask()
@@ -237,14 +224,25 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: Text(
-                      isEditing ? 'Update Task' : 'Create Task',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
+                    child: isSaving
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            isEditing
+                                ? 'task_form_btn_update'.tr
+                                : 'task_form_btn_create'.tr,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
                   ),
                 );
               }),

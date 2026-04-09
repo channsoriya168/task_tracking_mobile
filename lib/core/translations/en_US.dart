@@ -84,6 +84,17 @@ const Map<String, String> enUS = {
   'task_detail_created_by': 'Created by',
   'task_detail_created': 'Created',
 
+  // ── Task form ─────────────────────────────────────────────────
+  'task_form_new': 'New Task',
+  'task_form_edit': 'Edit Task',
+  'task_form_title_label': 'Title',
+  'task_form_title_hint': 'Enter task title',
+  'task_form_desc_label': 'Description',
+  'task_form_desc_hint': 'Enter task description',
+  'task_form_due_date_hint': 'Select due date',
+  'task_form_btn_create': 'Create Task',
+  'task_form_btn_update': 'Update Task',
+
   // ── Comments ──────────────────────────────────────────────────
   'comment_title': 'Comments',
   'comment_empty_mine': 'No comments yet — be the first!',

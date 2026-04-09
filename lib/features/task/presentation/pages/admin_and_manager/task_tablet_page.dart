@@ -5,7 +5,6 @@ import 'package:task_tracking_mobile/features/task/presentation/controllers/task
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_list_widget.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/show_task_dialog.dart';
 
 class TaskTabletPage extends StatelessWidget {
   const TaskTabletPage({super.key});
@@ -138,7 +137,7 @@ class _FilterPanel extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () => showTaskDialog(context, isDark),
+              onPressed: () => ctrl.showTaskSheet(),
               icon: const Icon(Icons.add_rounded, size: 18),
               label: const Text(
                 'Create Task',

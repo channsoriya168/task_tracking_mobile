@@ -5,11 +5,14 @@ import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/group_chip_widget.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/employee/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_avatar_widget.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_sheet.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_dialogs.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_reset_password_sheet.dart';
 
 class EmployeeCardWidget extends StatelessWidget {
   const EmployeeCardWidget({
@@ -25,10 +28,25 @@ class EmployeeCardWidget extends StatelessWidget {
   final Employee employee;
   final Group? taskGroup;
 
-  String? _genderName() {
-    if (employee.genderId == null) return null;
-    final match = ctrl.genders.where((g) => g.id == employee.genderId).toList();
-    return match.isNotEmpty ? match.first.name : null;
+  Future<void> _handleMenuAction(
+    BuildContext context,
+    EmployeeMenuAction action,
+  ) async {
+    switch (action) {
+      case EmployeeMenuAction.edit:
+        ctrl.showEditDialog(employee);
+      case EmployeeMenuAction.changePassword:
+        showResetPasswordSheet(
+          context,
+          employee: employee,
+          ctrl: ctrl,
+          isDark: isDark,
+        );
+      case EmployeeMenuAction.delete:
+        if (await confirmDeleteEmployee(context, employee.fullName)) {
+          ctrl.deleteEmployee(employee.id);
+        }
+    }
   }
 
   bool get _isProtected {
@@ -44,7 +62,6 @@ class EmployeeCardWidget extends StatelessWidget {
     final protected = _isProtected;
     final hasPhone = employee.phone != null && employee.phone!.isNotEmpty;
     final hasGroups = employee.groups.isNotEmpty || taskGroup != null;
-    final genderName = _genderName();
 
     return GestureDetector(
       onTap: () => showEmployeeMenuSheet(
@@ -246,26 +263,96 @@ class EmployeeCardWidget extends StatelessWidget {
               ),
             ),
 
-            // ── Chevron ───────────────────────────────────────
-            Container(
-              margin: const EdgeInsets.only(left: 8),
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withAlpha(10)
-                    : Colors.grey.withAlpha(15),
-                borderRadius: BorderRadius.circular(8),
+            // ── Menu button ───────────────────────────────────
+            if (!protected)
+              PopupMenuButton<EmployeeMenuAction>(
+                onSelected: (action) => _handleMenuAction(context, action),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                color: isDark ? kCardDark : Colors.white,
+                elevation: 4,
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: EmployeeMenuAction.changePassword,
+                    child: _PopupItem(
+                      icon: Icons.lock_reset_rounded,
+                      label: 'profile_change_password'.tr,
+                      color: const Color(0xFFF59E0B),
+                      isDark: isDark,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: EmployeeMenuAction.edit,
+                    child: _PopupItem(
+                      icon: Icons.edit_rounded,
+                      label: 'action_edit'.tr,
+                      color: kPrimary,
+                      isDark: isDark,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: EmployeeMenuAction.delete,
+                    child: _PopupItem(
+                      icon: Icons.delete_outline_rounded,
+                      label: 'action_delete'.tr,
+                      color: const Color(0xFFEF4444),
+                      isDark: isDark,
+                    ),
+                  ),
+                ],
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withAlpha(10)
+                        : Colors.grey.withAlpha(15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.more_vert_rounded,
+                    size: 20,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                ),
               ),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                size: 18,
-                color: isDark ? Colors.grey[500] : Colors.grey[400],
-              ),
-            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Popup menu item row ──────────────────────────────────────────
+class _PopupItem extends StatelessWidget {
+  const _PopupItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: color),
+        const SizedBox(width: 10),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 }

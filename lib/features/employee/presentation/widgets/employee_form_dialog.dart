@@ -259,6 +259,13 @@ class _Header extends StatelessWidget {
                 ],
               ),
             ),
+            IconButton(
+              onPressed: Get.back,
+              icon: Icon(
+                Icons.close_rounded,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
           ],
         ),
       ),
@@ -292,35 +299,8 @@ class _Footer extends StatelessWidget {
       child: Obx(
         () => Row(
           children: [
-            // Cancel
-            Expanded(
-              child: OutlinedButton(
-                onPressed: controller.isSaving.value ? null : Get.back,
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  side: BorderSide(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : Colors.grey[300]!,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  foregroundColor: isDark ? Colors.grey[300] : Colors.grey[700],
-                ),
-                child: Text(
-                  'dialog_cancel'.tr,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
             // Save
             Expanded(
-              flex: 2,
               child: ElevatedButton(
                 onPressed: controller.isSaving.value || !controller.canSave
                     ? null

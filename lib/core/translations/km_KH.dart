@@ -85,6 +85,17 @@ const Map<String, String> kmKH = {
   'task_detail_created_by': 'បង្កើតដោយ',
   'task_detail_created': 'បង្កើតនៅ',
 
+  // ── Task form ─────────────────────────────────────────────────
+  'task_form_new': 'កិច្ចការថ្មី',
+  'task_form_edit': 'កែប្រែកិច្ចការ',
+  'task_form_title_label': 'ចំណងជើង',
+  'task_form_title_hint': 'បញ្ចូលចំណងជើងកិច្ចការ',
+  'task_form_desc_label': 'ការពិពណ៌នា',
+  'task_form_desc_hint': 'បញ្ចូលការពិពណ៌នាកិច្ចការ',
+  'task_form_due_date_hint': 'ជ្រើសរើសកាលបរិច្ឆេទ',
+  'task_form_btn_create': 'បង្កើតកិច្ចការ',
+  'task_form_btn_update': 'កែប្រែកិច្ចការ',
+
   // ── Comments ──────────────────────────────────────────────────
   'comment_title': 'មតិយោបល់',
   'comment_empty_mine': 'មិនទាន់មានមតិយោបល់ — ចូររួមចំណែកដំបូង!',
