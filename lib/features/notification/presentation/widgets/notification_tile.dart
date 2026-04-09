@@ -37,7 +37,7 @@ class NotificationTile extends StatelessWidget {
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -50,8 +50,8 @@ class NotificationTile extends StatelessWidget {
                 letterSpacing: kLs(0.2),
               ),
             ),
-            SizedBox(width: 8),
-            Icon(Icons.delete_rounded, color: Colors.white, size: 22),
+            const SizedBox(width: 8),
+            const Icon(Icons.delete_rounded, color: Colors.white, size: 22),
           ],
         ),
       ),
@@ -59,7 +59,6 @@ class NotificationTile extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -70,60 +69,83 @@ class NotificationTile extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // ── Col 1: title + time ──────────────────────────────
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      notification.title,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight:
-                            isRead ? FontWeight.w500 : FontWeight.w700,
-                        color: isDark
-                            ? Colors.white
-                            : const Color(0xFF0F172A),
-                        height: 1.3,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(11),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // ── Left accent bar (unread only) ─────────────────
+                  if (!isRead) Container(width: 3, color: accent),
+                  // ── Main content ──────────────────────────────────
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.schedule_rounded,
-                          size: 12,
-                          color: isDark
-                              ? Colors.white38
-                              : const Color(0xFF94A3B8),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _relativeTime(notification.createdAt),
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: isDark
-                                ? Colors.white38
-                                : const Color(0xFF94A3B8),
-                            fontWeight: FontWeight.w400,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // ── Col 1: title + time ───────────────────
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  notification.title,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: isRead
+                                        ? FontWeight.w500
+                                        : FontWeight.w700,
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0F172A),
+                                    height: 1.3,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.schedule_rounded,
+                                      size: 12,
+                                      color: isDark
+                                          ? Colors.white38
+                                          : const Color(0xFF94A3B8),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      _relativeTime(notification.createdAt),
+                                      style:
+                                          theme.textTheme.labelSmall?.copyWith(
+                                        color: isDark
+                                            ? Colors.white38
+                                            : const Color(0xFF94A3B8),
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 12),
+                          // ── Col 2: status badge ───────────────────
+                          _TypeBadge(
+                            type: notification.type,
+                            accent: accent,
+                            isDark: isDark,
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              // ── Col 2: status badge ──────────────────────────────
-              _TypeBadge(
-                type: notification.type,
-                accent: accent,
-                isDark: isDark,
-              ),
-            ],
+            ),
           ),
         ),
       ),
