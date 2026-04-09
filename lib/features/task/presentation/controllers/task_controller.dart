@@ -15,7 +15,6 @@ import 'package:task_tracking_mobile/features/task/domain/usecases/delete_task_i
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_usecase.dart';
-import 'package:task_tracking_mobile/features/dashboard/controllers/manager_dashboard_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_bottom_sheet.dart';
 
 class TaskController extends GetxController {
@@ -233,8 +232,6 @@ class TaskController extends GetxController {
       );
       await _createTaskItem(model);
       await fetchTasks();
-      _refreshDashboard();
-      // _clearForm();
       AppSnackbar.success(
         'snack_task_created'.tr,
         'snack_task_created_msg'.trParams({'title': title}),
@@ -282,7 +279,6 @@ class TaskController extends GetxController {
     try {
       await _updateTaskItem(updated);
       await fetchTasks();
-      _refreshDashboard();
       AppSnackbar.success(
         'snack_task_updated'.tr,
         'snack_task_updated_msg'.trParams({'title': title}),
@@ -304,7 +300,6 @@ class TaskController extends GetxController {
       await _deleteTaskItem(taskItem);
       allTasks.removeWhere((t) => t.id == taskItem.id);
       _applyStatusFilter();
-      _refreshDashboard();
       AppSnackbar.success(
         'snack_task_deleted'.tr,
         'snack_task_deleted_msg'.trParams({'title': taskItem.title}),
@@ -349,11 +344,5 @@ class TaskController extends GetxController {
     final now = DateTime.now();
     selectedDueDate.value = DateTime(now.year, now.month, now.day);
     selectedStartDate.value = null;
-  }
-
-  void _refreshDashboard() {
-    try {
-      Get.find<ManagerDashboardController>().fetchTasks();
-    } catch (_) {}
   }
 }

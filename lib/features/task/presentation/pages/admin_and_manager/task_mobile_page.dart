@@ -83,7 +83,11 @@ class TaskMobilePage extends StatelessWidget {
             onChanged: (value) => ctrl.searchQuery.value = value,
           ),
           Expanded(
-            child: TaskListWidget(isDark: isDark, taskController: ctrl),
+            child: RefreshIndicator(
+              color: kPrimary,
+              onRefresh: ctrl.fetchTasks,
+              child: TaskListWidget(isDark: isDark, taskController: ctrl),
+            ),
           ),
         ],
       ),

@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/dashboard/widgets/task_line_chart_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/core/controllers/theme_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/circular_icon_button.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
 
-class AdminDashboardMobilePage extends StatelessWidget {
-  const AdminDashboardMobilePage({super.key});
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final themeCtrl = Get.find<ThemeController>();
     final adminTaskCtrl = Get.find<TaskController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : kTextDark;
-    final mutedColor = isDark ? Colors.white38 : kTextMuted;
+    final mutedColor = isDark ? Colors.white54 : kTextMuted;
     final cardBg = isDark ? kCardDark : Colors.white;
     final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : const Color(0xFFE5E7EB);
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.07);
+    final cardShadow = BoxShadow(
+      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
+      blurRadius: 10,
+      offset: const Offset(0, 3),
+    );
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
@@ -36,96 +38,43 @@ class AdminDashboardMobilePage extends StatelessWidget {
               // ── App Bar ───────────────────────────────────────
               SliverAppBar(
                 backgroundColor: isDark ? kBgDark : kBgLight,
-                floating: true,
+                pinned: true,
                 title: Text(
                   'nav_dashboard'.tr,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: textColor,
+                  style: AppTextStyles.appBarTitle(
+                    color: isDark ? Colors.white : null,
                   ),
                 ),
-                actions: [
-                  Obx(
-                    () => CircularIconButton(
-                      icon: themeCtrl.isDark
-                          ? Icons.wb_sunny_rounded
-                          : Icons.nightlight_round,
-                      isDark: isDark,
-                      onTap: themeCtrl.toggle,
+                // ── Week Calendar ─────────────────────────────────
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(120),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
-                  ),
-                ],
-              ),
-
-              // ── Week Calendar ─────────────────────────────────
-              SliverPadding(
-                padding: kPageSectionPadding,
-                sliver: SliverToBoxAdapter(
-                  child: WeekCalendarWidget(
-                    isDark: isDark,
-                    selectedDate: adminTaskCtrl.taskSelectedDate.value,
-                    onDateSelected: adminTaskCtrl.selectTaskDate,
+                    child: WeekCalendarWidget(
+                      isDark: isDark,
+                      selectedDate: adminTaskCtrl.taskSelectedDate.value,
+                      onDateSelected: adminTaskCtrl.selectTaskDate,
+                    ),
                   ),
                 ),
               ),
 
               // ── Task Summary Chart (follows selected date) ────
               SliverPadding(
-                padding: kPageSectionLargePadding,
+                padding: kPagePaddingHorizontal,
                 sliver: SliverToBoxAdapter(
                   child: Container(
                     decoration: BoxDecoration(
                       color: cardBg,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: borderColor),
+                      boxShadow: [cardShadow],
                     ),
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
                     child: TaskLineChartWidget(isDark: isDark),
-                  ),
-                ),
-              ),
-
-              // ── Filter Chips ──────────────────────────────────
-              SliverToBoxAdapter(
-                child: TaskFilterBarWidget(
-                  isDark: isDark,
-                  filterStatus: adminTaskCtrl.filterStatus,
-                  taskStatus: adminTaskCtrl.taskStatus,
-                  allTasks: adminTaskCtrl.allTasks,
-                  onSelectStatus: adminTaskCtrl.selectStatus,
-                ),
-              ),
-
-              // ── Search Bar ────────────────────────────────────
-              SliverPadding(
-                padding: kPageSectionPadding,
-                sliver: SliverToBoxAdapter(
-                  child: Container(
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: cardBg,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: borderColor),
-                    ),
-                    child: TextField(
-                      onChanged: (v) => adminTaskCtrl.searchQuery.value = v,
-                      style: TextStyle(fontSize: 14, color: textColor),
-                      decoration: InputDecoration(
-                        hintText: 'dashboard_search_hint'.tr,
-                        hintStyle: TextStyle(fontSize: 14, color: mutedColor),
-                        prefixIcon: Icon(
-                          Icons.search_rounded,
-                          size: 18,
-                          color: mutedColor,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -198,7 +147,10 @@ class AdminDashboardMobilePage extends StatelessWidget {
                           final task = filtered[i];
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10),
-                            child: TaskCardWidget(task: task),
+                            child: TaskCardWidget(
+                              task: task,
+                              managerTaskController: adminTaskCtrl,
+                            ),
                           );
                         }, childCount: filtered.length),
                       ),

@@ -11,21 +11,10 @@ import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_it
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/dashboard/controllers/manager_dashboard_controller.dart';
 
 class ManagerTaskBinding extends Bindings {
   @override
   void dependencies() {
-    // ── Dashboard: own fetch/filter state, no CRUD ────────────
-    Get.lazyPut<ManagerDashboardController>(
-      () => ManagerDashboardController(
-        FetchTaskItemsUsecase(Get.find<TaskItemRepository>()),
-        FetchTaskItemByIdUsecase(Get.find<TaskItemRepository>()),
-        FetchTaskStatusesUsecase(Get.find<LookupRepository>()),
-      ),
-      fenix: true,
-    );
-
     // ── Task page: full CRUD + filter state ───────────────────
     Get.lazyPut<TaskController>(
       () => TaskController(
