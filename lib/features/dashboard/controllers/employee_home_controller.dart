@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/lookup/domain/entities/task_item_status.dart';
@@ -77,6 +78,14 @@ class EmployeeHomeController extends GetxController {
         }
       });
     }
+
+    // Auto-refresh when internet is restored.
+    ever(Get.find<NetworkController>().connectionStatus, (status) {
+      if (status == ConnectionStatus.reconnected) {
+        fetchTasks();
+        fetchStatuses();
+      }
+    });
   }
 
   @override

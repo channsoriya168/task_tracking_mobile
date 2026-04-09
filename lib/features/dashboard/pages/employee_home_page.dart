@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/dashboard/widgets/sticky_toolbar_delegate_widget.dart';
 import 'package:task_tracking_mobile/features/dashboard/widgets/task_card_shimmer.dart';
@@ -86,7 +87,10 @@ class EmployeeHomePage extends StatelessWidget {
 
               // ── Task list / shimmer / empty ───────────────────
               Obx(() {
-                if (homeCtrl.isLoading.value && homeCtrl.allTasks.isEmpty) {
+                final offline =
+                    !Get.find<NetworkController>().isConnected.value;
+                if (homeCtrl.isLoading.value ||
+                    (offline && homeCtrl.allTasks.isEmpty)) {
                   return SliverPadding(
                     padding: kPageBottomPadding,
                     sliver: SliverList.separated(

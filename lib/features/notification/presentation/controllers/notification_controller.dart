@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
@@ -33,6 +34,14 @@ class NotificationController extends GetxController {
     _fcmSubscription = FirebaseMessaging.onMessage.listen((_) {
       fetchNotifications();
       fetchUnreadCount();
+    });
+
+    // Auto-refresh when internet is restored.
+    ever(Get.find<NetworkController>().connectionStatus, (status) {
+      if (status == ConnectionStatus.reconnected) {
+        fetchNotifications();
+        fetchUnreadCount();
+      }
     });
   }
 

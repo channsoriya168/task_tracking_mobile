@@ -1,9 +1,12 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/language_controller.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
+import 'package:task_tracking_mobile/core/network/network_info_impl.dart';
 import 'package:task_tracking_mobile/routes/app_pages.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/core/themes/dark_theme.dart';
@@ -22,6 +25,11 @@ void main() async {
   Get.put<ThemeController>(ThemeController(), permanent: true);
   Get.put<LanguageController>(
     LanguageController(initialIsKhmer: savedIsKhmer),
+    permanent: true,
+  );
+  Get.put<NetworkInfoImpl>(NetworkInfoImpl(Connectivity()), permanent: true);
+  Get.put<NetworkController>(
+    NetworkController(Get.find<NetworkInfoImpl>()),
     permanent: true,
   );
 

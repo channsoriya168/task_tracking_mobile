@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
@@ -19,8 +20,10 @@ class EmployeeListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Show shimmer while loading
-      if (ctrl.isLoading.value) {
+      final offline = !Get.find<NetworkController>().isConnected.value;
+
+      // Show shimmer while loading or when the device is offline.
+      if (ctrl.isLoading.value || offline) {
         return EmployeeListShimmer(isDark: isDark);
       }
 

@@ -314,6 +314,15 @@ const Map<String, String> kmKH = {
   'val_field_required': '@label ត្រូវការ។',
   'val_phone_or_password_incorrect': 'លេខទូរស័ព្ទឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។',
 
+  // ── Network ───────────────────────────────────────────────────
+  'no_internet': 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត',
+  'back_online': 'មានការតភ្ជាប់ម្ដងទៀត',
+  'no_internet_title': 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត',
+  'no_internet_subtitle':
+      'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទ\nហើយព្យាយាមម្ដងទៀត។',
+  'retry': 'សាកល្បងម្ដងទៀត',
+  'dismiss': 'បិទ',
+
   // ── Snackbars ─────────────────────────────────────────────────
   'snack_success': 'ជោគជ័យ',
   'snack_error': 'កំហុស',

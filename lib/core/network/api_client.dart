@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'local/storage_service.dart';
 
@@ -26,6 +27,7 @@ class ApiClient {
       ),
     );
 
+    dio.interceptors.add(_NetworkInterceptor());
     dio.interceptors.add(_AuthInterceptor(storage: storage));
   }
 
@@ -131,4 +133,29 @@ class _PendingRequest {
   final RequestOptions options;
   final ErrorInterceptorHandler handler;
   _PendingRequest(this.options, this.handler);
+}
+
+/// ── Network Interceptor ────────────────────────────────────────────
+/// Updates [NetworkController] based on real request outcomes so the
+/// offline banner reflects actual server reachability, not just whether
+/// a network interface is present.
+class _NetworkInterceptor extends Interceptor {
+  NetworkController? get _net =>
+      Get.isRegistered<NetworkController>() ? Get.find<NetworkController>() : null;
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    _net?.onConnectionRestored();
+    handler.next(response);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (err.type == DioExceptionType.connectionError ||
+        err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout) {
+      _net?.onConnectionError();
+    }
+    handler.next(err);
+  }
 }

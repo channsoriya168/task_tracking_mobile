@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/widgets/offine_card_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/pages/label_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
@@ -19,76 +21,81 @@ class TaskMobilePage extends StatelessWidget {
     final ctrl = Get.find<TaskController>();
     final auth = Get.find<AuthController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    final offline = !Get.find<NetworkController>().isConnected.value;
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          Padding(
-            padding: kPagePaddingHorizontal,
-            child: Row(
-              children: [
-                Text(
-                  'task_title'.tr,
-                  style: AppTextStyles.appBarTitle(
-                    color: isDark ? Colors.white : kTextDark,
-                  ),
-                ),
-                Spacer(),
-                Obx(() {
-                  if (auth.role != UserRole.admin)
-                    return const SizedBox.shrink();
-                  return OutlinedButton.icon(
-                    onPressed: () => Get.to(() => const LabelPage()),
-                    label: Text('task_create_labels'.tr),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: kPrimary,
-                      side: const BorderSide(color: kPrimary),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: kPagePaddingHorizontal,
+                child: Row(
+                  children: [
+                    Text(
+                      'task_title'.tr,
+                      style: AppTextStyles.appBarTitle(
+                        color: isDark ? Colors.white : kTextDark,
                       ),
                     ),
-                  );
-                }),
-              ],
-            ),
-          ),
-
-          // ── Week calendar ──────────────────────────────────
-          Padding(
-            padding: kPageSectionPadding,
-            child: Obx(
-              () => WeekCalendarWidget(
-                isDark: isDark,
-                selectedDate: ctrl.taskSelectedDate.value,
-                onDateSelected: ctrl.selectTaskDate,
+                    Spacer(),
+                    Obx(() {
+                      if (auth.role != UserRole.admin)
+                        return const SizedBox.shrink();
+                      return OutlinedButton.icon(
+                        onPressed: () => Get.to(() => const LabelPage()),
+                        label: Text('task_create_labels'.tr),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: kPrimary,
+                          side: const BorderSide(color: kPrimary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ),
-            ),
-          ),
 
-          TaskFilterBarWidget(
-            isDark: isDark,
-            filterStatus: ctrl.filterStatus,
-            taskStatus: ctrl.taskStatus,
-            allTasks: ctrl.allTasks,
-            onSelectStatus: ctrl.selectStatus,
+              // ── Week calendar ──────────────────────────────────
+              Padding(
+                padding: kPageSectionPadding,
+                child: Obx(
+                  () => WeekCalendarWidget(
+                    isDark: isDark,
+                    selectedDate: ctrl.taskSelectedDate.value,
+                    onDateSelected: ctrl.selectTaskDate,
+                  ),
+                ),
+              ),
+
+              TaskFilterBarWidget(
+                isDark: isDark,
+                filterStatus: ctrl.filterStatus,
+                taskStatus: ctrl.taskStatus,
+                allTasks: ctrl.allTasks,
+                onSelectStatus: ctrl.selectStatus,
+              ),
+              SearchBarWidget(
+                isDark: isDark,
+                onChanged: (value) => ctrl.searchQuery.value = value,
+              ),
+              Expanded(
+                child: RefreshIndicator(
+                  color: kPrimary,
+                  onRefresh: ctrl.fetchTasks,
+                  child: TaskListWidget(isDark: isDark, taskController: ctrl),
+                ),
+              ),
+            ],
           ),
-          SearchBarWidget(
-            isDark: isDark,
-            onChanged: (value) => ctrl.searchQuery.value = value,
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              color: kPrimary,
-              onRefresh: ctrl.fetchTasks,
-              child: TaskListWidget(isDark: isDark, taskController: ctrl),
-            ),
-          ),
+          if (offline) OfflineCardWidget(isDark: isDark),
         ],
       ),
       floatingActionButton: FloatingActionButton(

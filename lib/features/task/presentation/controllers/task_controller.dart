@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/task/data/models/task_item_model.dart';
 import 'package:task_tracking_mobile/features/label/domain/entities/label.dart';
@@ -121,6 +122,14 @@ class TaskController extends GetxController {
       (_) => fetchTasks(),
       time: const Duration(milliseconds: 500),
     );
+
+    // Auto-refresh when internet is restored.
+    ever(Get.find<NetworkController>().connectionStatus, (status) {
+      if (status == ConnectionStatus.reconnected) {
+        fetchTasks();
+        fetchStatuses();
+      }
+    });
   }
 
   Future<TaskItem?> fetchTaskById(String id) async {

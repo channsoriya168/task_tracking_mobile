@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/profile/domain/entities/employee_profile.dart';
@@ -24,6 +25,7 @@ class ProfileController extends GetxController {
   });
 
   final Rx<EmployeeProfile?> profile = Rx<EmployeeProfile?>(null);
+  final RxBool isLoading = false.obs;
   final RxBool isUploadingImage = false.obs;
   final RxBool isChangingPassword = false.obs;
   final RxString changePasswordError = ''.obs;
@@ -40,6 +42,10 @@ class ProfileController extends GetxController {
     currentPasswordController.addListener(_handlePasswordInputChange);
     newPasswordController.addListener(_handlePasswordInputChange);
     confirmPasswordController.addListener(_handlePasswordInputChange);
+
+    ever(Get.find<NetworkController>().connectionStatus, (status) {
+      if (status == ConnectionStatus.reconnected) fetchProfile();
+    });
   }
 
   @override
@@ -98,11 +104,14 @@ class ProfileController extends GetxController {
 
   // ── Fetch profile ─────────────────────────────────────────
   Future<void> fetchProfile() async {
+    isLoading.value = true;
     try {
       final p = await fetchProfileUsecase();
       profile.value = p;
     } catch (e, st) {
       dev.log('fetchProfile error: $e', name: 'ProfileController', error: e, stackTrace: st);
+    } finally {
+      isLoading.value = false;
     }
   }
 

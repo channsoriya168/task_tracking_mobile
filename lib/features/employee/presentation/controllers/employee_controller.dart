@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_validator.dart';
@@ -38,6 +39,7 @@ class EmployeeController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
   final RxString selectedTaskGroupId = ''.obs;
+  final offline = !Get.find<NetworkController>().isConnected.value;
 
   RxList<Group> get Groups => Get.find<GroupController>().groups;
 
@@ -69,7 +71,9 @@ class EmployeeController extends GetxController {
       employees.value = await _repository.fetchEmployees(groupId: groupId);
       if (groupId == null) allEmployees.assignAll(employees);
     } catch (_) {
-      AppSnackbar.error('snack_error'.tr, 'snack_emp_load_failed'.tr);
+      if (!offline) {
+        AppSnackbar.error('snack_error'.tr, 'snack_emp_load_failed'.tr);
+      }
     } finally {
       isLoading.value = false;
     }

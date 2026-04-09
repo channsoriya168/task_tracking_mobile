@@ -313,6 +313,15 @@ const Map<String, String> enUS = {
   'val_field_required': '@label is required.',
   'val_phone_or_password_incorrect': 'Incorrect phone number or password.',
 
+  // ── Network ───────────────────────────────────────────────────
+  'no_internet': 'No internet connection',
+  'back_online': 'Back online',
+  'no_internet_title': 'No Internet Connection',
+  'no_internet_subtitle':
+      'Please check your Wi-Fi or mobile data\nand try again.',
+  'retry': 'Retry',
+  'dismiss': 'Dismiss',
+
   // ── Snackbars ─────────────────────────────────────────────────
   'snack_success': 'Success',
   'snack_error': 'Error',
