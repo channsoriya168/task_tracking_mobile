@@ -31,7 +31,6 @@ class AuthController extends GetxController {
   final RxBool obscurePassword = true.obs;
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
   bool get isAuthenticated => currentAuth.value != null;
 
@@ -51,8 +50,8 @@ class AuthController extends GetxController {
   }
 
   // ── Login ────────────────────────────────────────────────
-  void submitLogin() {
-    if (!(loginFormKey.currentState?.validate() ?? false)) return;
+  void submitLogin(GlobalKey<FormState> formKey) {
+    if (!(formKey.currentState?.validate() ?? false)) return;
     login();
   }
 

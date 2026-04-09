@@ -11,6 +11,11 @@ abstract class AppTextStyles {
       Get.locale?.languageCode == 'km' ? 'Siemreap' : 'Kantumruy Pro';
   // ── Single source of truth — change THIS line to switch font app-wide ───
 
+  // Returns 0 letter-spacing for Khmer — Khmer script breaks visually with
+  // any explicit spacing between characters.
+  static double? _ls(double? spacing) =>
+      (spacing == null || Get.locale?.languageCode == 'km') ? 0.0 : spacing;
+
   // ── Base builder ────────────────────────────────────────────────────────
   static TextStyle _font({
     double? fontSize,
@@ -23,7 +28,7 @@ abstract class AppTextStyles {
     fontSize: fontSize,
     fontWeight: fontWeight,
     color: color,
-    letterSpacing: letterSpacing,
+    letterSpacing: _ls(letterSpacing),
     height: height,
   );
 

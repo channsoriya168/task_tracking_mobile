@@ -59,7 +59,9 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                 children: [
                   Obx(
                     () => Text(
-                      ctrl.editingTask.value != null ? 'task_form_edit'.tr : 'task_form_new'.tr,
+                      ctrl.editingTask.value != null
+                          ? 'task_form_edit'.tr
+                          : 'task_form_new'.tr,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -90,7 +92,11 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Label
-              FieldLabelWidget('task_detail_label'.tr, isDark: isDark, isRequired: true),
+              FieldLabelWidget(
+                'task_detail_label'.tr,
+                isDark: isDark,
+                isRequired: true,
+              ),
               const SizedBox(height: 8),
               Obx(
                 () => DropdownWidget<Label>(
@@ -185,7 +191,11 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
               const SizedBox(height: 14),
 
               // Due Date
-              FieldLabelWidget('task_detail_due_date'.tr, isDark: isDark, isRequired: true),
+              FieldLabelWidget(
+                'task_detail_due_date'.tr,
+                isDark: isDark,
+                isRequired: true,
+              ),
               const SizedBox(height: 8),
               Obx(
                 () => DatePickerFieldWidget(

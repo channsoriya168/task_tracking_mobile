@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/network/push_notification_service.dart';
+import 'package:task_tracking_mobile/features/core/data/datasources/image_service.dart';
+import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
@@ -47,6 +49,10 @@ class SplashBinding extends Bindings {
       ),
       permanent: true,
     );
+
+    // ── Image ─────────────────────────────────────────────────
+    Get.put(ImageService(), permanent: true);
+    Get.put(PickAndCompressImageUseCase(Get.find()), permanent: true);
 
     // ── Core ──────────────────────────────────────────────────
     Get.put<AuthController>(

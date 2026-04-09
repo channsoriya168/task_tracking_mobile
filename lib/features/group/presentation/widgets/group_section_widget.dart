@@ -58,7 +58,7 @@ class _TaskGroupSectionState extends State<TaskGroupSectionWidget> {
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.grey[300] : kTextMuted,
-                    letterSpacing: 0.5,
+                    letterSpacing: kLs(0.5),
                   ),
                 ),
                 const SizedBox(width: 8),

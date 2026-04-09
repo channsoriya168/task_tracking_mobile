@@ -149,11 +149,11 @@ class EmployeeTaskCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   'task_new'.tr,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
                                     color: Colors.white,
-                                    letterSpacing: 0.5,
+                                    letterSpacing: kLs(0.5),
                                   ),
                                 ),
                               ),
@@ -314,7 +314,7 @@ class _AcceptButton extends StatelessWidget {
             fontSize: 11,
             fontWeight: FontWeight.w800,
             color: Colors.white,
-            letterSpacing: 0.5,
+            letterSpacing: kLs(0.5),
           ),
         ),
       ),
@@ -347,7 +347,7 @@ class _StatusChip extends StatelessWidget {
             fontSize: 11,
             fontWeight: FontWeight.w700,
             color: color,
-            letterSpacing: 0.3,
+            letterSpacing: kLs(0.3),
           ),
         ),
       ),

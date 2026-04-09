@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class DateSectionWidget extends StatelessWidget {
   final String label;
@@ -37,7 +38,7 @@ class DateSectionWidget extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 fontSize: 12,
                 color: isDark ? Colors.white60 : const Color(0xFF6C63FF),
-                letterSpacing: 0.3,
+                letterSpacing: kLs(0.3),
               ),
             ),
           ),

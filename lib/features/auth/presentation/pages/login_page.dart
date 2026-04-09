@@ -10,8 +10,15 @@ import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_he
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_password_field.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_phone_field.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +51,7 @@ class LoginPage extends StatelessWidget {
                     child: SingleChildScrollView(
                       padding: kPagePaddingWithBottom,
                       child: Form(
-                        key: auth.loginFormKey,
+                        key: _formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -77,7 +84,7 @@ class LoginPage extends StatelessWidget {
                             Obx(
                               () => LoginButton(
                                 isLoading: auth.isLoading.value,
-                                onPressed: auth.submitLogin,
+                                onPressed: () => auth.submitLogin(_formKey),
                               ),
                             ),
                             const SizedBox(height: 24),

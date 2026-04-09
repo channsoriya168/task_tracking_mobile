@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -39,6 +40,12 @@ class ProfileController extends GetxController {
     currentPasswordController.addListener(_handlePasswordInputChange);
     newPasswordController.addListener(_handlePasswordInputChange);
     confirmPasswordController.addListener(_handlePasswordInputChange);
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    fetchProfile();
   }
 
   @override
@@ -94,8 +101,8 @@ class ProfileController extends GetxController {
     try {
       final p = await fetchProfileUsecase();
       profile.value = p;
-    } catch (_) {
-      // Silently fail — auth from login/restore is still valid
+    } catch (e, st) {
+      dev.log('fetchProfile error: $e', name: 'ProfileController', error: e, stackTrace: st);
     }
   }
 

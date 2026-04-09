@@ -28,97 +28,59 @@ class ProfileGroupCard extends StatelessWidget {
     final roleName = roleMap['name'] as String? ?? '—';
     final joinedAt = group['joinedAt'] as String?;
     final joinedDate = joinedAt != null ? DateTime.tryParse(joinedAt) : null;
+    final joinedStr = joinedDate != null
+        ? 'Joined ${joinedDate.day.toString().padLeft(2, '0')}/'
+            '${joinedDate.month.toString().padLeft(2, '0')}/'
+            '${joinedDate.year}'
+        : null;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: isDark ? kCardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 50 : 12),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        children: [
+          // Group info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  groupName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                ),
+                if (joinedStr != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    joinedStr,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.white38 : kTextMuted,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // Role chip
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: groupColor.withAlpha(isDark ? 40 : 20),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              roleName,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: groupColor,
+              ),
+            ),
           ),
         ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Color accent strip
-              Container(
-                width: 5,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [groupColor, groupColor.withValues(alpha: 0.4)],
-                  ),
-                ),
-              ),
-              // Content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-                  child: Row(
-                    children: [
-                      // Group info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              groupName,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: isDark ? Colors.white : kTextDark,
-                                letterSpacing: -0.2,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            if (joinedDate != null)
-                              Text(
-                                'Joined ${joinedDate.day.toString().padLeft(2, '0')}/${joinedDate.month.toString().padLeft(2, '0')}/${joinedDate.year}',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: isDark ? Colors.white38 : kTextMuted,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      // Role chip
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: groupColor.withAlpha(20),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: groupColor.withAlpha(60)),
-                        ),
-                        child: Text(
-                          roleName,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: groupColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

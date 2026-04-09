@@ -27,7 +27,7 @@ class DashboardDateHeaderWidget extends StatelessWidget {
               fontSize: 12,
               fontWeight: isSpecial ? FontWeight.w700 : FontWeight.w600,
               color: labelColor,
-              letterSpacing: 0.3,
+              letterSpacing: kLs(0.3),
             ),
           ),
           const SizedBox(width: 8),

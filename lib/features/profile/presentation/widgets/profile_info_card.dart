@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
-import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_card.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_info_row.dart';
 
 class ProfileInfoCard extends StatelessWidget {
@@ -22,33 +20,33 @@ class ProfileInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dateStr = dateOfBirth != null
+        ? '${dateOfBirth!.day.toString().padLeft(2, '0')}/'
+            '${dateOfBirth!.month.toString().padLeft(2, '0')}/'
+            '${dateOfBirth!.year}'
+        : null;
+
     final items = [
-      if (email.isNotEmpty) (Icons.email_rounded, 'profile_email'.tr, email),
-      (Icons.phone_rounded, 'profile_phone'.tr, phone.isEmpty ? '—' : phone),
+      if (email.isNotEmpty)
+        (Icons.alternate_email_rounded, kPrimary, email),
+      (Icons.phone_rounded, kPrimary, phone.isEmpty ? '—' : phone),
       (
         Icons.location_on_rounded,
-        'profile_place_of_birth'.tr,
+        kPrimary,
         placeOfBirth.isEmpty ? '—' : placeOfBirth,
       ),
-      if (dateOfBirth != null)
-        (
-          Icons.cake_rounded,
-          'profile_date_of_birth'.tr,
-          dateOfBirth != null
-              ? '${dateOfBirth!.day.toString().padLeft(2, '0')}/${dateOfBirth!.month.toString().padLeft(2, '0')}/${dateOfBirth!.year}'
-              : '—',
-        ),
+      if (dateStr != null) (Icons.cake_rounded, kPrimary, dateStr),
     ];
 
-    return ProfileCard(
-      isDark: isDark,
+    return Container(
+      color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
       child: Column(
         children: List.generate(items.length, (i) {
-          final (icon, _, value) = items[i];
+          final (icon, color, value) = items[i];
           return ProfileInfoRow(
             isDark: isDark,
             icon: icon,
-            iconColor: kPrimary,
+            iconColor: color,
             value: value,
             showDivider: i < items.length - 1,
           );
