@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_widget.dart';
@@ -19,11 +20,13 @@ class TaskListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (taskController.isLoading.value) {
+      final offline = !Get.find<NetworkController>().isConnected.value;
+      final tasks = taskController.filteredTasks;
+
+      if (taskController.isLoading.value || (offline && tasks.isEmpty)) {
         return ManagerTaskListShimmer(isDark: isDark);
       }
 
-      final tasks = taskController.filteredTasks;
       if (tasks.isEmpty) return TaskEmptyState(isDark: isDark);
 
       return ListView.builder(

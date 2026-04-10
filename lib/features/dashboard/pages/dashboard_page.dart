@@ -128,7 +128,7 @@ class DashboardPage extends StatelessWidget {
               ),
 
               // ── Task List ────────────────────────────────────────
-              if (adminTaskCtrl.isLoading.value)
+              if (adminTaskCtrl.isLoading.value || (offline && filtered.isEmpty))
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                   sliver: SliverList.separated(
@@ -138,36 +138,6 @@ class DashboardPage extends StatelessWidget {
                       isDark: isDark,
                       cardBg: cardBg,
                       borderColor: borderColor,
-                    ),
-                  ),
-                )
-              else if (offline && filtered.isEmpty)
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 48, 20, 0),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.wifi_off_rounded,
-                          size: 52,
-                          color: isDark ? Colors.grey[700] : Colors.grey[300],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'no_internet_title'.tr,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: textColor,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'no_internet_subtitle'.tr,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 13, color: mutedColor),
-                        ),
-                      ],
                     ),
                   ),
                 )

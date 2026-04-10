@@ -4,6 +4,7 @@ import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/pages/label_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
@@ -103,7 +104,13 @@ class TaskMobilePage extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ctrl.showTaskSheet(),
+        onPressed: () {
+          if (!Get.find<NetworkController>().isConnected.value) {
+            showNoInternetDialog(isDark: isDark, redirectCount: 1);
+            return;
+          }
+          ctrl.showTaskSheet();
+        },
         backgroundColor: kPrimary,
         child: const Icon(Icons.add_rounded, color: Colors.white),
       ),

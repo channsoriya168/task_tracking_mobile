@@ -6,6 +6,7 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/controllers/label_controller.dart';
 import 'package:task_tracking_mobile/features/label/presentation/widgets/label_dialog.dart';
+import 'package:task_tracking_mobile/features/label/presentation/widgets/label_shimmer_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
 
 enum _AdminLabelMenuAction { edit, delete }
@@ -63,8 +64,16 @@ class LabelPage extends StatelessWidget {
           }),
           Expanded(
             child: Obx(() {
-              if (ctrl.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+              final offline =
+                  !Get.find<NetworkController>().isConnected.value;
+
+              if (ctrl.isLoading.value || (offline && ctrl.labels.isEmpty)) {
+                return ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
+                  itemCount: 6,
+                  separatorBuilder: (_, i) => const SizedBox(height: 12),
+                  itemBuilder: (_, i) => LabelShimmerWidget(isDark: isDark),
+                );
               }
 
               if (ctrl.labels.isEmpty) {
