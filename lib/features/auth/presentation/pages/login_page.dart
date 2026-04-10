@@ -52,43 +52,59 @@ class _LoginPageState extends State<LoginPage> {
                       padding: kPagePaddingWithBottom,
                       child: Form(
                         key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            LoginHeadline(isDark: isDark),
-                            const SizedBox(height: 36),
-                            LoginPhoneField(
-                              controller: auth.phoneController,
-                              isDark: isDark,
-                            ),
-                            const SizedBox(height: 16),
-                            Obx(
-                              () => LoginPasswordField(
-                                controller: auth.passwordController,
+                        child: Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: isDark ? kSurfaceDark : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isDark
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              LoginHeadline(isDark: isDark),
+                              const SizedBox(height: 36),
+                              LoginPhoneField(
+                                controller: auth.phoneController,
                                 isDark: isDark,
-                                obscure: auth.obscurePassword.value,
-                                onToggle: () => auth.obscurePassword.toggle(),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Obx(() {
-                              final msg = auth.errorMessage.value;
-                              if (msg.isEmpty) return const SizedBox.shrink();
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: LoginErrorBanner(message: msg),
-                              );
-                            }),
-                            const SizedBox(height: 28),
-                            Obx(
-                              () => LoginButton(
-                                isLoading: auth.isLoading.value,
-                                onPressed: () => auth.submitLogin(_formKey),
+                              const SizedBox(height: 16),
+                              Obx(
+                                () => LoginPasswordField(
+                                  controller: auth.passwordController,
+                                  isDark: isDark,
+                                  obscure: auth.obscurePassword.value,
+                                  onToggle: () => auth.obscurePassword.toggle(),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                          ],
+                              const SizedBox(height: 8),
+                              Obx(() {
+                                final msg = auth.errorMessage.value;
+                                if (msg.isEmpty) return const SizedBox.shrink();
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: LoginErrorBanner(message: msg),
+                                );
+                              }),
+                              const SizedBox(height: 28),
+                              Obx(
+                                () => LoginButton(
+                                  isLoading: auth.isLoading.value,
+                                  onPressed: () => auth.submitLogin(_formKey),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                            ],
+                          ),
                         ),
                       ),
                     ),
