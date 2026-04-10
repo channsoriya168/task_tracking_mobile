@@ -32,11 +32,6 @@ class EmployeeHomeController extends GetxController {
   final RxString searchQuery = ''.obs;
   final Rxn<DateTime> selectedDate = Rxn<DateTime>();
 
-  // ── Computed ─────────────────────────────────────────────────────────────
-
-  String get employeeName =>
-      Get.find<ProfileController>().profile.value?.fullName ?? '';
-
   /// All group tasks filtered by status and search query.
   /// Date filtering is handled by the API — no client-side date re-filter.
   List<TaskItem> get filteredTasks {

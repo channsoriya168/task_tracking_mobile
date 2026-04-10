@@ -50,7 +50,7 @@ class DashboardPage extends StatelessWidget {
                     title: Text(
                       'nav_dashboard'.tr,
                       style: AppTextStyles.appBarTitle(
-                        color: isDark ? Colors.white : null,
+                        color: isDark ? Colors.white : kPrimary,
                       ),
                     ),
                     // ── Week Calendar ─────────────────────────────────
@@ -207,8 +207,6 @@ class DashboardPage extends StatelessWidget {
                         }, childCount: filtered.length),
                       ),
                     ),
-
-                  const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
                 ],
               ),
               if (offline) OfflineCardWidget(isDark: isDark),
