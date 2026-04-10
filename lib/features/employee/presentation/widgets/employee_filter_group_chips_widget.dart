@@ -17,7 +17,7 @@ class EmployeeFilterGroupChipsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final groups = ctrl.Groups.toList();
+      final groups = ctrl.groups.toList();
       final selected = ctrl.selectedTaskGroupId.value;
       final all = ctrl.allEmployees;
 

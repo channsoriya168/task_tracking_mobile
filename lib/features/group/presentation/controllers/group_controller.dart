@@ -29,21 +29,28 @@ class GroupController extends GetxController {
   final TextEditingController descriptionEditingController =
       TextEditingController();
   final Rxn<Color> selectedColor = Rxn<Color>(kDefaultTaskGroupColor);
-  //loading save
+  final RxBool isLoading = false.obs;
   final RxBool isSaving = false.obs;
+  final RxBool isOfflineDialogOpen = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchGroups();
+    ever(Get.find<NetworkController>().connectionStatus, (status) {
+      if (status == ConnectionStatus.reconnected) fetchGroups();
+    });
   }
 
   Future<void> fetchGroups() async {
     try {
+      isLoading.value = true;
       groups.assignAll(await _getAllGroups());
     } catch (_) {
       final offline = !Get.find<NetworkController>().isConnected.value;
       if (!offline) AppSnackbar.error('snack_label'.tr, 'snack_group_load_fail'.tr);
+    } finally {
+      isLoading.value = false;
     }
   }
 

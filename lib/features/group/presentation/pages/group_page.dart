@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
+import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/widgets/group_card_widget.dart';
 import 'package:task_tracking_mobile/features/group/presentation/widgets/group_dialog.dart';
+import 'package:task_tracking_mobile/features/group/presentation/widgets/group_shimmer_widget.dart';
+
 
 class GroupPage extends StatelessWidget {
   const GroupPage({super.key});
@@ -42,8 +47,28 @@ class GroupPage extends StatelessWidget {
           builder: (context, constraints) {
             final isTabletLayout = constraints.maxWidth >= 600;
 
-            return Obx(() {
-              final groups = ctrl.groups;
+            return Column(
+              children: [
+                Obx(() {
+                  final offline =
+                      !Get.find<NetworkController>().isConnected.value;
+                  if (!offline || ctrl.isOfflineDialogOpen.value) return const SizedBox.shrink();
+                  return OfflineCardWidget(isDark: isDark);
+                }),
+                Expanded(
+                  child: Obx(() {
+                    final groups = ctrl.groups;
+                    final offline =
+                        !Get.find<NetworkController>().isConnected.value;
+
+              if (ctrl.isLoading.value || (offline && groups.isEmpty)) {
+                return ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+                  itemCount: 6,
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  itemBuilder: (_, _) => GroupShimmerWidget(isDark: isDark),
+                );
+              }
 
               if (groups.isEmpty) {
                 return RefreshIndicator(
@@ -130,14 +155,26 @@ class GroupPage extends StatelessWidget {
                   },
                 ),
               );
-            });
+            }),
+                ),
+              ],
+            );
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
-        onPressed: () => showGroupDialog(context, ctrl, isDark),
+        onPressed: () {
+           if (!Get.find<NetworkController>().isConnected.value) {
+            ctrl.isOfflineDialogOpen.value = true;
+            showNoInternetDialog(
+              isDark: isDark,
+            ).then((_) => ctrl.isOfflineDialogOpen.value = false);
+            return;
+          }
+          showGroupDialog(context, ctrl, isDark, null, ctrl.isOfflineDialogOpen);
+        },
         child: const Icon(Icons.add_rounded),
       ),
     );

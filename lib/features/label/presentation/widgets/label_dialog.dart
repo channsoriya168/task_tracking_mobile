@@ -14,6 +14,7 @@ Future<void> showLabelDialog(
   Label? existing,
   RxBool? dialogOpenFlag,
 ]) async {
+  
   ctrl.initForm(existing);
 
   await showModalBottomSheet(

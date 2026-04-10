@@ -1,7 +1,9 @@
 // ── Position Card ─────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
@@ -45,7 +47,15 @@ class GroupCardWidget extends StatelessWidget {
         ),
         child: const Icon(Icons.delete_rounded, color: Colors.white, size: 22),
       ),
-      confirmDismiss: (_) => _confirmDelete(context),
+      confirmDismiss: (_) async {
+        if (!Get.find<NetworkController>().isConnected.value) {
+          ctrl.isOfflineDialogOpen.value = true;
+          await showNoInternetDialog(isDark: isDark, redirectCount: 1);
+          ctrl.isOfflineDialogOpen.value = false;
+          return false;
+        }
+        return _confirmDelete(context);
+      },
       onDismissed: (_) => ctrl.deleteGroup(group.id),
       child: Container(
         decoration: BoxDecoration(
@@ -134,8 +144,20 @@ class GroupCardWidget extends StatelessWidget {
                     ),
                     tooltip: 'actions'.tr,
                     onSelected: (action) async {
+                      final offline =
+                          !Get.find<NetworkController>().isConnected.value;
+                      if (offline) {
+                        ctrl.isOfflineDialogOpen.value = true;
+                        await showNoInternetDialog(
+                            isDark: isDark, redirectCount: 1);
+                        ctrl.isOfflineDialogOpen.value = false;
+                        return;
+                      }
+
                       if (action == _GroupCardMenuAction.edit) {
-                        showGroupDialog(context, ctrl, isDark, group);
+                        showGroupDialog(
+                            context, ctrl, isDark, group,
+                            ctrl.isOfflineDialogOpen);
                         return;
                       }
 
