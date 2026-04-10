@@ -36,10 +36,7 @@ class TaskListWidget extends StatelessWidget {
           final task = tasks[i];
           return Padding(
             padding: kItemSpacing,
-            child: TaskCardWidget(
-              task: task,
-              managerTaskController: taskController,
-            ),
+            child: TaskCardWidget(task: task, taskController: taskController),
           );
         },
       );

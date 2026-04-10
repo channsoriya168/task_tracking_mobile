@@ -18,14 +18,14 @@ class TaskCardWidget extends StatelessWidget {
   const TaskCardWidget({
     super.key,
     required this.task,
-    this.managerTaskController,
+    this.taskController,
     this.fetchDetail,
   });
 
   final TaskItem task;
 
   /// When null the card is read-only (no action bar shown).
-  final TaskController? managerTaskController;
+  final TaskController? taskController;
 
   /// When provided, the detail sheet fetches fresh data from the API on open.
   final Future<TaskItem?> Function(String id)? fetchDetail;
@@ -35,7 +35,7 @@ class TaskCardWidget extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? kCardDark : Colors.white;
     final mutedColor = isDark ? Colors.white54 : kTextMuted;
-    final ctrl = managerTaskController;
+    final ctrl = taskController;
 
     // Only the task creator can edit or delete
     String? currentEmployeeId;
@@ -56,8 +56,12 @@ class TaskCardWidget extends StatelessWidget {
         : (task.createdAt != null ? formatDate(task.createdAt!) : '');
 
     final cardContent = GestureDetector(
-      onTap: () =>
-          TaskBottomSheet.showTaskDetailSheet(context, isDark, task, fetchDetail: fetchDetail),
+      onTap: () => TaskBottomSheet.showTaskDetailSheet(
+        context,
+        isDark,
+        task,
+        fetchDetail: fetchDetail,
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: cardBg,
@@ -152,8 +156,10 @@ class TaskCardWidget extends StatelessWidget {
       confirmDismiss: (_) async {
         if (!Get.find<NetworkController>().isConnected.value) {
           ctrl.isOfflineDialogOpen.value = true;
-          showNoInternetDialog(isDark: isDark, redirectCount: 1)
-              .then((_) => ctrl.isOfflineDialogOpen.value = false);
+          showNoInternetDialog(
+            isDark: isDark,
+            redirectCount: 1,
+          ).then((_) => ctrl.isOfflineDialogOpen.value = false);
           return false;
         }
         return showConfirmDeleteDialog(

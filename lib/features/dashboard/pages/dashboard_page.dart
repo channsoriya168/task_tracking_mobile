@@ -180,7 +180,7 @@ class DashboardPage extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 10),
                         child: TaskCardWidget(
                           task: task,
-                          managerTaskController: adminTaskCtrl,
+                          taskController: adminTaskCtrl,
                         ),
                       );
                     }, childCount: filtered.length),
