@@ -16,6 +16,15 @@ import 'package:task_tracking_mobile/core/controllers/theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Suppress MissingPluginException from connectivity_plus stream activation.
+  // The exception is reported through FlutterError, not catchable via try-catch.
+  final originalOnError = FlutterError.onError;
+  FlutterError.onError = (details) {
+    if (details.exception is MissingPluginException) return;
+    originalOnError?.call(details);
+  };
+
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp();
 

@@ -43,6 +43,7 @@ class EmployeeFormAvatar extends StatelessWidget {
                         ? Colors.grey[800]
                         : Colors.grey[200],
                     backgroundImage: bgImage,
+                    onBackgroundImageError: bgImage != null ? (_, _) {} : null,
                     child: bgImage == null
                         ? Icon(
                             Icons.person_rounded,

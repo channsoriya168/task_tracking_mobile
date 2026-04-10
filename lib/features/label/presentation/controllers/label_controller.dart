@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/label/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/label/domain/usecases/create_label_usecase.dart';
@@ -34,7 +35,8 @@ class LabelController extends GetxController {
     try {
       labels.assignAll(await _getAll());
     } catch (_) {
-      AppSnackbar.error('snack_label'.tr, 'snack_label_load_fail'.tr);
+      final offline = !Get.find<NetworkController>().isConnected.value;
+      if (!offline) AppSnackbar.error('snack_label'.tr, 'snack_label_load_fail'.tr);
     } finally {
       isLoading.value = false;
     }

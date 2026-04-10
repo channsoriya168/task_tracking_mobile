@@ -277,6 +277,7 @@ class _Avatar extends StatelessWidget {
       radius: 14,
       backgroundColor: kPrimary.withValues(alpha: 0.15),
       backgroundImage: url != null ? NetworkImage(url!) : null,
+      onBackgroundImageError: url != null ? (_, _) {} : null,
       child: url == null
           ? Text(
               letter,

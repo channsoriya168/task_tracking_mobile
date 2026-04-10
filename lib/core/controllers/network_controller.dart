@@ -51,16 +51,11 @@ class NetworkController extends GetxController {
   void _initNetworkListener() {
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) return;
 
-    runZonedGuarded(
-      () {
-        _subscription = networkInfo.connectivity.onConnectivityChanged.listen(
-          _onConnectivityChanged,
-          onError: (_) {},
-          cancelOnError: false,
-        );
-      },
-      (_, __) {},
-    );
+    // .handleError() intercepts MissingPluginException thrown inside Flutter's
+    // platform channel async machinery — runZonedGuarded cannot reach it.
+    _subscription = networkInfo.connectivity.onConnectivityChanged
+        .handleError((_) {})
+        .listen(_onConnectivityChanged, cancelOnError: false);
   }
 
   void _onConnectivityChanged(dynamic status) {
