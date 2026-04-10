@@ -20,6 +20,7 @@ class TaskDetailAvatar extends StatelessWidget {
       return CircleAvatar(
         radius: size / 2,
         backgroundImage: NetworkImage(imageUrl!),
+        onBackgroundImageError: (_, _) {},
       );
     }
     return Container(

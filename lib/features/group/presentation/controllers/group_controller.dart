@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/employee/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
@@ -41,7 +42,8 @@ class GroupController extends GetxController {
     try {
       groups.assignAll(await _getAllGroups());
     } catch (_) {
-      AppSnackbar.error('snack_label'.tr, 'snack_group_load_fail'.tr);
+      final offline = !Get.find<NetworkController>().isConnected.value;
+      if (!offline) AppSnackbar.error('snack_label'.tr, 'snack_group_load_fail'.tr);
     }
   }
 

@@ -123,11 +123,14 @@ class TaskController extends GetxController {
       time: const Duration(milliseconds: 500),
     );
 
-    // Auto-refresh when internet is restored.
+    // Auto-refresh when internet is restored — also retry labels/priorities
+    // which may have failed if the page was never visited while online.
     ever(Get.find<NetworkController>().connectionStatus, (status) {
       if (status == ConnectionStatus.reconnected) {
         fetchTasks();
         fetchStatuses();
+        if (taskPriority.isEmpty) fetchPriorities();
+        if (labels.isEmpty) fetchLabels();
       }
     });
   }

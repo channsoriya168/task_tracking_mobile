@@ -42,6 +42,7 @@ class UserAvatarWidget extends StatelessWidget {
       radius: radius,
       backgroundColor: c.withValues(alpha: 0.15),
       backgroundImage: hasImage ? NetworkImage(imageUrl!) : null,
+      onBackgroundImageError: hasImage ? (_, _) {} : null,
       child: hasImage
           ? null
           : Text(
