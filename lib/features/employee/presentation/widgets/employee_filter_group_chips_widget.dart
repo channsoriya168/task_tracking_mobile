@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 
 class EmployeeFilterGroupChipsWidget extends StatelessWidget {
@@ -19,110 +19,45 @@ class EmployeeFilterGroupChipsWidget extends StatelessWidget {
     return Obx(() {
       final groups = ctrl.Groups.toList();
       final selected = ctrl.selectedTaskGroupId.value;
+      final all = ctrl.allEmployees;
 
       return Padding(
         padding: kPagePaddingHorizontal,
         child: SizedBox(
-          height: 44,
+          height: 40,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
               // ── "All" chip ──────────────────────────────────
-              _FilterChip(
-                label: 'employee_all'.tr,
-                isSelected: selected.isEmpty,
+              FilterChipWidget(
                 isDark: isDark,
-                icon: Icons.people_rounded,
+                filter: 'employee_all'.tr,
+                count: all.length,
+                selected: selected.isEmpty,
                 onTap: () => ctrl.selectedTaskGroupId.value = '',
               ),
+              const SizedBox(width: 8),
 
               // ── Group chips ─────────────────────────────────
-              ...groups.map(
-                (g) => _FilterChip(
-                  label: g.name,
-                  isSelected: selected == g.id,
-
-                  isDark: isDark,
-                  onTap: () => ctrl.selectedTaskGroupId.value = g.id,
-                ),
-              ),
+              ...groups.map((g) {
+                final count = all
+                    .where((e) => e.groups.any((eg) => eg.groupId == g.id))
+                    .length;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: FilterChipWidget(
+                    isDark: isDark,
+                    filter: g.name,
+                    count: count,
+                    selected: selected == g.id,
+                    onTap: () => ctrl.selectedTaskGroupId.value = g.id,
+                  ),
+                );
+              }),
             ],
           ),
         ),
       );
     });
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.isSelected,
-    required this.isDark,
-    required this.onTap,
-    this.icon,
-  });
-
-  final String label;
-  final bool isSelected;
-  final bool isDark;
-  final VoidCallback onTap;
-  final IconData? icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? kPrimary : (isDark ? kCardDark : Colors.white),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected
-                ? kPrimary
-                : (isDark
-                      ? Colors.white.withAlpha(18)
-                      : Colors.grey.withAlpha(40)),
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: kPrimary.withAlpha(70),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : [],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(
-                icon,
-                size: 13,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? Colors.grey[400] : kTextMuted),
-              ),
-              const SizedBox(width: 5),
-            ],
-            Text(
-              label,
-              style: AppTextStyles.chipLabel(
-                selected: isSelected,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? Colors.grey[300] : kTextDark),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

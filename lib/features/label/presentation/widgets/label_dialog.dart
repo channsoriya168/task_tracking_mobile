@@ -27,10 +27,11 @@ Future<void> showLabelDialog(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Handle
             Center(
               child: Container(
@@ -43,13 +44,27 @@ Future<void> showLabelDialog(
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              existing == null ? 'label_new'.tr : 'label_edit'.tr,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : kTextDark,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  existing == null ? 'label_new'.tr : 'label_edit'.tr,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : kTextDark,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: isDark ? Colors.grey[400] : kTextMuted,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             // Name field
@@ -125,7 +140,8 @@ Future<void> showLabelDialog(
                 ),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     ),
