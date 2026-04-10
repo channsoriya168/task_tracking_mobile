@@ -4,6 +4,7 @@ import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
@@ -68,6 +69,9 @@ class EmployeeMobilePage extends StatelessWidget {
           Obx(() {
             final offline = !Get.find<NetworkController>().isConnected.value;
             if (!offline) return const SizedBox.shrink();
+            if (!offline || ctrl.isOfflineDialogOpen.value) {
+              return const SizedBox.shrink();
+            }
             return OfflineCardWidget(isDark: isDark);
           }),
           EmployeeFilterGroupChipsWidget(isDark: isDark, ctrl: ctrl),
@@ -87,8 +91,17 @@ class EmployeeMobilePage extends StatelessWidget {
           : FloatingActionButton(
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
-              onPressed: () =>
-                  Get.find<EmployeeController>().showCreateDialog(),
+              onPressed: () {
+                if (!Get.find<NetworkController>().isConnected.value) {
+                  ctrl.isOfflineDialogOpen.value = true;
+                  showNoInternetDialog(
+                    isDark: isDark,
+                    redirectCount: 1,
+                  ).then((_) => ctrl.isOfflineDialogOpen.value = false);
+                  return;
+                }
+                ctrl.showCreateDialog();
+              },
               child: const Icon(Icons.person_add_rounded),
             ),
     );

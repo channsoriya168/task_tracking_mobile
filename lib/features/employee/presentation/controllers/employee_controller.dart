@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
+import 'package:task_tracking_mobile/core/utils/network_utils.dart';
 import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_validator.dart';
 import 'package:task_tracking_mobile/features/employee/domain/entities/employee.dart';
@@ -37,11 +39,11 @@ class EmployeeController extends GetxController {
   final RxList<Employee> employees = <Employee>[].obs;
   final RxList<Employee> allEmployees = <Employee>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool isOfflineDialogOpen = false.obs;
   final RxString searchQuery = ''.obs;
   final RxString selectedTaskGroupId = ''.obs;
-  final offline = !Get.find<NetworkController>().isConnected.value;
 
-  RxList<Group> get Groups => Get.find<GroupController>().groups;
+  RxList<Group> get groups => Get.find<GroupController>().groups;
 
   // ── Gender lookup ──────────────────────────────────────────────
   final RxList<LookupGender> genders = <LookupGender>[].obs;
@@ -60,6 +62,12 @@ class EmployeeController extends GetxController {
     fetchEmployees();
     fetchGenders();
     ever(selectedTaskGroupId, (_) => fetchEmployees());
+    ever(Get.find<NetworkController>().connectionStatus, (status) {
+      if (status == ConnectionStatus.reconnected) {
+        fetchEmployees();
+        if (genders.isEmpty) fetchGenders();
+      }
+    });
   }
 
   Future<void> fetchEmployees() async {
@@ -70,8 +78,8 @@ class EmployeeController extends GetxController {
           : null;
       employees.value = await _repository.fetchEmployees(groupId: groupId);
       if (groupId == null) allEmployees.assignAll(employees);
-    } catch (_) {
-      if (!offline) {
+    } catch (e) {
+      if (!isConnectionError(e)) {
         AppSnackbar.error('snack_error'.tr, 'snack_emp_load_failed'.tr);
       }
     } finally {
@@ -170,11 +178,7 @@ class EmployeeController extends GetxController {
   Future<void> showCreateDialog([String? preselectedGroupId]) async {
     _resetForm();
     selectedGroupId.value = preselectedGroupId;
-    await Get.bottomSheet(
-      EmployeeFormDialog(controller: this),
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-    );
+    await _showFormSheet();
   }
 
   Future<void> showEditDialog(Employee employee) async {
@@ -192,11 +196,31 @@ class EmployeeController extends GetxController {
     selectedGroupId.value = employee.groups.isNotEmpty
         ? employee.groups.first.groupId
         : null;
+    await _showFormSheet();
+  }
+
+  Future<void> _showFormSheet() async {
+    Worker? offlineWorker;
+    offlineWorker = ever(
+      Get.find<NetworkController>().isConnected,
+      (connected) {
+        if (!connected) {
+          offlineWorker?.dispose();
+          Get.back();
+          isOfflineDialogOpen.value = true;
+          showNoInternetDialog(isDark: Get.isDarkMode, redirectCount: 1)
+              .then((_) => isOfflineDialogOpen.value = false);
+        }
+      },
+    );
+
     await Get.bottomSheet(
       EmployeeFormDialog(controller: this),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     );
+
+    offlineWorker.dispose();
   }
 
   void _resetForm() {
