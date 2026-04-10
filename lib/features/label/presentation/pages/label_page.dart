@@ -69,7 +69,7 @@ class LabelPage extends StatelessWidget {
                   if (!offline || _dialogOpen.value) {
                     return const SizedBox.shrink();
                   }
-                  return const OfflineCardWidget();
+                  return OfflineCardWidget(isDark: isDark);
                 }),
                 Expanded(
                   child: Obx(() {
