@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 
 class OfflineCardWidget extends StatelessWidget {
-  const OfflineCardWidget({super.key});
+  const OfflineCardWidget({super.key, required this.isDark});
+
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {

@@ -58,7 +58,7 @@ class DashboardPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (offline && !adminTaskCtrl.isOfflineDialogOpen.value)
-                        const OfflineCardWidget(),
+                        OfflineCardWidget(isDark: isDark),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,

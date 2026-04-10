@@ -30,7 +30,9 @@ class EmployeeMobilePage extends StatelessWidget {
           Obx(() {
             final offline = !Get.find<NetworkController>().isConnected.value;
             if (!offline) return const SizedBox.shrink();
-            return const OfflineCardWidget();
+            return OfflineCardWidget(
+              isDark: isDark,
+            );
           }),
 
           const SizedBox(height: 12),
