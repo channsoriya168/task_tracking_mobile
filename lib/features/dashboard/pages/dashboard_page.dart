@@ -51,11 +51,14 @@ class DashboardPage extends StatelessWidget {
                 ),
                 // ── Offline banner + Week Calendar ──────────────────
                 bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(offline ? 215 : 135),
+                  preferredSize: Size.fromHeight(
+                    offline && !adminTaskCtrl.isOfflineDialogOpen.value ? 215 : 135,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (offline) const OfflineCardWidget(),
+                      if (offline && !adminTaskCtrl.isOfflineDialogOpen.value)
+                        const OfflineCardWidget(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,

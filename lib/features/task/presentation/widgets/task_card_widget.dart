@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
@@ -147,12 +149,20 @@ class TaskCardWidget extends StatelessWidget {
 
     return Dismissible(
       key: Key(task.id),
-      confirmDismiss: (_) => showConfirmDeleteDialog(
-        context,
-        title: 'Delete Task',
-        message:
-            'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
-      ),
+      confirmDismiss: (_) async {
+        if (!Get.find<NetworkController>().isConnected.value) {
+          ctrl.isOfflineDialogOpen.value = true;
+          showNoInternetDialog(isDark: isDark, redirectCount: 1)
+              .then((_) => ctrl.isOfflineDialogOpen.value = false);
+          return false;
+        }
+        return showConfirmDeleteDialog(
+          context,
+          title: 'Delete Task',
+          message:
+              'Are you sure you want to delete "${task.title}"? This action cannot be undone.',
+        );
+      },
       onDismissed: (_) => ctrl.deleteTask(task),
       background: Container(
         alignment: Alignment.centerRight,

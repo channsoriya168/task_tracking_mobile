@@ -67,7 +67,7 @@ class TaskMobilePage extends StatelessWidget {
           // ── Offline banner ────────────────────────────────────
           Obx(() {
             final offline = !Get.find<NetworkController>().isConnected.value;
-            if (!offline) return const SizedBox.shrink();
+            if (!offline || ctrl.isOfflineDialogOpen.value) return const SizedBox.shrink();
             return const OfflineCardWidget();
           }),
 
@@ -106,7 +106,9 @@ class TaskMobilePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (!Get.find<NetworkController>().isConnected.value) {
-            showNoInternetDialog(isDark: isDark, redirectCount: 1);
+            ctrl.isOfflineDialogOpen.value = true;
+            showNoInternetDialog(isDark: isDark, redirectCount: 1)
+                .then((_) => ctrl.isOfflineDialogOpen.value = false);
             return;
           }
           ctrl.showTaskSheet();

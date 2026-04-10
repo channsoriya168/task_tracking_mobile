@@ -84,8 +84,10 @@ class _TaskSheetBodyState extends State<_TaskSheetBody> {
 
   void _handleOffline() {
     if (!mounted) return;
-    Get.back(); // close the bottom sheet
-    showNoInternetDialog(isDark: widget.isDark, redirectCount: 1);
+    Get.back();
+    widget.ctrl.isOfflineDialogOpen.value = true;
+    showNoInternetDialog(isDark: widget.isDark, redirectCount: 1)
+        .then((_) => widget.ctrl.isOfflineDialogOpen.value = false);
   }
 
   @override

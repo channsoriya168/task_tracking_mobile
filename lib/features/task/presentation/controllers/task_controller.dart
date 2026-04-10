@@ -63,6 +63,7 @@ class TaskController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isSaving = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxBool isOfflineDialogOpen = false.obs;
 
   final titleTextEditor = TextEditingController();
   final descTextEditor = TextEditingController();
