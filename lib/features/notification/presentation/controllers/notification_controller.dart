@@ -179,7 +179,10 @@ class NotificationController extends GetxController {
 
       if (role == UserRole.employee) {
         if (Get.isRegistered<EmployeeTaskController>()) {
-          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId, initialTab: initialTab);
+          Get.find<EmployeeTaskController>().prepareTaskDetail(
+            taskId,
+            initialTab: initialTab,
+          );
         }
         Get.toNamed(
           AppRoutes.taskDetail,
@@ -200,9 +203,10 @@ class NotificationController extends GetxController {
       }
     } catch (_) {
       if (Get.isDialogOpen ?? false) Get.back();
+      //this task might deleted or user might not have access to it anymore
       Get.snackbar(
         'Error',
-        'Could not load task details.',
+        'Failed to open task detail. It might have been deleted or you might not have access to it anymore.',
         backgroundColor: const Color(0xFFFF4757),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

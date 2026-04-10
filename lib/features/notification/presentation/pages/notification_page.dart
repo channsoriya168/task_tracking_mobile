@@ -38,33 +38,9 @@ class NotificationPage extends StatelessWidget {
                       children: [
                         Text(
                           'notification_title'.tr,
-                          style: AppTextStyles.appBarTitle(
-                            color: isDark ? Colors.white : kTextDark,
-                          ),
+                          style: AppTextStyles.appBarTitle(color: kPrimary),
                         ),
                         const SizedBox(height: 2),
-                        Obx(() {
-                          final count = controller.showUnreadOnly.value
-                              ? controller.unreadCount.value
-                              : controller.notifications.length;
-                          return Text(
-                            count == 0
-                                ? 'notif_all_caught_up'.tr
-                                : 'notif_unread_count'.trParams({
-                                    'count': '$count',
-                                  }),
-                            style: TextStyle(
-                              color: isDark
-                                  ? kTextLight.withValues(alpha: 0.70)
-                                  : kTextDark.withValues(alpha: 0.70),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: Get.locale?.languageCode == 'km'
-                                  ? 'Siemreap'
-                                  : 'Kantumruy Pro',
-                            ),
-                          );
-                        }),
                       ],
                     ),
                     const Spacer(),
@@ -122,6 +98,7 @@ class NotificationPage extends StatelessWidget {
                     isSelected: controller.showUnreadOnly.value,
                     isDark: isDark,
                     onTap: () => controller.showUnreadOnly.value = true,
+                    unreadCount: controller.unreadCount.value,
                   ),
                 ],
               ),

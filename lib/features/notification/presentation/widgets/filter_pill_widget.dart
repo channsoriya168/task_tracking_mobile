@@ -5,6 +5,7 @@ class FilterPillWidget extends StatelessWidget {
   final String label;
   final bool isSelected;
   final bool isDark;
+  final int? unreadCount; // Optional unread count to display on the pill
   final VoidCallback onTap;
 
   const FilterPillWidget({
@@ -12,6 +13,7 @@ class FilterPillWidget extends StatelessWidget {
     required this.isSelected,
     required this.isDark,
     required this.onTap,
+    this.unreadCount,
   });
 
   @override
@@ -46,17 +48,48 @@ class FilterPillWidget extends StatelessWidget {
                 ]
               : null,
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected
-                ? Colors.white
-                : isDark
-                ? Colors.white54
-                : const Color(0xFF64748B),
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            fontSize: 13,
-          ),
+        child: Row(
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected
+                    ? Colors.white
+                    : isDark
+                    ? Colors.white54
+                    : const Color(0xFF64748B),
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+            //count all or unread
+            if (unreadCount != null) ...[
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? Colors.white.withValues(alpha: 0.9)
+                      : isDark
+                      ? Colors.white.withValues(alpha: 0.15)
+                      : const Color(0xFFCBD5E1).withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  unreadCount.toString(),
+                  style: TextStyle(
+                    color: isSelected
+                        ? kPrimary
+                        : isDark
+                        ? Colors.white70
+                        : const Color(0xFF64748B),
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

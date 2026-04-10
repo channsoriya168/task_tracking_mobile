@@ -35,9 +35,7 @@ class TaskMobilePage extends StatelessWidget {
               children: [
                 Text(
                   'task_title'.tr,
-                  style: AppTextStyles.appBarTitle(
-                    color: isDark ? Colors.white : kTextDark,
-                  ),
+                  style: AppTextStyles.appBarTitle(color: kPrimary),
                 ),
                 const Spacer(),
                 Obx(() {
@@ -63,17 +61,19 @@ class TaskMobilePage extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 4),
 
           // ── Offline banner ────────────────────────────────────
           Obx(() {
             final offline = !Get.find<NetworkController>().isConnected.value;
-            if (!offline || ctrl.isOfflineDialogOpen.value) return const SizedBox.shrink();
+            if (!offline || ctrl.isOfflineDialogOpen.value)
+              return const SizedBox.shrink();
             return OfflineCardWidget(isDark: isDark);
           }),
 
           // ── Week calendar ─────────────────────────────────────
           Padding(
-            padding: kPageSectionPadding,
+            padding: kPagePaddingHorizontal,
             child: Obx(
               () => WeekCalendarWidget(
                 isDark: isDark,
@@ -107,8 +107,10 @@ class TaskMobilePage extends StatelessWidget {
         onPressed: () {
           if (!Get.find<NetworkController>().isConnected.value) {
             ctrl.isOfflineDialogOpen.value = true;
-            showNoInternetDialog(isDark: isDark, redirectCount: 1)
-                .then((_) => ctrl.isOfflineDialogOpen.value = false);
+            showNoInternetDialog(
+              isDark: isDark,
+              redirectCount: 1,
+            ).then((_) => ctrl.isOfflineDialogOpen.value = false);
             return;
           }
           ctrl.showTaskSheet();
