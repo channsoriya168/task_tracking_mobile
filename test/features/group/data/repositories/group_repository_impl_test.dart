@@ -44,6 +44,13 @@ void main() {
   late MockGroupRemoteDatasource mockRemote;
   late GroupRepositoryImpl repository;
 
+  setUpAll(() {
+    // mocktail requires a registered fallback for any custom type used with any()
+    registerFallbackValue(
+      GroupModel(id: '', name: '', createdAt: DateTime(2024)),
+    );
+  });
+
   setUp(() {
     mockRemote = MockGroupRemoteDatasource();
     repository = GroupRepositoryImpl(mockRemote);
@@ -231,7 +238,7 @@ void main() {
 
   group('delete', () {
     test('calls remote.delete with the correct id', () async {
-      when(() => mockRemote.delete('1')).thenAnswer((_) async {});
+      when(() => mockRemote.delete(any())).thenAnswer((_) async {});
 
       await repository.delete('1');
 
