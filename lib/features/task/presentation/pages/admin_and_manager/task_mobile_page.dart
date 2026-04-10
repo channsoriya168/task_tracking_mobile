@@ -24,45 +24,43 @@ class TaskMobilePage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'task_title'.tr,
+          style: AppTextStyles.appBarTitle(color: kPrimary),
+        ),
+        backgroundColor: isDark ? kBgDark : kBgLight,
+        elevation: 0,
+        actions: [
+          Obx(() {
+            if (auth.role != UserRole.admin) {
+              return const SizedBox.shrink();
+            }
+            return Padding(
+              padding: kPagePaddingHorizontal,
+              child: OutlinedButton.icon(
+                onPressed: () => Get.to(() => const LabelPage()),
+                label: Text('task_create_labels'.tr),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: kPrimary,
+                  side: const BorderSide(color: kPrimary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
       backgroundColor: isDark ? kBgDark : kBgLight,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Title ────────────────────────────────────────────
-          Padding(
-            padding: kPagePaddingHorizontal,
-            child: Row(
-              children: [
-                Text(
-                  'task_title'.tr,
-                  style: AppTextStyles.appBarTitle(color: kPrimary),
-                ),
-                const Spacer(),
-                Obx(() {
-                  if (auth.role != UserRole.admin) {
-                    return const SizedBox.shrink();
-                  }
-                  return OutlinedButton.icon(
-                    onPressed: () => Get.to(() => const LabelPage()),
-                    label: Text('task_create_labels'.tr),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: kPrimary,
-                      side: const BorderSide(color: kPrimary),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
-          SizedBox(height: 4),
-
           // ── Offline banner ────────────────────────────────────
           Obx(() {
             final offline = !Get.find<NetworkController>().isConnected.value;

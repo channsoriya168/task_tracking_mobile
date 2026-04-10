@@ -31,6 +31,14 @@ class DashboardPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
+      appBar: AppBar(
+        backgroundColor: isDark ? kBgDark : kBgLight,
+        elevation: 0,
+        title: Text(
+          'nav_dashboard'.tr,
+          style: AppTextStyles.appBarTitle(color: kPrimary),
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: adminTaskCtrl.fetchTasks,
         child: Obx(() {
@@ -43,16 +51,12 @@ class DashboardPage extends StatelessWidget {
               SliverAppBar(
                 backgroundColor: isDark ? kBgDark : kBgLight,
                 pinned: true,
-                title: Text(
-                  'nav_dashboard'.tr,
-                  style: AppTextStyles.appBarTitle(
-                    color: isDark ? Colors.white : kPrimary,
-                  ),
-                ),
                 // ── Offline banner + Week Calendar ──────────────────
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(
-                    offline && !adminTaskCtrl.isOfflineDialogOpen.value ? 215 : 135,
+                    offline && !adminTaskCtrl.isOfflineDialogOpen.value
+                        ? 120
+                        : 90,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -60,9 +64,10 @@ class DashboardPage extends StatelessWidget {
                       if (offline && !adminTaskCtrl.isOfflineDialogOpen.value)
                         OfflineCardWidget(isDark: isDark),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                        padding: const EdgeInsets.only(
+                          bottom: 12,
+                          left: 16,
+                          right: 16,
                         ),
                         child: WeekCalendarWidget(
                           isDark: isDark,
@@ -86,7 +91,7 @@ class DashboardPage extends StatelessWidget {
                       border: Border.all(color: borderColor),
                       boxShadow: [cardShadow],
                     ),
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
+                    padding: const EdgeInsets.all(14),
                     child: TaskLineChartWidget(isDark: isDark),
                   ),
                 ),
@@ -131,7 +136,8 @@ class DashboardPage extends StatelessWidget {
               ),
 
               // ── Task List ────────────────────────────────────────
-              if (adminTaskCtrl.isLoading.value || (offline && filtered.isEmpty))
+              if (adminTaskCtrl.isLoading.value ||
+                  (offline && filtered.isEmpty))
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                   sliver: SliverList.separated(
@@ -168,19 +174,16 @@ class DashboardPage extends StatelessWidget {
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, i) {
-                        final task = filtered[i];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: TaskCardWidget(
-                            task: task,
-                            managerTaskController: adminTaskCtrl,
-                          ),
-                        );
-                      },
-                      childCount: filtered.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, i) {
+                      final task = filtered[i];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: TaskCardWidget(
+                          task: task,
+                          managerTaskController: adminTaskCtrl,
+                        ),
+                      );
+                    }, childCount: filtered.length),
                   ),
                 ),
 

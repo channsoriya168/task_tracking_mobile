@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_filter_group_chips_widget.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_header_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_list_widget.dart';
+import 'package:task_tracking_mobile/features/group/presentation/pages/group_page.dart';
 
 class EmployeeMobilePage extends StatelessWidget {
   const EmployeeMobilePage({super.key});
@@ -21,21 +22,54 @@ class EmployeeMobilePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
+      appBar: AppBar(
+        title: Text(
+          'employee_title'.tr,
+          style: AppTextStyles.appBarTitle(color: kPrimary),
+        ),
+        backgroundColor: isDark ? kBgDark : kBgLight,
+        elevation: 0,
+        actions: [
+          Obx(() {
+            if (Get.find<AuthController>().role != UserRole.admin) {
+              return const SizedBox.shrink();
+            }
+            return Padding(
+              padding: kPagePaddingHorizontal,
+              child: OutlinedButton.icon(
+                onPressed: () => Get.to(() => const GroupPage()),
+                label: Text(
+                  'employee_create_group_btn'.tr,
+                  style: TextStyle(
+                    fontFamily: Get.locale?.languageCode == 'km'
+                        ? 'Siemreap'
+                        : 'Kantumruy Pro',
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: kPrimary,
+                  side: const BorderSide(color: kPrimary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
       body: Column(
         children: [
-          // ── Title ─────────────────────────────────────────────
-          EmployeeHeaderWidget(isDark: isDark, ctrl: ctrl),
-
           // ── Offline banner ────────────────────────────────────
           Obx(() {
             final offline = !Get.find<NetworkController>().isConnected.value;
             if (!offline) return const SizedBox.shrink();
-            return OfflineCardWidget(
-              isDark: isDark,
-            );
+            return OfflineCardWidget(isDark: isDark);
           }),
-
-          const SizedBox(height: 12),
           EmployeeFilterGroupChipsWidget(isDark: isDark, ctrl: ctrl),
           SearchBarWidget(
             isDark: isDark,
@@ -53,7 +87,8 @@ class EmployeeMobilePage extends StatelessWidget {
           : FloatingActionButton(
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
-              onPressed: () => Get.find<EmployeeController>().showCreateDialog(),
+              onPressed: () =>
+                  Get.find<EmployeeController>().showCreateDialog(),
               child: const Icon(Icons.person_add_rounded),
             ),
     );

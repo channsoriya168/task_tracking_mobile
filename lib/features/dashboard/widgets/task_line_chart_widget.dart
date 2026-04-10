@@ -21,25 +21,31 @@ class TaskLineChartWidget extends StatelessWidget {
           .where((t) => t.status.name.toLowerCase() == name.toLowerCase())
           .length;
 
-      final pending    = count('Pending');
-      final assigned   = count('Assigned');
+      final pending = count('Pending');
+      final assigned = count('Assigned');
       final inProgress = count('InProgress');
-      final inReview   = count('InReview');
-      final completed  = count('Completed');
-      final cancelled  = count('Cancelled');
-      final onHold     = count('OnHold');
+      final inReview = count('InReview');
+      final completed = count('Completed');
+      final cancelled = count('Cancelled');
+      final onHold = count('OnHold');
 
       final total =
-          pending + assigned + inProgress + inReview + completed + cancelled + onHold;
+          pending +
+          assigned +
+          inProgress +
+          inReview +
+          completed +
+          cancelled +
+          onHold;
 
       final data = [
-        _StatusData('status_pending',    pending,    kMediumPriority),
-        _StatusData('status_assigned',   assigned,   const Color(0xFF00BCD4)),
+        _StatusData('status_pending', pending, kMediumPriority),
+        _StatusData('status_assigned', assigned, const Color(0xFF00BCD4)),
         _StatusData('status_inprogress', inProgress, kPrimary),
-        _StatusData('status_inreview',   inReview,   const Color(0xFFAB47BC)),
-        _StatusData('status_completed',  completed,  kLowPriority),
-        _StatusData('status_cancelled',  cancelled,  kHighPriority),
-        _StatusData('status_onhold',     onHold,     const Color(0xFF8E8EA0)),
+        _StatusData('status_inreview', inReview, const Color(0xFFAB47BC)),
+        _StatusData('status_completed', completed, kLowPriority),
+        _StatusData('status_cancelled', cancelled, kHighPriority),
+        _StatusData('status_onhold', onHold, const Color(0xFF8E8EA0)),
       ];
       final chartData = data.where((d) => d.value > 0).toList();
 
@@ -67,8 +73,8 @@ class TaskLineChartWidget extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 160,
-                height: 160,
+                width: 140,
+                height: 140,
                 child: total == 0
                     ? Center(
                         child: Text(
@@ -118,7 +124,7 @@ class TaskLineChartWidget extends StatelessWidget {
                       ),
               ),
 
-              const SizedBox(width: 20),
+              const SizedBox(width: 14),
 
               // Legend
               Expanded(
@@ -186,7 +192,7 @@ class _LegendItem extends StatelessWidget {
           Text(
             '$count  ($pct%)',
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w600,
               color: isDark ? Colors.grey[400] : kTextMuted,
             ),

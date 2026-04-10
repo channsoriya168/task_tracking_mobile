@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/widgets/group_card_widget.dart';
@@ -30,11 +31,7 @@ class GroupPage extends StatelessWidget {
         ),
         title: Text(
           'group_title'.tr,
-          style: TextStyle(
-            fontSize: isTablet ? 22 : 18,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : kPrimary,
-          ),
+          style: AppTextStyles.appBarTitle(color: kPrimary),
         ),
       ),
       body: SafeArea(

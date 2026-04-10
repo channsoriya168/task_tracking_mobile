@@ -20,70 +20,55 @@ class NotificationPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
-      body: Column(
-        children: [
-          // ── Custom header ─────────────────────────────────────────────────
-          Container(
-            color: isDark ? kBgDark : kBgLight,
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: kPagePaddingHorizontal,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Title + subtitle
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'notification_title'.tr,
-                          style: AppTextStyles.appBarTitle(color: kPrimary),
-                        ),
-                        const SizedBox(height: 2),
-                      ],
+      appBar: AppBar(
+        backgroundColor: isDark ? kBgDark : kBgLight,
+        elevation: 0,
+        title: Text(
+          'notification_title'.tr,
+          style: AppTextStyles.appBarTitle(color: kPrimary),
+        ),
+        actions: [
+          // Mark all button
+          Obx(() {
+            if (controller.unreadCount.value == 0) {
+              return const SizedBox.shrink();
+            }
+            return Padding(
+              padding: kPagePaddingHorizontal,
+              child: GestureDetector(
+                onTap: () => MarkAllReadDialog.show(context, controller),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? kTextDark.withValues(alpha: 0.18)
+                        : kTextLight.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: kPrimary, width: 1),
+                  ),
+                  child: Text(
+                    'notif_mark_all'.tr,
+                    style: TextStyle(
+                      color: kPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
                     ),
-                    const Spacer(),
-                    // Mark all button
-                    Obx(() {
-                      if (controller.unreadCount.value == 0) {
-                        return const SizedBox.shrink();
-                      }
-                      return GestureDetector(
-                        onTap: () =>
-                            MarkAllReadDialog.show(context, controller),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? kTextDark.withValues(alpha: 0.18)
-                                : kTextLight.withValues(alpha: 0.18),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: kPrimary, width: 1),
-                          ),
-                          child: Text(
-                            'notif_mark_all'.tr,
-                            style: TextStyle(
-                              color: isDark ? kTextLight : kTextDark,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
+        ],
+      ),
+      body: Column(
+        children: [
           //filter pills
           Obx(
             () => Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   FilterPillWidget(
