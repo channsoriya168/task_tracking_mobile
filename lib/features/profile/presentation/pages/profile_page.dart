@@ -114,7 +114,6 @@ class ProfilePage extends StatelessWidget {
                     );
                   }
                   return Container(
-                    color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
                     child: Column(
                       children: List.generate(groups.length, (i) {
                         final map = groups[i] as Map<String, dynamic>? ?? {};

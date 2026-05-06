@@ -14,23 +14,17 @@ class ProfileSettingsCard extends StatelessWidget {
     final themeCtrl = Get.find<ThemeController>();
 
     return Container(
-      color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
       child: Column(
         children: [
           // ── Dark Mode ────────────────────────────────────────
           Obx(() {
             final dark = themeCtrl.isDark;
             return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 14,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               child: Row(
                 children: [
                   Icon(
-                    dark
-                        ? Icons.nightlight_round
-                        : Icons.wb_sunny_rounded,
+                    dark ? Icons.nightlight_round : Icons.wb_sunny_rounded,
                     size: 20,
                     color: kPrimary,
                   ),
@@ -91,24 +85,15 @@ class ProfileSettingsCard extends StatelessWidget {
             height: 1,
             indent: 0,
             endIndent: 0,
-            color: isDark
-                ? Colors.white.withAlpha(10)
-                : Colors.grey.shade200,
+            color: isDark ? Colors.white.withAlpha(10) : Colors.grey.shade200,
           ),
 
           // ── Language ─────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 14,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: Row(
               children: [
-                Icon(
-                  Icons.language_rounded,
-                  size: 20,
-                  color: kPrimary,
-                ),
+                Icon(Icons.language_rounded, size: 20, color: kPrimary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(

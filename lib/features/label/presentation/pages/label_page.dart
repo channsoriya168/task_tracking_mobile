@@ -429,7 +429,7 @@ class LabelPage extends StatelessWidget {
                         countRow,
                         Expanded(
                           child: ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
                             itemCount: ctrl.labels.length,
                             itemBuilder: (_, i) => Padding(
                               padding: const EdgeInsets.only(bottom: 12),

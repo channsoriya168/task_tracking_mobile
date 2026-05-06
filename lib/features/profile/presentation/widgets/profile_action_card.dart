@@ -17,7 +17,6 @@ class ProfileActionCard extends StatelessWidget {
     final isEmployee = authCtrl.role == UserRole.employee;
 
     return Container(
-      color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
       child: Column(
         children: [
           if (!isEmployee) ...[
@@ -31,8 +30,7 @@ class ProfileActionCard extends StatelessWidget {
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (_) =>
-                      ProfileChangePasswordSheet(isDark: isDark),
+                  builder: (_) => ProfileChangePasswordSheet(isDark: isDark),
                 );
               },
             ),
@@ -40,9 +38,7 @@ class ProfileActionCard extends StatelessWidget {
               height: 1,
               indent: 0,
               endIndent: 0,
-              color: isDark
-                  ? Colors.white.withAlpha(10)
-                  : Colors.grey.shade200,
+              color: isDark ? Colors.white.withAlpha(10) : Colors.grey.shade200,
             ),
           ],
           _ActionRow(
@@ -102,8 +98,7 @@ class _ActionRow extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color:
-                        labelColor ?? (isDark ? Colors.white : kTextDark),
+                    color: labelColor ?? (isDark ? Colors.white : kTextDark),
                   ),
                 ),
               ),

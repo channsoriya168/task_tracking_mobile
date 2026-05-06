@@ -22,13 +22,12 @@ class ProfileInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateStr = dateOfBirth != null
         ? '${dateOfBirth!.day.toString().padLeft(2, '0')}/'
-            '${dateOfBirth!.month.toString().padLeft(2, '0')}/'
-            '${dateOfBirth!.year}'
+              '${dateOfBirth!.month.toString().padLeft(2, '0')}/'
+              '${dateOfBirth!.year}'
         : null;
 
     final items = [
-      if (email.isNotEmpty)
-        (Icons.alternate_email_rounded, kPrimary, email),
+      if (email.isNotEmpty) (Icons.alternate_email_rounded, kPrimary, email),
       (Icons.phone_rounded, kPrimary, phone.isEmpty ? '—' : phone),
       (
         Icons.location_on_rounded,
@@ -39,7 +38,6 @@ class ProfileInfoCard extends StatelessWidget {
     ];
 
     return Container(
-      color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
       child: Column(
         children: List.generate(items.length, (i) {
           final (icon, color, value) = items[i];

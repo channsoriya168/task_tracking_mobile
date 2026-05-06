@@ -187,7 +187,7 @@ class DashboardPage extends StatelessWidget {
                   ),
                 ),
 
-              const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
+              const SliverPadding(padding: EdgeInsets.only(bottom: 30)),
             ],
           );
         }),
