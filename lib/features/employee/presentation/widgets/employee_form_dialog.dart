@@ -25,247 +25,208 @@ class EmployeeFormDialog extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.92,
         ),
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.92,
-          ),
-          decoration: BoxDecoration(
-            color: isDark ? kCardDark : Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _DragHandle(),
-              _Header(controller: controller, isDark: isDark),
-              Divider(
-                height: 1,
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.06),
+        decoration: BoxDecoration(
+          color: isDark ? kCardDark : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //start header
+            Obx(
+              () => Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            controller.isEditMode.value
+                                ? 'emp_form_title_edit'.tr
+                                : 'emp_form_title_add'.tr,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : kTextDark,
+                            ),
+                          ),
+                          Text(
+                            controller.isEditMode.value
+                                ? 'emp_form_subtitle_edit'.tr
+                                : 'emp_form_subtitle_add'.tr,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.grey[500] : kTextMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: Get.back,
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ── Avatar ───────────────────────────────────
-                      Center(
-                        child: EmployeeFormAvatar(
-                          controller: controller,
-                          isDark: isDark,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      _gapSm,
-                      Obx(
-                        () => TextFieldWidget(
-                          controller: controller.nameCtrl,
-                          label: 'profile_full_name'.tr,
-                          hint: 'emp_form_name_hint'.tr,
-                          isDark: isDark,
-                          isRequired: true,
-                          errorText: controller.fieldErrors['fullName'],
-                        ),
-                      ),
-                      _gap,
-                      Obx(
-                        () => PhoneFieldWidget(
-                          controller: controller.phoneCtrl,
-                          isDark: isDark,
-                          errorText: controller.fieldErrors['phone'],
-                        ),
-                      ),
-                      _gap,
-                      Obx(
-                        () => TextFieldWidget(
-                          controller: controller.emailCtrl,
-                          label: 'profile_email'.tr,
-                          hint: 'emp_form_email_hint'.tr,
-                          isDark: isDark,
-                          keyboardType: TextInputType.emailAddress,
-                          errorText: controller.fieldErrors['email'],
-                        ),
-                      ),
-                      _gap,
-                      Obx(
-                        () => DatePickerWidget(
-                          isDark: isDark,
-                          value: controller.formDob,
-                          onPicked: (d) {
-                            controller.formDob.value = d;
-                            controller.fieldErrors.remove('dob');
-                          },
-                          label: 'profile_date_of_birth'.tr,
-                          isRequired: true,
-                          errorText: controller.fieldErrors['dob'],
-                        ),
-                      ),
-                      _gap,
-                      TextFieldWidget(
-                        controller: controller.placeCtrl,
-                        label: 'profile_place_of_birth'.tr,
-                        hint: 'emp_form_place_hint'.tr,
-                        isDark: isDark,
-                      ),
-                      _gap,
-                      _GenderSelector(controller: controller, isDark: isDark),
-
-                      // ── Section: Account ─────────────────────────
-                      Obx(() {
-                        if (controller.isEditMode.value) {
-                          return const SizedBox.shrink();
-                        }
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _gapSm,
-                            Obx(
-                              () => PasswordInputWidget(
-                                controller: controller.passwordCtrl,
-                                label: 'login_password_label'.tr,
-                                hint: 'emp_form_password_hint'.tr,
-                                isDark: isDark,
-                                isRequired: true,
-                                errorText: controller.fieldErrors['password'],
-                                helperText:
-                                    controller.fieldErrors['password'] == null
-                                    ? 'emp_form_password_helper'.tr
-                                    : null,
-                              ),
-                            ),
-                            _gap,
-                            Obx(
-                              () => PasswordInputWidget(
-                                controller: controller.confirmPasswordCtrl,
-                                label: 'emp_form_confirm_password_label'.tr,
-                                hint: 'emp_form_confirm_password_hint'.tr,
-                                isDark: isDark,
-                                isRequired: true,
-                                errorText:
-                                    controller.fieldErrors['confirmPassword'],
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-
-                      // ── Section: Role (admin only) ───────────────
-                      _RoleSelector(controller: controller, isDark: isDark),
-
-                      _gapSm,
-                      EmployeeFormGroupPicker(
+            ),
+            // end header
+            Divider(
+              height: 1,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.06),
+            ),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Avatar ───────────────────────────────────
+                    Center(
+                      child: EmployeeFormAvatar(
                         controller: controller,
                         isDark: isDark,
                       ),
-                      Obx(() {
-                        final err = controller.fieldErrors['taskGroup'];
-                        if (err == null || err.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 6, left: 4),
-                          child: Text(
-                            err,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _gapSm,
+                    Obx(
+                      () => TextFieldWidget(
+                        controller: controller.nameCtrl,
+                        label: 'profile_full_name'.tr,
+                        hint: 'emp_form_name_hint'.tr,
+                        isDark: isDark,
+                        isRequired: true,
+                        errorText: controller.fieldErrors['fullName'],
+                      ),
+                    ),
+                    _gap,
+                    Obx(
+                      () => PhoneFieldWidget(
+                        controller: controller.phoneCtrl,
+                        isDark: isDark,
+                        errorText: controller.fieldErrors['phone'],
+                      ),
+                    ),
+                    _gap,
+                    Obx(
+                      () => TextFieldWidget(
+                        controller: controller.emailCtrl,
+                        label: 'profile_email'.tr,
+                        hint: 'emp_form_email_hint'.tr,
+                        isDark: isDark,
+                        keyboardType: TextInputType.emailAddress,
+                        errorText: controller.fieldErrors['email'],
+                      ),
+                    ),
+                    _gap,
+                    Obx(
+                      () => DatePickerWidget(
+                        isDark: isDark,
+                        value: controller.formDob,
+                        onPicked: (d) {
+                          controller.formDob.value = d;
+                          controller.fieldErrors.remove('dob');
+                        },
+                        label: 'profile_date_of_birth'.tr,
+                        isRequired: true,
+                        errorText: controller.fieldErrors['dob'],
+                      ),
+                    ),
+                    _gap,
+                    TextFieldWidget(
+                      controller: controller.placeCtrl,
+                      label: 'profile_place_of_birth'.tr,
+                      hint: 'emp_form_place_hint'.tr,
+                      isDark: isDark,
+                    ),
+                    _gap,
+                    _GenderSelector(controller: controller, isDark: isDark),
+
+                    // ── Section: Account ─────────────────────────
+                    Obx(() {
+                      if (controller.isEditMode.value) {
+                        return const SizedBox.shrink();
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _gapSm,
+                          Obx(
+                            () => PasswordInputWidget(
+                              controller: controller.passwordCtrl,
+                              label: 'login_password_label'.tr,
+                              hint: 'emp_form_password_hint'.tr,
+                              isDark: isDark,
+                              isRequired: true,
+                              errorText: controller.fieldErrors['password'],
+                              helperText:
+                                  controller.fieldErrors['password'] == null
+                                  ? 'emp_form_password_helper'.tr
+                                  : null,
                             ),
                           ),
-                        );
-                      }),
+                          _gap,
+                          Obx(
+                            () => PasswordInputWidget(
+                              controller: controller.confirmPasswordCtrl,
+                              label: 'emp_form_confirm_password_label'.tr,
+                              hint: 'emp_form_confirm_password_hint'.tr,
+                              isDark: isDark,
+                              isRequired: true,
+                              errorText:
+                                  controller.fieldErrors['confirmPassword'],
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
 
-                      const SizedBox(height: 28),
-                    ],
-                  ),
+                    // ── Section: Role (admin only) ───────────────
+                    _RoleSelector(controller: controller, isDark: isDark),
+
+                    _gapSm,
+                    EmployeeFormGroupPicker(
+                      controller: controller,
+                      isDark: isDark,
+                    ),
+                    Obx(() {
+                      final err = controller.fieldErrors['taskGroup'];
+                      if (err == null || err.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 6, left: 4),
+                        child: Text(
+                          err,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(height: 28),
+                  ],
                 ),
               ),
-
-              // ── Footer: Cancel + Save ────────────────────────────
-              _Footer(controller: controller, isDark: isDark),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Drag handle ────────────────────────────────────────────────────────────────
-
-class _DragHandle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Center(
-        child: Container(
-          width: 40,
-          height: 4,
-          decoration: BoxDecoration(
-            color: Colors.grey[400],
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Header ─────────────────────────────────────────────────────────────────────
-
-class _Header extends StatelessWidget {
-  const _Header({required this.controller, required this.isDark});
-
-  final EmployeeController controller;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(
-      () => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    controller.isEditMode.value
-                        ? 'emp_form_title_edit'.tr
-                        : 'emp_form_title_add'.tr,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : kTextDark,
-                    ),
-                  ),
-                  Text(
-                    controller.isEditMode.value
-                        ? 'emp_form_subtitle_edit'.tr
-                        : 'emp_form_subtitle_add'.tr,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.grey[500] : kTextMuted,
-                    ),
-                  ),
-                ],
-              ),
             ),
-            IconButton(
-              onPressed: Get.back,
-              icon: Icon(
-                Icons.close_rounded,
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-              ),
-            ),
+
+            // ── Footer: Cancel + Save ────────────────────────────
+            _Footer(controller: controller, isDark: isDark),
           ],
         ),
       ),
@@ -426,6 +387,7 @@ class _GenderSelector extends StatelessWidget {
               Icons.keyboard_arrow_down_rounded,
               color: isDark ? Colors.grey[500] : Colors.grey[500],
             ),
+            //padding
             items: [
               DropdownMenuItem<String>(
                 value: null,

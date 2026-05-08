@@ -115,20 +115,6 @@ class LabelPage extends StatelessWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Container(
-                                width: 64,
-                                height: 64,
-                                decoration: BoxDecoration(
-                                  color: kPrimary.withValues(alpha: 0.12),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.label_outline_rounded,
-                                  size: 30,
-                                  color: kPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
                               Text(
                                 'no_labels_get'.tr,
                                 textAlign: TextAlign.center,
@@ -146,42 +132,6 @@ class LabelPage extends StatelessWidget {
                                   fontSize: 13,
                                   height: 1.4,
                                   color: isDark ? Colors.grey[400] : kTextMuted,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              SizedBox(
-                                width: double.infinity,
-                                child: FilledButton.icon(
-                                  onPressed: () {
-                                    if (!Get.find<NetworkController>()
-                                        .isConnected
-                                        .value) {
-                                      _dialogOpen.value = true;
-                                      showNoInternetDialog(
-                                        isDark: isDark,
-                                      ).then((_) => _dialogOpen.value = false);
-                                      return;
-                                    }
-                                    showLabelDialog(
-                                      context,
-                                      ctrl,
-                                      isDark,
-                                      null,
-                                      _dialogOpen,
-                                    );
-                                  },
-                                  icon: const Icon(Icons.add_rounded, size: 18),
-                                  label: Text('labels'.tr),
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: kPrimary,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
                                 ),
                               ),
                             ],

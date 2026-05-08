@@ -22,94 +22,110 @@ class TaskTabletPage extends StatelessWidget {
     final auth = Get.find<AuthController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final offline = !Get.find<NetworkController>().isConnected.value;
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
       backgroundColor: isDark ? kBgDark : kBgLight,
-      body: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Row 1: Title + Search + Labels button ─────────
-              Padding(
-                padding: kPagePaddingHorizontal,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompactHeight = constraints.maxHeight < 320;
+            final showExtendedHeader = !isKeyboardOpen && !isCompactHeight;
+
+            return Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'task_title'.tr,
-                      style: AppTextStyles.appBarTitle(
-                        color: isDark ? Colors.white : kPrimary,
+                    // ── Row 1: Title + Search + Labels button ─────────
+                    Padding(
+                      padding: kPagePaddingHorizontal,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'task_title'.tr,
+                            style: AppTextStyles.appBarTitle(
+                              color: isDark ? Colors.white : kPrimary,
+                            ),
+                          ),
+                          const Spacer(),
+                          TabletSearchFieldWidget(
+                            isDark: isDark,
+                            onChanged: (v) => ctrl.searchQuery.value = v,
+                            hintText: 'search'.tr,
+                          ),
+                          const SizedBox(width: 8),
+                          Obx(() {
+                            if (auth.role != UserRole.admin) {
+                              return const SizedBox.shrink();
+                            }
+                            return OutlinedButton.icon(
+                              onPressed: () => Get.to(() => const LabelPage()),
+                              label: Text('task_create_labels'.tr),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: kPrimary,
+                                side: const BorderSide(color: kPrimary),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
                       ),
                     ),
-                    const Spacer(),
-                    TabletSearchFieldWidget(
-                      isDark: isDark,
-                      onChanged: (v) => ctrl.searchQuery.value = v,
-                      hintText: 'search'.tr,
-                    ),
-                    const SizedBox(width: 8),
-                    Obx(() {
-                      if (auth.role != UserRole.admin) {
-                        return const SizedBox.shrink();
-                      }
-                      return OutlinedButton.icon(
-                        onPressed: () => Get.to(() => const LabelPage()),
-                        label: Text('task_create_labels'.tr),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: kPrimary,
-                          side: const BorderSide(color: kPrimary),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
+
+                    if (showExtendedHeader) ...[
+                      // ── Row 2: Filter bar ─────────────────────────────
+                      // const SizedBox(height: 8),
+                      TaskFilterBarWidget(
+                        isDark: isDark,
+                        filterStatus: ctrl.filterStatus,
+                        taskStatus: ctrl.taskStatus,
+                        allTasks: ctrl.allTasks,
+                        onSelectStatus: ctrl.selectStatus,
+                      ),
+
+                      // ── Week calendar ─────────────────────────────────
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 20,
+                          vertical: 4,
+                        ),
+                        child: Obx(
+                          () => WeekCalendarWidget(
+                            isDark: isDark,
+                            selectedDate: ctrl.taskSelectedDate.value,
+                            onDateSelected: ctrl.selectTaskDate,
                           ),
                         ),
-                      );
-                    }),
+                      ),
+                    ],
+
+                    // ── Task list ─────────────────────────────────────
+                    Expanded(
+                      child: RefreshIndicator(
+                        color: kPrimary,
+                        onRefresh: () => ctrl.fetchTasks(),
+                        child: TaskListWidget(
+                          isDark: isDark,
+                          taskController: ctrl,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-
-              // ── Row 2: Filter bar ─────────────────────────────
-              // const SizedBox(height: 8),
-              TaskFilterBarWidget(
-                isDark: isDark,
-                filterStatus: ctrl.filterStatus,
-                taskStatus: ctrl.taskStatus,
-                allTasks: ctrl.allTasks,
-                onSelectStatus: ctrl.selectStatus,
-              ),
-
-              // ── Week calendar ─────────────────────────────────
-              Padding(
-                padding: EdgeInsetsGeometry.symmetric(
-                  horizontal: 20,
-                  vertical: 8,
-                ),
-                child: Obx(
-                  () => WeekCalendarWidget(
-                    isDark: isDark,
-                    selectedDate: ctrl.taskSelectedDate.value,
-                    onDateSelected: ctrl.selectTaskDate,
-                  ),
-                ),
-              ),
-
-              // ── Task list ─────────────────────────────────────
-              Expanded(
-                child: RefreshIndicator(
-                  color: kPrimary,
-                  onRefresh: () => ctrl.fetchTasks(),
-                  child: TaskListWidget(isDark: isDark, taskController: ctrl),
-                ),
-              ),
-            ],
-          ),
-          if (offline) OfflineCardWidget(isDark: isDark),
-        ],
+                if (offline) OfflineCardWidget(isDark: isDark),
+              ],
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => ctrl.showTaskSheet(),
