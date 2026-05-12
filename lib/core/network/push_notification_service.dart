@@ -194,6 +194,7 @@ class PushNotificationService extends GetxService {
         importance: Importance.high,
         priority: Priority.high,
         icon: _appIcon,
+        largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
         color: kPrimary,
       ),
       iOS: const DarwinNotificationDetails(
