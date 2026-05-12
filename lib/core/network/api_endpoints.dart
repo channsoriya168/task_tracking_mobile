@@ -10,6 +10,9 @@ abstract class ApiEndpoints {
   static const String profile = '/api/v1/Auth/profile';
   static const String changePassword = '/api/v1/Auth/change-password';
   static const String resetPassword = '/api/v1/Auth/reset-password';
+  static const String qrLogin = '/api/v1/Auth/qr-login';
+  static String generateQrLogin(String employeeId) =>
+      '/api/v1/Auth/generate-qr-login/$employeeId';
 
   // ── Groups ───────────────────────────────────────────
   static const String groups = '/api/v1/groups';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_form_field.dart';
 
@@ -24,9 +25,8 @@ class LoginPasswordField extends StatelessWidget {
         controller: controller,
         obscureText: obscure,
         textInputAction: TextInputAction.done,
-        style: TextStyle(
+        style: AppTextStyles.inputText(
           color: isDark ? Colors.white : kTextDark,
-          fontSize: 15,
         ),
         decoration: loginInputDecoration(
           hint: 'login_password_hint'.tr,

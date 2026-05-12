@@ -6,6 +6,7 @@ import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/domain/entities/employee.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_sheet.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_qr_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/group_chip_widget.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
@@ -42,6 +43,8 @@ class EmployeeCardWidget extends StatelessWidget {
           ctrl: ctrl,
           isDark: isDark,
         );
+      case EmployeeMenuAction.generateQr:
+        showEmployeeQrSheet(context, employee: employee, isDark: isDark);
       case EmployeeMenuAction.delete:
         if (await confirmDeleteEmployee(context, employee.fullName)) {
           ctrl.deleteEmployee(employee.id);
@@ -279,6 +282,15 @@ class EmployeeCardWidget extends StatelessWidget {
                       icon: Icons.lock_reset_rounded,
                       label: 'profile_change_password'.tr,
                       color: const Color(0xFFF59E0B),
+                      isDark: isDark,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: EmployeeMenuAction.generateQr,
+                    child: _PopupItem(
+                      icon: Icons.qr_code_rounded,
+                      label: 'qr_generate_action'.tr,
+                      color: kPrimary,
                       isDark: isDark,
                     ),
                   ),

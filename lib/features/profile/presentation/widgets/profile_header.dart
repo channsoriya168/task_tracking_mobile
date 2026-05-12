@@ -55,14 +55,12 @@ class ProfileHeader extends StatelessWidget {
                             ),
                           ),
                         )
-                      : profileImageUrl != null &&
-                            profileImageUrl!.isNotEmpty
+                      : profileImageUrl != null && profileImageUrl!.isNotEmpty
                       ? Image.network(
                           profileImageUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _AvatarFallback(
-                            letter: avatarLetter,
-                          ),
+                          errorBuilder: (_, _, _) =>
+                              _AvatarFallback(letter: avatarLetter),
                         )
                       : _AvatarFallback(letter: avatarLetter),
                 ),

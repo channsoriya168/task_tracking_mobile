@@ -54,7 +54,7 @@ class ProfilePage extends StatelessWidget {
             slivers: [
               // ── Profile header ─ padded, flat on bg ────────────
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: kPagePaddingHorizontal,
                 sliver: SliverToBoxAdapter(
                   child: Obx(() {
                     final auth = authCtrl.currentAuth.value;
@@ -66,37 +66,40 @@ class ProfilePage extends StatelessWidget {
                     final avatarLetter = name.isNotEmpty
                         ? name[0].toUpperCase()
                         : '?';
-                    return ProfileHeader(
-                      isDark: isDark,
-                      name: name,
-                      role: role,
-                      email: email,
-                      avatarLetter: avatarLetter,
-                      profileImageUrl: profile?.profileImageUrl,
-                      isUploadingImage: profileCtrl.isUploadingImage.value,
-                      onEditTap: () =>
-                          showProfileImageOptions(isDark, profileCtrl),
+                    return Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? kBgDark : kBgLight,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: isDark
+                                ? Colors.white.withAlpha(10)
+                                : Colors.grey.shade200,
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ProfileHeader(
+                        isDark: isDark,
+                        name: name,
+                        role: role,
+                        email: email,
+                        avatarLetter: avatarLetter,
+                        profileImageUrl: profile?.profileImageUrl,
+                        isUploadingImage: profileCtrl.isUploadingImage.value,
+                        onEditTap: () =>
+                            showProfileImageOptions(isDark, profileCtrl),
+                      ),
                     );
                   }),
                 ),
               ),
 
-              // ── Full-width divider after profile ────────────────
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Divider(
-                    height: 1,
-                    color: isDark
-                        ? Colors.white.withAlpha(12)
-                        : const Color(0xFFD1D1D6),
-                  ),
-                ),
-              ),
-
               // ── My Groups — label (padded) + section (full-width)
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
                 sliver: SliverToBoxAdapter(
                   child: SectionTitleWidget(
                     label: 'profile_my_groups'.tr,

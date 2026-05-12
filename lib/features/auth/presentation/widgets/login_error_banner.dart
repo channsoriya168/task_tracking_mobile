@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class LoginErrorBanner extends StatelessWidget {
@@ -26,11 +27,7 @@ class LoginErrorBanner extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(
-                color: kHighPriority,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
+              style: AppTextStyles.errorText(color: kHighPriority),
             ),
           ),
         ],

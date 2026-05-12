@@ -18,6 +18,13 @@ class RailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double scale = (MediaQuery.of(context).size.width / 1024).clamp(
+      0.80,
+      1.25,
+    );
+    final double iconSize = 20 * scale;
+    final double fontSize = 20 * scale;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -34,7 +41,7 @@ class RailItem extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 20,
+              size: iconSize,
               color: selected
                   ? Colors.white
                   : (isDark ? Colors.grey[400] : Colors.grey[600]),
@@ -45,7 +52,7 @@ class RailItem extends StatelessWidget {
                 label,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.w600,
                   color: selected
                       ? Colors.white

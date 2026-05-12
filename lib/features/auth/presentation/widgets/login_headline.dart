@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class LoginHeadline extends StatelessWidget {
@@ -13,18 +14,14 @@ class LoginHeadline extends StatelessWidget {
       children: [
         Text(
           'login_welcome'.tr,
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w800,
+          style: AppTextStyles.loginTitle(
             color: isDark ? Colors.white : kTextDark,
-            height: 1.2,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           'login_subtitle'.tr,
-          style: TextStyle(
-            fontSize: 15,
+          style: AppTextStyles.loginSubtitle(
             color: isDark ? Colors.white54 : kTextMuted,
           ),
         ),

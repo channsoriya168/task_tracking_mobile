@@ -51,7 +51,6 @@ class ProfileController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchProfile();
   }
 
   @override

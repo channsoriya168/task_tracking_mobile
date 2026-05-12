@@ -4,9 +4,12 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
+import 'package:task_tracking_mobile/features/auth/domain/entities/qr_code.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/check_auth_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/generate_qr_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:task_tracking_mobile/features/auth/domain/usecases/qr_login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
@@ -17,12 +20,16 @@ class AuthController extends GetxController {
   final LogoutUsecase logoutUsecase;
   final CheckAuthUsecase checkAuthUsecase;
   final RefreshTokenUsecase refreshTokenUsecase;
+  final QrLoginUsecase qrLoginUsecase;
+  final GenerateQrUsecase generateQrUsecase;
 
   AuthController({
     required this.loginUsecase,
     required this.logoutUsecase,
     required this.checkAuthUsecase,
     required this.refreshTokenUsecase,
+    required this.qrLoginUsecase,
+    required this.generateQrUsecase,
   });
 
   final Rx<Auth?> currentAuth = Rx<Auth?>(null);
@@ -31,6 +38,7 @@ class AuthController extends GetxController {
   final RxBool obscurePassword = true.obs;
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   bool get isAuthenticated => currentAuth.value != null;
 
@@ -50,7 +58,7 @@ class AuthController extends GetxController {
   }
 
   // ── Login ────────────────────────────────────────────────
-  void submitLogin(GlobalKey<FormState> formKey) {
+  void submitLogin() {
     if (!(formKey.currentState?.validate() ?? false)) return;
     login();
   }
@@ -76,6 +84,38 @@ class AuthController extends GetxController {
       errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  // ── QR Login ─────────────────────────────────────────────
+  Future<void> qrLogin(String token) async {
+    errorMessage.value = '';
+    isLoading.value = true;
+    try {
+      final auth = await qrLoginUsecase(token);
+      currentAuth.value = auth;
+      Get.find<ProfileController>().fetchProfile();
+      _registerPushToken();
+      Get.find<NavigationController>().changePage(0);
+      Get.offAllNamed(AppRoutes.mainPage);
+      AppSnackbar.success(
+        'snack_welcome'.trParams({'name': auth.fullName}),
+        '',
+      );
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ── Generate QR ───────────────────────────────────────────
+  Future<QrLoginData?> generateQrLogin(String employeeId) async {
+    try {
+      return await generateQrUsecase(employeeId);
+    } catch (e) {
+      AppSnackbar.error('qr_generate_error'.tr, e.toString());
+      return null;
     }
   }
 
@@ -112,7 +152,6 @@ class AuthController extends GetxController {
     currentAuth.value = null;
     Get.find<ProfileController>().clearProfile();
     Get.find<NavigationController>().changePage(0);
-    AppSnackbar.success('snack_logged_out'.tr, 'snack_logged_out_msg'.tr);
     Get.offAllNamed(AppRoutes.login);
   }
 

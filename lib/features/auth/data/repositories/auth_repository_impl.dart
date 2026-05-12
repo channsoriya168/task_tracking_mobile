@@ -4,6 +4,7 @@ import 'package:task_tracking_mobile/core/utils/dio_error_mapper.dart';
 import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
+import 'package:task_tracking_mobile/features/auth/domain/entities/qr_code.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -44,8 +45,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final authUpdate = await _remote.refreshToken(accessToken, refreshToken);
       await _saveSession(authUpdate);
       return authUpdate;
-    } on DioException catch (e) {
-      throw mapDioError(e);
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
@@ -76,6 +77,28 @@ class AuthRepositoryImpl implements AuthRepository {
       refreshToken: storedRefreshToken,
       accessTokenExpiration: expiration,
     );
+  }
+
+  // ── QR Login ─────────────────────────────────────────────
+  @override
+  Future<Auth> qrLogin(String token) async {
+    try {
+      final auth = await _remote.qrLogin(token);
+      await _saveSession(auth);
+      return auth;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
+  // ── Generate QR ───────────────────────────────────────────
+  @override
+  Future<QrLoginData> generateQrLogin(String employeeId) async {
+    try {
+      return await _remote.generateQrLogin(employeeId);
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   // ── Helpers ───────────────────────────────────────────────

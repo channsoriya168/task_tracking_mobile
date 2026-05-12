@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class FilterChipWidget extends StatelessWidget {
@@ -37,13 +38,18 @@ class FilterChipWidget extends StatelessWidget {
           children: [
             Text(
               filter,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+              style: AppTextStyles.title(
                 color: selected
                     ? Colors.white
                     : (isDark ? Colors.white54 : kTextMuted),
               ),
+              // style: TextStyle(
+              //   fontSize: 13,
+              //   fontWeight: FontWeight.w600,
+              //   color: selected
+              //       ? Colors.white
+              //       : (isDark ? Colors.white54 : kTextMuted),
+              // ),
             ),
             const SizedBox(width: 6),
             Container(
@@ -56,9 +62,7 @@ class FilterChipWidget extends StatelessWidget {
               ),
               child: Text(
                 '$count',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
+                style: AppTextStyles.subTitle(
                   color: selected ? Colors.white : kPrimary,
                 ),
               ),

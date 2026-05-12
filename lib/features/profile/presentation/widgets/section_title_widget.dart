@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 
 class SectionTitleWidget extends StatelessWidget {
   const SectionTitleWidget({
@@ -12,14 +12,6 @@ class SectionTitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label.toUpperCase(),
-      style: TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: isDark ? Colors.white38 : kTextMuted,
-        letterSpacing: kLs(1.2),
-      ),
-    );
+    return Text(label.toUpperCase(), style: AppTextStyles.title());
   }
 }

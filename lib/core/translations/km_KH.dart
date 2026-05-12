@@ -11,6 +11,21 @@ const Map<String, String> kmKH = {
   'login_password_required': 'ត្រូវការពាក្យសម្ងាត់',
   'login_password_min': 'ត្រូវការយ៉ាងហោចណាស់ ៨ តួអក្សរ',
   'login_sign_in': 'ចូលប្រព័ន្ធ',
+  'login_qr_sign_in': 'ចូលប្រព័ន្ធដោយ QR Code',
+  'login_qr_scan_title': 'ស្កែន QR Code',
+  'login_qr_scan_hint': 'ចង្អុលកាមេរ៉ាទៅ QR Code ដើម្បីចូលប្រព័ន្ធ',
+
+  // ── QR Login ──────────────────────────────────────────────────
+  'qr_generate_action': 'បង្កើត QR ចូលប្រព័ន្ធ',
+  'qr_generate_error': 'បរាជ័យក្នុងការបង្កើត QR',
+  'qr_sheet_title': 'លេខកូដ QR ចូលប្រព័ន្ធ',
+  'qr_sheet_expires': 'ផុតកំណត់នៅ',
+  'qr_sheet_hint': 'បង្ហាញ QR Code នេះដល់បុគ្គលិកដើម្បីស្កែននិងចូលប្រព័ន្ធ',
+  'qr_save_action': 'រក្សាទុកក្នុងវិចិត្រសាល',
+  'qr_save_saving': 'កំពុងរក្សាទុក...',
+  'qr_save_success': 'QR Code ត្រូវបានរក្សាទុកក្នុងវិចិត្រសាល',
+  'qr_save_error': 'បរាជ័យក្នុងការរក្សាទុក QR Code',
+  'qr_save_permission_denied': 'ការអនុញ្ញាតចូលប្រើវិចិត្រសាលត្រូវបានបដិសេធ',
 
   // ── Notifications ────────────────────────────────────────────
   'notification_title': 'ការជូនដំណឹង',

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
+import 'package:task_tracking_mobile/features/auth/domain/entities/qr_code.dart';
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase.dart';
 
@@ -35,6 +36,13 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<Auth> checkAuth() async => _response!;
+
+  @override
+  Future<Auth> qrLogin(String token) async => _response!;
+
+  @override
+  Future<QrLoginData> generateQrLogin(String employeeId) async =>
+      QrLoginData(qrCodeUrl: '', expiresAt: DateTime.now());
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

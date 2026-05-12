@@ -41,11 +41,7 @@ class EmployeeMobilePage extends StatelessWidget {
                 onPressed: () => Get.to(() => const GroupPage()),
                 label: Text(
                   'employee_create_group_btn'.tr,
-                  style: TextStyle(
-                    fontFamily: Get.locale?.languageCode == 'km'
-                        ? 'Siemreap'
-                        : 'Kantumruy Pro',
-                  ),
+                  style: AppTextStyles.buttonLabel(),
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kPrimary,

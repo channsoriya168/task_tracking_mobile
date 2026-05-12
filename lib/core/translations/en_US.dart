@@ -11,6 +11,21 @@ const Map<String, String> enUS = {
   'login_password_required': 'Password is required',
   'login_password_min': 'At least 8 characters required',
   'login_sign_in': 'Sign In',
+  'login_qr_sign_in': 'Sign In with QR Code',
+  'login_qr_scan_title': 'Scan QR Code',
+  'login_qr_scan_hint': 'Point the camera at a QR code to log in',
+
+  // ── QR Login ──────────────────────────────────────────────────
+  'qr_generate_action': 'Generate QR Login',
+  'qr_generate_error': 'Failed to generate QR',
+  'qr_sheet_title': 'QR Login Code',
+  'qr_sheet_expires': 'Expires at',
+  'qr_sheet_hint': 'Show this QR code to the employee to scan and log in',
+  'qr_save_action': 'Save to Gallery',
+  'qr_save_saving': 'Saving...',
+  'qr_save_success': 'QR code saved to gallery',
+  'qr_save_error': 'Failed to save QR code',
+  'qr_save_permission_denied': 'Gallery permission denied',
 
   // ── Notifications ────────────────────────────────────────────
   'notification_title': 'Notifications',

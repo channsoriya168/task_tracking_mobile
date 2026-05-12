@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'local/storage_service.dart';
 
 class ApiClient {
@@ -53,11 +54,13 @@ class ApiClient {
 class _AuthInterceptor extends Interceptor {
   final StorageService storage;
   bool _isRefreshing = false;
+  bool _isLoggingOut = false;
   final List<_PendingRequest> _pending = [];
 
   _AuthInterceptor({required this.storage});
 
   AuthController get _authController => Get.find<AuthController>();
+
   @override
   void onRequest(
     RequestOptions options,
@@ -70,14 +73,44 @@ class _AuthInterceptor extends Interceptor {
     handler.next(options);
   }
 
+  /// Logs out once — guards against loops when logout itself triggers 403/401.
+  Future<void> _forceLogout(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    if (_isLoggingOut || Get.currentRoute == AppRoutes.login) {
+      handler.next(err);
+      return;
+    }
+    _isLoggingOut = true;
+    try {
+      await _authController.logout();
+    } finally {
+      _isLoggingOut = false;
+    }
+    handler.next(err);
+  }
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    final is401 = err.response?.statusCode == 401;
+    final statusCode = err.response?.statusCode;
+    final is401 = statusCode == 401;
+    final is403 = statusCode == 403;
     final path = err.requestOptions.path.toLowerCase();
     final isRefreshEndpoint = path.contains('/auth/refresh');
     final isLoginEndpoint = path.contains('/auth/login');
     final isChangePasswordEndpoint = path.contains('/auth/change-password');
     final alreadyRetried = err.requestOptions.extra['_retried'] == true;
+
+    // 403 Account Inactive — force logout, _isLoggingOut guard prevents loops
+    if (is403) {
+      final title = (err.response?.data?['title'] as String? ?? '')
+          .toLowerCase();
+      if (title.contains('account inactive')) {
+        await _forceLogout(err, handler);
+        return;
+      }
+    }
 
     if (!is401 ||
         isRefreshEndpoint ||
@@ -119,8 +152,7 @@ class _AuthInterceptor extends Interceptor {
           ),
         );
       }
-      await _authController.logout();
-      handler.next(err);
+      await _forceLogout(err, handler);
     } finally {
       _pending.clear();
       _isRefreshing = false;
@@ -140,8 +172,9 @@ class _PendingRequest {
 /// offline banner reflects actual server reachability, not just whether
 /// a network interface is present.
 class _NetworkInterceptor extends Interceptor {
-  NetworkController? get _net =>
-      Get.isRegistered<NetworkController>() ? Get.find<NetworkController>() : null;
+  NetworkController? get _net => Get.isRegistered<NetworkController>()
+      ? Get.find<NetworkController>()
+      : null;
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {

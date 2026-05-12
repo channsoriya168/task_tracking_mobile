@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_form_field.dart';
 
@@ -20,9 +21,8 @@ class LoginPhoneField extends StatelessWidget {
         controller: controller,
         keyboardType: TextInputType.phone,
         textInputAction: TextInputAction.next,
-        style: TextStyle(
+        style: AppTextStyles.inputText(
           color: isDark ? Colors.white : kTextDark,
-          fontSize: 15,
         ),
         decoration: loginInputDecoration(
           hint: 'login_phone_hint'.tr,

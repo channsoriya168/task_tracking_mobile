@@ -43,6 +43,12 @@ class EmployeeMenuController extends GetxController {
         isWarning: true,
       ),
       const EmployeeMenuItem(
+        action: EmployeeMenuAction.generateQr,
+        icon: Icons.qr_code_rounded,
+        label: 'Generate QR Login',
+        isPrimary: true,
+      ),
+      const EmployeeMenuItem(
         action: EmployeeMenuAction.delete,
         icon: Icons.delete_rounded,
         label: 'Delete Employee',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class LoginFormField extends StatelessWidget {
@@ -14,9 +15,7 @@ class LoginFormField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
+          style: AppTextStyles.formLabel(
             color: isDark ? Colors.grey[400] : kTextMuted,
           ),
         ),
@@ -35,9 +34,8 @@ InputDecoration loginInputDecoration({
 }) {
   return InputDecoration(
     hintText: hint,
-    hintStyle: TextStyle(
+    hintStyle: AppTextStyles.inputText(
       color: isDark ? Colors.grey[600] : Colors.grey[400],
-      fontSize: 14,
     ),
     prefixIcon: Icon(icon, size: 20, color: kTextMuted),
     suffixIcon: suffixIcon,

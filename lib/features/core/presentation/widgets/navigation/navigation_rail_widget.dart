@@ -21,9 +21,14 @@ class NavigationRailWidget extends StatelessWidget {
     final NavigationController navController = Get.find();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final double railWidth = (MediaQuery.of(context).size.width * 0.20).clamp(
+      160.0,
+      220.0,
+    );
+
     return Obx(
       () => Container(
-        width: 150,
+        width: railWidth,
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
           boxShadow: [
@@ -34,43 +39,40 @@ class NavigationRailWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16),
-            // Logo
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  'assets/images/logo.jpg',
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              // Logo scrolls with nav items
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                height: 80,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/images/logo.jpg',
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            // Nav items
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: items.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final item = entry.value;
-                    final selected = navController.selectedIndex.value == index;
-                    return RailItem(
-                      icon: item.icon,
-                      label: item.label,
-                      selected: selected,
-                      isDark: isDark,
-                      onTap: () => navController.changePage(index),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              // Nav items
+              ...items.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                final selected = navController.selectedIndex.value == index;
+                return RailItem(
+                  icon: item.icon,
+                  label: item.label,
+                  selected: selected,
+                  isDark: isDark,
+                  onTap: () => navController.changePage(index),
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );

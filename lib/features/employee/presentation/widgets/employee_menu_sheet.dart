@@ -7,6 +7,7 @@ import 'package:task_tracking_mobile/features/employee/presentation/controllers/
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_menu_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_dialogs.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_qr_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_reset_password_sheet.dart';
 
 void showEmployeeMenuSheet(
@@ -61,6 +62,13 @@ class _EmployeeMenuSheet extends StatelessWidget {
             ctrl: Get.find<EmployeeController>(),
             isDark: isDark,
           );
+        });
+      case EmployeeMenuAction.generateQr:
+        final emp = menuCtrl.employee;
+        if (emp == null) return;
+        Get.back();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showEmployeeQrSheet(context, employee: emp, isDark: isDark);
         });
       case EmployeeMenuAction.delete:
         final name = menuCtrl.employee?.fullName ?? '';
@@ -331,6 +339,21 @@ class _EmployeeMenuSheet extends StatelessWidget {
                         onTap: () => _handleAction(
                           context,
                           EmployeeMenuAction.changePassword,
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // Generate QR Login — full width
+                      _ActionTile(
+                        icon: Icons.qr_code_rounded,
+                        label: 'qr_generate_action'.tr,
+                        color: kPrimary,
+                        isDark: isDark,
+                        cardColor: cardColor,
+                        onTap: () => _handleAction(
+                          context,
+                          EmployeeMenuAction.generateQr,
                         ),
                       ),
 

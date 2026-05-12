@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/navigation/notification_icon_with_badge.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/navigation/profile_avatar_widget.dart';
@@ -20,10 +21,16 @@ class NavItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inactiveColor = isDark
-        ? const Color(0xFF5A5A7A)
-        : const Color(0xFFB8B8CC);
+        ? const Color.fromARGB(255, 124, 124, 175)
+        : const Color.fromARGB(255, 101, 101, 143);
     final isNotificationItem = item.icon == Icons.notifications_rounded;
     final isProfileItem = item.icon == Icons.person_rounded;
+    final double scale = (MediaQuery.of(context).size.width / 1024).clamp(
+      0.80,
+      1.25,
+    );
+    final double iconSize = 30 * scale;
+    final double fontSize = 15 * scale;
 
     Widget iconWidget;
     if (isProfileItem) {
@@ -37,7 +44,7 @@ class NavItemWidget extends StatelessWidget {
     } else {
       iconWidget = Icon(
         item.icon,
-        size: 21,
+        size: iconSize,
         color: isSelected ? Colors.white : inactiveColor,
       );
     }
@@ -93,11 +100,10 @@ class NavItemWidget extends StatelessWidget {
           AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 280),
             curve: Curves.easeOut,
-            style: TextStyle(
-              fontSize: 10,
+            style: GoogleFonts.battambang(
+              fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               color: isSelected ? kPrimary : inactiveColor,
-              letterSpacing: isSelected ? 0.1 : 0,
             ),
             child: Text(
               item.label,
