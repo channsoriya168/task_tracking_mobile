@@ -12,6 +12,6 @@ class SectionTitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(label.toUpperCase(), style: AppTextStyles.title());
+    return Text(label, style: AppTextStyles.title());
   }
 }

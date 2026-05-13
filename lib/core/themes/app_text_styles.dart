@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 abstract class AppTextStyles {
-  AppTextStyles._();
-
+  // AppTextStyles._();
+  // static String get _fontFamily =>
+  //     Get.locale?.languageCode == 'km' ? 'Siemreap' : 'Kantumruy Pro';
   static double? _ls(double? spacing) =>
       (spacing == null || Get.locale?.languageCode == 'km') ? 0.0 : spacing;
 
@@ -47,17 +48,17 @@ abstract class AppTextStyles {
       _font(fontSize: _sp(25), fontWeight: FontWeight.bold, color: color);
 
   static TextStyle title({Color? color}) =>
-      _font(fontSize: _sp(15), letterSpacing: -0.5, color: color);
+      _font(fontSize: _sp(18), letterSpacing: -0.5, color: color);
 
   static TextStyle subTitle({Color? color}) => _font(
-    fontSize: _sp(15),
+    fontSize: _sp(16),
     fontWeight: FontWeight.bold,
     letterSpacing: -0.5,
     color: color,
   );
 
   static TextStyle buttonLabel({Color? color}) => _font(
-    fontSize: _sp(15),
+    fontSize: _sp(18),
     fontWeight: FontWeight.bold,
     letterSpacing: -0.5,
     color: color,
@@ -70,7 +71,7 @@ abstract class AppTextStyles {
     height: 1.2,
   );
   static TextStyle loginSubtitle({Color? color}) =>
-      _font(fontSize: _sp(17), color: color);
+      _font(fontSize: _sp(18), color: color);
   static TextStyle formLabel({Color? color}) =>
       _font(fontSize: _sp(15), fontWeight: FontWeight.w600, color: color);
   static TextStyle inputText({Color? color}) =>

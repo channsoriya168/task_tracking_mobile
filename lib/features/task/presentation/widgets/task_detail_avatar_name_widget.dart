@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 
 class TaskDetailAvatarName extends StatelessWidget {
   const TaskDetailAvatarName({
@@ -38,11 +39,7 @@ class TaskDetailAvatarName extends StatelessWidget {
         Flexible(
           child: Text(
             name,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: textColor,
-            ),
+            style: AppTextStyles.formLabel(color: textColor),
           ),
         ),
       ],

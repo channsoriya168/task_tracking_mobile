@@ -49,7 +49,6 @@ class TaskCardWidget extends StatelessWidget {
         currentEmployeeId == task.createdById;
 
     final statusColor = task.status.color;
-    final priorityColor = task.priority.color;
 
     final startLabel = task.startDate != null
         ? formatDate(task.startDate!)
@@ -131,7 +130,6 @@ class TaskCardWidget extends StatelessWidget {
                               isDark: isDark,
                               mutedColor: mutedColor,
                               statusColor: statusColor,
-                              priorityColor: priorityColor,
                             ),
                           ],
                         ),

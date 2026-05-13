@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:intl/intl.dart';
 
@@ -61,14 +62,7 @@ class _WeekCalendarState extends State<WeekCalendarWidget> {
           // ── Header ────────────────────────────────────────
           Row(
             children: [
-              Text(
-                headerMonth,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
-                ),
-              ),
+              Text(headerMonth, style: AppTextStyles.title(color: textColor)),
               const Spacer(),
               _NavBtn(
                 icon: Icons.chevron_left_rounded,
@@ -102,11 +96,7 @@ class _WeekCalendarState extends State<WeekCalendarWidget> {
                     child: Text(
                       name,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: mutedColor,
-                      ),
+                      style: AppTextStyles.subTitle(color: mutedColor),
                     ),
                   ),
                 )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
@@ -68,10 +69,8 @@ class TaskDetailBodyWidget extends StatelessWidget {
                   children: [
                     Text(
                       task.title,
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: AppTextStyles.title(color: textColor).copyWith(
                         fontWeight: FontWeight.w700,
-                        color: textColor,
                         height: 1.3,
                       ),
                     ),
@@ -86,7 +85,10 @@ class TaskDetailBodyWidget extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               task.description!,
-              style: TextStyle(fontSize: 13.5, color: mutedColor, height: 1.6),
+              style: AppTextStyles.subTitle(color: mutedColor).copyWith(
+                fontWeight: FontWeight.w400,
+                height: 1.5,
+              ),
             ),
           ],
         ],
@@ -171,7 +173,9 @@ class TaskDetailBodyWidget extends StatelessWidget {
               )
             : Text(
                 'Not assigned',
-                style: TextStyle(fontSize: 13.5, color: mutedColor),
+                style: AppTextStyles.subTitle(color: mutedColor).copyWith(
+                  fontWeight: FontWeight.w400,
+                ),
               ),
       ),
     );
@@ -210,10 +214,8 @@ class TaskDetailBodyWidget extends StatelessWidget {
           width: 82,
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: mutedColor,
-              fontWeight: FontWeight.w500,
+            style: AppTextStyles.formLabel(color: mutedColor).copyWith(
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -238,11 +240,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
 
   Widget _dateText(String text) => Text(
     text,
-    style: TextStyle(
-      fontSize: 13.5,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
+    style: AppTextStyles.formLabel(color: textColor),
   );
 }
 

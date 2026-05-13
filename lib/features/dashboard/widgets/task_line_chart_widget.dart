@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
 
@@ -55,17 +56,13 @@ class TaskLineChartWidget extends StatelessWidget {
           // ── Title ───────────────────────────────────────
           Text(
             'dashboard_task_summary'.tr,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+            style: AppTextStyles.title(color: textColor),
           ),
 
           const SizedBox(height: 4),
           Text(
             'dashboard_total_tasks'.trParams({'count': '$total'}),
-            style: TextStyle(fontSize: 12, color: labelColor),
+            style: AppTextStyles.subTitle(color: labelColor),
           ),
           const SizedBox(height: 16),
 
@@ -79,7 +76,7 @@ class TaskLineChartWidget extends StatelessWidget {
                     ? Center(
                         child: Text(
                           'dashboard_no_data'.tr,
-                          style: TextStyle(color: labelColor, fontSize: 13),
+                          style: AppTextStyles.subTitle(color: labelColor),
                         ),
                       )
                     : SfCircularChart(
@@ -91,16 +88,11 @@ class TaskLineChartWidget extends StatelessWidget {
                               children: [
                                 Text(
                                   '$total',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w800,
-                                    color: textColor,
-                                  ),
+                                  style: AppTextStyles.title(color: textColor),
                                 ),
                                 Text(
                                   'task_title'.tr,
-                                  style: TextStyle(
-                                    fontSize: 11,
+                                  style: AppTextStyles.subTitle(
                                     color: labelColor,
                                   ),
                                 ),
@@ -183,17 +175,14 @@ class _LegendItem extends StatelessWidget {
           Expanded(
             child: Text(
               label.tr,
-              style: TextStyle(
-                fontSize: 12,
-                color: isDark ? Colors.white70 : kTextDark,
+              style: AppTextStyles.subTitle(
+                color: isDark ? Colors.white70 : kTextMuted,
               ),
             ),
           ),
           Text(
             '$count  ($pct%)',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
+            style: AppTextStyles.subTitle(
               color: isDark ? Colors.grey[400] : kTextMuted,
             ),
           ),

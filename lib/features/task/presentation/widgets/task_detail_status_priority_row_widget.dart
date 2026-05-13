@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 
@@ -27,10 +28,9 @@ class TaskDetailStatusPriorityRow extends StatelessWidget {
           ),
           child: Text(
             task.status.localizedName,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: statusColor,
+            style: AppTextStyles.formLabel(color: statusColor).copyWith(
+              fontWeight: FontWeight.w700,
+              letterSpacing: kLs(0.1),
             ),
           ),
         ),
@@ -38,19 +38,14 @@ class TaskDetailStatusPriorityRow extends StatelessWidget {
         Container(
           width: 7,
           height: 7,
-          decoration: BoxDecoration(
-            color: priorityColor,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: priorityColor, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
         Text(
           task.priority.localizedName,
-          style: TextStyle(
-            fontSize: 12,
+          style: AppTextStyles.formLabel(
             color: isDark ? Colors.white54 : kTextMuted,
-            fontWeight: FontWeight.w500,
-          ),
+          ).copyWith(fontWeight: FontWeight.w500),
         ),
       ],
     );

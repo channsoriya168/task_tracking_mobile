@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/label/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
@@ -58,10 +59,8 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                     ctrl.editingTask.value != null
                         ? 'task_form_edit'.tr
                         : 'task_form_new'.tr,
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: AppTextStyles.title(color: textColor).copyWith(
                       fontWeight: FontWeight.w700,
-                      color: textColor,
                     ),
                   ),
                 ),
@@ -243,11 +242,7 @@ class TaskItemDialogSheetWidget extends StatelessWidget {
                           isEditing
                               ? 'task_form_btn_update'.tr
                               : 'task_form_btn_create'.tr,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                            letterSpacing: 0.2,
-                          ),
+                          style: AppTextStyles.buttonLabel(color: Colors.white),
                         ),
                 ),
               );

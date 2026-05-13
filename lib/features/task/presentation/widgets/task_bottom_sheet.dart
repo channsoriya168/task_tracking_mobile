@@ -86,8 +86,10 @@ class _TaskSheetBodyState extends State<_TaskSheetBody> {
     if (!mounted) return;
     Get.back();
     widget.ctrl.isOfflineDialogOpen.value = true;
-    showNoInternetDialog(isDark: widget.isDark, redirectCount: 1)
-        .then((_) => widget.ctrl.isOfflineDialogOpen.value = false);
+    showNoInternetDialog(
+      isDark: widget.isDark,
+      redirectCount: 1,
+    ).then((_) => widget.ctrl.isOfflineDialogOpen.value = false);
   }
 
   @override

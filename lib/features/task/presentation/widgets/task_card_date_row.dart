@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
@@ -47,10 +48,10 @@ class TaskCardDateRow extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           startLabel,
-          style: TextStyle(
-            fontSize: 11,
-            color: mutedColor,
-            fontStyle: isStartFallback ? FontStyle.italic : FontStyle.normal,
+          style: AppTextStyles.subTitle(
+            color: isStartFallback
+                ? mutedColor
+                : (mutedColor.withValues(alpha: 0.9)),
           ),
         ),
         if (dueDate != null) ...[
@@ -63,22 +64,30 @@ class TaskCardDateRow extends StatelessWidget {
             ),
           ),
           if (_isOverdue)
-            Padding(
-              padding: const EdgeInsets.only(right: 3),
-              child: Icon(
-                Icons.warning_amber_rounded,
-                size: 11,
-                color: kHighPriority,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              decoration: BoxDecoration(
+                color: kHighPriority.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: kHighPriority.withValues(alpha: 0.3)),
               ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.warning_amber_rounded, size: 10, color: kHighPriority),
+                  const SizedBox(width: 2),
+                  Text(
+                    formatDate(dueDate!),
+                    style: AppTextStyles.subTitle(color: kHighPriority),
+                  ),
+                ],
+              ),
+            )
+          else
+            Text(
+              formatDate(dueDate!),
+              style: AppTextStyles.subTitle(color: dueDateCol),
             ),
-          Text(
-            formatDate(dueDate!),
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: dueDateCol,
-            ),
-          ),
         ],
       ],
     );

@@ -10,14 +10,12 @@ class TaskCardFooterRow extends StatelessWidget {
     required this.isDark,
     required this.mutedColor,
     required this.statusColor,
-    required this.priorityColor,
   });
 
   final TaskItem task;
   final bool isDark;
   final Color mutedColor;
   final Color statusColor;
-  final Color priorityColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,49 +27,77 @@ class TaskCardFooterRow extends StatelessWidget {
           color: statusColor,
           isDark: isDark,
         ),
-        const SizedBox(width: 8),
-
-        // ── Priority dot + label ────────────────────────────────
-        Container(
-          width: 6,
-          height: 6,
-          decoration: BoxDecoration(
-            color: priorityColor,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          task.priority.localizedName,
-          style: TextStyle(
-            fontSize: 11,
-            color: mutedColor,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
 
         const Spacer(),
 
-        // ── Avatars ─────────────────────────────────────────────
-        if (task.assignedToName != null)
-          UserAvatarWidget(
-            name: task.assignedToName!,
-            imageUrl: task.assignedToProfileImageUrl,
-            radius: 10,
-            showBorder: true,
-          ),
-        if (task.createdByEmployeeName != null)
-          Padding(
-            padding: const EdgeInsets.only(left: 4),
-            child: UserAvatarWidget(
-              name: task.createdByEmployeeName!,
-              imageUrl: task.createdByProfileImageUrl,
-              radius: 10,
-              color: mutedColor,
-              showBorder: true,
-            ),
-          ),
+        // ── Stacked avatars ─────────────────────────────────────
+        _StackedAvatars(task: task, mutedColor: mutedColor),
       ],
+    );
+  }
+}
+
+class _StackedAvatars extends StatelessWidget {
+  const _StackedAvatars({required this.task, required this.mutedColor});
+
+  final TaskItem task;
+  final Color mutedColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasAssignee = task.assignedToName != null;
+    final hasCreator = task.createdByEmployeeName != null;
+
+    if (!hasAssignee && !hasCreator) return const SizedBox.shrink();
+
+    if (hasAssignee && hasCreator) {
+      return SizedBox(
+        width: 30,
+        height: 22,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Creator — behind (right)
+            Positioned(
+              right: 0,
+              child: UserAvatarWidget(
+                name: task.createdByEmployeeName!,
+                imageUrl: task.createdByProfileImageUrl,
+                radius: 10,
+                color: mutedColor,
+                showBorder: true,
+              ),
+            ),
+            // Assignee — front (left)
+            Positioned(
+              left: 0,
+              child: UserAvatarWidget(
+                name: task.assignedToName!,
+                imageUrl: task.assignedToProfileImageUrl,
+                radius: 10,
+                showBorder: true,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (hasAssignee) {
+      return UserAvatarWidget(
+        name: task.assignedToName!,
+        imageUrl: task.assignedToProfileImageUrl,
+        radius: 10,
+        showBorder: true,
+      );
+    }
+
+    return UserAvatarWidget(
+      name: task.createdByEmployeeName!,
+      imageUrl: task.createdByProfileImageUrl,
+      radius: 10,
+      color: mutedColor,
+      showBorder: true,
     );
   }
 }

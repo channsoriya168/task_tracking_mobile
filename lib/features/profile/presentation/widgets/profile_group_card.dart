@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class ProfileGroupCard extends StatelessWidget {
@@ -30,8 +31,8 @@ class ProfileGroupCard extends StatelessWidget {
     final joinedDate = joinedAt != null ? DateTime.tryParse(joinedAt) : null;
     final joinedStr = joinedDate != null
         ? 'Joined ${joinedDate.day.toString().padLeft(2, '0')}/'
-            '${joinedDate.month.toString().padLeft(2, '0')}/'
-            '${joinedDate.year}'
+              '${joinedDate.month.toString().padLeft(2, '0')}/'
+              '${joinedDate.year}'
         : null;
 
     return Padding(
@@ -45,9 +46,7 @@ class ProfileGroupCard extends StatelessWidget {
               children: [
                 Text(
                   groupName,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                  style: AppTextStyles.title(
                     color: isDark ? Colors.white : kTextDark,
                   ),
                 ),
@@ -55,8 +54,7 @@ class ProfileGroupCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     joinedStr,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: AppTextStyles.subTitle(
                       color: isDark ? Colors.white38 : kTextMuted,
                     ),
                   ),
@@ -65,21 +63,6 @@ class ProfileGroupCard extends StatelessWidget {
             ),
           ),
           // Role chip
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: groupColor.withAlpha(isDark ? 40 : 20),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              roleName,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: groupColor,
-              ),
-            ),
-          ),
         ],
       ),
     );

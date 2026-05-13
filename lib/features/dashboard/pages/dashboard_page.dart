@@ -55,8 +55,8 @@ class DashboardPage extends StatelessWidget {
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(
                     offline && !adminTaskCtrl.isOfflineDialogOpen.value
-                        ? 120
-                        : 90,
+                        ? 125
+                        : 95,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -105,11 +105,7 @@ class DashboardPage extends StatelessWidget {
                     children: [
                       Text(
                         'task_title'.tr,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: textColor,
-                        ),
+                        style: AppTextStyles.title(color: textColor),
                       ),
                       const SizedBox(width: 8),
                       Container(
@@ -123,11 +119,7 @@ class DashboardPage extends StatelessWidget {
                         ),
                         child: Text(
                           '${filtered.length}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: kPrimary,
-                          ),
+                          style: AppTextStyles.subTitle(color: kPrimary),
                         ),
                       ),
                     ],
@@ -164,7 +156,7 @@ class DashboardPage extends StatelessWidget {
                         const SizedBox(height: 12),
                         Text(
                           'task_empty'.tr,
-                          style: TextStyle(fontSize: 14, color: mutedColor),
+                          style: AppTextStyles.subTitle(color: mutedColor),
                         ),
                       ],
                     ),

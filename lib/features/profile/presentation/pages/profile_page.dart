@@ -117,6 +117,20 @@ class ProfilePage extends StatelessWidget {
                     );
                   }
                   return Container(
+                    padding: kPagePaddingHorizontal,
+                    decoration: BoxDecoration(
+                      color: isDark ? kBgDark : kBgLight,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: isDark
+                              ? Colors.white.withAlpha(10)
+                              : Colors.grey.shade200,
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
                     child: Column(
                       children: List.generate(groups.length, (i) {
                         final map = groups[i] as Map<String, dynamic>? ?? {};
@@ -154,12 +168,15 @@ class ProfilePage extends StatelessWidget {
                 child: Obx(() {
                   final auth = authCtrl.currentAuth.value;
                   final profile = profileCtrl.profile.value;
-                  return ProfileInfoCard(
-                    isDark: isDark,
-                    email: profile?.email ?? '',
-                    phone: profile?.phoneNumber ?? auth?.phoneNumber ?? '',
-                    placeOfBirth: profile?.placeOfBirth ?? '',
-                    dateOfBirth: profile?.dateOfBirth,
+                  return Padding(
+                    padding: kPagePaddingHorizontal,
+                    child: ProfileInfoCard(
+                      isDark: isDark,
+                      email: profile?.email ?? '',
+                      phone: profile?.phoneNumber ?? auth?.phoneNumber ?? '',
+                      placeOfBirth: profile?.placeOfBirth ?? '',
+                      dateOfBirth: profile?.dateOfBirth,
+                    ),
                   );
                 }),
               ),
@@ -174,7 +191,12 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverToBoxAdapter(child: ProfileSettingsCard(isDark: isDark)),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: kPagePaddingHorizontal,
+                  child: ProfileSettingsCard(isDark: isDark),
+                ),
+              ),
 
               // ── Account ─────────────────────────────────────────
               SliverPadding(
@@ -186,9 +208,14 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverToBoxAdapter(child: ProfileActionCard(isDark: isDark)),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: kPagePaddingHorizontal,
+                  child: ProfileActionCard(isDark: isDark),
+                ),
+              ),
 
-              const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
+              const SliverPadding(padding: EdgeInsets.only(bottom: 0)),
             ],
           );
         }),

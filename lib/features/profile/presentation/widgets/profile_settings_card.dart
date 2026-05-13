@@ -14,6 +14,17 @@ class ProfileSettingsCard extends StatelessWidget {
     final themeCtrl = Get.find<ThemeController>();
 
     return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white12 : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.white.withAlpha(10) : Colors.grey.shade200,
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           // ── Dark Mode ────────────────────────────────────────
