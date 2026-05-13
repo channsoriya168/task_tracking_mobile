@@ -13,8 +13,6 @@ import 'package:task_tracking_mobile/features/employee/presentation/controllers/
 import 'package:task_tracking_mobile/features/employee/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_dialogs.dart';
-import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_reset_password_sheet.dart';
-
 class EmployeeCardWidget extends StatelessWidget {
   const EmployeeCardWidget({
     super.key,
@@ -36,13 +34,6 @@ class EmployeeCardWidget extends StatelessWidget {
     switch (action) {
       case EmployeeMenuAction.edit:
         ctrl.showEditDialog(employee);
-      case EmployeeMenuAction.changePassword:
-        showResetPasswordSheet(
-          context,
-          employee: employee,
-          ctrl: ctrl,
-          isDark: isDark,
-        );
       case EmployeeMenuAction.generateQr:
         showEmployeeQrSheet(context, employee: employee, isDark: isDark);
       case EmployeeMenuAction.delete:
@@ -276,15 +267,6 @@ class EmployeeCardWidget extends StatelessWidget {
                 color: isDark ? kCardDark : Colors.white,
                 elevation: 4,
                 itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: EmployeeMenuAction.changePassword,
-                    child: _PopupItem(
-                      icon: Icons.lock_reset_rounded,
-                      label: 'profile_change_password'.tr,
-                      color: const Color(0xFFF59E0B),
-                      isDark: isDark,
-                    ),
-                  ),
                   PopupMenuItem(
                     value: EmployeeMenuAction.generateQr,
                     child: _PopupItem(

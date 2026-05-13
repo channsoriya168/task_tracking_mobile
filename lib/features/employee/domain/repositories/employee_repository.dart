@@ -6,8 +6,6 @@ abstract class EmployeeRepository {
   Future<Employee> createEmployee({
     required String fullName,
     String? email,
-    required String password,
-    required String confirmPassword,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,
@@ -28,8 +26,6 @@ abstract class EmployeeRepository {
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
-    String? password,
-    String? confirmPassword,
     String? role,
   });
 

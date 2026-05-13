@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
@@ -11,8 +12,6 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_
 
 enum _AdminLabelMenuAction { edit, delete }
 
-// Hides the offline banner while the no-internet dialog is open so it
-// doesn't show through behind the dialog barrier.
 final _dialogOpen = false.obs;
 
 class LabelPage extends StatelessWidget {
@@ -48,9 +47,7 @@ class LabelPage extends StatelessWidget {
         ),
         title: Text(
           'labels'.tr,
-          style: TextStyle(
-            fontSize: isTablet ? 22 : 18,
-            fontWeight: FontWeight.bold,
+          style: AppTextStyles.appBarTitle(
             color: isDark ? Colors.white : kPrimary,
           ),
         ),
@@ -79,7 +76,7 @@ class LabelPage extends StatelessWidget {
                     if (ctrl.isLoading.value ||
                         (offline && ctrl.labels.isEmpty)) {
                       return ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
+                        padding: const EdgeInsets.fromLTRB(12, 12, 12, 30),
                         itemCount: 6,
                         separatorBuilder: (_, i) => const SizedBox(height: 12),
                         itemBuilder: (_, i) =>
@@ -93,7 +90,7 @@ class LabelPage extends StatelessWidget {
                           margin: EdgeInsets.symmetric(
                             horizontal: isTabletLayout ? 80 : 24,
                           ),
-                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: isDark ? kCardDark : Colors.white,
                             borderRadius: BorderRadius.circular(20),
@@ -118,9 +115,7 @@ class LabelPage extends StatelessWidget {
                               Text(
                                 'no_labels_get'.tr,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
+                                style: AppTextStyles.subTitle(
                                   color: isDark ? Colors.white : kTextDark,
                                 ),
                               ),
@@ -128,11 +123,9 @@ class LabelPage extends StatelessWidget {
                               Text(
                                 'label_empty_hint'.tr,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  height: 1.4,
+                                style: AppTextStyles.inputText(
                                   color: isDark ? Colors.grey[400] : kTextMuted,
-                                ),
+                                ).copyWith(height: 1.4),
                               ),
                             ],
                           ),
@@ -147,7 +140,7 @@ class LabelPage extends StatelessWidget {
                         direction: DismissDirection.endToStart,
                         background: Container(
                           alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
+                          padding: const EdgeInsets.only(right: 12),
                           decoration: BoxDecoration(
                             color: kHighPriority.withAlpha(200),
                             borderRadius: BorderRadius.circular(18),
@@ -200,13 +193,14 @@ class LabelPage extends StatelessWidget {
                                             label.name,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : kTextDark,
-                                            ),
+                                            style:
+                                                AppTextStyles.title(
+                                                  color: isDark
+                                                      ? Colors.white
+                                                      : kTextDark,
+                                                ).copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                           ),
                                         ),
                                       ],
@@ -218,13 +212,12 @@ class LabelPage extends StatelessWidget {
                                         label.description!,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 12.5,
-                                          height: 1.35,
-                                          color: isDark
-                                              ? Colors.grey[400]
-                                              : kTextMuted,
-                                        ),
+                                        style:
+                                            AppTextStyles.inputText(
+                                              color: isDark
+                                                  ? Colors.grey[400]
+                                                  : kTextMuted,
+                                            ).copyWith(height: 1.35),
                                       ),
                                     ],
                                   ],
@@ -282,9 +275,7 @@ class LabelPage extends StatelessWidget {
                                         const SizedBox(width: 10),
                                         Text(
                                           'edit'.tr,
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
+                                          style: AppTextStyles.formLabel(
                                             color: menuTextColor,
                                           ),
                                         ),
@@ -304,9 +295,7 @@ class LabelPage extends StatelessWidget {
                                         const SizedBox(width: 10),
                                         Text(
                                           'delete'.tr,
-                                          style: const TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
+                                          style: AppTextStyles.formLabel(
                                             color: kHighPriority,
                                           ),
                                         ),
@@ -332,9 +321,7 @@ class LabelPage extends StatelessWidget {
                         children: [
                           Text(
                             '${ctrl.labels.length} ${'labels'.tr}',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+                            style: AppTextStyles.formLabel(
                               color: isDark ? Colors.grey[400] : kTextMuted,
                             ),
                           ),
@@ -352,9 +339,9 @@ class LabelPage extends StatelessWidget {
                           Expanded(
                             child: SingleChildScrollView(
                               padding: const EdgeInsets.fromLTRB(
-                                24,
+                                12,
                                 0,
-                                24,
+                                12,
                                 100,
                               ),
                               child: Wrap(
@@ -379,7 +366,7 @@ class LabelPage extends StatelessWidget {
                         countRow,
                         Expanded(
                           child: ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
+                            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                             itemCount: ctrl.labels.length,
                             itemBuilder: (_, i) => Padding(
                               padding: const EdgeInsets.only(bottom: 12),
@@ -396,7 +383,7 @@ class LabelPage extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
         onPressed: () {
@@ -409,7 +396,11 @@ class LabelPage extends StatelessWidget {
           }
           showLabelDialog(context, ctrl, isDark, null, _dialogOpen);
         },
-        child: const Icon(Icons.add_rounded),
+        label: Text(
+          'create_label'.tr,
+          style: AppTextStyles.buttonLabel(color: Colors.white),
+        ),
+        icon: const Icon(Icons.add_rounded),
       ),
     );
   }

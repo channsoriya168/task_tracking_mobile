@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class DatePickerWidget extends StatelessWidget {
@@ -26,13 +27,11 @@ class DatePickerWidget extends StatelessWidget {
       children: [
         RichText(
           text: TextSpan(
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.grey[400] : kTextMuted,
+            style: AppTextStyles.formLabel(
+              color: isDark ? Colors.white : kTextDark,
             ),
             children: [
-              const TextSpan(text: 'Date of Birth'),
+              TextSpan(text: 'profile_date_of_birth'.tr),
               if (isRequired)
                 const TextSpan(
                   text: ' *',

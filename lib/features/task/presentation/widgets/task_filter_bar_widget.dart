@@ -6,15 +6,15 @@ import 'package:task_tracking_mobile/features/lookup/domain/entities/task_item_s
 import 'package:task_tracking_mobile/features/core/presentation/widgets/filter_chip_widget.dart';
 
 String _statusTrKey(String? name) => switch (name?.toLowerCase()) {
-      'pending'    => 'status_pending',
-      'assigned'   => 'status_assigned',
-      'inprogress' => 'status_inprogress',
-      'inreview'   => 'status_inreview',
-      'completed'  => 'status_completed',
-      'cancelled'  => 'status_cancelled',
-      'onhold'     => 'status_onhold',
-      _            => 'status_all',
-    };
+  'pending' => 'status_pending',
+  'assigned' => 'status_assigned',
+  'inprogress' => 'status_inprogress',
+  'inreview' => 'status_inreview',
+  'completed' => 'status_completed',
+  'cancelled' => 'status_cancelled',
+  'onhold' => 'status_onhold',
+  _ => 'status_all',
+};
 
 class TaskFilterBarWidget extends StatelessWidget {
   const TaskFilterBarWidget({
@@ -34,47 +34,38 @@ class TaskFilterBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: Obx(() {
-        final selected = filterStatus.value;
-        final statusItems = [null, ...taskStatus];
+    return Obx(() {
+      final selected = filterStatus.value;
+      final statusItems = [null, ...taskStatus];
 
-        final counts = <String, int>{
-          'All': allTasks.length,
-          for (final s in taskStatus)
-            s.name: allTasks
-                .where(
-                  (t) => t.status.name.toLowerCase() == s.name.toLowerCase(),
-                )
-                .length,
-        };
+      final counts = <String, int>{
+        'All': allTasks.length,
+        for (final s in taskStatus)
+          s.name: allTasks
+              .where((t) => t.status.name.toLowerCase() == s.name.toLowerCase())
+              .length,
+      };
 
-        return Container(
-          padding: kPagePaddingHorizontal,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 4),
-            itemCount: statusItems.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
-            itemBuilder: (_, i) {
-              final status = statusItems[i];
-              final label = status?.name ?? 'All';
-              final isSelected = selected == label;
-              final count = counts[label] ?? 0;
-              final displayLabel = _statusTrKey(status?.name).tr;
-
-              return FilterChipWidget(
-                isDark: isDark,
-                filter: displayLabel,
-                count: count,
-                selected: isSelected,
-                onTap: () => onSelectStatus(status),
-              );
-            },
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (int i = 0; i < statusItems.length; i++) ...[
+                if (i > 0) const SizedBox(width: 8),
+                FilterChipWidget(
+                  isDark: isDark,
+                  filter: _statusTrKey(statusItems[i]?.name).tr,
+                  count: counts[statusItems[i]?.name ?? 'All'] ?? 0,
+                  selected: selected == (statusItems[i]?.name ?? 'All'),
+                  onTap: () => onSelectStatus(statusItems[i]),
+                ),
+              ],
+            ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }

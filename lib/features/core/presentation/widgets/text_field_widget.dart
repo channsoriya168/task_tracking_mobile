@@ -1,5 +1,6 @@
 // ── Shared Dialog Text Field ───────────────────────────────────
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class TextFieldWidget extends StatelessWidget {
@@ -41,10 +42,8 @@ class TextFieldWidget extends StatelessWidget {
       children: [
         RichText(
           text: TextSpan(
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.grey[400] : kTextMuted,
+            style: AppTextStyles.formLabel(
+              color: isDark ? Colors.white : kTextDark,
             ),
             children: [
               TextSpan(text: label),
@@ -63,9 +62,8 @@ class TextFieldWidget extends StatelessWidget {
           onChanged: onChanged,
           obscureText: obscureText,
           maxLines: obscureText ? 1 : maxLines,
-          style: TextStyle(
+          style: AppTextStyles.formLabel(
             color: isDark ? Colors.white : kTextDark,
-            fontSize: 14,
           ),
           decoration: InputDecoration(
             hintText: hint,
@@ -73,14 +71,8 @@ class TextFieldWidget extends StatelessWidget {
             errorText: errorText,
             helperText: helperText,
             helperMaxLines: 2,
-            helperStyle: TextStyle(
-              fontSize: 11,
-              color: isDark ? Colors.grey[500] : Colors.grey[500],
-            ),
-            hintStyle: TextStyle(
-              color: isDark ? Colors.grey[600] : Colors.grey[400],
-              fontSize: 14,
-            ),
+            helperStyle: AppTextStyles.formLabel(color: kTextMuted),
+            hintStyle: AppTextStyles.inputText(color: kTextMuted),
             filled: true,
             fillColor: isDark ? kSurfaceDark : kBgLight,
             alignLabelWithHint: maxLines > 1,

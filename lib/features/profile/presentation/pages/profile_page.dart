@@ -198,16 +198,6 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              // ── Account ─────────────────────────────────────────
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-                sliver: SliverToBoxAdapter(
-                  child: SectionTitleWidget(
-                    label: 'profile_account'.tr,
-                    isDark: isDark,
-                  ),
-                ),
-              ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: kPagePaddingHorizontal,

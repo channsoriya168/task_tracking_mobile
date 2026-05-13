@@ -110,8 +110,6 @@ class EmployeeController extends GetxController {
   // ── Form state ────────────────────────────────────────────────
   final TextEditingController nameCtrl = TextEditingController();
   final TextEditingController emailCtrl = TextEditingController();
-  final TextEditingController passwordCtrl = TextEditingController();
-  final TextEditingController confirmPasswordCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController placeCtrl = TextEditingController();
 
@@ -122,8 +120,6 @@ class EmployeeController extends GetxController {
   final Rxn<String> selectedGroupId = Rxn<String>();
   final Rxn<XFile> profileImage = Rxn<XFile>();
   final RxBool isSaving = false.obs;
-  final RxBool showPassword = false.obs;
-  final RxBool showConfirmPassword = false.obs;
   final RxMap<String, String> fieldErrors = <String, String>{}.obs;
 
   final RxBool isEditMode = false.obs;
@@ -150,8 +146,6 @@ class EmployeeController extends GetxController {
   }
 
   // ── Form validity (reactive) ──────────────────────────────────
-  // Create: require DOB + group before enabling submit.
-  // Edit: always allow submit — validator shows inline errors for missing fields.
   bool get canSave {
     if (isSaving.value) return false;
     if (isEditMode.value) return true;
@@ -225,8 +219,6 @@ class EmployeeController extends GetxController {
   void _resetForm() {
     nameCtrl.clear();
     emailCtrl.clear();
-    passwordCtrl.clear();
-    confirmPasswordCtrl.clear();
     phoneCtrl.clear();
     placeCtrl.clear();
     formDob.value = null;
@@ -234,8 +226,6 @@ class EmployeeController extends GetxController {
     selectedGenderId.value = null;
     selectedRole.value = 'Employee';
     profileImage.value = null;
-    showPassword.value = false;
-    showConfirmPassword.value = false;
     fieldErrors.clear();
     isEditMode.value = false;
     _editingId = null;
@@ -317,15 +307,11 @@ class EmployeeController extends GetxController {
     final name = nameCtrl.text.trim();
     final email = emailCtrl.text.trim();
     final phone = phoneCtrl.text.trim();
-    final password = passwordCtrl.text;
-    final confirmPassword = confirmPasswordCtrl.text;
 
     final errors = EmployeeValidator.validateCreate(
       name: name,
       email: email,
       phone: phone,
-      password: password,
-      confirmPassword: confirmPassword,
       dob: formDob.value,
       genderId: selectedGenderId.value,
       groupId: selectedGroupId.value,
@@ -340,8 +326,6 @@ class EmployeeController extends GetxController {
       await _createEmployee(
         fullName: name,
         email: email.isEmpty ? null : email,
-        password: password,
-        confirmPassword: confirmPassword,
         phone: phone.isEmpty ? null : Validators.toE164(phone),
         placeOfBirth: placeCtrl.text.trim().isEmpty
             ? null
@@ -369,8 +353,6 @@ class EmployeeController extends GetxController {
     final name = nameCtrl.text.trim();
     final email = emailCtrl.text.trim();
     final phone = phoneCtrl.text.trim();
-    final password = passwordCtrl.text;
-    final confirmPassword = confirmPasswordCtrl.text;
     final role = selectedRole.value;
 
     final errors = EmployeeValidator.validateEdit(
@@ -380,8 +362,6 @@ class EmployeeController extends GetxController {
       dob: formDob.value,
       genderId: selectedGenderId.value,
       groupId: selectedGroupId.value,
-      password: password,
-      confirmPassword: confirmPassword,
     );
     if (errors.isNotEmpty) {
       fieldErrors.assignAll(errors);
@@ -405,8 +385,6 @@ class EmployeeController extends GetxController {
             : null,
         profileImagePath: profileImage.value?.path,
         removeProfileImage: removeProfileImage.value,
-        password: password.isEmpty ? null : password,
-        confirmPassword: confirmPassword.isEmpty ? null : confirmPassword,
         role: role,
       );
       Get.back();
@@ -424,8 +402,6 @@ class EmployeeController extends GetxController {
     'FullName': 'fullName',
     'Email': 'email',
     'Phone': 'phone',
-    'Password': 'password',
-    'ConfirmPassword': 'confirmPassword',
     'PlaceOfBirth': 'placeOfBirth',
     'DateOfBirth': 'dateOfBirth',
     'Role': 'role',
@@ -454,8 +430,6 @@ class EmployeeController extends GetxController {
   void onClose() {
     nameCtrl.dispose();
     emailCtrl.dispose();
-    passwordCtrl.dispose();
-    confirmPasswordCtrl.dispose();
     phoneCtrl.dispose();
     placeCtrl.dispose();
     resetPasswordCtrl.dispose();

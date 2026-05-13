@@ -218,6 +218,9 @@ const Map<String, String> enUS = {
   'profile_phone': 'Phone',
   'profile_place_of_birth': 'Place of Birth',
   'profile_date_of_birth': 'Date of Birth',
+  'emp_form_role_label': 'Role',
+  'task_group': 'Task Group',
+  'new': 'Add New',
 
   // ── Change Password Sheet ──────────────────────────────────────
   'change_pwd_title': 'Change Password',
@@ -341,6 +344,8 @@ const Map<String, String> enUS = {
       'Please check your Wi-Fi or mobile data and try again.',
   'retry': 'Retry',
   'dismiss': 'Dismiss',
+  'create_label': 'Create Label',
+  'phone_number': 'Phone Number',
 
   // ── Snackbars ─────────────────────────────────────────────────
   'snack_success': 'Success',

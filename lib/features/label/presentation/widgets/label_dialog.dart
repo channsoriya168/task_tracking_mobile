@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/label/domain/entities/label.dart';
@@ -14,7 +15,6 @@ Future<void> showLabelDialog(
   Label? existing,
   RxBool? dialogOpenFlag,
 ]) async {
-  
   ctrl.initForm(existing);
 
   await showModalBottomSheet(
@@ -72,8 +72,10 @@ class _LabelDialogBodyState extends State<_LabelDialogBody> {
     if (!mounted) return;
     Navigator.of(context).pop();
     widget.dialogOpenFlag?.value = true;
-    showNoInternetDialog(isDark: widget.isDark, redirectCount: 2)
-        .then((_) => widget.dialogOpenFlag?.value = false);
+    showNoInternetDialog(
+      isDark: widget.isDark,
+      redirectCount: 2,
+    ).then((_) => widget.dialogOpenFlag?.value = false);
   }
 
   @override
@@ -116,9 +118,7 @@ class _LabelDialogBodyState extends State<_LabelDialogBody> {
               children: [
                 Text(
                   existing == null ? 'label_new'.tr : 'label_edit'.tr,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: AppTextStyles.subTitle(
                     color: isDark ? Colors.white : kTextDark,
                   ),
                 ),
@@ -133,81 +133,80 @@ class _LabelDialogBodyState extends State<_LabelDialogBody> {
                 ),
               ],
             ),
-          const SizedBox(height: 20),
-          // Name field
-          Obx(
-            () => TextFieldWidget(
-              controller: ctrl.nameCtrl,
-              label: 'label_name'.tr,
-              hint: 'label_name_hint'.tr,
-              isDark: isDark,
-              isRequired: true,
-              errorText: ctrl.nameError.value.isEmpty
-                  ? null
-                  : ctrl.nameError.value,
-              onChanged: (_) {
-                if (ctrl.nameError.value.isNotEmpty &&
-                    ctrl.nameCtrl.text.trim().isNotEmpty) {
-                  ctrl.nameError.value = '';
-                }
-              },
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Description field
-          TextFieldWidget(
-            controller: ctrl.descriptionCtrl,
-            label: 'label_description'.tr,
-            hint: 'label_description_hint'.tr,
-            isDark: isDark,
-            maxLines: 3,
-          ),
-          const SizedBox(height: 24),
-          // Save button
-          Obx(
-            () => SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: ctrl.isSaving.value
+            const SizedBox(height: 20),
+            // Name field
+            Obx(
+              () => TextFieldWidget(
+                controller: ctrl.nameCtrl,
+                label: 'label_name'.tr,
+                hint: 'label_name_hint'.tr,
+                isDark: isDark,
+                isRequired: true,
+                errorText: ctrl.nameError.value.isEmpty
                     ? null
-                    : () async {
-                        final nav = Navigator.of(context);
-                        final success = existing == null
-                            ? await ctrl.createLabel()
-                            : await ctrl.updateLabel(existing.id);
-                        if (success) nav.pop();
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimary,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: kPrimary.withValues(alpha: 0.5),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: ctrl.isSaving.value
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(
-                        existing == null
-                            ? 'label_create_btn'.tr
-                            : 'label_save_btn'.tr,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
+                    : ctrl.nameError.value,
+                onChanged: (_) {
+                  if (ctrl.nameError.value.isNotEmpty &&
+                      ctrl.nameCtrl.text.trim().isNotEmpty) {
+                    ctrl.nameError.value = '';
+                  }
+                },
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            // Description field
+            TextFieldWidget(
+              controller: ctrl.descriptionCtrl,
+              label: 'label_description'.tr,
+              hint: 'label_description_hint'.tr,
+              isDark: isDark,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 24),
+            // Save button
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: ctrl.isSaving.value
+                      ? null
+                      : () async {
+                          final nav = Navigator.of(context);
+                          final success = existing == null
+                              ? await ctrl.createLabel()
+                              : await ctrl.updateLabel(existing.id);
+                          if (success) nav.pop();
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimary,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: kPrimary.withValues(alpha: 0.5),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: ctrl.isSaving.value
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          existing == null
+                              ? 'label_create_btn'.tr
+                              : 'label_save_btn'.tr,
+                          style: AppTextStyles.buttonLabel(
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

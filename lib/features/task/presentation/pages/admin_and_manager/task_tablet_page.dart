@@ -103,8 +103,8 @@ class TaskTabletPage extends StatelessWidget {
                       // ── Week calendar ─────────────────────────────────
                       Padding(
                         padding: EdgeInsetsGeometry.symmetric(
-                          horizontal: 20,
-                          vertical: 4,
+                          horizontal: 12,
+                          vertical: 7,
                         ),
                         child: Obx(
                           () => WeekCalendarWidget(

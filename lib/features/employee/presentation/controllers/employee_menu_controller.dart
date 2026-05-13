@@ -36,13 +36,7 @@ class EmployeeMenuController extends GetxController {
         icon: Icons.edit_rounded,
         label: 'Edit Employee',
       ),
-      const EmployeeMenuItem(
-        action: EmployeeMenuAction.changePassword,
-        icon: Icons.lock_reset_rounded,
-        label: 'Change Password',
-        isWarning: true,
-      ),
-      const EmployeeMenuItem(
+const EmployeeMenuItem(
         action: EmployeeMenuAction.generateQr,
         icon: Icons.qr_code_rounded,
         label: 'Generate QR Login',

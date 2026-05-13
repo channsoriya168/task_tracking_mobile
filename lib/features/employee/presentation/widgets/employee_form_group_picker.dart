@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
@@ -28,20 +29,14 @@ class EmployeeFormGroupPicker extends StatelessWidget {
               Expanded(
                 child: RichText(
                   text: TextSpan(
-                    text: 'Task Group',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                    text: 'task_group'.tr,
+                    style: AppTextStyles.formLabel(
                       color: isDark ? Colors.white : kTextDark,
                     ),
                     children: [
                       TextSpan(
                         text: ' *',
-                        style: TextStyle(
-                          color: Colors.red[400],
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTextStyles.formLabel(color: Colors.red[400]),
                       ),
                     ],
                   ),
@@ -56,12 +51,8 @@ class EmployeeFormGroupPicker extends StatelessWidget {
                     Icon(Icons.add_rounded, size: 15, color: kPrimary),
                     const SizedBox(width: 3),
                     Text(
-                      'New',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kPrimary,
-                      ),
+                      'new'.tr,
+                      style: AppTextStyles.formLabel(color: kPrimary),
                     ),
                   ],
                 ),

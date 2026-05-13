@@ -5,7 +5,6 @@ import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
-import 'package:task_tracking_mobile/features/profile/presentation/widgets/profile_change_password_sheet.dart';
 
 class ProfileActionCard extends StatelessWidget {
   const ProfileActionCard({super.key, required this.isDark});
@@ -18,6 +17,7 @@ class ProfileActionCard extends StatelessWidget {
     final isEmployee = authCtrl.role == UserRole.employee;
 
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? Colors.white12 : Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -32,20 +32,6 @@ class ProfileActionCard extends StatelessWidget {
       child: Column(
         children: [
           if (!isEmployee) ...[
-            _ActionRow(
-              isDark: isDark,
-              icon: Icons.lock_outline_rounded,
-              iconColor: kPrimary,
-              label: 'Change Password',
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => ProfileChangePasswordSheet(isDark: isDark),
-                );
-              },
-            ),
             Divider(
               height: 1,
               indent: 0,

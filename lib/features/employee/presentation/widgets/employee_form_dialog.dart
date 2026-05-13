@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/date_picker_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/password_input_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_form_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_form_group_picker.dart';
@@ -50,20 +50,7 @@ class EmployeeFormDialog extends StatelessWidget {
                             controller.isEditMode.value
                                 ? 'emp_form_title_edit'.tr
                                 : 'emp_form_title_add'.tr,
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : kTextDark,
-                            ),
-                          ),
-                          Text(
-                            controller.isEditMode.value
-                                ? 'emp_form_subtitle_edit'.tr
-                                : 'emp_form_subtitle_add'.tr,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? Colors.grey[500] : kTextMuted,
-                            ),
+                            style: AppTextStyles.appBarTitle(color: kPrimary),
                           ),
                         ],
                       ),
@@ -101,7 +88,6 @@ class EmployeeFormDialog extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    _gapSm,
                     Obx(
                       () => TextFieldWidget(
                         controller: controller.nameCtrl,
@@ -155,46 +141,8 @@ class EmployeeFormDialog extends StatelessWidget {
                     _gap,
                     _GenderSelector(controller: controller, isDark: isDark),
 
-                    // ── Section: Account ─────────────────────────
-                    Obx(() {
-                      if (controller.isEditMode.value) {
-                        return const SizedBox.shrink();
-                      }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _gapSm,
-                          Obx(
-                            () => PasswordInputWidget(
-                              controller: controller.passwordCtrl,
-                              label: 'login_password_label'.tr,
-                              hint: 'emp_form_password_hint'.tr,
-                              isDark: isDark,
-                              isRequired: true,
-                              errorText: controller.fieldErrors['password'],
-                              helperText:
-                                  controller.fieldErrors['password'] == null
-                                  ? 'emp_form_password_helper'.tr
-                                  : null,
-                            ),
-                          ),
-                          _gap,
-                          Obx(
-                            () => PasswordInputWidget(
-                              controller: controller.confirmPasswordCtrl,
-                              label: 'emp_form_confirm_password_label'.tr,
-                              hint: 'emp_form_confirm_password_hint'.tr,
-                              isDark: isDark,
-                              isRequired: true,
-                              errorText:
-                                  controller.fieldErrors['confirmPassword'],
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-
                     // ── Section: Role (admin only) ───────────────
+                    _gap,
                     _RoleSelector(controller: controller, isDark: isDark),
 
                     _gapSm,
@@ -211,10 +159,7 @@ class EmployeeFormDialog extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 6, left: 4),
                         child: Text(
                           err,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-                          ),
+                          style: AppTextStyles.errorText(color: Colors.red),
                         ),
                       );
                     }),
@@ -289,10 +234,7 @@ class _Footer extends StatelessWidget {
                         controller.isEditMode.value
                             ? 'emp_form_btn_save'.tr
                             : 'emp_form_btn_add'.tr,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
+                        style: AppTextStyles.buttonLabel(color: Colors.white),
                       ),
               ),
             ),
@@ -311,6 +253,83 @@ class _GenderSelector extends StatelessWidget {
   final EmployeeController controller;
   final bool isDark;
 
+  static String _label(String name) =>
+      name.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (_) => ' ');
+
+  void _showPicker(BuildContext context) {
+    final genders = controller.genders;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? kCardDark : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[700] : Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'emp_form_gender_label'.tr,
+                  style: AppTextStyles.formLabel(
+                    color: isDark ? Colors.grey[400] : Colors.grey[500],
+                  ),
+                ),
+              ),
+            ),
+            ...genders.map((g) {
+              return Obx(
+                () => InkWell(
+                  onTap: () {
+                    controller.selectedGenderId.value = g.id;
+                    controller.fieldErrors.remove('gender');
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _label(g.name),
+                            style: AppTextStyles.inputText(
+                              color: (controller.selectedGenderId.value == g.id)
+                                  ? kPrimary
+                                  : (isDark ? Colors.white : kTextDark),
+                            ),
+                          ),
+                        ),
+                        if (controller.selectedGenderId.value == g.id)
+                          Icon(Icons.check_rounded, size: 18, color: kPrimary),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -319,16 +338,17 @@ class _GenderSelector extends StatelessWidget {
 
       final selected = controller.selectedGenderId.value;
       final errorText = controller.fieldErrors['gender'];
+      final selectedGender = selected != null
+          ? genders.firstWhereOrNull((g) => g.id == selected)
+          : null;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(
             text: TextSpan(
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.grey[400] : kTextMuted,
+              style: AppTextStyles.formLabel(
+                color: isDark ? Colors.white : kTextDark,
               ),
               children: [
                 TextSpan(text: 'emp_form_gender_label'.tr),
@@ -340,75 +360,50 @@ class _GenderSelector extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            initialValue: selected,
-            isExpanded: true,
-            decoration: InputDecoration(
-              hintText: 'emp_form_gender_hint'.tr,
-              hintStyle: TextStyle(
-                color: isDark ? Colors.grey[600] : Colors.grey[400],
-                fontSize: 14,
-              ),
-              errorText: errorText,
-              filled: true,
-              fillColor: isDark ? kSurfaceDark : kBgLight,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 14,
-              ),
-              border: OutlineInputBorder(
+          GestureDetector(
+            onTap: () => _showPicker(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+              decoration: BoxDecoration(
+                color: isDark ? kSurfaceDark : kBgLight,
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
+                border: Border.all(
                   color: errorText != null
                       ? Colors.red
                       : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
+                  width: errorText != null ? 1.5 : 1,
                 ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: errorText != null ? Colors.red : kPrimary,
-                  width: 1.5,
-                ),
-              ),
-            ),
-            dropdownColor: isDark ? kCardDark : Colors.white,
-            style: TextStyle(
-              color: isDark ? Colors.white : kTextDark,
-              fontSize: 14,
-            ),
-            icon: Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: isDark ? Colors.grey[500] : Colors.grey[500],
-            ),
-            //padding
-            items: [
-              DropdownMenuItem<String>(
-                value: null,
-                child: Text(
-                  'emp_form_gender_hint'.tr,
-                  style: TextStyle(
-                    color: isDark ? Colors.grey[600] : Colors.grey[400],
-                    fontSize: 14,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      selectedGender != null
+                          ? _label(selectedGender.name)
+                          : 'emp_form_gender_hint'.tr,
+                      style: AppTextStyles.inputText(
+                        color: selectedGender != null
+                            ? (isDark ? Colors.white : kTextDark)
+                            : (isDark ? Colors.grey[600]! : Colors.grey[400]!),
+                      ),
+                    ),
                   ),
-                ),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: isDark ? Colors.grey[500] : Colors.grey[500],
+                  ),
+                ],
               ),
-              ...genders.map(
-                (g) =>
-                    DropdownMenuItem<String>(value: g.id, child: Text(g.name)),
-              ),
-            ],
-            onChanged: (value) {
-              controller.selectedGenderId.value = value;
-              if (value != null) controller.fieldErrors.remove('gender');
-            },
+            ),
           ),
+          if (errorText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 6, left: 4),
+              child: Text(
+                errorText,
+                style: AppTextStyles.errorText(color: Colors.red),
+              ),
+            ),
         ],
       );
     });
@@ -433,7 +428,20 @@ class _RoleSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 12),
+        RichText(
+          text: TextSpan(
+            style: AppTextStyles.formLabel(
+              color: isDark ? Colors.white : kTextDark,
+            ),
+            children: [
+              TextSpan(text: 'emp_form_role_label'.tr),
+              const TextSpan(
+                text: ' *',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+        ),
         Obx(
           () => Row(
             children: _roles.map((role) {
@@ -477,11 +485,8 @@ class _RoleSelector extends StatelessWidget {
                         ],
                         Text(
                           role,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
+                          style: AppTextStyles.chipLabel(
+                            selected: isSelected,
                             color: isSelected
                                 ? kPrimary
                                 : (isDark

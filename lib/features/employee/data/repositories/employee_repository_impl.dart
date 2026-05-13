@@ -19,8 +19,6 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   Future<Employee> createEmployee({
     required String fullName,
     String? email,
-    required String password,
-    required String confirmPassword,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,
@@ -31,8 +29,6 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   }) => _remote.createEmployee(
     fullName: fullName,
     email: email,
-    password: password,
-    confirmPassword: confirmPassword,
     phone: phone,
     placeOfBirth: placeOfBirth,
     dateOfBirth: dateOfBirth,
@@ -54,8 +50,6 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
-    String? password,
-    String? confirmPassword,
     String? role,
   }) => _remote.updateEmployee(
     id,
@@ -68,8 +62,6 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     groupIds: groupIds,
     profileImagePath: profileImagePath,
     removeProfileImage: removeProfileImage,
-    password: password,
-    confirmPassword: confirmPassword,
     role: role,
   );
 

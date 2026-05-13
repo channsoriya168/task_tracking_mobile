@@ -9,8 +9,6 @@ class CreateEmployeeUsecase {
   Future<Employee> call({
     required String fullName,
     String? email,
-    required String password,
-    required String confirmPassword,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,
@@ -21,8 +19,6 @@ class CreateEmployeeUsecase {
   }) => _repo.createEmployee(
     fullName: fullName,
     email: email,
-    password: password,
-    confirmPassword: confirmPassword,
     phone: phone,
     placeOfBirth: placeOfBirth,
     dateOfBirth: dateOfBirth,

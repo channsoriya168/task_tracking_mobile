@@ -29,8 +29,6 @@ class EmployeeRemoteDatasource {
   Future<Employee> createEmployee({
     required String fullName,
     String? email,
-    required String password,
-    required String confirmPassword,
     String? phone,
     String? placeOfBirth,
     DateTime? dateOfBirth,
@@ -45,8 +43,6 @@ class EmployeeRemoteDatasource {
     formData.fields.addAll([
       MapEntry('fullName', fullName),
       if (email != null && email.isNotEmpty) MapEntry('email', email),
-      MapEntry('password', password),
-      MapEntry('confirmPassword', confirmPassword),
       if (phone != null && phone.isNotEmpty) MapEntry('phone', phone),
       if (placeOfBirth != null && placeOfBirth.isNotEmpty)
         MapEntry('placeOfBirth', placeOfBirth),
@@ -97,8 +93,6 @@ class EmployeeRemoteDatasource {
     List<String>? groupIds,
     String? profileImagePath,
     bool removeProfileImage = false,
-    String? password,
-    String? confirmPassword,
     String? role,
   }) async {
     final formData = FormData();
@@ -112,10 +106,6 @@ class EmployeeRemoteDatasource {
         MapEntry('placeOfBirth', placeOfBirth),
       if (dateOfBirth != null)
         MapEntry('dateOfBirth', dateOfBirth.toIso8601String().split('T').first),
-      if (password != null && password.isNotEmpty)
-        MapEntry('password', password),
-      if (confirmPassword != null && confirmPassword.isNotEmpty)
-        MapEntry('confirmPassword', confirmPassword),
       if (genderId != null && genderId.isNotEmpty) MapEntry('gender', genderId),
       if (role != null && role.isNotEmpty) MapEntry('role', role),
     ]);

@@ -10,8 +10,6 @@ class EmployeeValidator {
     required String name,
     required String email,
     required String phone,
-    required String password,
-    required String confirmPassword,
     required DateTime? dob,
     required String? groupId,
     required String? genderId,
@@ -28,15 +26,6 @@ class EmployeeValidator {
     final phoneErr = Validators.phone(phone);
     if (phoneErr != null) errors['phone'] = phoneErr;
 
-    final pwErr = Validators.strongPassword(password);
-    if (pwErr != null) errors['password'] = pwErr;
-
-    if (confirmPassword.isEmpty) {
-      errors['confirmPassword'] = 'Please confirm your password.';
-    } else if (password != confirmPassword) {
-      errors['confirmPassword'] = 'Passwords do not match.';
-    }
-
     if (dob == null) errors['dob'] = 'Date of birth is required.';
     if (genderId == null) errors['gender'] = 'Please select a gender.';
     if (groupId == null) errors['taskGroup'] = 'Please select a task group.';
@@ -51,8 +40,6 @@ class EmployeeValidator {
     required DateTime? dob,
     required String? groupId,
     required String? genderId,
-    String password = '',
-    String confirmPassword = '',
   }) {
     final errors = <String, String>{};
 
@@ -66,16 +53,6 @@ class EmployeeValidator {
     if (phone.isNotEmpty) {
       final phoneErr = Validators.phone(phone);
       if (phoneErr != null) errors['phone'] = phoneErr;
-    }
-
-    if (password.isNotEmpty) {
-      final pwErr = Validators.strongPassword(password);
-      if (pwErr != null) errors['password'] = pwErr;
-      if (confirmPassword.isEmpty) {
-        errors['confirmPassword'] = 'Please confirm your password.';
-      } else if (password != confirmPassword) {
-        errors['confirmPassword'] = 'Passwords do not match.';
-      }
     }
 
     if (dob == null) errors['dob'] = 'Date of birth is required.';

@@ -13,11 +13,13 @@ class TaskDetailButtonSheet extends StatelessWidget {
     required this.task,
     required this.isDark,
     required this.scrollController,
+    required this.ctrl,
   });
 
   final TaskItem task;
   final bool isDark;
   final ScrollController scrollController;
+  final TaskDetailController ctrl;
 
   static Future<void> show(
     BuildContext context,
@@ -45,6 +47,7 @@ class TaskDetailButtonSheet extends StatelessWidget {
         task: task,
         isDark: isDark,
         scrollController: scrollController,
+        ctrl: ctrl,
       ),
     );
     scrollController.dispose();
@@ -53,7 +56,6 @@ class TaskDetailButtonSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<TaskDetailController>(tag: task.id);
     final screenH = MediaQuery.of(context).size.height;
     final keyboardBottom = MediaQuery.of(context).viewInsets.bottom;
     final textColor = isDark ? Colors.white : kTextDark;

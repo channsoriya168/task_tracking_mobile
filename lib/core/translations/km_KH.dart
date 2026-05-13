@@ -136,6 +136,7 @@ const Map<String, String> kmKH = {
   'progress_hours_hint': 'ឧ. 2.5',
   'progress_update': 'ធ្វើបច្ចុប្បន្នភាព',
   'progress_save': 'រក្សាទុក',
+  'phone_number': 'លេខទូរស័ព្ទ',
 
   // ── Members ───────────────────────────────────────────────────
   'member_title': 'សមាជិក',
@@ -183,6 +184,7 @@ const Map<String, String> kmKH = {
   'task_overdue_date': 'ហួសកំណត់: @date',
   'task_done_date': 'បានបញ្ចប់: @date',
   'task_create': 'បង្កើតកិច្ចការ',
+  'create_label': 'បង្កើតប្រភេទការងារ',
 
   // ── Dashboard ────────────────────────────────────────────────
   'dashboard_search_hint': 'ស្វែងរកកិច្ចការ…',
@@ -220,6 +222,9 @@ const Map<String, String> kmKH = {
   'profile_phone': 'ទូរស័ព្ទ',
   'profile_place_of_birth': 'ទីកន្លែងកំណើត',
   'profile_date_of_birth': 'ថ្ងៃខែឆ្នាំកំណើត',
+  'emp_form_role_label': 'តួនាទី',
+  'new': 'បន្ថែមថ្មី',
+  'task_group': 'ក្រុមការងារ',
 
   // ── Change Password Sheet ──────────────────────────────────────
   'change_pwd_title': 'ផ្លាស់ប្ដូរពាក្យសម្ងាត់',
