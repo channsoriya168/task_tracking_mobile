@@ -22,36 +22,16 @@ class SplashPage extends GetView<SplashController> {
         child: Stack(
           children: [
             // ── Decorative circles ─────────────────────────────
-            Positioned(
-              top: -80,
-              right: -60,
-              child: _Circle(260, 0.08),
-            ),
-            Positioned(
-              top: 90,
-              right: 55,
-              child: _Circle(90, 0.12),
-            ),
+            Positioned(top: -80, right: -60, child: _Circle(260, 0.08)),
+            Positioned(top: 90, right: 55, child: _Circle(90, 0.12)),
             Positioned(
               top: size.height * 0.28,
               left: -35,
               child: _Circle(130, 0.06),
             ),
-            Positioned(
-              bottom: -100,
-              left: -70,
-              child: _Circle(300, 0.07),
-            ),
-            Positioned(
-              bottom: 190,
-              left: 30,
-              child: _Circle(65, 0.11),
-            ),
-            Positioned(
-              bottom: 80,
-              right: 50,
-              child: _Circle(45, 0.09),
-            ),
+            Positioned(bottom: -100, left: -70, child: _Circle(300, 0.07)),
+            Positioned(bottom: 190, left: 30, child: _Circle(65, 0.11)),
+            Positioned(bottom: 80, right: 50, child: _Circle(45, 0.09)),
 
             // ── Main content ───────────────────────────────────
             SafeArea(
@@ -61,37 +41,37 @@ class SplashPage extends GetView<SplashController> {
 
                   // ── Logo ─────────────────────────────────────
                   Container(
-                    width: logoSize,
-                    height: logoSize,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(logoSize * 0.24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: kPrimary.withValues(alpha: 0.18),
-                          blurRadius: 32,
-                          offset: const Offset(0, 12),
+                        width: logoSize,
+                        height: logoSize,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(logoSize * 0.24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: kPrimary.withValues(alpha: 0.18),
+                              blurRadius: 32,
+                              offset: const Offset(0, 12),
+                            ),
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(logoSize * 0.24),
+                          child: Image.asset(
+                            'assets/images/logo.jpg',
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Icon(
+                              Icons.business_rounded,
+                              size: logoSize * 0.55,
+                              color: kPrimary,
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(logoSize * 0.24),
-                      child: Image.asset(
-                        'assets/images/logo.jpg',
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Icon(
-                          Icons.business_rounded,
-                          size: logoSize * 0.55,
-                          color: kPrimary,
-                        ),
-                      ),
-                    ),
-                  )
+                      )
                       .animate()
                       .fadeIn(duration: 600.ms, curve: Curves.easeOut)
                       .scale(
@@ -105,27 +85,10 @@ class SplashPage extends GetView<SplashController> {
 
                   // ── App name ──────────────────────────────────
                   Text(
-                    'Task Tracking',
-                    style: AppTextStyles.loginTitle(color: kTextDark),
-                  )
+                        'Task Tracking',
+                        style: AppTextStyles.loginTitle(color: kTextDark),
+                      )
                       .animate(delay: 320.ms)
-                      .fadeIn(duration: 500.ms)
-                      .slideY(
-                        begin: 0.35,
-                        end: 0.0,
-                        duration: 500.ms,
-                        curve: Curves.easeOut,
-                      ),
-
-                  const SizedBox(height: 10),
-
-                  // ── Tagline ───────────────────────────────────
-                  Text(
-                    'login_subtitle'.tr,
-                    style: AppTextStyles.loginSubtitle(color: kTextMuted),
-                    textAlign: TextAlign.center,
-                  )
-                      .animate(delay: 460.ms)
                       .fadeIn(duration: 500.ms)
                       .slideY(
                         begin: 0.35,

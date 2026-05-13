@@ -35,8 +35,6 @@ class LabelController extends GetxController {
     try {
       labels.assignAll(await _getAll());
     } catch (_) {
-      final offline = !Get.find<NetworkController>().isConnected.value;
-      if (!offline) AppSnackbar.error('snack_label'.tr, 'snack_label_load_fail'.tr);
     } finally {
       isLoading.value = false;
     }

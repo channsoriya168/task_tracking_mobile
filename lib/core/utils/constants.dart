@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 
 // ── Letter-spacing helper ────────────────────────────────
 // Returns 0 for Khmer locale — Khmer script breaks visually with any spacing.
-double kLs(double spacing) =>
-    Get.locale?.languageCode == 'km' ? 0.0 : spacing;
+double kLs(double spacing) => Get.locale?.languageCode == 'km' ? 0.0 : spacing;
 
 // ── Colors ──────────────────────────────────────────────
 const Color kPrimary = Color(0xFF6C63FF);
@@ -25,12 +24,11 @@ const Color kTextMuted = Color(0xFF8E8EA0);
 // ── Padding ────────────────────────────────────────────
 
 // Page level padding
-const EdgeInsets kPagePadding = EdgeInsets.fromLTRB(20, 20, 20, 0);
-const EdgeInsets kPagePaddingHorizontal = EdgeInsets.symmetric(horizontal: 20);
-const EdgeInsets kPagePaddingWithBottom = EdgeInsets.all(20);
-const EdgeInsets kPageSectionPadding = EdgeInsets.fromLTRB(20, 16, 20, 0);
-const EdgeInsets kPageSectionLargePadding = EdgeInsets.fromLTRB(20, 24, 20, 0);
-const EdgeInsets kPageBottomPadding = EdgeInsets.fromLTRB(20, 16, 20, 32);
+const EdgeInsets kPagePadding = EdgeInsets.fromLTRB(12, 12, 12, 0);
+const EdgeInsets kPagePaddingHorizontal = EdgeInsets.symmetric(horizontal: 12);
+const EdgeInsets kPagePaddingWithBottom = EdgeInsets.all(12);
+const EdgeInsets kPageSectionPadding = EdgeInsets.fromLTRB(12, 12, 12, 0);
+const EdgeInsets kPageBottomPadding = EdgeInsets.fromLTRB(12, 12, 12, 3);
 
 // Content padding
 const EdgeInsets kContentPadding = EdgeInsets.all(16);

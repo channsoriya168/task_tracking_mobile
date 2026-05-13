@@ -4,32 +4,16 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 
-class QrScannerPage extends StatefulWidget {
+class QrScannerPage extends StatelessWidget {
   const QrScannerPage({super.key});
 
-  @override
-  State<QrScannerPage> createState() => _QrScannerPageState();
-}
-
-class _QrScannerPageState extends State<QrScannerPage> {
-  final MobileScannerController _scanner = MobileScannerController();
-  bool _processed = false;
-
-  @override
-  void dispose() {
-    _scanner.dispose();
-    super.dispose();
-  }
-
-  void _onDetect(BarcodeCapture capture) async {
-    if (_processed) return;
+  void _onDetect(BarcodeCapture capture) {
+    final auth = Get.find<AuthController>();
+    if (auth.isLoading.value) return;
     final raw = capture.barcodes.firstOrNull?.rawValue;
     if (raw == null || raw.isEmpty) return;
-    _processed = true;
-    await _scanner.stop();
-    if (!mounted) return;
     Get.back();
-    Get.find<AuthController>().qrLogin(raw);
+    auth.qrLogin(raw);
   }
 
   @override
@@ -53,8 +37,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
       ),
       body: Stack(
         children: [
-          MobileScanner(controller: _scanner, onDetect: _onDetect),
-          // Overlay with scan frame
+          MobileScanner(onDetect: _onDetect),
           Center(
             child: Container(
               width: 240,

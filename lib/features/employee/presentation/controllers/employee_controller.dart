@@ -79,9 +79,7 @@ class EmployeeController extends GetxController {
       employees.value = await _repository.fetchEmployees(groupId: groupId);
       if (groupId == null) allEmployees.assignAll(employees);
     } catch (e) {
-      if (!isConnectionError(e)) {
-        AppSnackbar.error('snack_error'.tr, 'snack_emp_load_failed'.tr);
-      }
+      throw Exception(e);
     } finally {
       isLoading.value = false;
     }
@@ -201,18 +199,19 @@ class EmployeeController extends GetxController {
 
   Future<void> _showFormSheet() async {
     Worker? offlineWorker;
-    offlineWorker = ever(
-      Get.find<NetworkController>().isConnected,
-      (connected) {
-        if (!connected) {
-          offlineWorker?.dispose();
-          Get.back();
-          isOfflineDialogOpen.value = true;
-          showNoInternetDialog(isDark: Get.isDarkMode, redirectCount: 1)
-              .then((_) => isOfflineDialogOpen.value = false);
-        }
-      },
-    );
+    offlineWorker = ever(Get.find<NetworkController>().isConnected, (
+      connected,
+    ) {
+      if (!connected) {
+        offlineWorker?.dispose();
+        Get.back();
+        isOfflineDialogOpen.value = true;
+        showNoInternetDialog(
+          isDark: Get.isDarkMode,
+          redirectCount: 1,
+        ).then((_) => isOfflineDialogOpen.value = false);
+      }
+    });
 
     await Get.bottomSheet(
       EmployeeFormDialog(controller: this),

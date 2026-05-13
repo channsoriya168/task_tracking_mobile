@@ -19,7 +19,8 @@ String mapDioError(DioException e) {
   if (status == 401) {
     return e.response?.data?['detail'] as String? ??
         e.response?.data?['message'] as String? ??
-        'Incorrect phone number or password.';
+        e.response?.data?['title'] as String? ??
+        'Unauthorized.';
   }
   if (status == 403) return 'Access denied.';
   if (status == 500) return 'Server error. Please try again later.';

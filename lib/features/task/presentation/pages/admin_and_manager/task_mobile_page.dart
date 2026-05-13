@@ -8,8 +8,10 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/pages/label_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/TashButtonSheet.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_list_widget.dart';
@@ -40,7 +42,10 @@ class TaskMobilePage extends StatelessWidget {
               padding: kPagePaddingHorizontal,
               child: OutlinedButton.icon(
                 onPressed: () => Get.to(() => const LabelPage()),
-                label: Text('task_create_labels'.tr),
+                label: Text(
+                  'task_create_labels'.tr,
+                  style: AppTextStyles.buttonLabel(color: kPrimary),
+                ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kPrimary,
                   side: const BorderSide(color: kPrimary),
@@ -89,6 +94,7 @@ class TaskMobilePage extends StatelessWidget {
             onSelectStatus: ctrl.selectStatus,
           ),
           SearchBarWidget(
+            hintText: 'task_search_hint'.tr,
             isDark: isDark,
             onChanged: (value) => ctrl.searchQuery.value = value,
           ),
@@ -101,8 +107,8 @@ class TaskMobilePage extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
           if (!Get.find<NetworkController>().isConnected.value) {
             ctrl.isOfflineDialogOpen.value = true;
             showNoInternetDialog(
@@ -111,10 +117,26 @@ class TaskMobilePage extends StatelessWidget {
             ).then((_) => ctrl.isOfflineDialogOpen.value = false);
             return;
           }
-          ctrl.showTaskSheet();
+          final groupCtrl = Get.find<GroupController>();
+          final futures = <Future<void>>[ctrl.refreshFormData()];
+          if (groupCtrl.groups.isEmpty) futures.add(groupCtrl.fetchGroups());
+          await Future.wait(futures);
+          final groups = groupCtrl.groups.toList();
+          ctrl.resetForm(groups);
+          Get.bottomSheet(
+            const TaskButtonSheet(),
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+          );
         },
         backgroundColor: kPrimary,
-        child: const Icon(Icons.add_rounded, color: Colors.white),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        icon: const Icon(Icons.add_rounded, size: 22, color: Colors.white),
+        label: Text(
+          'task_create'.tr,
+          style: AppTextStyles.buttonLabel(color: Colors.white),
+        ),
       ),
     );
   }

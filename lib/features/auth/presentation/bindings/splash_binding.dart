@@ -7,7 +7,6 @@ import 'package:task_tracking_mobile/features/auth/data/repositories/auth_reposi
 import 'package:task_tracking_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/check_auth_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/generate_qr_usecase.dart';
-import 'package:task_tracking_mobile/features/auth/domain/usecases/login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/qr_login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
@@ -30,7 +29,6 @@ class SplashBinding extends Bindings {
       AuthRepositoryImpl(AuthRemoteDatasource()),
       permanent: true,
     );
-    Get.put(LoginUsecase(Get.find()), permanent: true);
     Get.put(LogoutUsecase(Get.find()), permanent: true);
     Get.put(CheckAuthUsecase(Get.find()), permanent: true);
     Get.put(RefreshTokenUsecase(Get.find()), permanent: true);
@@ -61,7 +59,6 @@ class SplashBinding extends Bindings {
     // ── Core ──────────────────────────────────────────────────
     Get.put<AuthController>(
       AuthController(
-        loginUsecase: Get.find(),
         logoutUsecase: Get.find(),
         checkAuthUsecase: Get.find(),
         refreshTokenUsecase: Get.find(),

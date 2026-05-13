@@ -99,6 +99,7 @@ class _AuthInterceptor extends Interceptor {
     final path = err.requestOptions.path.toLowerCase();
     final isRefreshEndpoint = path.contains('/auth/refresh');
     final isLoginEndpoint = path.contains('/auth/login');
+    final isQrLoginEndpoint = path.contains('/auth/qr-login');
     final isChangePasswordEndpoint = path.contains('/auth/change-password');
     final alreadyRetried = err.requestOptions.extra['_retried'] == true;
 
@@ -115,6 +116,7 @@ class _AuthInterceptor extends Interceptor {
     if (!is401 ||
         isRefreshEndpoint ||
         isLoginEndpoint ||
+        isQrLoginEndpoint ||
         isChangePasswordEndpoint ||
         alreadyRetried) {
       handler.next(err);

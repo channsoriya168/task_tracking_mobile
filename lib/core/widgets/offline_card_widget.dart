@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 
 class OfflineCardWidget extends StatelessWidget {
   const OfflineCardWidget({super.key, required this.isDark});
@@ -44,25 +43,6 @@ class OfflineCardWidget extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          GestureDetector(
-            onTap: Get.find<NetworkController>().retry,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'retry'.tr,
-                style: const TextStyle(
-                  color: Color(0xFFB91C1C),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
             ),
           ),
         ],

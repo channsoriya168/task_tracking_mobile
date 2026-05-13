@@ -6,8 +6,11 @@ import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/pages/label_page.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/TashButtonSheet.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/tablet_search_field_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
@@ -128,7 +131,25 @@ class TaskTabletPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ctrl.showTaskSheet(),
+        onPressed: () async {
+          if (!Get.find<NetworkController>().isConnected.value) {
+            ctrl.isOfflineDialogOpen.value = true;
+            showNoInternetDialog(isDark: isDark, redirectCount: 1)
+                .then((_) => ctrl.isOfflineDialogOpen.value = false);
+            return;
+          }
+          final groupCtrl = Get.find<GroupController>();
+          final futures = <Future<void>>[ctrl.refreshFormData()];
+          if (groupCtrl.groups.isEmpty) futures.add(groupCtrl.fetchGroups());
+          await Future.wait(futures);
+          final groups = groupCtrl.groups.toList();
+          ctrl.resetForm(groups);
+          Get.bottomSheet(
+            const TaskButtonSheet(),
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+          );
+        },
         backgroundColor: kPrimary,
         child: const Icon(Icons.add_rounded, color: Colors.white),
       ),

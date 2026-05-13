@@ -215,11 +215,6 @@ class TaskController extends GetxController {
     } catch (_) {}
   }
 
-  //show task sheet
-  void showTaskSheet([TaskItem? task]) {
-    TaskBottomSheet.showTaskSheet(Get.isDarkMode, task: task);
-  }
-
   /// Returns true on success, false on failure.
   Future<bool> createTask() async {
     final title = titleTextEditor.text.trim();
@@ -338,6 +333,15 @@ class TaskController extends GetxController {
     selectedLabel.value = task.labelId != null
         ? labels.firstWhereOrNull((l) => l.id == task.labelId)
         : null;
+  }
+
+  /// Ensures labels and priorities are loaded before opening the form sheet.
+  /// No-op if both lists are already populated.
+  Future<void> refreshFormData() async {
+    final futures = <Future<void>>[];
+    if (taskPriority.isEmpty) futures.add(fetchPriorities());
+    if (labels.isEmpty) futures.add(fetchLabels());
+    if (futures.isNotEmpty) await Future.wait(futures);
   }
 
   /// Resets the form to defaults before opening the create-task dialog.

@@ -1,7 +1,7 @@
 const Map<String, String> enUS = {
   // ── Login ──────────────────────────────────────────────────────
   'login_welcome': 'Welcome back',
-  'login_subtitle': 'Enter your phone number to continue',
+  'login_subtitle': 'Scan or upload your QR code to sign in',
   'login_phone_label': 'Phone Number',
   'login_phone_hint': '0884311016',
   'login_phone_required': 'Phone number is required',
@@ -11,9 +11,11 @@ const Map<String, String> enUS = {
   'login_password_required': 'Password is required',
   'login_password_min': 'At least 8 characters required',
   'login_sign_in': 'Sign In',
-  'login_qr_sign_in': 'Sign In with QR Code',
+  'login_qr_sign_in': 'Scan QR Code',
+  'login_qr_upload': 'Upload QR from Gallery',
+  'login_qr_not_found': 'No QR code found in image',
   'login_qr_scan_title': 'Scan QR Code',
-  'login_qr_scan_hint': 'Point the camera at a QR code to log in',
+  'login_qr_scan_hint': 'Point the camera at a QR code to sign in',
 
   // ── QR Login ──────────────────────────────────────────────────
   'qr_generate_action': 'Generate QR Login',
@@ -109,6 +111,8 @@ const Map<String, String> enUS = {
   'task_form_due_date_hint': 'Select due date',
   'task_form_btn_create': 'Create Task',
   'task_form_btn_update': 'Update Task',
+  'task_form_section_assignment': 'Assignment',
+  'task_form_section_schedule': 'Schedule',
 
   // ── Comments ──────────────────────────────────────────────────
   'comment_title': 'Comments',
@@ -145,6 +149,7 @@ const Map<String, String> enUS = {
   'picker_select_employee': 'Select Employee',
   'picker_search_hint': 'Search...',
   'picker_empty': 'No employees found.',
+  'task_search_hint': 'Search tasks...',
 
   // ── Actions ───────────────────────────────────────────────────
   'action_add': 'Add',
@@ -333,7 +338,7 @@ const Map<String, String> enUS = {
   'back_online': 'Back online',
   'no_internet_title': 'No Internet Connection',
   'no_internet_subtitle':
-      'Please check your Wi-Fi or mobile data\nand try again.',
+      'Please check your Wi-Fi or mobile data and try again.',
   'retry': 'Retry',
   'dismiss': 'Dismiss',
 
@@ -364,6 +369,7 @@ const Map<String, String> enUS = {
   'snack_task_deleted': 'Task Deleted',
   'snack_task_deleted_msg': '"@title" has been removed.',
   'snack_task_load_fail': 'Could not load task.',
+  'task_created': 'Task Created',
   'snack_task_create_fail': 'Could not create task.',
   'snack_task_update_fail': 'Could not update task.',
   'snack_task_delete_fail': 'Could not delete task.',

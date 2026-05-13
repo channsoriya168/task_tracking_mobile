@@ -4,7 +4,9 @@ import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
+import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/TashButtonSheet.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
 
 class TaskCardActionsRow extends StatelessWidget {
@@ -53,7 +55,16 @@ class TaskCardActionsRow extends StatelessWidget {
                   .then((_) => ctrl.isOfflineDialogOpen.value = false);
               return;
             }
-            ctrl.showTaskSheet(task);
+            final groupCtrl = Get.find<GroupController>();
+            final futures = <Future<void>>[ctrl.refreshFormData()];
+            if (groupCtrl.groups.isEmpty) futures.add(groupCtrl.fetchGroups());
+            await Future.wait(futures);
+            ctrl.openForEdit(task);
+            Get.bottomSheet(
+              const TaskButtonSheet(),
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+            );
             break;
           case _TaskCardAction.delete:
             if (!Get.find<NetworkController>().isConnected.value) {

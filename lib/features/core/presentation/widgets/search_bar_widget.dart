@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -7,7 +8,7 @@ class SearchBarWidget extends StatelessWidget {
     required this.isDark,
     required this.onChanged,
     this.controller,
-    this.hintText = 'Search',
+    this.hintText = 'search_hint',
     this.padding,
   });
 
@@ -20,7 +21,7 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsetsGeometry.symmetric(horizontal: 12, vertical: 8),
       child: Container(
         height: 44,
         decoration: BoxDecoration(
@@ -33,15 +34,11 @@ class SearchBarWidget extends StatelessWidget {
         child: TextField(
           controller: controller,
           onChanged: onChanged,
-          style: TextStyle(
-            fontSize: 14,
-            color: isDark ? Colors.white : kTextDark,
-          ),
+          style: AppTextStyles.title(color: isDark ? Colors.white : kTextDark),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: TextStyle(
+            hintStyle: AppTextStyles.title(
               color: isDark ? Colors.grey[600] : kTextMuted,
-              fontSize: 14,
             ),
             prefixIcon: Icon(
               Icons.search_rounded,

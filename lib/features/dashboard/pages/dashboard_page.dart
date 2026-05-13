@@ -55,7 +55,7 @@ class DashboardPage extends StatelessWidget {
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(
                     offline && !adminTaskCtrl.isOfflineDialogOpen.value
-                        ? 125
+                        ? 168
                         : 95,
                   ),
                   child: Column(
@@ -66,8 +66,8 @@ class DashboardPage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(
                           bottom: 12,
-                          left: 16,
-                          right: 16,
+                          left: 12,
+                          right: 12,
                         ),
                         child: WeekCalendarWidget(
                           isDark: isDark,
@@ -99,7 +99,7 @@ class DashboardPage extends StatelessWidget {
 
               // ── Task count ───────────────────────────────────────
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
                 sliver: SliverToBoxAdapter(
                   child: Row(
                     children: [
@@ -131,7 +131,7 @@ class DashboardPage extends StatelessWidget {
               if (adminTaskCtrl.isLoading.value ||
                   (offline && filtered.isEmpty))
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
                   sliver: SliverList.separated(
                     itemCount: 5,
                     separatorBuilder: (_, i) => const SizedBox(height: 10),
@@ -144,7 +144,7 @@ class DashboardPage extends StatelessWidget {
                 )
               else if (filtered.isEmpty)
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 48, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(12, 48, 12, 0),
                   sliver: SliverToBoxAdapter(
                     child: Column(
                       children: [
@@ -164,7 +164,7 @@ class DashboardPage extends StatelessWidget {
                 )
               else
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, i) {
                       final task = filtered[i];
@@ -178,8 +178,6 @@ class DashboardPage extends StatelessWidget {
                     }, childCount: filtered.length),
                   ),
                 ),
-
-              const SliverPadding(padding: EdgeInsets.only(bottom: 30)),
             ],
           );
         }),

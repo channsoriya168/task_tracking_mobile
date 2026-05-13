@@ -41,15 +41,8 @@ class FilterChipWidget extends StatelessWidget {
               style: AppTextStyles.title(
                 color: selected
                     ? Colors.white
-                    : (isDark ? Colors.white54 : kTextMuted),
+                    : (isDark ? kTextLight : kTextMuted),
               ),
-              // style: TextStyle(
-              //   fontSize: 13,
-              //   fontWeight: FontWeight.w600,
-              //   color: selected
-              //       ? Colors.white
-              //       : (isDark ? Colors.white54 : kTextMuted),
-              // ),
             ),
             const SizedBox(width: 6),
             Container(

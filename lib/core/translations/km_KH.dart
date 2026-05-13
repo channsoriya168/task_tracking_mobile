@@ -1,7 +1,7 @@
 const Map<String, String> kmKH = {
   // ── Login ──────────────────────────────────────────────────────
   'login_welcome': 'សូមស្វាគមន៍វិញ',
-  'login_subtitle': 'បញ្ចូលលេខទូរស័ព្ទរបស់អ្នកដើម្បីបន្ត',
+  'login_subtitle': 'ស្កែន ឬបង្ហោះ QR Code របស់អ្នកដើម្បីចូលប្រព័ន្ធ',
   'login_phone_label': 'លេខទូរស័ព្ទ',
   'login_phone_hint': '0884311016',
   'login_phone_required': 'ត្រូវការលេខទូរស័ព្ទ',
@@ -11,7 +11,9 @@ const Map<String, String> kmKH = {
   'login_password_required': 'ត្រូវការពាក្យសម្ងាត់',
   'login_password_min': 'ត្រូវការយ៉ាងហោចណាស់ ៨ តួអក្សរ',
   'login_sign_in': 'ចូលប្រព័ន្ធ',
-  'login_qr_sign_in': 'ចូលប្រព័ន្ធដោយ QR Code',
+  'login_qr_sign_in': 'ស្កែន QR Code',
+  'login_qr_upload': 'បង្ហោះ QR ពីវិចិត្រសាល',
+  'login_qr_not_found': 'រកមិនឃើញ QR Code នៅក្នុងរូបភាព',
   'login_qr_scan_title': 'ស្កែន QR Code',
   'login_qr_scan_hint': 'ចង្អុលកាមេរ៉ាទៅ QR Code ដើម្បីចូលប្រព័ន្ធ',
 
@@ -69,20 +71,20 @@ const Map<String, String> kmKH = {
   'notif_type_completed': 'បានបញ្ចប់',
 
   'task_title': 'កិច្ចការ',
-  'task_create_labels': 'បង្កើតស្លាក',
-  'labels': 'ស្លាក',
-  'no_labels_get': 'មិនមានស្លាកទេ',
-  'label_empty_hint': 'ចុច + ដើម្បីបង្កើតស្លាកដំបូងរបស់អ្នក',
-  'label_delete_title': 'លុបស្លាក',
-  'label_delete_confirm': 'លុបស្លាក "@name"?',
-  'label_new': 'ស្លាកថ្មី',
-  'label_edit': 'កែស្លាក',
-  'label_name': 'ឈ្មោះស្លាក',
+  'task_create_labels': 'បង្កើតប្រភេទការងារ',
+  'labels': 'ប្រភេទការងារ',
+  'no_labels_get': 'មិនមានប្រភេទការងារទេ',
+  'label_empty_hint': 'ចុច + ដើម្បីបង្កើតប្រភេទការងារដំបូងរបស់អ្នក',
+  'label_delete_title': 'លុបប្រភេទការងារ',
+  'label_delete_confirm': 'លុបប្រភេទការងារ "@name"?',
+  'label_new': 'ប្រភេទការងារថ្មី',
+  'label_edit': 'កែប្រភេទការងារ',
+  'label_name': 'ឈ្មោះប្រភេទការងារ',
   'label_name_hint': 'ឧ. បន្ទាន់',
-  'label_name_required': 'ឈ្មោះស្លាកត្រូវការ',
+  'label_name_required': 'ឈ្មោះប្រភេទការងារត្រូវការ',
   'label_description': 'ការពិពណ៌នា',
-  'label_description_hint': 'កំណត់ចំណាំខ្លីអំពីស្លាកនេះ',
-  'label_create_btn': 'បង្កើតស្លាក',
+  'label_description_hint': 'កំណត់ចំណាំខ្លីអំពីប្រភេទការងារនេះ',
+  'label_create_btn': 'បង្កើតប្រភេទការងារ',
   'label_save_btn': 'រក្សាទុកការផ្លាស់ប្តូរ',
   // ── Task detail ───────────────────────────────────────────────
   'task_empty': 'រកមិនឃើញកិច្ចការ',
@@ -90,7 +92,7 @@ const Map<String, String> kmKH = {
   'task_overdue': 'ហួសកំណត់',
   'task_expired': 'មិនអាចកែសម្រួលកិច្ចការនេះបានទេ (រយៈពេលផុតកំណត់ហើយ)',
   'task_detail_title': 'លម្អិតភារកិច្ច',
-  'task_detail_label': 'ស្លាក',
+  'task_detail_label': 'ប្រភេទការងារ',
   'task_detail_group': 'ក្រុម',
   'task_detail_priority': 'អាទិភាព',
   'task_detail_start_date': 'កាលបរិច្ឆេទចាប់ផ្តើម',
@@ -110,6 +112,8 @@ const Map<String, String> kmKH = {
   'task_form_due_date_hint': 'ជ្រើសរើសកាលបរិច្ឆេទ',
   'task_form_btn_create': 'បង្កើតកិច្ចការ',
   'task_form_btn_update': 'កែប្រែកិច្ចការ',
+  'task_form_section_assignment': 'ការចាត់ចែង',
+  'task_form_section_schedule': 'កាលវិភាគ',
 
   // ── Comments ──────────────────────────────────────────────────
   'comment_title': 'មតិយោបល់',
@@ -146,6 +150,7 @@ const Map<String, String> kmKH = {
   'picker_select_employee': 'ជ្រើសរើសបុគ្គលិក',
   'picker_search_hint': 'ស្វែងរក...',
   'picker_empty': 'រកមិនឃើញបុគ្គលិក។',
+  'task_search_hint': 'ស្វែងរកកិច្ចការ...',
 
   // ── Actions ───────────────────────────────────────────────────
   'action_add': 'បន្ថែម',
@@ -177,6 +182,7 @@ const Map<String, String> kmKH = {
   'task_due_date': 'ផុតកំណត់ @date',
   'task_overdue_date': 'ហួសកំណត់: @date',
   'task_done_date': 'បានបញ្ចប់: @date',
+  'task_create': 'បង្កើតកិច្ចការ',
 
   // ── Dashboard ────────────────────────────────────────────────
   'dashboard_search_hint': 'ស្វែងរកកិច្ចការ…',
@@ -333,8 +339,7 @@ const Map<String, String> kmKH = {
   'no_internet': 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត',
   'back_online': 'មានការតភ្ជាប់ម្ដងទៀត',
   'no_internet_title': 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត',
-  'no_internet_subtitle':
-      'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទ\nហើយព្យាយាមម្ដងទៀត។',
+  'no_internet_subtitle': 'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទហើយព្យាយាមម្ដងទៀត។',
   'retry': 'សាកល្បងម្ដងទៀត',
   'dismiss': 'បិទ',
 
