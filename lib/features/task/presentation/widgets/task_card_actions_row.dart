@@ -6,7 +6,7 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/TashButtonSheet.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_button_sheet.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
 
 class TaskCardActionsRow extends StatelessWidget {
@@ -51,8 +51,10 @@ class TaskCardActionsRow extends StatelessWidget {
           case _TaskCardAction.edit:
             if (!Get.find<NetworkController>().isConnected.value) {
               ctrl.isOfflineDialogOpen.value = true;
-              showNoInternetDialog(isDark: isDark, redirectCount: 1)
-                  .then((_) => ctrl.isOfflineDialogOpen.value = false);
+              showNoInternetDialog(
+                isDark: isDark,
+                redirectCount: 1,
+              ).then((_) => ctrl.isOfflineDialogOpen.value = false);
               return;
             }
             final groupCtrl = Get.find<GroupController>();
@@ -69,8 +71,10 @@ class TaskCardActionsRow extends StatelessWidget {
           case _TaskCardAction.delete:
             if (!Get.find<NetworkController>().isConnected.value) {
               ctrl.isOfflineDialogOpen.value = true;
-              showNoInternetDialog(isDark: isDark, redirectCount: 1)
-                  .then((_) => ctrl.isOfflineDialogOpen.value = false);
+              showNoInternetDialog(
+                isDark: isDark,
+                redirectCount: 1,
+              ).then((_) => ctrl.isOfflineDialogOpen.value = false);
               return;
             }
             final ok = await showConfirmDeleteDialog(

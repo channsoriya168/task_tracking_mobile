@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class TabletSearchFieldWidget extends StatelessWidget {
@@ -20,14 +21,10 @@ class TabletSearchFieldWidget extends StatelessWidget {
       height: 40,
       child: TextField(
         onChanged: onChanged,
-        style: TextStyle(
-          fontSize: 13,
-          color: isDark ? Colors.white : kTextDark,
-        ),
+        style: AppTextStyles.title(color: isDark ? Colors.white : kPrimary),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            fontSize: 13,
+          hintStyle: AppTextStyles.title(
             color: isDark ? Colors.grey[600] : Colors.grey[400],
           ),
           prefixIcon: Icon(

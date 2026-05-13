@@ -369,7 +369,7 @@ const Map<String, String> enUS = {
   'snack_task_deleted': 'Task Deleted',
   'snack_task_deleted_msg': '"@title" has been removed.',
   'snack_task_load_fail': 'Could not load task.',
-  'task_created': 'Task Created',
+  'task_create': 'Task Created',
   'snack_task_create_fail': 'Could not create task.',
   'snack_task_update_fail': 'Could not update task.',
   'snack_task_delete_fail': 'Could not delete task.',

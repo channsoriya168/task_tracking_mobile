@@ -10,7 +10,7 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/TashButtonSheet.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_button_sheet.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/tablet_search_field_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
@@ -66,7 +66,12 @@ class TaskTabletPage extends StatelessWidget {
                             }
                             return OutlinedButton.icon(
                               onPressed: () => Get.to(() => const LabelPage()),
-                              label: Text('task_create_labels'.tr),
+                              label: Text(
+                                'task_create_labels'.tr,
+                                style: AppTextStyles.buttonLabel(
+                                  color: kPrimary,
+                                ),
+                              ),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: kPrimary,
                                 side: const BorderSide(color: kPrimary),
@@ -130,12 +135,14 @@ class TaskTabletPage extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           if (!Get.find<NetworkController>().isConnected.value) {
             ctrl.isOfflineDialogOpen.value = true;
-            showNoInternetDialog(isDark: isDark, redirectCount: 1)
-                .then((_) => ctrl.isOfflineDialogOpen.value = false);
+            showNoInternetDialog(
+              isDark: isDark,
+              redirectCount: 1,
+            ).then((_) => ctrl.isOfflineDialogOpen.value = false);
             return;
           }
           final groupCtrl = Get.find<GroupController>();
@@ -151,7 +158,13 @@ class TaskTabletPage extends StatelessWidget {
           );
         },
         backgroundColor: kPrimary,
-        child: const Icon(Icons.add_rounded, color: Colors.white),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        icon: const Icon(Icons.add_rounded, size: 22, color: Colors.white),
+        label: Text(
+          'task_create'.tr,
+          style: AppTextStyles.buttonLabel(color: Colors.white),
+        ),
       ),
     );
   }

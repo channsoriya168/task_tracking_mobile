@@ -10,7 +10,7 @@ import 'package:task_tracking_mobile/features/notification/domain/entities/notif
 import 'package:task_tracking_mobile/features/notification/domain/repositories/notification_repository.dart';
 import 'package:task_tracking_mobile/features/task/domain/repositories/task_item_repository.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_bottom_sheet.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_button_sheet.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class NotificationController extends GetxController {
@@ -194,7 +194,7 @@ class NotificationController extends GetxController {
           },
         );
       } else {
-        await TaskBottomSheet.showTaskDetailSheet(
+        await TaskDetailButtonSheet.show(
           context,
           isDark,
           task,

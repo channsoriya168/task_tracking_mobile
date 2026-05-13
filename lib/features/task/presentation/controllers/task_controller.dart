@@ -16,7 +16,6 @@ import 'package:task_tracking_mobile/features/task/domain/usecases/delete_task_i
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/fetch_task_item_by_id_usecase.dart';
 import 'package:task_tracking_mobile/features/task/domain/usecases/update_task_item_usecase.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_bottom_sheet.dart';
 
 class TaskController extends GetxController {
   final FetchTaskItemsUsecase _fetchTaskItems;

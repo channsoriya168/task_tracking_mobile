@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
@@ -52,6 +55,7 @@ class EmployeeHomeController extends GetxController {
   // ── Lifecycle ────────────────────────────────────────────────────────────
 
   Worker? _profileWorker;
+  StreamSubscription<RemoteMessage>? _fcmSubscription;
 
   @override
   void onInit() {
@@ -81,11 +85,20 @@ class EmployeeHomeController extends GetxController {
         fetchStatuses();
       }
     });
+
+    // Real-time refresh when a task-related push notification arrives.
+    _fcmSubscription = FirebaseMessaging.onMessage.listen((message) {
+      final taskId = message.data['taskId'] as String?;
+      if (taskId != null && taskId.isNotEmpty) {
+        fetchTasks();
+      }
+    });
   }
 
   @override
   void onClose() {
     _profileWorker?.dispose();
+    _fcmSubscription?.cancel();
     super.onClose();
   }
 
