@@ -312,6 +312,7 @@ const Map<String, String> kmKH = {
   'no_internet_subtitle': 'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទហើយព្យាយាមម្ដងទៀត។',
   'retry': 'សាកល្បងម្ដងទៀត',
   'dismiss': 'បិទ',
+  'task_detail': 'លម្អិតកិច្ចការ',
 
   // ── Snackbars ─────────────────────────────────────────────────
   'snack_success': 'ជោគជ័យ',

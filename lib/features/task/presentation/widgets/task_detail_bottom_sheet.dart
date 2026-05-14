@@ -108,10 +108,8 @@ class TaskDetailBottomSheet extends StatelessWidget {
                 Expanded(
                   child: Obx(
                     () => Text(
-                      ctrl.task.value.title,
-                      style: AppTextStyles.title(
-                        color: textColor,
-                      ).copyWith(fontWeight: FontWeight.w700),
+                      "task_detail".tr,
+                      style: AppTextStyles.appBarTitle(color: kPrimary),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -148,11 +146,6 @@ class TaskDetailBottomSheet extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          Divider(
-            height: 1,
-            color: isDark ? Colors.grey[800] : Colors.grey[100],
           ),
 
           // ── Scrollable body ──────────────────────────────────

@@ -5,7 +5,6 @@ import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_detail_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_avatar_name_widget.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_colored_chip_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_status_priority_row_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_tab_section_widget.dart';
 
@@ -36,7 +35,44 @@ class TaskDetailBodyWidget extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
       children: [
         // ── Header card ───────────────────────────────────────
-        _buildHeaderCard(),
+        Container(
+          decoration: _cardDecoration(),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          task.title,
+                          style: AppTextStyles.title(
+                            color: textColor,
+                          ).copyWith(fontWeight: FontWeight.w700, height: 1.3),
+                        ),
+                        const SizedBox(height: 6),
+                        TaskDetailStatusPriorityRow(task: task, isDark: isDark),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if ((task.description ?? '').isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  task.description!,
+                  style: AppTextStyles.subTitle(
+                    color: mutedColor,
+                  ).copyWith(fontWeight: FontWeight.w400, height: 1.5),
+                ),
+              ],
+            ],
+          ),
+        ),
 
         const SizedBox(height: 12),
 
@@ -48,51 +84,6 @@ class TaskDetailBodyWidget extends StatelessWidget {
         // ── Members / Comments / Progress tabs ────────────────
         TaskDetailTabSection(ctrl: ctrl, isDark: isDark),
       ],
-    );
-  }
-
-  // ── Header card (title + status + description) ───────────────────────────
-
-  Widget _buildHeaderCard() {
-    return Container(
-      decoration: _cardDecoration(),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: AppTextStyles.title(color: textColor).copyWith(
-                        fontWeight: FontWeight.w700,
-                        height: 1.3,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    TaskDetailStatusPriorityRow(task: task, isDark: isDark),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if ((task.description ?? '').isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              task.description!,
-              style: AppTextStyles.subTitle(color: mutedColor).copyWith(
-                fontWeight: FontWeight.w400,
-                height: 1.5,
-              ),
-            ),
-          ],
-        ],
-      ),
     );
   }
 
@@ -118,14 +109,14 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.labelName != null) {
       addRow(
         _buildInfoRow(
-          icon: Icons.label_outline_rounded,
           label: 'Label',
-          child: TaskDetailColoredChip(
-            label: task.labelName!,
-            color: task.labelColor != null
-                ? _hexToColor(task.labelColor!)
-                : kPrimary,
-            isDark: isDark,
+          child: Text(
+            task.labelName!,
+            style: AppTextStyles.formLabel(
+              color: textColor,
+            ).copyWith(fontWeight: FontWeight.w500),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       );
@@ -134,7 +125,6 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.startDate != null) {
       addRow(
         _buildInfoRow(
-          icon: Icons.play_circle_outline_rounded,
           label: 'Start Date',
           child: _dateText(formatDate(task.startDate!)),
         ),
@@ -144,7 +134,6 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.dueDate != null) {
       addRow(
         _buildInfoRow(
-          icon: Icons.event_rounded,
           label: 'Due Date',
           child: _dateText(formatDate(task.dueDate!)),
         ),
@@ -154,7 +143,6 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.completedAt != null) {
       addRow(
         _buildInfoRow(
-          icon: Icons.check_circle_outline_rounded,
           label: 'Completed',
           child: _dateText(formatDate(task.completedAt!)),
         ),
@@ -163,7 +151,6 @@ class TaskDetailBodyWidget extends StatelessWidget {
 
     addRow(
       _buildInfoRow(
-        icon: Icons.person_outline_rounded,
         label: 'Assigned to',
         child: task.assignedToName != null
             ? TaskDetailAvatarName(
@@ -173,9 +160,9 @@ class TaskDetailBodyWidget extends StatelessWidget {
               )
             : Text(
                 'Not assigned',
-                style: AppTextStyles.subTitle(color: mutedColor).copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
+                style: AppTextStyles.subTitle(
+                  color: mutedColor,
+                ).copyWith(fontWeight: FontWeight.w400),
               ),
       ),
     );
@@ -183,7 +170,6 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.createdByEmployeeName != null) {
       addRow(
         _buildInfoRow(
-          icon: Icons.person_add_alt_1_outlined,
           label: 'Created by',
           child: TaskDetailAvatarName(
             name: task.createdByEmployeeName!,
@@ -200,23 +186,17 @@ class TaskDetailBodyWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow({
-    required IconData icon,
-    required String label,
-    required Widget child,
-  }) {
+  Widget _buildInfoRow({required String label, required Widget child}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon, size: 15, color: kPrimary),
-        const SizedBox(width: 10),
         SizedBox(
           width: 82,
           child: Text(
             label,
-            style: AppTextStyles.formLabel(color: mutedColor).copyWith(
-              fontWeight: FontWeight.w400,
-            ),
+            style: AppTextStyles.formLabel(
+              color: mutedColor,
+            ).copyWith(fontWeight: FontWeight.w400),
           ),
         ),
         Expanded(
@@ -238,10 +218,8 @@ class TaskDetailBodyWidget extends StatelessWidget {
     ],
   );
 
-  Widget _dateText(String text) => Text(
-    text,
-    style: AppTextStyles.formLabel(color: textColor),
-  );
+  Widget _dateText(String text) =>
+      Text(text, style: AppTextStyles.formLabel(color: textColor));
 }
 
 Color _hexToColor(String hex) {

@@ -37,10 +37,7 @@ class TaskDetailAvatarName extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Flexible(
-          child: Text(
-            name,
-            style: AppTextStyles.formLabel(color: textColor),
-          ),
+          child: Text(name, style: AppTextStyles.formLabel(color: textColor)),
         ),
       ],
     );

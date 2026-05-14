@@ -313,6 +313,7 @@ const Map<String, String> enUS = {
   'create_label': 'Create Label',
   'phone_number': 'Phone Number',
   'group_create_btn': 'Create Group',
+  'task_detail': 'Task Detail',
 
   // ── Snackbars ─────────────────────────────────────────────────
   'snack_success': 'Success',
