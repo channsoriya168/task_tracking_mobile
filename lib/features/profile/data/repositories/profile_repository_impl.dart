@@ -21,26 +21,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmNewPassword,
-  }) async {
-    try {
-      await _remote.changePassword(
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-        confirmNewPassword: confirmNewPassword,
-      );
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 400) {
-        throw 'Current password is incorrect.';
-      }
-      throw mapDioError(e);
-    }
-  }
-
-  @override
   Future<void> updateProfile({File? image, bool removeImage = false}) async {
     try {
       await _remote.updateProfile(image: image, removeImage: removeImage);

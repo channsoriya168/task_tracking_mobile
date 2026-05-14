@@ -14,40 +14,6 @@ class AuthRemoteDatasource {
   /// Named constructor for tests — inject any [Dio] instance directly.
   @visibleForTesting
   AuthRemoteDatasource.withDio(this._dio);
-
-  Future<Auth> login(String phoneNumber, String password) async {
-    final response = await _dio.post(
-      ApiEndpoints.login,
-      data: {'phoneNumber': phoneNumber, 'password': password},
-      options: Options(
-        headers: {'Content-Type': 'application/json', 'Accept': 'text/plain'},
-      ),
-    );
-    final statusCode = response.statusCode ?? 0;
-    if (statusCode < 200 || statusCode >= 300) {
-      throw DioException(
-        requestOptions: response.requestOptions,
-        response: response,
-        type: DioExceptionType.badResponse,
-      );
-    }
-
-    final data = response.data as Map<String, dynamic>;
-    final auth = AuthModel.fromJson(data);
-    if (auth.accessToken.isEmpty) {
-      throw DioException(
-        requestOptions: response.requestOptions,
-        response: response,
-        type: DioExceptionType.badResponse,
-        message:
-            data['detail'] as String? ??
-            data['message'] as String? ??
-            'Login failed.',
-      );
-    }
-    return auth;
-  }
-
   Future<Auth> refreshToken(String accessToken, String refreshToken) async {
     final response = await _dio.post(
       ApiEndpoints.refreshToken,

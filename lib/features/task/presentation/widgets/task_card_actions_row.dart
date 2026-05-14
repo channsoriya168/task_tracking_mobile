@@ -6,7 +6,7 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_button_sheet.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
 
 class TaskCardActionsRow extends StatelessWidget {
@@ -63,7 +63,7 @@ class TaskCardActionsRow extends StatelessWidget {
             await Future.wait(futures);
             ctrl.openForEdit(task);
             Get.bottomSheet(
-              const TaskButtonSheet(),
+              const TaskBottomSheet(),
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
             );

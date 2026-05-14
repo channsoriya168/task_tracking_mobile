@@ -10,7 +10,7 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_button_sheet.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/tablet_search_field_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
@@ -152,7 +152,7 @@ class TaskTabletPage extends StatelessWidget {
           final groups = groupCtrl.groups.toList();
           ctrl.resetForm(groups);
           Get.bottomSheet(
-            const TaskButtonSheet(),
+            const TaskBottomSheet(),
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
           );

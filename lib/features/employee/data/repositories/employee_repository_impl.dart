@@ -67,15 +67,4 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
 
   @override
   Future<void> deleteEmployee(String id) => _remote.deleteEmployee(id);
-
-  @override
-  Future<void> resetPassword({
-    required String employeeId,
-    required String newPassword,
-    required String confirmNewPassword,
-  }) => _remote.resetPassword(
-    employeeId: employeeId,
-    newPassword: newPassword,
-    confirmNewPassword: confirmNewPassword,
-  );
 }

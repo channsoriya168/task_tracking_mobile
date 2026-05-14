@@ -53,7 +53,7 @@ class EmployeeListWidget extends StatelessWidget {
         color: kPrimary,
         onRefresh: () => ctrl.fetchEmployees(),
         child: ListView.separated(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 20),
           itemCount: employees.length,
           separatorBuilder: (_, __) => const SizedBox(height: 10),
           itemBuilder: (_, i) {

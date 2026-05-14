@@ -8,7 +8,7 @@ import 'package:task_tracking_mobile/features/profile/presentation/controllers/p
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_button_sheet.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_actions_row.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_date_row.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_footer_row.dart';
@@ -55,7 +55,7 @@ class TaskCardWidget extends StatelessWidget {
         : (task.createdAt != null ? formatDate(task.createdAt!) : '');
 
     final cardContent = GestureDetector(
-      onTap: () => TaskDetailButtonSheet.show(
+      onTap: () => TaskDetailBottomSheet.show(
         context,
         isDark,
         task,

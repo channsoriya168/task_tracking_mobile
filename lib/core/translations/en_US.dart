@@ -6,10 +6,6 @@ const Map<String, String> enUS = {
   'login_phone_hint': '0884311016',
   'login_phone_required': 'Phone number is required',
   'login_phone_invalid': 'Enter a valid phone number',
-  'login_password_label': 'Password',
-  'login_password_hint': 'Enter your password',
-  'login_password_required': 'Password is required',
-  'login_password_min': 'At least 8 characters required',
   'login_sign_in': 'Sign In',
   'login_qr_sign_in': 'Scan QR Code',
   'login_qr_upload': 'Upload QR from Gallery',
@@ -211,7 +207,6 @@ const Map<String, String> enUS = {
   'profile_account': 'Account',
   'profile_dark_mode': 'Dark Mode',
   'profile_language': 'Language',
-  'profile_change_password': 'Change Password',
   'profile_sign_out': 'Sign Out',
   'profile_full_name': 'Full Name',
   'profile_email': 'Email',
@@ -221,26 +216,7 @@ const Map<String, String> enUS = {
   'emp_form_role_label': 'Role',
   'task_group': 'Task Group',
   'new': 'Add New',
-
-  // ── Change Password Sheet ──────────────────────────────────────
-  'change_pwd_title': 'Change Password',
-  'change_pwd_subtitle': 'Enter your current password then choose a new one.',
-  'change_pwd_current': 'Current Password',
-  'change_pwd_current_hint': 'Enter current password',
-  'change_pwd_new': 'New Password',
-  'change_pwd_new_hint': 'Enter new password',
-  'change_pwd_confirm': 'Confirm New Password',
-  'change_pwd_confirm_hint': 'Re-enter new password',
-  'change_pwd_hint':
-      'Min 8 chars · uppercase · lowercase · number · special (e.g. Ditway@168)',
-  'change_pwd_btn': 'Update Password',
-  'change_pwd_err_current_required': 'Current password is required.',
-  'change_pwd_err_current_incorrect': 'Current password is incorrect.',
-  'change_pwd_err_new_required': 'New password is required.',
-  'change_pwd_err_new_weak':
-      'Min 8 chars · uppercase · lowercase · number · special.',
-  'change_pwd_err_no_match': 'Passwords do not match.',
-  'change_pwd_err_confirm_required': 'Please confirm your new password.',
+  'employee_create_btn': 'Create Employee',
 
   // ── Image Options ─────────────────────────────────────────────
   'img_camera': 'Camera',
@@ -269,11 +245,6 @@ const Map<String, String> enUS = {
   'emp_form_name_hint': 'e.g. Sok Dara',
   'emp_form_email_hint': 'e.g. sokdara@company.com',
   'emp_form_place_hint': 'e.g. Phnom Penh',
-  'emp_form_password_hint': 'Enter a strong password',
-  'emp_form_password_helper':
-      'Min 8 chars · uppercase · lowercase · number · special',
-  'emp_form_confirm_password_label': 'Confirm Password',
-  'emp_form_confirm_password_hint': 'Re-enter password',
   'emp_form_btn_save': 'Save Changes',
   'emp_form_btn_add': 'Add Employee',
   'emp_form_gender_label': 'Gender',
@@ -329,12 +300,7 @@ const Map<String, String> enUS = {
   // ── Validators ────────────────────────────────────────────────
   'val_phone_required': 'Phone number is required.',
   'val_phone_invalid': 'Enter a valid Cambodian phone number.',
-  'val_password_required': 'Password is required.',
-  'val_password_min': 'Password must be at least 8 characters.',
-  'val_password_strong':
-      'Min 8 chars with uppercase, lowercase, number & special character (e.g. Ditway@168).',
   'val_field_required': '@label is required.',
-  'val_phone_or_password_incorrect': 'Incorrect phone number or password.',
 
   // ── Network ───────────────────────────────────────────────────
   'no_internet': 'No internet connection',
@@ -351,7 +317,6 @@ const Map<String, String> enUS = {
   'snack_success': 'Success',
   'snack_error': 'Error',
   'snack_welcome': 'Welcome back, @name!',
-  'snack_pwd_changed': 'Password changed successfully.',
   'snack_photo_updated': 'Profile photo updated.',
   'snack_photo_removed': 'Profile photo removed.',
   'snack_logged_out': 'Logged out',
@@ -366,7 +331,6 @@ const Map<String, String> enUS = {
   'snack_emp_updated': 'Employee Updated',
   'snack_emp_updated_msg': 'Changes have been saved.',
   'snack_emp_load_failed': 'Failed to load employees.',
-  'snack_reset_pwd': 'Reset Password',
   'snack_task_created': 'Task Created',
   'snack_task_created_msg': '"@title" has been created.',
   'snack_task_updated': 'Task Updated',

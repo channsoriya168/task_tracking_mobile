@@ -9,6 +9,7 @@ import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_filter_group_chips_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_list_widget.dart';
 import 'package:task_tracking_mobile/features/group/presentation/pages/group_page.dart';
@@ -75,7 +76,7 @@ class EmployeeMobilePage extends StatelessWidget {
             isDark: isDark,
             onChanged: (v) => ctrl.searchQuery.value = v,
             hintText: 'employee_search_hint'.tr,
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
           ),
           Expanded(
             child: EmployeeListWidget(isDark: isDark, ctrl: ctrl),
@@ -84,7 +85,7 @@ class EmployeeMobilePage extends StatelessWidget {
       ),
       floatingActionButton: Get.find<AuthController>().role == UserRole.employee
           ? null
-          : FloatingActionButton(
+          : FloatingActionButton.extended(
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
               onPressed: () {
@@ -96,9 +97,15 @@ class EmployeeMobilePage extends StatelessWidget {
                   ).then((_) => ctrl.isOfflineDialogOpen.value = false);
                   return;
                 }
-                ctrl.showCreateDialog();
+                ctrl.prepareForCreate();
+                Get.bottomSheet(
+                  const EmployeeBottomSheet(),
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                );
               },
-              child: const Icon(Icons.person_add_rounded),
+              label: Text('employee_create_btn'.tr),
+              icon: const Icon(Icons.person_add_rounded),
             ),
     );
   }

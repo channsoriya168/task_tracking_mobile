@@ -32,6 +32,8 @@ class GroupController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isOfflineDialogOpen = false.obs;
+  final RxBool showNameError = false.obs;
+  final RxBool showColorError = false.obs;
 
   @override
   void onInit() {
@@ -56,6 +58,8 @@ class GroupController extends GetxController {
 
   void initGroupForm(Group? existing) {
     isSaving.value = false;
+    showNameError.value = false;
+    showColorError.value = false;
     nameEditingController.text = existing?.name ?? '';
     descriptionEditingController.text = existing?.description ?? '';
     selectedColor.value = existing?.color ?? kDefaultTaskGroupColor;

@@ -34,27 +34,6 @@ class Validators {
     return '+855$digits';
   }
 
-  // ── Password ─────────────────────────────────────────────────────────────
-
-  /// Requires at least 6 characters.
-  static String? password(String? value) {
-    if (value == null || value.isEmpty) return 'Password is required.';
-    if (value.length < 6) return 'Password must be at least 6 characters.';
-    return null;
-  }
-
-  /// Strong password: min 8 chars, uppercase, lowercase, digit, special char.
-  static String? strongPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Password is required.';
-    final regex = RegExp(
-      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:,.<>?]).{8,}$',
-    );
-    if (!regex.hasMatch(value)) {
-      return 'Min 8 chars · uppercase · lowercase · number · special (e.g. Ditway@168).';
-    }
-    return null;
-  }
-
   // ── Generic ──────────────────────────────────────────────────────────────
 
   /// Non-empty check with an optional custom label.

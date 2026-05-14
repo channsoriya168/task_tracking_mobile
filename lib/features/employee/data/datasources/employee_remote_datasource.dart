@@ -144,19 +144,4 @@ class EmployeeRemoteDatasource {
   Future<void> deleteEmployee(String id) async {
     await _dio.delete(ApiEndpoints.employeeById(id));
   }
-
-  Future<void> resetPassword({
-    required String employeeId,
-    required String newPassword,
-    required String confirmNewPassword,
-  }) async {
-    await _dio.post(
-      ApiEndpoints.resetPassword,
-      data: {
-        'employeeId': employeeId,
-        'newPassword': newPassword,
-        'confirmNewPassword': confirmNewPassword,
-      },
-    );
-  }
 }

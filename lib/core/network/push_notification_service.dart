@@ -15,7 +15,7 @@ import 'package:task_tracking_mobile/features/notification/domain/entities/notif
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/task/domain/repositories/task_item_repository.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
-import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_button_sheet.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_bottom_sheet.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class PushNotificationService extends GetxService {
@@ -238,8 +238,7 @@ class PushNotificationService extends GetxService {
         notificationId != null &&
         Get.isRegistered<NotificationController>()) {
       try {
-        final cached = Get.find<NotificationController>()
-            .notifications
+        final cached = Get.find<NotificationController>().notifications
             .firstWhere((n) => n.id == notificationId);
         if (cached.type == NotificationType.taskCommented) initialTab = 1;
       } catch (_) {
@@ -247,7 +246,11 @@ class PushNotificationService extends GetxService {
       }
     }
 
-    _openTaskDetail(taskId, initialTab: initialTab, notificationId: notificationId);
+    _openTaskDetail(
+      taskId,
+      initialTab: initialTab,
+      notificationId: notificationId,
+    );
   }
 
   Future<void> _openTaskDetail(
@@ -284,7 +287,10 @@ class PushNotificationService extends GetxService {
 
       if (role == UserRole.employee) {
         if (Get.isRegistered<EmployeeTaskController>()) {
-          Get.find<EmployeeTaskController>().prepareTaskDetail(taskId, initialTab: initialTab);
+          Get.find<EmployeeTaskController>().prepareTaskDetail(
+            taskId,
+            initialTab: initialTab,
+          );
         }
         Get.toNamed(
           AppRoutes.taskDetail,
@@ -296,7 +302,7 @@ class PushNotificationService extends GetxService {
           },
         );
       } else {
-        await TaskDetailButtonSheet.show(
+        await TaskDetailBottomSheet.show(
           context,
           isDark,
           task,

@@ -6,10 +6,6 @@ const Map<String, String> kmKH = {
   'login_phone_hint': '0884311016',
   'login_phone_required': 'ត្រូវការលេខទូរស័ព្ទ',
   'login_phone_invalid': 'បញ្ចូលលេខទូរស័ព្ទដែលត្រឹមត្រូវ',
-  'login_password_label': 'ពាក្យសម្ងាត់',
-  'login_password_hint': 'បញ្ចូលពាក្យសម្ងាត់របស់អ្នក',
-  'login_password_required': 'ត្រូវការពាក្យសម្ងាត់',
-  'login_password_min': 'ត្រូវការយ៉ាងហោចណាស់ ៨ តួអក្សរ',
   'login_sign_in': 'ចូលប្រព័ន្ធ',
   'login_qr_sign_in': 'ស្កែន QR Code',
   'login_qr_upload': 'បង្ហោះ QR ពីវិចិត្រសាល',
@@ -215,7 +211,6 @@ const Map<String, String> kmKH = {
   'profile_account': 'គណនី',
   'profile_dark_mode': 'របៀបងងឹត',
   'profile_language': 'ភាសា',
-  'profile_change_password': 'ផ្លាស់ប្ដូរពាក្យសម្ងាត់',
   'profile_sign_out': 'ចេញ',
   'profile_full_name': 'ឈ្មោះពេញ',
   'profile_email': 'អ៊ីមែល',
@@ -225,27 +220,7 @@ const Map<String, String> kmKH = {
   'emp_form_role_label': 'តួនាទី',
   'new': 'បន្ថែមថ្មី',
   'task_group': 'ក្រុមការងារ',
-
-  // ── Change Password Sheet ──────────────────────────────────────
-  'change_pwd_title': 'ផ្លាស់ប្ដូរពាក្យសម្ងាត់',
-  'change_pwd_subtitle':
-      'បញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្នរបស់អ្នក ហើយជ្រើសរើសពាក្យសម្ងាត់ថ្មី។',
-  'change_pwd_current': 'ពាក្យសម្ងាត់បច្ចុប្បន្ន',
-  'change_pwd_current_hint': 'បញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្ន',
-  'change_pwd_new': 'ពាក្យសម្ងាត់ថ្មី',
-  'change_pwd_new_hint': 'បញ្ចូលពាក្យសម្ងាត់ថ្មី',
-  'change_pwd_confirm': 'បញ្ជាក់ពាក្យសម្ងាត់ថ្មី',
-  'change_pwd_confirm_hint': 'បញ្ចូលពាក្យសម្ងាត់ថ្មីម្ដងទៀត',
-  'change_pwd_hint':
-      'យ៉ាងតិច ៨ តួ · អក្សរធំ · អក្សរតូច · លេខ · តួអក្សរពិសេស (ឧ. Ditway@168)',
-  'change_pwd_btn': 'ធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់',
-  'change_pwd_err_current_required': 'ពាក្យសម្ងាត់បច្ចុប្បន្នត្រូវការ។',
-  'change_pwd_err_current_incorrect': 'ពាក្យសម្ងាត់បច្ចុប្បន្នមិនត្រឹមត្រូវ។',
-  'change_pwd_err_new_required': 'ពាក្យសម្ងាត់ថ្មីត្រូវការ។',
-  'change_pwd_err_new_weak':
-      'យ៉ាងតិច ៨ តួ · អក្សរធំ · អក្សរតូច · លេខ · តួអក្សរពិសេស។',
-  'change_pwd_err_no_match': 'ពាក្យសម្ងាត់មិនត្រូវគ្នា។',
-  'change_pwd_err_confirm_required': 'សូមបញ្ជាក់ពាក្យសម្ងាត់ថ្មីរបស់អ្នក។',
+  'employee_create_btn': 'បង្កើតបុគ្គលិក',
 
   // ── Image Options ─────────────────────────────────────────────
   'img_camera': 'កាមេរ៉ា',
@@ -274,11 +249,6 @@ const Map<String, String> kmKH = {
   'emp_form_name_hint': 'ឧ. សុខ ដារា',
   'emp_form_email_hint': 'ឧ. sokdara@company.com',
   'emp_form_place_hint': 'ឧ. ភ្នំពេញ',
-  'emp_form_password_hint': 'បញ្ចូលពាក្យសម្ងាត់ខ្លាំង',
-  'emp_form_password_helper':
-      'យ៉ាងតិច ៨ តួ · អក្សរធំ · អក្សរតូច · លេខ · និមិត្តសញ្ញាពិសេស',
-  'emp_form_confirm_password_label': 'បញ្ជាក់ពាក្យសម្ងាត់',
-  'emp_form_confirm_password_hint': 'បញ្ចូលពាក្យសម្ងាត់ម្ដងទៀត',
   'emp_form_btn_save': 'រក្សាទុកការផ្លាស់ប្ដូរ',
   'emp_form_btn_add': 'បន្ថែមបុគ្គលិក',
   'emp_form_gender_label': 'ភេទ',
@@ -333,12 +303,6 @@ const Map<String, String> kmKH = {
   // ── Validators ────────────────────────────────────────────────
   'val_phone_required': 'ត្រូវការលេខទូរស័ព្ទ។',
   'val_phone_invalid': 'បញ្ចូលលេខទូរស័ព្ទកម្ពុជាដែលត្រឹមត្រូវ។',
-  'val_password_required': 'ត្រូវការពាក្យសម្ងាត់។',
-  'val_password_min': 'ពាក្យសម្ងាត់ត្រូវការយ៉ាងហោចណាស់ ៨ តួអក្សរ។',
-  'val_password_strong':
-      'យ៉ាងតិច ៨ តួ ជាមួយអក្សរធំ អក្សរតូច លេខ និងតួអក្សរពិសេស (ឧ. Ditway@168)។',
-  'val_field_required': '@label ត្រូវការ។',
-  'val_phone_or_password_incorrect': 'លេខទូរស័ព្ទឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។',
 
   // ── Network ───────────────────────────────────────────────────
   'no_internet': 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត',

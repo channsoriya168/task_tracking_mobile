@@ -12,8 +12,8 @@ import 'package:task_tracking_mobile/features/core/presentation/widgets/field_la
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/date_pickerField_widget.dart';
 
-class TaskButtonSheet extends StatelessWidget {
-  const TaskButtonSheet({super.key});
+class TaskBottomSheet extends StatelessWidget {
+  const TaskBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {

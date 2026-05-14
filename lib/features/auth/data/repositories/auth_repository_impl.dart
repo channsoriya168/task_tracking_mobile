@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/core/network/local/storage_service.dart';
 import 'package:task_tracking_mobile/core/utils/dio_error_mapper.dart';
-import 'package:task_tracking_mobile/core/utils/validators.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/qr_code.dart';
@@ -13,21 +12,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   AuthRepositoryImpl(this._remote, [StorageService? storage])
     : _storage = storage ?? StorageService();
-
-  // ── Login ────────────────────────────────────────────────
-  @override
-  Future<Auth> login(String phoneNumber, String password) async {
-    try {
-      final auth = await _remote.login(
-        Validators.toE164(phoneNumber),
-        password,
-      );
-      await _saveSession(auth);
-      return auth;
-    } on DioException catch (e) {
-      throw mapDioError(e);
-    }
-  }
 
   // ── Logout ───────────────────────────────────────────────
   @override

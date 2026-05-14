@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/group_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
@@ -44,7 +45,14 @@ class EmployeeFormGroupPicker extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               GestureDetector(
-                onTap: () => controller.openTaskGroupDialog(context),
+                onTap: () {
+                  tgCtrl.initGroupForm(null);
+                  Get.bottomSheet(
+                    const GroupBottomSheet(),
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                  );
+                },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -62,7 +70,11 @@ class EmployeeFormGroupPicker extends StatelessWidget {
           const SizedBox(height: 12),
           if (groups.isEmpty)
             GestureDetector(
-              onTap: () => controller.openTaskGroupDialog(context),
+              onTap: () => Get.bottomSheet(
+                const GroupBottomSheet(),
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+              ),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,

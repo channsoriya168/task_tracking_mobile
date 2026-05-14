@@ -21,7 +21,6 @@ import 'package:task_tracking_mobile/features/label/data/label_repository_impl.d
 import 'package:task_tracking_mobile/features/label/domain/repositories/label_repository.dart';
 import 'package:task_tracking_mobile/features/label/domain/usecases/get_all_labels_usecase.dart';
 import 'package:task_tracking_mobile/features/label/domain/usecases/create_label_usecase.dart';
-import 'package:task_tracking_mobile/features/employee/domain/usecases/reset_employee_password_usecase.dart';
 import 'package:task_tracking_mobile/features/employee/domain/usecases/update_employee_usecase.dart';
 import 'package:task_tracking_mobile/features/label/domain/usecases/update_label_usecase.dart';
 import 'package:task_tracking_mobile/features/label/domain/usecases/delete_label_usecase.dart';
@@ -95,7 +94,6 @@ class AppBinding extends Bindings {
         Get.find<EmployeeRepository>(),
         CreateEmployeeUsecase(Get.find<EmployeeRepository>()),
         UpdateEmployeeUsecase(Get.find<EmployeeRepository>()),
-        ResetEmployeePasswordUsecase(Get.find<EmployeeRepository>()),
         Get.find<LookupRepository>(),
       ),
       fenix: true,

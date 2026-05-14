@@ -6,6 +6,7 @@ import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/tablet_search_field_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/group/presentation/pages/group_page.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_filter_group_chips_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_list_widget.dart';
@@ -82,8 +83,11 @@ class EmployeeTabletPage extends StatelessWidget {
           : FloatingActionButton(
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
-              onPressed: () =>
-                  Get.find<EmployeeController>().showCreateDialog(),
+              onPressed: () => Get.bottomSheet(
+                const EmployeeBottomSheet(),
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+              ),
               child: const Icon(Icons.person_add_rounded),
             ),
     );

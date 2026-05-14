@@ -100,7 +100,6 @@ class _AuthInterceptor extends Interceptor {
     final isRefreshEndpoint = path.contains('/auth/refresh');
     final isLoginEndpoint = path.contains('/auth/login');
     final isQrLoginEndpoint = path.contains('/auth/qr-login');
-    final isChangePasswordEndpoint = path.contains('/auth/change-password');
     final alreadyRetried = err.requestOptions.extra['_retried'] == true;
 
     // 403 Account Inactive — force logout, _isLoggingOut guard prevents loops
@@ -117,7 +116,6 @@ class _AuthInterceptor extends Interceptor {
         isRefreshEndpoint ||
         isLoginEndpoint ||
         isQrLoginEndpoint ||
-        isChangePasswordEndpoint ||
         alreadyRetried) {
       handler.next(err);
       return;

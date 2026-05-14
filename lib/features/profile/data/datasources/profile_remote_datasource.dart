@@ -31,29 +31,6 @@ class ProfileRemoteDatasource {
     return EmployeeProfileModel.fromJson(data);
   }
 
-  Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmNewPassword,
-  }) async {
-    final response = await _dio.post(
-      ApiEndpoints.changePassword,
-      data: {
-        'currentPassword': currentPassword,
-        'newPassword': newPassword,
-        'confirmNewPassword': confirmNewPassword,
-      },
-    );
-    final statusCode = response.statusCode ?? 0;
-    if (statusCode < 200 || statusCode >= 300) {
-      throw DioException(
-        requestOptions: response.requestOptions,
-        response: response,
-        type: DioExceptionType.badResponse,
-      );
-    }
-  }
-
   Future<void> updateProfile({File? image, bool removeImage = false}) async {
     final formData = FormData.fromMap({
       if (image != null)

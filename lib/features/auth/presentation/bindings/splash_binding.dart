@@ -16,7 +16,6 @@ import 'package:task_tracking_mobile/features/core/presentation/controllers/navi
 import 'package:task_tracking_mobile/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:task_tracking_mobile/features/profile/domain/repositories/profile_repository.dart';
-import 'package:task_tracking_mobile/features/profile/domain/usecases/change_password_usecase.dart';
 import 'package:task_tracking_mobile/features/profile/domain/usecases/fetch_profile_usecase.dart';
 import 'package:task_tracking_mobile/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
@@ -41,12 +40,10 @@ class SplashBinding extends Bindings {
       permanent: true,
     );
     Get.put(FetchProfileUsecase(Get.find()), permanent: true);
-    Get.put(ChangePasswordUsecase(Get.find()), permanent: true);
     Get.put(UpdateProfileUsecase(Get.find()), permanent: true);
     Get.put<ProfileController>(
       ProfileController(
         fetchProfileUsecase: Get.find(),
-        changePasswordUsecase: Get.find(),
         updateProfileUsecase: Get.find(),
       ),
       permanent: true,

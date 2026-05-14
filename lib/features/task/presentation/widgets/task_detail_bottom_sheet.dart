@@ -7,8 +7,8 @@ import 'package:task_tracking_mobile/features/task/domain/repositories/task_item
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_detail_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_body_widget.dart';
 
-class TaskDetailButtonSheet extends StatelessWidget {
-  const TaskDetailButtonSheet({
+class TaskDetailBottomSheet extends StatelessWidget {
+  const TaskDetailBottomSheet({
     super.key,
     required this.task,
     required this.isDark,
@@ -32,10 +32,7 @@ class TaskDetailButtonSheet extends StatelessWidget {
       repo = Get.find<TaskItemRepository>();
     } catch (_) {}
 
-    final ctrl = Get.put(
-      TaskDetailController(repo, task),
-      tag: task.id,
-    );
+    final ctrl = Get.put(TaskDetailController(repo, task), tag: task.id);
     if (fetchDetail != null) ctrl.loadFresh(fetchDetail);
 
     final scrollController = ScrollController();
@@ -43,7 +40,7 @@ class TaskDetailButtonSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => TaskDetailButtonSheet(
+      builder: (_) => TaskDetailBottomSheet(
         task: task,
         isDark: isDark,
         scrollController: scrollController,

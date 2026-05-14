@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/employee_menu_item.dart';
@@ -8,6 +9,7 @@ import 'package:task_tracking_mobile/features/employee/presentation/controllers/
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_dialogs.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_qr_sheet.dart';
+
 void showEmployeeMenuSheet(
   BuildContext context, {
   required EmployeeController ctrl,
@@ -595,14 +597,7 @@ class _ActionTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: color,
-                      ),
-                    ),
+                    Text(label, style: AppTextStyles.buttonLabel(color: color)),
                   ],
                 ),
               ),

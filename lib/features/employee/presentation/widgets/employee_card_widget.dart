@@ -5,6 +5,7 @@ import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/domain/entities/employee.dart';
+import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_qr_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/group_chip_widget.dart';
@@ -13,6 +14,7 @@ import 'package:task_tracking_mobile/features/employee/presentation/controllers/
 import 'package:task_tracking_mobile/features/employee/data/models/employee_menu_item.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_menu_dialogs.dart';
+
 class EmployeeCardWidget extends StatelessWidget {
   const EmployeeCardWidget({
     super.key,
@@ -33,7 +35,13 @@ class EmployeeCardWidget extends StatelessWidget {
   ) async {
     switch (action) {
       case EmployeeMenuAction.edit:
-        ctrl.showEditDialog(employee);
+        ctrl.prepareForEdit(employee);
+        Get.bottomSheet(
+          const EmployeeBottomSheet(),
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+        );
+        break;
       case EmployeeMenuAction.generateQr:
         showEmployeeQrSheet(context, employee: employee, isDark: isDark);
       case EmployeeMenuAction.delete:
