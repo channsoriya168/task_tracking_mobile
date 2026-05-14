@@ -24,7 +24,7 @@ class EmployeeBottomSheet extends StatelessWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.92,
+          maxHeight: MediaQuery.of(context).size.height * 0.90,
         ),
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
@@ -33,6 +33,18 @@ class EmployeeBottomSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // ── Drag handle ─────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 4),
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[700] : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
             //start header
             Obx(
               () => Padding(

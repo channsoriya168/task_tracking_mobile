@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_member.dart';
@@ -24,7 +25,7 @@ class TaskDetailMembersTab extends StatelessWidget {
     if (members.isEmpty) {
       return TaskDetailEmptyState(
         icon: Icons.group_off_outlined,
-        message: 'No members assigned',
+        message: 'no_members_assigned',
         isDark: isDark,
       );
     }
@@ -58,16 +59,12 @@ class TaskDetailMembersTab extends StatelessWidget {
                       children: [
                         Text(
                           members[i].employeeName,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
+                          style: AppTextStyles.subTitle(color: textColor),
                         ),
                         if (members[i].addedByName != null)
                           Text(
                             'Added by ${members[i].addedByName}',
-                            style: TextStyle(fontSize: 11, color: mutedColor),
+                            style: AppTextStyles.subTitle(color: mutedColor),
                           ),
                       ],
                     ),
@@ -75,7 +72,7 @@ class TaskDetailMembersTab extends StatelessWidget {
                   if (members[i].assignedAt != null)
                     Text(
                       formatDate(members[i].assignedAt!),
-                      style: TextStyle(fontSize: 10, color: mutedColor),
+                      style: AppTextStyles.subTitle(color: mutedColor),
                     ),
                 ],
               ),

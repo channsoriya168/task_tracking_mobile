@@ -20,11 +20,11 @@ class TaskBottomSheet extends StatelessWidget {
     final ctrl = Get.find<TaskController>();
     final groups = Get.find<GroupController>().groups.toList();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : kTextDark;
-    final keyboardBottom = MediaQuery.of(context).viewInsets.bottom;
-    final screenH = MediaQuery.of(context).size.height;
 
     return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.90,
+      ),
       decoration: BoxDecoration(
         color: isDark ? kCardDark : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
@@ -36,7 +36,6 @@ class TaskBottomSheet extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.only(bottom: keyboardBottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -109,8 +108,7 @@ class TaskBottomSheet extends StatelessWidget {
           ),
 
           // ── Scrollable form ──────────────────────────────
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: screenH * 0.62),
+          Flexible(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
               child: Column(

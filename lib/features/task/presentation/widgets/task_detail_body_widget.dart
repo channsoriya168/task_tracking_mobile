@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
@@ -109,7 +110,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.labelName != null) {
       addRow(
         _buildInfoRow(
-          label: 'Label',
+          label: 'label'.tr,
           child: Text(
             task.labelName!,
             style: AppTextStyles.formLabel(
@@ -125,7 +126,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.startDate != null) {
       addRow(
         _buildInfoRow(
-          label: 'Start Date',
+          label: 'start_date'.tr,
           child: _dateText(formatDate(task.startDate!)),
         ),
       );
@@ -134,7 +135,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.dueDate != null) {
       addRow(
         _buildInfoRow(
-          label: 'Due Date',
+          label: 'due_date'.tr,
           child: _dateText(formatDate(task.dueDate!)),
         ),
       );
@@ -151,7 +152,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
 
     addRow(
       _buildInfoRow(
-        label: 'Assigned to',
+        label: 'assigned_to'.tr,
         child: task.assignedToName != null
             ? TaskDetailAvatarName(
                 name: task.assignedToName!,
@@ -159,7 +160,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
                 textColor: textColor,
               )
             : Text(
-                'Not assigned',
+                'not_assigned'.tr,
                 style: AppTextStyles.subTitle(
                   color: mutedColor,
                 ).copyWith(fontWeight: FontWeight.w400),
@@ -170,7 +171,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
     if (task.createdByEmployeeName != null) {
       addRow(
         _buildInfoRow(
-          label: 'Created by',
+          label: 'created_by'.tr,
           child: TaskDetailAvatarName(
             name: task.createdByEmployeeName!,
             color: mutedColor,
@@ -220,10 +221,4 @@ class TaskDetailBodyWidget extends StatelessWidget {
 
   Widget _dateText(String text) =>
       Text(text, style: AppTextStyles.formLabel(color: textColor));
-}
-
-Color _hexToColor(String hex) {
-  final h = hex.replaceAll('#', '');
-  if (h.length == 6) return Color(int.parse('FF$h', radix: 16));
-  return kPrimary;
 }

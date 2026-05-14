@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_detail_controller.dart';
@@ -18,10 +19,10 @@ class TaskDetailTabSection extends StatelessWidget {
   final TaskDetailController ctrl;
   final bool isDark;
 
-  static const _tabs = [
-    (Icons.group_outlined, 'Members'),
-    (Icons.chat_bubble_outline_rounded, 'Comments'),
-    (Icons.trending_up_rounded, 'Progress'),
+  static final _tabs = [
+    (Icons.group_outlined, 'members'.tr),
+    (Icons.chat_bubble_outline_rounded, 'comments'.tr),
+    (Icons.trending_up_rounded, 'progress'.tr),
   ];
 
   static bool _computeCanComment() {
@@ -86,11 +87,7 @@ class TaskDetailTabSection extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             '$label (${counts[i]})',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: active
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
+                            style: AppTextStyles.subTitle(
                               color: active ? Colors.white : mutedColor,
                             ),
                           ),

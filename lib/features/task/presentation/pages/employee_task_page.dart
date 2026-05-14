@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
@@ -19,6 +20,15 @@ class EmployeeTaskPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'nav_tasks'.tr,
+          style: AppTextStyles.appBarTitle(color: kPrimary),
+        ),
+        centerTitle: false,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -34,22 +44,14 @@ class EmployeeTaskPage extends StatelessWidget {
                 pinned: true,
                 backgroundColor: isDark ? kBgDark : kBgLight,
                 elevation: 0,
-                title: Text(
-                  'nav_tasks'.tr,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : kTextDark,
-                  ),
-                ),
                 //Week calendar and Status filter bar
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(170),
+                  preferredSize: const Size.fromHeight(132),
                   child: Column(
                     children: [
                       // ── Week calendar ──────────────────────────────────
                       Padding(
-                        padding: kPageSectionPadding,
+                        padding: kPagePaddingHorizontal,
                         child: Obx(
                           () => WeekCalendarWidget(
                             isDark: isDark,
@@ -74,6 +76,7 @@ class EmployeeTaskPage extends StatelessWidget {
               // ── Search bar ─────────────────────────────────────
               SliverToBoxAdapter(
                 child: SearchBarWidget(
+                  hintText: 'search_tasks'.tr,
                   isDark: isDark,
                   onChanged: (v) => ctrl.searchQuery.value = v,
                 ),
@@ -83,8 +86,7 @@ class EmployeeTaskPage extends StatelessWidget {
               Obx(() {
                 final offline =
                     !Get.find<NetworkController>().isConnected.value;
-                if (ctrl.isLoading.value ||
-                    (offline && ctrl.myTasks.isEmpty)) {
+                if (ctrl.isLoading.value || (offline && ctrl.myTasks.isEmpty)) {
                   return SliverPadding(
                     padding: kPageBottomPadding,
                     sliver: SliverList.separated(

@@ -106,13 +106,11 @@ class TaskDetailBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Obx(
-                    () => Text(
-                      "task_detail".tr,
-                      style: AppTextStyles.appBarTitle(color: kPrimary),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  child: Text(
+                    "task_detail".tr,
+                    style: AppTextStyles.appBarTitle(color: kPrimary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Obx(() {

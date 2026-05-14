@@ -41,7 +41,7 @@ class TaskDetailCommentsTab extends StatelessWidget {
         if (comments.isEmpty && !canComment)
           TaskDetailEmptyState(
             icon: Icons.chat_bubble_outline_rounded,
-            message: 'No comments yet',
+            message: 'no_comments_yet',
             isDark: isDark,
           )
         else if (comments.isEmpty)

@@ -24,7 +24,7 @@ class TaskDetailProgressTab extends StatelessWidget {
     if (progresses.isEmpty) {
       return TaskDetailEmptyState(
         icon: Icons.trending_flat_rounded,
-        message: 'No progress logged yet',
+        message: 'no_progress_yet',
         isDark: isDark,
       );
     }

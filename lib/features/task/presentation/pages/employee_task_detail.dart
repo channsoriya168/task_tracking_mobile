@@ -65,7 +65,6 @@ class EmployeeTaskDetailPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: isDark ? kBgDark : kBgLight,
         elevation: 0,
-        centerTitle: true,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,

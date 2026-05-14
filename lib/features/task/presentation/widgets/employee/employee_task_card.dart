@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
@@ -81,12 +82,6 @@ class EmployeeTaskCard extends StatelessWidget {
         'date': formatDate(task.dueDate!),
       });
     }
-
-    // Avatar: prefer assignee, fall back to creator
-    final avatarUrl =
-        task.assignedToProfileImageUrl ?? task.createdByProfileImageUrl;
-    final avatarName = task.assignedToName ?? task.createdByEmployeeName ?? '';
-
     return GestureDetector(
       onTap: () => openDetail(readOnly: isAssignedToOther),
       child: Container(
@@ -94,6 +89,7 @@ class EmployeeTaskCard extends StatelessWidget {
           color: isDark ? kCardDark : Colors.white,
           // border: Border.all(color: kPrimary, width: 0.2),
           borderRadius: BorderRadius.circular(16),
+          border: Border(left: BorderSide(color: statusColor, width: 4)),
           boxShadow: [
             BoxShadow(
               color: isDark
@@ -124,14 +120,9 @@ class EmployeeTaskCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 task.title,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: isDark
-                                      ? Colors.white
-                                      : const Color(0xFF1A1A2E),
-                                  height: 1.3,
-                                ),
+                                style: AppTextStyles.title(
+                                  color: isDark ? Colors.white : kTextDark,
+                                ).copyWith(fontWeight: FontWeight.w600),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -140,21 +131,43 @@ class EmployeeTaskCard extends StatelessWidget {
                               const SizedBox(width: 6),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF22C55E),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  'task_new'.tr,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    letterSpacing: kLs(0.5),
+                                  color: const Color(
+                                    0xFF22C55E,
+                                  ).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(
+                                    color: const Color(
+                                      0xFF22C55E,
+                                    ).withValues(alpha: 0.16),
                                   ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF22C55E),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'task_new'.tr,
+                                      style:
+                                          AppTextStyles.subTitle(
+                                            color: const Color(0xFF16A34A),
+                                          ).copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: kLs(0.2),
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -167,62 +180,79 @@ class EmployeeTaskCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             task.description!,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: isDark
-                                  ? Colors.white54
-                                  : const Color(0xFF8E8EA0),
-                              height: 1.4,
+                            style: AppTextStyles.subTitle(
+                              color: isDark ? Colors.white54 : kTextMuted,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
 
-                        // ── Due date ──────────────────────────
-                        if (dueDateLabel != null) ...[
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              if (dueDateUrgent)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 4),
-                                  child: Icon(
-                                    Icons.access_time_rounded,
-                                    size: 13,
-                                    color: dueDateUrgent
-                                        ? const Color(0xFFFF6B35)
-                                        : (isDark
-                                              ? Colors.white38
-                                              : const Color(0xFF8E8EA0)),
-                                  ),
-                                ),
-                              Text(
-                                dueDateLabel,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: dueDateUrgent
-                                      ? FontWeight.w600
-                                      : FontWeight.w400,
-                                  color: dueDateUrgent
-                                      ? const Color(0xFFFF6B35)
-                                      : (isDark
-                                            ? Colors.white38
-                                            : const Color(0xFF8E8EA0)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 4),
 
                         // ── Bottom row: avatar + action ────────
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Avatar
-                            _Avatar(url: avatarUrl, name: avatarName),
+                            // ── Due date ──────────────────────────
+                            if (dueDateLabel != null) ...[
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: isDark
+                                            ? Colors.white.withValues(
+                                                alpha: 0.2,
+                                              )
+                                            : Colors.black.withValues(
+                                                alpha: 0.1,
+                                              ),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        if (dueDateUrgent)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 4,
+                                            ),
+                                            child: Icon(
+                                              Icons.access_time_rounded,
+                                              size: 13,
+                                              color: dueDateUrgent
+                                                  ? const Color(0xFFFF6B35)
+                                                  : (isDark
+                                                        ? Colors.white38
+                                                        : const Color(
+                                                            0xFF8E8EA0,
+                                                          )),
+                                            ),
+                                          ),
+                                        Text(
+                                          dueDateLabel,
+                                          style: AppTextStyles.subTitle(
+                                            color: dueDateUrgent
+                                                ? const Color(0xFFFF6B35)
+                                                : (isDark
+                                                      ? Colors.white38
+                                                      : const Color(
+                                                          0xFF8E8EA0,
+                                                        )),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
 
                             const Spacer(),
 
@@ -262,36 +292,6 @@ class EmployeeTaskCard extends StatelessWidget {
   }
 }
 
-// ── Avatar ────────────────────────────────────────────────────────────────────
-
-class _Avatar extends StatelessWidget {
-  const _Avatar({required this.url, required this.name});
-
-  final String? url;
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
-    return CircleAvatar(
-      radius: 14,
-      backgroundColor: kPrimary.withValues(alpha: 0.15),
-      backgroundImage: url != null ? NetworkImage(url!) : null,
-      onBackgroundImageError: url != null ? (_, _) {} : null,
-      child: url == null
-          ? Text(
-              letter,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: kPrimary,
-              ),
-            )
-          : null,
-    );
-  }
-}
-
 // ── Accept button ─────────────────────────────────────────────────────────────
 
 class _AcceptButton extends StatelessWidget {
@@ -311,12 +311,9 @@ class _AcceptButton extends StatelessWidget {
         ),
         child: Text(
           'task_accept'.tr,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
+          style: AppTextStyles.subTitle(
             color: Colors.white,
-            letterSpacing: kLs(0.5),
-          ),
+          ).copyWith(fontWeight: FontWeight.w600, letterSpacing: kLs(0.5)),
         ),
       ),
     );
@@ -339,17 +336,15 @@ class _StatusChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
+          // color: color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Text(
           label.toUpperCase(),
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.subTitle(
             color: color,
-            letterSpacing: kLs(0.3),
-          ),
+          ).copyWith(fontWeight: FontWeight.w600, letterSpacing: kLs(0.5)),
         ),
       ),
     );

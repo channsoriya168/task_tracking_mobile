@@ -16,6 +16,7 @@ import 'package:task_tracking_mobile/core/controllers/theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   // Suppress MissingPluginException from connectivity_plus stream activation.
   // The exception is reported through FlutterError, not catchable via try-catch.

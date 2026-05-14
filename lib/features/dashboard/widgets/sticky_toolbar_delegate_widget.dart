@@ -45,7 +45,7 @@ class StickyToolbarDelegateWidget extends SliverPersistentHeaderDelegate {
       child: Column(
         children: [
           Padding(
-            padding: kPageSectionPadding,
+            padding: kPagePaddingHorizontal,
             child: Obx(
               () => WeekCalendarWidget(
                 isDark: isDark,
@@ -63,6 +63,7 @@ class StickyToolbarDelegateWidget extends SliverPersistentHeaderDelegate {
           ),
           SearchBarWidget(
             isDark: isDark,
+            hintText: 'search_tasks'.tr,
             onChanged: (v) => homeCtrl.searchQuery.value = v,
           ),
         ],

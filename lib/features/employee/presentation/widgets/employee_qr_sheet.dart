@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:gal/gal.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/qr_code.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
@@ -10,7 +15,11 @@ Future<void> showEmployeeQrSheet(
   required Employee employee,
   required bool isDark,
 }) async {
+  Get.dialog(const _QrGeneratingDialog(), barrierDismissible: false);
+
   final qrData = await Get.find<AuthController>().generateQrLogin(employee.id);
+
+  if (Get.isDialogOpen ?? false) Get.back();
   if (qrData == null) return;
   if (!context.mounted) return;
 
@@ -21,8 +30,47 @@ Future<void> showEmployeeQrSheet(
   );
 }
 
+class _QrGeneratingDialog extends StatelessWidget {
+  const _QrGeneratingDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: kPrimary, strokeWidth: 2.5),
+            SizedBox(height: 16),
+            Text(
+              'Generating QR...',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: kTextMuted,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _EmployeeQrSheet extends StatelessWidget {
-  const _EmployeeQrSheet({
+  _EmployeeQrSheet({
     required this.employee,
     required this.qrData,
     required this.isDark,
@@ -32,6 +80,31 @@ class _EmployeeQrSheet extends StatelessWidget {
   final QrLoginData qrData;
   final bool isDark;
 
+  final _isSaving = false.obs;
+
+  Future<void> _saveToGallery() async {
+    if (_isSaving.value) return;
+    _isSaving.value = true;
+    try {
+      final response = await Dio().get<List<int>>(
+        qrData.qrCodeUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+      await Gal.putImageBytes(Uint8List.fromList(response.data!));
+      AppSnackbar.success('qr_save_success'.tr, '');
+    } on GalException catch (e) {
+      if (e.type == GalExceptionType.accessDenied) {
+        AppSnackbar.error('qr_save_permission_denied'.tr, '');
+      } else {
+        AppSnackbar.error('qr_save_error'.tr, '');
+      }
+    } catch (_) {
+      AppSnackbar.error('qr_save_error'.tr, '');
+    } finally {
+      _isSaving.value = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bgColor = isDark ? kCardDark : const Color(0xFFF8F9FB);
@@ -40,7 +113,7 @@ class _EmployeeQrSheet extends StatelessWidget {
 
     final expiresAt = qrData.expiresAt;
     final expiryLabel =
-        '${expiresAt.year}-${expiresAt.month.toString().padLeft(2, '0')}-${expiresAt.day.toString().padLeft(2, '0')} ${expiresAt.hour.toString().padLeft(2, '0')}:${expiresAt.minute.toString().padLeft(2, '0')}';
+        '${expiresAt.year}-${expiresAt.month.toString().padLeft(2, '0')}-${expiresAt.day.toString().padLeft(2, '0')} ${expiresAt.hour.toString().padLeft(2, '0')}:${expiresAt.minute.toString().padLeft(2, '0')}:${expiresAt.second.toString().padLeft(2, '0')}}';
 
     return Container(
       padding: EdgeInsets.only(
@@ -133,7 +206,7 @@ class _EmployeeQrSheet extends StatelessWidget {
                           ),
                         );
                       },
-                      errorBuilder: (_, __, ___) => const SizedBox(
+                      errorBuilder: (_, _, _) => const SizedBox(
                         width: 220,
                         height: 220,
                         child: Center(
@@ -143,23 +216,6 @@ class _EmployeeQrSheet extends StatelessWidget {
                             color: kTextMuted,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      employee.fullName,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1A1A2E),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${'qr_sheet_expires'.tr} $expiresAt',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFF8E8EA0),
                       ),
                     ),
                   ],
@@ -186,6 +242,47 @@ class _EmployeeQrSheet extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
+
+              // Save to Gallery button
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: _isSaving.value ? null : _saveToGallery,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kPrimary,
+                      disabledBackgroundColor: kPrimary.withValues(alpha: 0.6),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 0,
+                    ),
+                    icon: _isSaving.value
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.download_rounded, size: 20),
+                    label: Text(
+                      _isSaving.value
+                          ? 'qr_save_saving'.tr
+                          : 'qr_save_action'.tr,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               Text(
                 'qr_sheet_hint'.tr,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class TaskDetailEmptyState extends StatelessWidget {
@@ -24,7 +26,7 @@ class TaskDetailEmptyState extends StatelessWidget {
           children: [
             Icon(icon, size: 22, color: mutedColor),
             const SizedBox(height: 6),
-            Text(message, style: TextStyle(fontSize: 12, color: mutedColor)),
+            Text(message.tr, style: AppTextStyles.subTitle(color: mutedColor)),
           ],
         ),
       ),

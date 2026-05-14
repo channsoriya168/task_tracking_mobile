@@ -313,6 +313,22 @@ const Map<String, String> kmKH = {
   'retry': 'សាកល្បងម្ដងទៀត',
   'dismiss': 'បិទ',
   'task_detail': 'លម្អិតកិច្ចការ',
+  'search_tasks': 'ស្វែងរកកិច្ចការ',
+  'label': 'ប្រភេទការងារ',
+  'start_date': 'កាលបរិច្ឆេទចាប់ផ្តើម',
+  'due_date': 'កាលបរិច្ឆេទផុតកំណត់',
+  'assigned_to': 'ចាត់តាំងទៅ',
+  'not_assigned': 'មិនទាន់ចាត់តាំង',
+  'created_by': 'បង្កើតដោយ',
+  'comments': 'មតិយោបល់',
+  'members': 'សមាជិក',
+  'progress': 'វឌ្ឍនភាព',
+  'no_members_assigned': 'មិនទាន់មានសមាជិក។ ចុច + ដើម្បីបន្ថែម',
+  'no_comments_yet': 'មិនទាន់មានមតិយោបល់',
+  'no_progress_yet': 'មិនទាន់មានកំណត់ហេតុវឌ្ឍនភាព។',
+  'choose_language': 'ជ្រើសរើសភាសា',
+  //Select how the app should appear.'
+  'select_language': 'របៀបដែលកម្មវិធីគួរតែបង្ហាញ',
 
   // ── Snackbars ─────────────────────────────────────────────────
   'snack_success': 'ជោគជ័យ',
