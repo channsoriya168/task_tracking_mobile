@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/enums/user_role.dart';
 import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/tablet_search_field_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
@@ -50,7 +52,10 @@ class EmployeeTabletPage extends StatelessWidget {
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
                   onPressed: () => Get.to(() => const GroupPage()),
-                  label: Text('employee_create_group_btn'.tr),
+                  label: Text(
+                    'employee_create_group_btn'.tr,
+                    style: AppTextStyles.buttonLabel(),
+                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: kPrimary,
                     side: const BorderSide(color: kPrimary),
@@ -80,15 +85,27 @@ class EmployeeTabletPage extends StatelessWidget {
       ),
       floatingActionButton: Get.find<AuthController>().role == UserRole.employee
           ? null
-          : FloatingActionButton(
+          : FloatingActionButton.extended(
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
-              onPressed: () => Get.bottomSheet(
-                const EmployeeBottomSheet(),
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-              ),
-              child: const Icon(Icons.person_add_rounded),
+              onPressed: () {
+                if (!Get.find<NetworkController>().isConnected.value) {
+                  ctrl.isOfflineDialogOpen.value = true;
+                  showNoInternetDialog(
+                    isDark: isDark,
+                    redirectCount: 1,
+                  ).then((_) => ctrl.isOfflineDialogOpen.value = false);
+                  return;
+                }
+                ctrl.prepareForCreate();
+                Get.bottomSheet(
+                  const EmployeeBottomSheet(),
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                );
+              },
+              label: Text('employee_create_btn'.tr),
+              icon: const Icon(Icons.add_rounded),
             ),
     );
   }

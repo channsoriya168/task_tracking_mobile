@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
@@ -94,8 +95,10 @@ class _GroupDialogBodyState extends State<_GroupDialogBody> {
     if (!mounted) return;
     Navigator.of(context).pop();
     widget.dialogOpenFlag?.value = true;
-    showNoInternetDialog(isDark: widget.isDark, redirectCount: 1)
-        .then((_) => widget.dialogOpenFlag?.value = false);
+    showNoInternetDialog(
+      isDark: widget.isDark,
+      redirectCount: 1,
+    ).then((_) => widget.dialogOpenFlag?.value = false);
   }
 
   @override
@@ -143,11 +146,7 @@ class _GroupDialogBodyState extends State<_GroupDialogBody> {
                     existing == null
                         ? 'group_dialog_new'.tr
                         : 'group_dialog_edit'.tr,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : kTextDark,
-                    ),
+                    style: AppTextStyles.appBarTitle(color: kPrimary),
                   ),
                 ),
                 IconButton(
@@ -210,7 +209,12 @@ class _GroupDialogBodyState extends State<_GroupDialogBody> {
                         color: isDark ? Colors.grey[400] : kTextMuted,
                       ),
                       children: [
-                        TextSpan(text: 'group_color_label'.tr),
+                        TextSpan(
+                          text: 'group_color_label'.tr,
+                          style: AppTextStyles.formLabel(
+                            color: isDark ? Colors.white : kTextDark,
+                          ),
+                        ),
                         const TextSpan(
                           text: ' *',
                           style: TextStyle(color: Colors.red),
@@ -310,14 +314,15 @@ class _GroupDialogBodyState extends State<_GroupDialogBody> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: ctrl.isSaving.value ||
-                              _nameText.value.trim().isEmpty
+                      onPressed:
+                          ctrl.isSaving.value || _nameText.value.trim().isEmpty
                           ? null
                           : () async {
-                              final name =
-                                  ctrl.nameEditingController.text.trim();
+                              final name = ctrl.nameEditingController.text
+                                  .trim();
                               final description = ctrl
-                                  .descriptionEditingController.text
+                                  .descriptionEditingController
+                                  .text
                                   .trim();
                               final isNameValid = name.isNotEmpty;
                               final isColorValid =
@@ -348,8 +353,9 @@ class _GroupDialogBodyState extends State<_GroupDialogBody> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor:
-                            kPrimary.withValues(alpha: 0.4),
+                        disabledBackgroundColor: kPrimary.withValues(
+                          alpha: 0.4,
+                        ),
                         disabledForegroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(

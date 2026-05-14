@@ -82,9 +82,7 @@ class TaskBottomSheet extends StatelessWidget {
                       ctrl.editingTask.value != null
                           ? 'task_form_edit'.tr
                           : 'task_form_new'.tr,
-                      style: AppTextStyles.title(
-                        color: textColor,
-                      ).copyWith(fontWeight: FontWeight.w700),
+                      style: AppTextStyles.appBarTitle(color: kPrimary),
                     ),
                   ),
                 ),
@@ -108,11 +106,6 @@ class TaskBottomSheet extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          Divider(
-            height: 1,
-            color: isDark ? Colors.grey[800] : Colors.grey[100],
           ),
 
           // ── Scrollable form ──────────────────────────────

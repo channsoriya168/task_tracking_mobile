@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
@@ -44,11 +45,7 @@ class GroupBottomSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'group_dialog_new'.tr,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : kTextDark,
-                    ),
+                    style: AppTextStyles.appBarTitle(color: kPrimary),
                   ),
                 ),
                 IconButton(
@@ -60,13 +57,6 @@ class GroupBottomSheet extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          Divider(
-            height: 1,
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.06),
           ),
 
           // ── Scrollable body ───────────────────────────────────
@@ -104,10 +94,8 @@ class GroupBottomSheet extends StatelessWidget {
                   const SizedBox(height: 16),
                   RichText(
                     text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.grey[400] : kTextMuted,
+                      style: AppTextStyles.formLabel(
+                        color: isDark ? Colors.grey[300] : kBgDark,
                       ),
                       children: [
                         TextSpan(text: 'group_color_label'.tr),

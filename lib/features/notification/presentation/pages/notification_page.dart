@@ -51,11 +51,7 @@ class NotificationPage extends StatelessWidget {
                   ),
                   child: Text(
                     'notif_mark_all'.tr,
-                    style: TextStyle(
-                      color: kPrimary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                    ),
+                    style: AppTextStyles.buttonLabel(color: kPrimary),
                   ),
                 ),
               ),
@@ -68,7 +64,7 @@ class NotificationPage extends StatelessWidget {
           //filter pills
           Obx(
             () => Padding(
-              padding: EdgeInsetsGeometry.symmetric(horizontal: 16),
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 12),
               child: Row(
                 children: [
                   FilterPillWidget(

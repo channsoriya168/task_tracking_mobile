@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class FilterPillWidget extends StatelessWidget {
@@ -52,14 +53,12 @@ class FilterPillWidget extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(
+              style: AppTextStyles.buttonLabel(
                 color: isSelected
                     ? Colors.white
                     : isDark
-                    ? Colors.white54
+                    ? Colors.white70
                     : const Color(0xFF64748B),
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                fontSize: 13,
               ),
             ),
             //count all or unread

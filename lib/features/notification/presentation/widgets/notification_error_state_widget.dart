@@ -61,24 +61,6 @@ class NotificationErrorStateWidget extends StatelessWidget {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: Text('notif_retry'.tr),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 13,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                elevation: 0,
-              ),
-            ),
           ],
         ),
       ),

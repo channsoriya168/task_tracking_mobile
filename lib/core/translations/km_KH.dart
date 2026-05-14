@@ -299,6 +299,7 @@ const Map<String, String> kmKH = {
   'group_member': 'សមាជិក',
   'group_members': 'សមាជិក',
   'snack_group_update_fail': 'បរាជ័យក្នុងការធ្វើបច្ចុប្បន្នភាពក្រុម។',
+  'group_create_btn': 'បង្កើតក្រុម',
 
   // ── Validators ────────────────────────────────────────────────
   'val_phone_required': 'ត្រូវការលេខទូរស័ព្ទ។',

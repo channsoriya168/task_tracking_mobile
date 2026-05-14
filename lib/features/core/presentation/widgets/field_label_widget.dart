@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 class FieldLabelWidget extends StatelessWidget {
@@ -19,21 +20,15 @@ class FieldLabelWidget extends StatelessWidget {
       text: text.isNotEmpty
           ? TextSpan(
               text: text,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : kTextDark,
+              style: AppTextStyles.formLabel(
+                color: isDark ? Colors.grey[300] : kBgDark,
               ),
               children: isRequired
                   ? [
                       const TextSpan(text: ' '),
                       TextSpan(
                         text: '*',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red[400],
-                        ),
+                        style: AppTextStyles.formLabel(color: Colors.red[400]),
                       ),
                     ]
                   : [],

@@ -20,8 +20,8 @@ class NotificationEmptyWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 90,
-              height: 90,
+              width: 60,
+              height: 60,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isDark

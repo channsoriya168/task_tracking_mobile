@@ -60,7 +60,7 @@ class GroupPage extends StatelessWidget {
 
                     if (ctrl.isLoading.value || (offline && groups.isEmpty)) {
                       return ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+                        padding: const EdgeInsets.all(12),
                         itemCount: 6,
                         separatorBuilder: (_, _) => const SizedBox(height: 12),
                         itemBuilder: (_, _) =>
@@ -89,12 +89,10 @@ class GroupPage extends StatelessWidget {
                                   const SizedBox(height: 16),
                                   Text(
                                     'group_no_groups'.tr,
-                                    style: TextStyle(
-                                      fontSize: isTabletLayout ? 18 : 16,
-                                      fontWeight: FontWeight.w600,
+                                    style: AppTextStyles.subTitle(
                                       color: isDark
-                                          ? Colors.grey[500]
-                                          : kTextMuted,
+                                          ? Colors.grey[600]
+                                          : Colors.grey[400],
                                     ),
                                   ),
                                 ],
@@ -112,7 +110,7 @@ class GroupPage extends StatelessWidget {
                         color: kPrimary,
                         onRefresh: () => ctrl.fetchGroups(),
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.fromLTRB(24, 20, 24, 100),
+                          padding: const EdgeInsets.all(12),
                           child: Wrap(
                             spacing: 16,
                             runSpacing: 16,
@@ -139,7 +137,7 @@ class GroupPage extends StatelessWidget {
                       color: kPrimary,
                       onRefresh: () => ctrl.fetchGroups(),
                       child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+                        padding: const EdgeInsets.all(12),
                         itemCount: groups.length,
                         itemBuilder: (_, i) {
                           final group = groups[i];
@@ -163,7 +161,7 @@ class GroupPage extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
         onPressed: () {
@@ -182,7 +180,8 @@ class GroupPage extends StatelessWidget {
             ctrl.isOfflineDialogOpen,
           );
         },
-        child: const Icon(Icons.add_rounded),
+        label: Text('group_create_btn'.tr),
+        icon: const Icon(Icons.add_rounded),
       ),
     );
   }
