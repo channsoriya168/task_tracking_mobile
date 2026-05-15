@@ -341,7 +341,7 @@ class _StatusChip extends StatelessWidget {
           border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Text(
-          label.toUpperCase(),
+          label,
           style: AppTextStyles.subTitle(
             color: color,
           ).copyWith(fontWeight: FontWeight.w600, letterSpacing: kLs(0.5)),

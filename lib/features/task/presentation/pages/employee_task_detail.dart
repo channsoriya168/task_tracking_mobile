@@ -10,6 +10,7 @@ import 'package:task_tracking_mobile/features/task/presentation/controllers/empl
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_progress_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/build_bottom_bar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/header_card_widget.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/info_card_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/tab_section_widget.dart';
 
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_sheet_widgets.dart';
@@ -99,7 +100,7 @@ class EmployeeTaskDetailPage extends StatelessWidget {
           progressCtrl.fetchTaskProgresses(task.id),
         ]),
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
           children: [
             // ── Header card ───────────────────────────────────────
             HeaderCardWidget(task: task, isDark: isDark),
@@ -107,7 +108,12 @@ class EmployeeTaskDetailPage extends StatelessWidget {
             const SizedBox(height: 12),
 
             // ── Info card ─────────────────────────────────────────
-            _buildInfoCard(),
+            InfoCardWidget(
+              surfaceColor: surfaceColor,
+              mutedColor: mutedColor,
+              task: task,
+              isDark: isDark,
+            ),
 
             const SizedBox(height: 12),
 
@@ -129,133 +135,4 @@ class EmployeeTaskDetailPage extends StatelessWidget {
       ),
     );
   }
-
-  // ── Header card (title + status + description) ───────────────────────────
-
-  // ── Info card (detail rows grouped) ─────────────────────────────────────
-
-  Widget _buildInfoCard() {
-    final rows = <_InfoEntry>[];
-
-    if (task.groupName != null || task.labelName != null) {
-      rows.add(
-        _InfoEntry(
-          label: task.labelName != null
-              ? 'task_detail_label'.tr
-              : 'task_detail_group'.tr,
-          child: Text(
-            task.labelName!,
-            style: TextStyle(fontSize: 13.5, color: mutedColor),
-          ),
-        ),
-      );
-    }
-
-    if (task.startDate != null) {
-      rows.add(
-        _InfoEntry(
-          label: 'task_detail_start_date'.tr,
-          child: _dateText(formatDate(task.startDate!)),
-        ),
-      );
-    }
-
-    if (task.dueDate != null) {
-      rows.add(
-        _InfoEntry(
-          label: 'task_detail_due_date'.tr,
-          child: _dateText(formatDate(task.dueDate!)),
-        ),
-      );
-    }
-
-    rows.add(
-      _InfoEntry(
-        label: 'task_detail_assigned_to'.tr,
-        child: task.assignedToName != null
-            ? TaskAssigneeRow(
-                name: task.assignedToName!,
-                isDark: isDark,
-                imageUrl: task.assignedToProfileImageUrl,
-              )
-            : Text(
-                'task_detail_not_assigned'.tr,
-                style: TextStyle(fontSize: 13.5, color: mutedColor),
-              ),
-      ),
-    );
-
-    if (task.createdByEmployeeName != null) {
-      rows.add(
-        _InfoEntry(
-          label: 'task_detail_created_by'.tr,
-          child: TaskAssigneeRow(
-            name: task.createdByEmployeeName!,
-            isDark: isDark,
-            imageUrl: task.createdByProfileImageUrl,
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? kCardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          for (int i = 0; i < rows.length; i++) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-              child: _buildInfoRow(rows[i]),
-            ),
-            if (i < rows.length - 1)
-              Divider(height: 1, indent: 16, endIndent: 16, color: divColor),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(_InfoEntry entry) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(width: 10),
-        SizedBox(
-          width: 82,
-          child: Text(
-            entry.label,
-            style: TextStyle(
-              fontSize: 12,
-              color: mutedColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Align(alignment: Alignment.centerLeft, child: entry.child),
-        ),
-      ],
-    );
-  }
-
-  Widget _dateText(String text) =>
-      Text(text, style: AppTextStyles.subTitle(color: mutedColor));
-}
-
-// ── Helper ────────────────────────────────────────────────────────────────────
-
-class _InfoEntry {
-  const _InfoEntry({required this.label, required this.child});
-  final String label;
-  final Widget child;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_comment_controller.dart';
@@ -100,14 +101,7 @@ class TabSectionWidget extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             label,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontFamily: Get.locale?.languageCode == 'km'
-                                  ? 'Siemreap'
-                                  : 'Kantumruy Pro',
-                              fontWeight: active
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
+                            style: AppTextStyles.subTitle(
                               color: active ? Colors.white : muted,
                             ),
                           ),
@@ -126,10 +120,10 @@ class TabSectionWidget extends StatelessWidget {
                               ),
                               child: Text(
                                 '${counts[i]}',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w700,
-                                  color: active ? Colors.white : kPrimary,
+                                style: AppTextStyles.subTitle(
+                                  color: active
+                                      ? Colors.white
+                                      : kPrimary.withValues(alpha: 0.80),
                                 ),
                               ),
                             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
 
@@ -111,6 +112,7 @@ class TaskTransitionButton extends StatelessWidget {
     super.key,
     required this.label,
     required this.color,
+    required this.isDark,
     required this.loading,
     required this.onTap,
     this.width,
@@ -118,37 +120,61 @@ class TaskTransitionButton extends StatelessWidget {
 
   final String label;
   final Color color;
+  final bool isDark;
   final bool loading;
   final VoidCallback onTap;
   final double? width;
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = color.withValues(alpha: isDark ? 0.16 : 0.10);
+    final borderColor = color.withValues(alpha: isDark ? 0.30 : 0.22);
+    final textColor = isDark ? Colors.white : color;
+    final spinnerColor = isDark ? Colors.white : color;
+
     return SizedBox(
       width: width,
       child: ElevatedButton(
         onPressed: loading ? null : onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Colors.white,
+          backgroundColor: backgroundColor,
+          foregroundColor: textColor,
           elevation: 0,
-          minimumSize: const Size(0, 48),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shadowColor: color.withValues(alpha: 0.10),
+          minimumSize: const Size(0, 50),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          side: BorderSide(color: borderColor),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
-        child: loading
-            ? const SizedBox(
-                width: 24,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 180),
+          child: loading
+              ? SizedBox(
+                  key: const ValueKey('loading'),
+                  width: 24,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: spinnerColor,
+                  ),
+                )
+              : Row(
+                  key: const ValueKey('label'),
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        label,
+                        style: AppTextStyles.buttonLabel(color: textColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
-              )
-            : Text(
-                label,
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
-              ),
+        ),
       ),
     );
   }

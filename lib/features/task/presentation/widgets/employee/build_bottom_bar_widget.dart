@@ -33,7 +33,7 @@ class BuildBottomBarWidget extends StatelessWidget {
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, 16 + bottomPad),
+      padding: EdgeInsets.fromLTRB(12, 12, 12, 12 + bottomPad),
       decoration: BoxDecoration(
         color: isDark ? kBgDark : kBgLight,
         border: Border(top: BorderSide(color: divColor)),
@@ -46,6 +46,7 @@ class BuildBottomBarWidget extends StatelessWidget {
             width: double.infinity,
             label: 'task_accept'.tr,
             color: task.allowedTransitions.first.color,
+            isDark: isDark,
             loading: activeId == -1,
             onTap: () => ctrl.handleAccept(task),
           );
@@ -63,6 +64,7 @@ class BuildBottomBarWidget extends StatelessWidget {
                   child: TaskTransitionButton(
                     label: transitions[i].localizedName,
                     color: transitions[i].color,
+                    isDark: isDark,
                     loading: activeId == transitions[i].id,
                     onTap: () => ctrl.handleTransition(task, transitions[i]),
                   ),
@@ -83,6 +85,7 @@ class BuildBottomBarWidget extends StatelessWidget {
                   child: TaskTransitionButton(
                     label: transitions[i].localizedName,
                     color: transitions[i].color,
+                    isDark: isDark,
                     loading: activeId == transitions[i].id,
                     onTap: () => ctrl.handleTransition(task, transitions[i]),
                   ),
@@ -93,6 +96,7 @@ class BuildBottomBarWidget extends StatelessWidget {
                     child: TaskTransitionButton(
                       label: transitions[i + 1].localizedName,
                       color: transitions[i + 1].color,
+                      isDark: isDark,
                       loading: activeId == transitions[i + 1].id,
                       onTap: () =>
                           ctrl.handleTransition(task, transitions[i + 1]),
