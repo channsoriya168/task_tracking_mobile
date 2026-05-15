@@ -5,14 +5,14 @@ import 'package:task_tracking_mobile/core/utils/constants.dart';
 class ActionCardWidget extends StatelessWidget {
   const ActionCardWidget({
     super.key,
-    this.isDark,
+    required this.isDark,
     required this.icon,
     required this.title,
     required this.subtitle,
     this.actionLabel,
     this.onTap,
   });
-  final bool? isDark;
+  final bool isDark;
   final IconData icon;
   final String title;
   final String subtitle;
@@ -21,26 +21,23 @@ class ActionCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool _isDark =
-        isDark ?? Theme.of(context).brightness == Brightness.dark;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
+        onTap: onTap ?? () {},
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
           decoration: BoxDecoration(
-            color: _isDark
-                ? Colors.white.withOpacity(0.05)
-                : Colors.white.withOpacity(0.78),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.white.withValues(alpha: 0.78),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: _isDark
-                  ? Colors.white.withOpacity(0.08)
-                  : Colors.black.withOpacity(0.06),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.06),
             ),
           ),
           child: Row(
@@ -53,8 +50,8 @@ class ActionCardWidget extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      kPrimary.withOpacity(_isDark ? 0.50 : 0.20),
-                      kPrimary.withOpacity(_isDark ? 0.32 : 0.10),
+                      kPrimary.withValues(alpha: isDark ? 0.50 : 0.20),
+                      kPrimary.withValues(alpha: isDark ? 0.32 : 0.10),
                     ],
                   ),
                   shape: BoxShape.circle,
@@ -62,9 +59,9 @@ class ActionCardWidget extends StatelessWidget {
                 child: Icon(
                   icon,
                   size: 20,
-                  color: _isDark
+                  color: isDark
                       ? Colors.white
-                      : Colors.black.withOpacity(0.78),
+                      : Colors.black.withValues(alpha: 0.78),
                 ),
               ),
               const SizedBox(width: 12),
@@ -75,18 +72,18 @@ class ActionCardWidget extends StatelessWidget {
                     Text(
                       title,
                       style: AppTextStyles.buttonLabel(
-                        color: _isDark
+                        color: isDark
                             ? Colors.white
-                            : Colors.black.withOpacity(0.88),
+                            : Colors.black.withValues(alpha: 0.88),
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: AppTextStyles.caption(
-                        color: _isDark
-                            ? Colors.white.withOpacity(0.65)
-                            : Colors.black.withOpacity(0.56),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.65)
+                            : Colors.black.withValues(alpha: 0.56),
                       ),
                     ),
                   ],
@@ -103,14 +100,14 @@ class ActionCardWidget extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF2FBF71).withOpacity(0.92),
-                        const Color(0xFF21A45F).withOpacity(0.92),
+                        const Color(0xFF2FBF71).withValues(alpha: 0.92),
+                        const Color(0xFF21A45F).withValues(alpha: 0.92),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(999),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF21A45F).withOpacity(0.24),
+                        color: const Color(0xFF21A45F).withValues(alpha: 0.24),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -126,17 +123,17 @@ class ActionCardWidget extends StatelessWidget {
                   height: 28,
                   width: 28,
                   decoration: BoxDecoration(
-                    color: _isDark
-                        ? Colors.white.withOpacity(0.08)
-                        : Colors.black.withOpacity(0.05),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.05),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 13,
-                    color: _isDark
-                        ? Colors.white.withOpacity(0.80)
-                        : Colors.black.withOpacity(0.60),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.80)
+                        : Colors.black.withValues(alpha: 0.60),
                   ),
                 ),
             ],
