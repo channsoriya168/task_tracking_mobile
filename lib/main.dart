@@ -13,6 +13,7 @@ import 'package:task_tracking_mobile/core/themes/dark_theme.dart';
 import 'package:task_tracking_mobile/core/themes/light_theme.dart';
 import 'package:task_tracking_mobile/core/translations/app_translations.dart';
 import 'package:task_tracking_mobile/core/controllers/theme_controller.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,9 @@ void main() async {
   };
 
   await dotenv.load(fileName: '.env');
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Read persisted locale before the first frame to avoid a flash.
   final savedIsKhmer = await LanguageController.readSavedIsKhmer();

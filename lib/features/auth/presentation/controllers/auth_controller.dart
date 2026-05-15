@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:task_tracking_mobile/core/network/push_notification_service.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
@@ -72,25 +74,32 @@ class AuthController extends GetxController {
   Future<void> pickQrFromGallery() async {
     if (isPickingQr.value) return;
     isPickingQr.value = true;
-    final file = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (file == null) {
-      isPickingQr.value = false;
-      return;
-    }
 
-    final scanner = MobileScannerController();
+    File? tempFile;
+    MobileScannerController? scanner;
     try {
-      final capture = await scanner.analyzeImage(file.path);
+      final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
+
+      final bytes = await picked.readAsBytes();
+      final tempDir = await getTemporaryDirectory();
+      tempFile = File('${tempDir.path}/qr_scan_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      await tempFile.writeAsBytes(bytes);
+
+      // Create controller inside try so any init failure is caught and logged.
+      scanner = MobileScannerController();
+      final capture = await scanner.analyzeImage(tempFile.path);
       final raw = capture?.barcodes.firstOrNull?.rawValue;
       if (raw == null || raw.isEmpty) {
         AppSnackbar.error('login_qr_not_found'.tr, '');
         return;
       }
       await qrLogin(raw);
-    } catch (_) {
+    } catch (e, s) {
       AppSnackbar.error('login_qr_not_found'.tr, '');
     } finally {
-      await scanner.dispose();
+      await scanner?.dispose();
+      await tempFile?.delete().catchError((_) => tempFile!);
       isPickingQr.value = false;
     }
   }
