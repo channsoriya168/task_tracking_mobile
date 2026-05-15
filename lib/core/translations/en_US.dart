@@ -387,4 +387,8 @@ const Map<String, String> enUS = {
   'snack_status_updated': 'Status Updated',
   'snack_status_updated_msg': 'Task status changed to "@status"',
   'snack_something_wrong': 'Something went wrong.',
+  'attendance': 'Attendance',
+  'leave': 'Leave',
+  'check_in_and_check_out_today': 'Check in and check out today',
+  'check_in': 'Check In',
 };

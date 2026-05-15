@@ -388,4 +388,8 @@ const Map<String, String> kmKH = {
   'snack_status_updated': 'ស្ថានភាពត្រូវបានធ្វើបច្ចុប្បន្នភាព',
   'snack_status_updated_msg': 'ស្ថានភាពកិច្ចការផ្លាស់ប្ដូរទៅ "@status"',
   'snack_something_wrong': 'មានបញ្ហាមួយចំនួន។',
+  'attendance': 'កត់ត្រាវត្តមាន',
+  'leave': 'សុំច្បាប់',
+  'check_in_and_check_out_today': 'ចុះវត្តមានថ្ងៃនេះ',
+  'check_in': 'ចុះវត្តមាន',
 };

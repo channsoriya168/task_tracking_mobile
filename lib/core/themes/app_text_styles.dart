@@ -63,6 +63,10 @@ abstract class AppTextStyles {
     letterSpacing: -0.5,
     color: color,
   );
+
+  static TextStyle caption({Color? color}) =>
+      _font(fontSize: _sp(13), fontWeight: FontWeight.w500, color: color);
+
   // ── Login styles ────────────────────────────────────────────────────────
   static TextStyle loginTitle({Color? color}) => _font(
     fontSize: _sp(30),
