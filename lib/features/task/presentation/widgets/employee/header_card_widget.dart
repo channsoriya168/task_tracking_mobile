@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
@@ -31,19 +32,8 @@ class HeaderCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Colored status strip ──
-          Container(
-            height: 1,
-            decoration: BoxDecoration(
-              color: task.status.color,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-          ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 14, 0, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -63,13 +53,9 @@ class HeaderCardWidget extends StatelessWidget {
                 // ── Title ──
                 Text(
                   task.title,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                  style: AppTextStyles.title(
                     color: textColor,
-                    height: 1.3,
-                    letterSpacing: kLs(-0.3),
-                  ),
+                  ).copyWith(fontWeight: FontWeight.w600),
                 ),
                 // ── Description ──
                 if ((task.description ?? '').isNotEmpty) ...[
@@ -83,11 +69,9 @@ class HeaderCardWidget extends StatelessWidget {
                     ),
                     child: Text(
                       task.description!,
-                      style: TextStyle(
-                        fontSize: 13.5,
+                      style: AppTextStyles.subTitle(
                         color: mutedColor,
-                        height: 1.6,
-                      ),
+                      ).copyWith(height: 1.6),
                     ),
                   ),
                 ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
+import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 
 class PriorityBadgeWidget extends StatelessWidget {
@@ -14,10 +16,9 @@ class PriorityBadgeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: task.priority.color.withValues(alpha: isDark ? 0.2 : 0.1),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: task.priority.color.withValues(alpha: 0.4)),
       ),
       child: Row(
@@ -34,11 +35,9 @@ class PriorityBadgeWidget extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             task.priority.localizedName,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            style: AppTextStyles.subTitle(
               color: task.priority.color,
-            ),
+            ).copyWith(fontWeight: FontWeight.w600, letterSpacing: kLs(0.2)),
           ),
         ],
       ),

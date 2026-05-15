@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
@@ -75,10 +76,7 @@ class EmployeeTaskDetailPage extends StatelessWidget {
         ),
         title: Text(
           'task_detail_title'.tr,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : kTextDark,
-          ),
+          style: AppTextStyles.appBarTitle(color: kPrimary),
         ),
       ),
       bottomNavigationBar:
@@ -101,7 +99,7 @@ class EmployeeTaskDetailPage extends StatelessWidget {
           progressCtrl.fetchTaskProgresses(task.id),
         ]),
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
           children: [
             // ── Header card ───────────────────────────────────────
             HeaderCardWidget(task: task, isDark: isDark),
@@ -142,7 +140,6 @@ class EmployeeTaskDetailPage extends StatelessWidget {
     if (task.groupName != null || task.labelName != null) {
       rows.add(
         _InfoEntry(
-          icon: Icons.label_outline_rounded,
           label: task.labelName != null
               ? 'task_detail_label'.tr
               : 'task_detail_group'.tr,
@@ -157,7 +154,6 @@ class EmployeeTaskDetailPage extends StatelessWidget {
     if (task.startDate != null) {
       rows.add(
         _InfoEntry(
-          icon: Icons.play_circle_outline_rounded,
           label: 'task_detail_start_date'.tr,
           child: _dateText(formatDate(task.startDate!)),
         ),
@@ -167,7 +163,6 @@ class EmployeeTaskDetailPage extends StatelessWidget {
     if (task.dueDate != null) {
       rows.add(
         _InfoEntry(
-          icon: Icons.event_rounded,
           label: 'task_detail_due_date'.tr,
           child: _dateText(formatDate(task.dueDate!)),
         ),
@@ -176,7 +171,6 @@ class EmployeeTaskDetailPage extends StatelessWidget {
 
     rows.add(
       _InfoEntry(
-        icon: Icons.person_outline_rounded,
         label: 'task_detail_assigned_to'.tr,
         child: task.assignedToName != null
             ? TaskAssigneeRow(
@@ -194,7 +188,6 @@ class EmployeeTaskDetailPage extends StatelessWidget {
     if (task.createdByEmployeeName != null) {
       rows.add(
         _InfoEntry(
-          icon: Icons.person_add_alt_1_outlined,
           label: 'task_detail_created_by'.tr,
           child: TaskAssigneeRow(
             name: task.createdByEmployeeName!,
@@ -236,7 +229,6 @@ class EmployeeTaskDetailPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(entry.icon, size: 15, color: kPrimary),
         const SizedBox(width: 10),
         SizedBox(
           width: 82,
@@ -256,25 +248,14 @@ class EmployeeTaskDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _dateText(String text) => Text(
-    text,
-    style: TextStyle(
-      fontSize: 13.5,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
-  );
+  Widget _dateText(String text) =>
+      Text(text, style: AppTextStyles.subTitle(color: mutedColor));
 }
 
 // ── Helper ────────────────────────────────────────────────────────────────────
 
 class _InfoEntry {
-  const _InfoEntry({
-    required this.icon,
-    required this.label,
-    required this.child,
-  });
-  final IconData icon;
+  const _InfoEntry({required this.label, required this.child});
   final String label;
   final Widget child;
 }

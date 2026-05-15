@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 
 /// Reusable status badge pill — color driven by [kStatusColors].
@@ -20,20 +21,16 @@ class StatusBadgeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = color ?? kStatusColors[label] ?? kPrimary;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 6),
       decoration: BoxDecoration(
-        color: c.withValues(alpha: isDark ? 0.18 : 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: c.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
+        style: AppTextStyles.subTitle(
           color: c,
-          letterSpacing: kLs(0.1),
-        ),
+        ).copyWith(fontWeight: FontWeight.w600, letterSpacing: kLs(0.2)),
       ),
     );
   }
