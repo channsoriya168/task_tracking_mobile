@@ -28,11 +28,11 @@ class ProfileInfoCard extends StatelessWidget {
 
     final items = [
       if (email.isNotEmpty) (Icons.alternate_email_rounded, kPrimary, email),
-      (Icons.phone_rounded, kPrimary, phone.isEmpty ? '—' : phone),
+      (Icons.phone_rounded, kPrimary, phone.isEmpty ? '' : phone),
       (
         Icons.location_on_rounded,
         kPrimary,
-        placeOfBirth.isEmpty ? '—' : placeOfBirth,
+        placeOfBirth.isEmpty ? '' : placeOfBirth,
       ),
       if (dateStr != null) (Icons.cake_rounded, kPrimary, dateStr),
     ];

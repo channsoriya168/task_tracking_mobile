@@ -6,6 +6,7 @@ import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/lookup/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/stacked_avatars_widget.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class EmployeeTaskCard extends StatelessWidget {
@@ -45,10 +46,6 @@ class EmployeeTaskCard extends StatelessWidget {
         arguments: {'task': task, 'isDark': isDark, 'readOnly': readOnly},
       );
     }
-
-    final isNew =
-        task.createdAt != null &&
-        DateTime.now().difference(task.createdAt!).inHours < 24;
 
     final statusColor = task.status.color;
 
@@ -109,7 +106,7 @@ class EmployeeTaskCard extends StatelessWidget {
                 // ── Card content ───────────────────────────────
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -127,50 +124,10 @@ class EmployeeTaskCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (isNew) ...[
-                              const SizedBox(width: 6),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFF22C55E,
-                                  ).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(999),
-                                  border: Border.all(
-                                    color: const Color(
-                                      0xFF22C55E,
-                                    ).withValues(alpha: 0.16),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFF22C55E),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'task_new'.tr,
-                                      style:
-                                          AppTextStyles.subTitle(
-                                            color: const Color(0xFF16A34A),
-                                          ).copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: kLs(0.2),
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                            StackedAvatarsWidget(
+                              task: task,
+                              mutedColor: isDark ? Colors.white54 : kTextMuted,
+                            ),
                           ],
                         ),
 
@@ -188,7 +145,7 @@ class EmployeeTaskCard extends StatelessWidget {
                           ),
                         ],
 
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 12),
 
                         // ── Bottom row: avatar + action ────────
                         Row(
