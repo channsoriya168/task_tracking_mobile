@@ -391,4 +391,12 @@ const Map<String, String> enUS = {
   'leave': 'Leave',
   'check_in_and_check_out_today': 'Check in and check out today',
   'check_in': 'Check In',
+  'apply_for_leave': 'Apply for leave',
+  'recent_tasks': 'Recent Tasks',
+  'all_tasks': 'All Tasks',
+  'my_tasks': 'My Tasks',
+  'employees': 'Employees',
+  'dashboard': 'Dashboard',
+  'absent': 'Absences',
+  'today': 'Today',
 };

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/middleware/auth_middleware.dart';
+import 'package:task_tracking_mobile/features/attendence/presentation/pages/attendance_page.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/bindings/splash_binding.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/pages/login_page.dart';
@@ -39,5 +40,6 @@ class AppPages {
         );
       },
     ),
+    GetPage(name: AppRoutes.attendance, page: () => AttendancePage()),
   ];
 }

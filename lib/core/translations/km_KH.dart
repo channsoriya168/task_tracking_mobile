@@ -392,4 +392,13 @@ const Map<String, String> kmKH = {
   'leave': 'សុំច្បាប់',
   'check_in_and_check_out_today': 'ចុះវត្តមានថ្ងៃនេះ',
   'check_in': 'ចុះវត្តមាន',
+  'apply_for_leave': 'ស្នើសុំច្បាប់',
+  'recent_tasks': 'កិច្ចការថ្មីៗ',
+  'quick_actions': 'សកម្មភាពរហ័ស',
+  'all_tasks': 'កិច្ចការទាំងអស់',
+  'my_tasks': 'កិច្ចការរបស់ខ្ញុំ',
+  'employees': 'បុគ្គលិកទាំងអស់',
+  'absent': 'អវត្តមាន',
+  'today': 'ថ្ងៃនេះ',
+  'dashboard': 'ផ្ទាំងបង្ហាញ់',
 };

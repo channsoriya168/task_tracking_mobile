@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/utils/constants.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
-import 'package:task_tracking_mobile/features/dashboard/widgets/action_card_widget.dart';
-import 'package:task_tracking_mobile/features/dashboard/widgets/sticky_toolbar_delegate_widget.dart';
-import 'package:task_tracking_mobile/features/dashboard/widgets/task_card_shimmer.dart';
 import 'package:task_tracking_mobile/features/dashboard/controllers/employee_home_controller.dart';
+import 'package:task_tracking_mobile/features/dashboard/widgets/action_card_widget.dart';
+import 'package:task_tracking_mobile/features/dashboard/widgets/task_card_shimmer.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
+import 'package:task_tracking_mobile/features/task/presentation/pages/employee_task_page.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/employee_task_card.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_empty_state.dart';
-import 'package:task_tracking_mobile/features/task/presentation/pages/employee_task_page.dart';
+import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
+import 'package:task_tracking_mobile/routes/app_routes.dart';
 
 class EmployeeHomePage extends StatelessWidget {
   const EmployeeHomePage({super.key});
@@ -22,6 +22,12 @@ class EmployeeHomePage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Task Tracking',
+          style: AppTextStyles.appBarTitle(color: kPrimary),
+        ),
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -30,33 +36,22 @@ class EmployeeHomePage extends StatelessWidget {
           },
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: isDark
-                            ? [const Color(0xFF171826), const Color(0xFF10111A)]
-                            : [Colors.white, const Color(0xFFF7F9FF)],
-                      ),
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.10)
-                            : Colors.black.withValues(alpha: 0.05),
-                      ),
+                      color: isDark ? kBgDark : kBgLight,
+                      borderRadius: BorderRadius.circular(26),
                       boxShadow: [
                         BoxShadow(
                           color: isDark
-                              ? Colors.black.withValues(alpha: 0.30)
-                              : kPrimary.withValues(alpha: 0.12),
-                          blurRadius: 24,
-                          offset: const Offset(0, 10),
+                              ? Colors.black.withValues(alpha: 0.22)
+                              : Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 20,
+                          offset: const Offset(0, 12),
                         ),
                       ],
                     ),
@@ -66,58 +61,82 @@ class EmployeeHomePage extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              height: 34,
-                              width: 34,
+                              height: 40,
+                              width: 40,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
                                     kPrimary.withValues(alpha: 0.90),
-                                    const Color(0xFF8B84FF),
+                                    kPrimary.withValues(alpha: 0.70),
                                   ],
                                 ),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: kPrimary.withValues(alpha: 0.12),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
                               ),
                               child: const Icon(
                                 Icons.dashboard_customize_rounded,
-                                size: 18,
+                                size: 19,
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            Text(
-                              'quick_actions'.tr,
-                              style: AppTextStyles.buttonLabel(
-                                color: isDark
-                                    ? Colors.white
-                                    : Colors.black.withValues(alpha: 0.90),
-                              ),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'dashboard'.tr,
+                                  style: AppTextStyles.appBarTitle(
+                                    color: kPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                              ],
                             ),
                             const Spacer(),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
+                                horizontal: 12,
+                                vertical: 5,
                               ),
                               decoration: BoxDecoration(
-                                color: kPrimary.withValues(
-                                  alpha: isDark ? 0.22 : 0.10,
+                                gradient: LinearGradient(
+                                  colors: isDark
+                                      ? [
+                                          Colors.white.withValues(alpha: 0.08),
+                                          Colors.white.withValues(alpha: 0.03),
+                                        ]
+                                      : [
+                                          Colors.black.withValues(alpha: 0.02),
+                                          Colors.black.withValues(alpha: 0.01),
+                                        ],
                                 ),
                                 borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.06)
+                                      : Colors.black.withValues(alpha: 0.05),
+                                ),
                               ),
                               child: Text(
                                 'today'.tr,
-                                style: AppTextStyles.caption(
+                                style: AppTextStyles.subTitle(
                                   color: isDark
                                       ? Colors.white
-                                      : kPrimary.withValues(alpha: 0.90),
+                                      : Colors.black.withValues(alpha: 0.58),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 10),
                         Obx(() {
                           final allTasks = homeCtrl.allTasks;
                           final employeeId = Get.find<ProfileController>()
@@ -135,22 +154,9 @@ class EmployeeHomePage extends StatelessWidget {
                               .where((id) => id.trim().isNotEmpty)
                               .toSet()
                               .length;
-                          final doneCount = _countCompletedTasks(allTasks);
 
-                          return Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.03)
-                                  : kPrimary.withValues(alpha: 0.035),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.07)
-                                    : kPrimary.withValues(alpha: 0.11),
-                              ),
-                            ),
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 2),
                             child: LayoutBuilder(
                               builder: (context, constraints) {
                                 final itemWidth =
@@ -162,34 +168,44 @@ class EmployeeHomePage extends StatelessWidget {
                                     _buildMetricChip(
                                       isDark: isDark,
                                       width: itemWidth,
-                                      title: 'My Tasks',
-                                      value: myTasksCount,
-                                      icon: Icons.assignment_ind_rounded,
-                                      accent: const Color(0xFF6D5DF6),
-                                    ),
-                                    _buildMetricChip(
-                                      isDark: isDark,
-                                      width: itemWidth,
-                                      title: 'All Tasks',
+                                      title: 'all_tasks'.tr,
                                       value: allTasksCount,
                                       icon: Icons.fact_check_rounded,
-                                      accent: const Color(0xFF00A8E8),
                                     ),
                                     _buildMetricChip(
                                       isDark: isDark,
                                       width: itemWidth,
-                                      title: 'Employees',
+                                      title: 'my_tasks'.tr,
+                                      value: myTasksCount,
+                                      icon: Icons.assignment_ind_rounded,
+                                    ),
+                                    _buildMetricChip(
+                                      isDark: isDark,
+                                      width: itemWidth,
+                                      title: 'employees'.tr,
                                       value: employeesCount,
                                       icon: Icons.group_rounded,
-                                      accent: const Color(0xFFFF9F1C),
                                     ),
                                     _buildMetricChip(
                                       isDark: isDark,
                                       width: itemWidth,
-                                      title: 'Completed',
-                                      value: doneCount,
+                                      title: 'attendance'.tr,
+                                      value: 0,
                                       icon: Icons.check_circle_rounded,
-                                      accent: const Color(0xFF2FBF71),
+                                    ),
+                                    _buildMetricChip(
+                                      isDark: isDark,
+                                      width: itemWidth,
+                                      title: 'leave'.tr,
+                                      value: 0,
+                                      icon: Icons.check_circle_rounded,
+                                    ),
+                                    _buildMetricChip(
+                                      isDark: isDark,
+                                      width: itemWidth,
+                                      title: 'absent'.tr,
+                                      value: 0,
+                                      icon: Icons.check_circle_rounded,
                                     ),
                                   ],
                                 );
@@ -200,7 +216,6 @@ class EmployeeHomePage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  //action
                   const SizedBox(height: 10),
                   ActionCardWidget(
                     isDark: isDark,
@@ -218,6 +233,73 @@ class EmployeeHomePage extends StatelessWidget {
                     actionLabel: 'check_in'.tr,
                     onTap: () {},
                   ),
+                  const SizedBox(height: 10),
+                  ActionCardWidget(
+                    isDark: isDark,
+                    icon: Icons.access_time_filled_rounded,
+                    title: 'leave'.tr,
+                    subtitle: 'apply_for_leave'.tr,
+                    onTap: () => Get.to(() => AppRoutes.attendance),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(
+                        'recent_tasks'.tr,
+                        style: AppTextStyles.buttonLabel(
+                          color: isDark
+                              ? Colors.white
+                              : Colors.black.withValues(alpha: 0.90),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                  Obx(
+                    () => WeekCalendarWidget(
+                      isDark: isDark,
+                      selectedDate: homeCtrl.selectedDate.value,
+                      onDateSelected: homeCtrl.selectDate,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TaskFilterBarWidget(
+                    isDark: isDark,
+                    filterStatus: homeCtrl.filterStatus,
+                    taskStatus: homeCtrl.taskStatus,
+                    allTasks: homeCtrl.allTasks,
+                    onSelectStatus: homeCtrl.selectStatus,
+                  ),
+                  const SizedBox(height: 10),
+                  Obx(() {
+                    final tasks = homeCtrl.filteredTasks;
+                    if (homeCtrl.isLoading.value) {
+                      return Column(
+                        children: List.generate(
+                          3,
+                          (index) => TaskCardShimmer(isDark: isDark),
+                        ),
+                      );
+                    } else if (tasks.isEmpty) {
+                      return TaskEmptyState(isDark: isDark);
+                    } else {
+                      return Column(
+                        children: tasks
+                            .map(
+                              (t) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 6,
+                                ),
+                                child: EmployeeTaskCard(
+                                  task: t,
+                                  isDark: isDark,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }
+                  }),
                 ],
               ),
             ),
@@ -227,53 +309,43 @@ class EmployeeHomePage extends StatelessWidget {
     );
   }
 
-  int _countCompletedTasks(List<dynamic> tasks) {
-    bool isDoneStatus(String statusName) {
-      final n = statusName.trim().toLowerCase();
-      return n == 'done' ||
-          n == 'completed' ||
-          n == 'complete' ||
-          n == 'resolved' ||
-          n == 'closed';
-    }
-
-    return tasks
-        .where((t) => t.status.name.isNotEmpty && isDoneStatus(t.status.name))
-        .length;
-  }
-
   Widget _buildMetricChip({
     required bool isDark,
     required double width,
     required String title,
     required int value,
     required IconData icon,
-    required Color accent,
   }) {
     return Container(
       width: width,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? kBgDark : kBgLight,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isDark
               ? Colors.white.withValues(alpha: 0.08)
-              : accent.withValues(alpha: 0.18),
+              : Colors.black.withValues(alpha: 0.06),
         ),
       ),
       child: Row(
         children: [
           Container(
-            height: 28,
-            width: 28,
+            height: 32,
+            width: 32,
             decoration: BoxDecoration(
-              color: accent.withValues(alpha: isDark ? 0.25 : 0.14),
-              borderRadius: BorderRadius.circular(8),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, size: 16, color: isDark ? Colors.white : accent),
+            child: Icon(
+              icon,
+              size: 17,
+              color: isDark ? Colors.white : kPrimary,
+            ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,10 +354,10 @@ class EmployeeHomePage extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.caption(
+                  style: AppTextStyles.subTitle(
                     color: isDark
-                        ? Colors.white.withValues(alpha: 0.72)
-                        : Colors.black.withValues(alpha: 0.62),
+                        ? Colors.white.withValues(alpha: 0.74)
+                        : Colors.black.withValues(alpha: 0.58),
                   ),
                 ),
                 const SizedBox(height: 1),
@@ -294,7 +366,7 @@ class EmployeeHomePage extends StatelessWidget {
                   style: AppTextStyles.buttonLabel(
                     color: isDark
                         ? Colors.white
-                        : Colors.black.withValues(alpha: 0.88),
+                        : Colors.black.withValues(alpha: 0.90),
                   ),
                 ),
               ],

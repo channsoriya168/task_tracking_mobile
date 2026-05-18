@@ -46,24 +46,21 @@ class TaskFilterBarWidget extends StatelessWidget {
               .length,
       };
 
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              for (int i = 0; i < statusItems.length; i++) ...[
-                if (i > 0) const SizedBox(width: 8),
-                FilterChipWidget(
-                  isDark: isDark,
-                  filter: _statusTrKey(statusItems[i]?.name).tr,
-                  count: counts[statusItems[i]?.name ?? 'All'] ?? 0,
-                  selected: selected == (statusItems[i]?.name ?? 'All'),
-                  onTap: () => onSelectStatus(statusItems[i]),
-                ),
-              ],
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            for (int i = 0; i < statusItems.length; i++) ...[
+              if (i > 0) const SizedBox(width: 8),
+              FilterChipWidget(
+                isDark: isDark,
+                filter: _statusTrKey(statusItems[i]?.name).tr,
+                count: counts[statusItems[i]?.name ?? 'All'] ?? 0,
+                selected: selected == (statusItems[i]?.name ?? 'All'),
+                onTap: () => onSelectStatus(statusItems[i]),
+              ),
             ],
-          ),
+          ],
         ),
       );
     });
