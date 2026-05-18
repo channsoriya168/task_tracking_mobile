@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/core/network/api_client.dart';
-import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/constants/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/label/data/models/label_model.dart';
 
 class LabelRemoteDatasource {

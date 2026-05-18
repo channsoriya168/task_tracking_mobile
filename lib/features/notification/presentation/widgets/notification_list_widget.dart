@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/date_section_widget.dart';
@@ -58,11 +58,14 @@ class NotificationListWidget extends StatelessWidget {
                 }
                 final taskId = notification.taskId;
                 if (taskId != null && taskId.isNotEmpty) {
-                  final initialTab = notification.type ==
-                      NotificationType.taskCommented
+                  final initialTab =
+                      notification.type == NotificationType.taskCommented
                       ? 1
                       : 0;
-                  await controller.openTaskDetail(taskId, initialTab: initialTab);
+                  await controller.openTaskDetail(
+                    taskId,
+                    initialTab: initialTab,
+                  );
                 }
               },
               onDismissed: () {

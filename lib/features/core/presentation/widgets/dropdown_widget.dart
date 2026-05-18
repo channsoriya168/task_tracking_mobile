@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 class DropdownWidget<T> extends StatelessWidget {
   const DropdownWidget({

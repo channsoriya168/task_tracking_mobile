@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_detail_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_body_widget.dart';
 

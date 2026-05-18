@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/constants/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
 import 'package:task_tracking_mobile/features/notification/domain/repositories/notification_repository.dart';

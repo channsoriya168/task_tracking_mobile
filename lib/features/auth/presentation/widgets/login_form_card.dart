@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/pages/qr_scanner_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_error_banner.dart';
@@ -74,7 +74,9 @@ class LoginFormCard extends StatelessWidget {
             return SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: busy ? null : () => Get.to(() => const QrScannerPage()),
+                onPressed: busy
+                    ? null
+                    : () => Get.to(() => const QrScannerPage()),
                 icon: (auth.isLoading.value && !auth.isPickingQr.value)
                     ? const SizedBox(
                         width: 18,
@@ -121,9 +123,7 @@ class LoginFormCard extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kPrimary,
                   side: BorderSide(
-                    color: busy
-                        ? kPrimary.withValues(alpha: 0.4)
-                        : kPrimary,
+                    color: busy ? kPrimary.withValues(alpha: 0.4) : kPrimary,
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(

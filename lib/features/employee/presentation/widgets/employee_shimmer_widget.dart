@@ -1,7 +1,7 @@
 // ── Employee Shimmer Skeletons ────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 // ── List card skeleton ─────────────────────────────────────────
 class EmployeeCardShimmer extends StatelessWidget {
@@ -12,7 +12,9 @@ class EmployeeCardShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final base = isDark ? const Color(0xFF2A2A3A) : const Color(0xFFE8E8EE);
-    final highlight = isDark ? const Color(0xFF3A3A4E) : const Color(0xFFF5F5FA);
+    final highlight = isDark
+        ? const Color(0xFF3A3A4E)
+        : const Color(0xFFF5F5FA);
 
     return Shimmer.fromColors(
       baseColor: base,
@@ -60,7 +62,9 @@ class EmployeeGridCardShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final base = isDark ? const Color(0xFF2A2A3A) : const Color(0xFFE8E8EE);
-    final highlight = isDark ? const Color(0xFF3A3A4E) : const Color(0xFFF5F5FA);
+    final highlight = isDark
+        ? const Color(0xFF3A3A4E)
+        : const Color(0xFFF5F5FA);
 
     return Shimmer.fromColors(
       baseColor: base,

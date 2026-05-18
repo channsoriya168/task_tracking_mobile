@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/language_switcher_widget.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_form_card.dart';
 
@@ -22,7 +22,9 @@ class LoginTabletPage extends StatelessWidget {
               child: LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(32),

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/core/network/api_client.dart';
-import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/constants/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/task/data/models/task_item_model.dart';
 import 'package:task_tracking_mobile/features/task/data/models/task_comment_model.dart';
 import 'package:task_tracking_mobile/features/task/data/models/task_member_model.dart';

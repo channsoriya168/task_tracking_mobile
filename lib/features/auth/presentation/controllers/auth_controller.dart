@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:task_tracking_mobile/core/network/push_notification_service.dart';
+import 'package:task_tracking_mobile/core/services/push_notification_service.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
@@ -13,7 +13,7 @@ import 'package:task_tracking_mobile/features/auth/domain/usecases/generate_qr_u
 import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/qr_login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
-import 'package:task_tracking_mobile/core/enums/user_role.dart';
+import 'package:task_tracking_mobile/core/constants/user_role.dart';
 import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 
@@ -83,7 +83,9 @@ class AuthController extends GetxController {
 
       final bytes = await picked.readAsBytes();
       final tempDir = await getTemporaryDirectory();
-      tempFile = File('${tempDir.path}/qr_scan_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      tempFile = File(
+        '${tempDir.path}/qr_scan_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
       await tempFile.writeAsBytes(bytes);
 
       // Create controller inside try so any init failure is caught and logged.

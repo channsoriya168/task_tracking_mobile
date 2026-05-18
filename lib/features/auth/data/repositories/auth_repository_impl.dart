@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:task_tracking_mobile/core/network/local/storage_service.dart';
+import 'package:task_tracking_mobile/core/services/storage_service.dart';
 import 'package:task_tracking_mobile/core/utils/dio_error_mapper.dart';
 import 'package:task_tracking_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';

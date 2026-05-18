@@ -1,6 +1,6 @@
 // ── Position Tile ─────────────────────────────────────────────
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 class TaskGroupTitleWidget extends StatelessWidget {
   final bool isDark;

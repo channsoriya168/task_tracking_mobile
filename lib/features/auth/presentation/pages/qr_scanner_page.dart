@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 
 class QrScannerPage extends StatelessWidget {
@@ -30,9 +30,7 @@ class QrScannerPage extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        iconTheme: IconThemeData(
-          color: isDark ? Colors.white : kTextDark,
-        ),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : kTextDark),
         elevation: 0,
       ),
       body: Stack(

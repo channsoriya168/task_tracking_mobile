@@ -1,7 +1,7 @@
 // ── Shared Dialog Text Field ───────────────────────────────────
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({

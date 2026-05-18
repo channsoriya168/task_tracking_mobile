@@ -4,7 +4,7 @@ import 'package:get/get.dart' hide Response;
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
-import 'local/storage_service.dart';
+import '../services/storage_service.dart';
 
 class ApiClient {
   static final ApiClient instance = ApiClient._internal();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
-import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/controllers/label_controller.dart';
@@ -212,12 +212,11 @@ class LabelPage extends StatelessWidget {
                                         label.description!,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style:
-                                            AppTextStyles.inputText(
-                                              color: isDark
-                                                  ? Colors.grey[400]
-                                                  : kTextMuted,
-                                            ).copyWith(height: 1.35),
+                                        style: AppTextStyles.inputText(
+                                          color: isDark
+                                              ? Colors.grey[400]
+                                              : kTextMuted,
+                                        ).copyWith(height: 1.35),
                                       ),
                                     ],
                                   ],

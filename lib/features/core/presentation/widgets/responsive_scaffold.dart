@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/utils/responsive.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/nav_item.dart';
 import 'package:task_tracking_mobile/features/core/presentation/widgets/navigation/bottom_nav_bar_widget.dart';

@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 class EmployeeTaskCardShimmer extends StatelessWidget {
   const EmployeeTaskCardShimmer({required this.isDark});

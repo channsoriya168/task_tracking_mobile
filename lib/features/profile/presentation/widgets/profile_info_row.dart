@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 class ProfileInfoRow extends StatelessWidget {
   const ProfileInfoRow({
@@ -48,9 +48,7 @@ class ProfileInfoRow extends StatelessWidget {
             height: 1,
             indent: 0,
             endIndent: 0,
-            color: isDark
-                ? Colors.white.withAlpha(10)
-                : Colors.grey.shade200,
+            color: isDark ? Colors.white.withAlpha(10) : Colors.grey.shade200,
           ),
       ],
     );

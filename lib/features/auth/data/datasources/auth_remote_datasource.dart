@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:task_tracking_mobile/core/network/api_client.dart';
-import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/constants/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/auth/data/models/auth_model.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/auth.dart';
 import 'package:task_tracking_mobile/features/auth/domain/entities/qr_code.dart';

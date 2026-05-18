@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 class GroupShimmerWidget extends StatefulWidget {
   const GroupShimmerWidget({super.key, required this.isDark});
@@ -37,11 +37,27 @@ class _GroupShimmerWidgetState extends State<GroupShimmerWidget>
       animation: _anim,
       builder: (_, _) {
         final base = widget.isDark
-            ? Color.lerp(const Color(0xFF2A2A2A), const Color(0xFF3A3A3A), _anim.value)!
-            : Color.lerp(const Color(0xFFE8E8E8), const Color(0xFFF4F4F4), _anim.value)!;
+            ? Color.lerp(
+                const Color(0xFF2A2A2A),
+                const Color(0xFF3A3A3A),
+                _anim.value,
+              )!
+            : Color.lerp(
+                const Color(0xFFE8E8E8),
+                const Color(0xFFF4F4F4),
+                _anim.value,
+              )!;
         final accent = widget.isDark
-            ? Color.lerp(const Color(0xFF333333), const Color(0xFF444444), _anim.value)!
-            : Color.lerp(const Color(0xFFDDDDDD), const Color(0xFFEEEEEE), _anim.value)!;
+            ? Color.lerp(
+                const Color(0xFF333333),
+                const Color(0xFF444444),
+                _anim.value,
+              )!
+            : Color.lerp(
+                const Color(0xFFDDDDDD),
+                const Color(0xFFEEEEEE),
+                _anim.value,
+              )!;
 
         return Container(
           decoration: BoxDecoration(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 /// A reusable circular avatar that shows a [NetworkImage] when [imageUrl] is
 /// provided, or falls back to 1- or 2-letter initials derived from [name].

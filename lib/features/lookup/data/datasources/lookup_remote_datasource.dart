@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:task_tracking_mobile/core/network/api_client.dart';
-import 'package:task_tracking_mobile/core/network/api_endpoints.dart';
+import 'package:task_tracking_mobile/core/constants/api_endpoints.dart';
 import 'package:task_tracking_mobile/features/lookup/data/models/lookup_gender_model.dart';
 import 'package:task_tracking_mobile/features/lookup/data/models/task_priority_model.dart';
 import 'package:task_tracking_mobile/features/lookup/data/models/task_item_status_model.dart';

@@ -1,7 +1,7 @@
 // ── Task Shimmer Skeleton ─────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 
 // ── Single task card skeleton ─────────────────────────────────
 class TaskShimmerWidget extends StatelessWidget {

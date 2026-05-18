@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/notification/domain/entities/notification_entity.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/delete_notification_dialog.dart';
 
@@ -119,13 +119,13 @@ class NotificationTile extends StatelessWidget {
                                     const SizedBox(width: 4),
                                     Text(
                                       _relativeTime(notification.createdAt),
-                                      style:
-                                          theme.textTheme.labelSmall?.copyWith(
-                                        color: isDark
-                                            ? Colors.white38
-                                            : const Color(0xFF94A3B8),
-                                        fontWeight: FontWeight.w400,
-                                      ),
+                                      style: theme.textTheme.labelSmall
+                                          ?.copyWith(
+                                            color: isDark
+                                                ? Colors.white38
+                                                : const Color(0xFF94A3B8),
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                     ),
                                   ],
                                 ),

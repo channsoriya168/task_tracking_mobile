@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/core/network/local/theme_storage.dart';
+import 'package:task_tracking_mobile/core/services/theme_storage.dart';
 
 class ThemeController extends GetxController {
   final _isDark = false.obs;

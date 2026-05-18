@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/language_switcher_widget.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_bg_circles.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/widgets/login_form_card.dart';

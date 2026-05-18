@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
-import 'package:task_tracking_mobile/core/themes/app_text_styles.dart';
-import 'package:task_tracking_mobile/core/utils/constants.dart';
+import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
+import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/dashboard/widgets/sticky_toolbar_delegate_widget.dart';
 import 'package:task_tracking_mobile/features/dashboard/widgets/task_card_shimmer.dart';
 import 'package:task_tracking_mobile/features/dashboard/controllers/employee_home_controller.dart';
