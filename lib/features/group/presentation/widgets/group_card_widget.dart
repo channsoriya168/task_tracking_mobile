@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/core/widgets/confirm_delete_dialog.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
 import 'package:task_tracking_mobile/features/group/presentation/widgets/group_dialog.dart';
 

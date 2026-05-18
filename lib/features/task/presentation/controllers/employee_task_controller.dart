@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/main/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/lookup/domain/entities/task_item_status.dart';
 import 'package:task_tracking_mobile/features/lookup/domain/usecases/fetch_task_statuses_usecase.dart';
@@ -192,7 +192,10 @@ class EmployeeTaskController extends GetxController {
     }
   }
 
-  Future<void> handleTransition(TaskItem task, TaskStatusLookup newStatus) async {
+  Future<void> handleTransition(
+    TaskItem task,
+    TaskStatusLookup newStatus,
+  ) async {
     if (transitionLoadingId.value != null) return;
     transitionLoadingId.value = newStatus.id;
     final success = await transitionTask(task, newStatus);
@@ -201,7 +204,9 @@ class EmployeeTaskController extends GetxController {
       Get.back();
       AppSnackbar.update(
         'snack_status_updated'.tr,
-        'snack_status_updated_msg'.trParams({'status': newStatus.localizedName}),
+        'snack_status_updated_msg'.trParams({
+          'status': newStatus.localizedName,
+        }),
       );
     }
   }

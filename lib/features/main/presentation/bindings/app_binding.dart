@@ -27,7 +27,7 @@ import 'package:task_tracking_mobile/features/label/domain/usecases/delete_label
 import 'package:task_tracking_mobile/features/label/presentation/controllers/label_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/bindings/task_binding.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/main/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/dashboard/bindings/employee_binding.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/notification/data/datasources/notification_remote_datasource.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/status_badge_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/status_badge_widget.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/priority_badge_widget.dart';
 

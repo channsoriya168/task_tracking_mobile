@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/core/widgets/confirm_delete_dialog.dart';
 
 Future<bool> confirmDeleteEmployee(BuildContext context, String name) async {
   final result = await showConfirmDeleteDialog(

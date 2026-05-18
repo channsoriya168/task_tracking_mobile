@@ -5,7 +5,7 @@ import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/label/domain/entities/label.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/controllers/label_controller.dart';
 
 Future<void> showLabelDialog(

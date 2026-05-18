@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_tracking_mobile/features/core/data/datasources/image_service.dart';
+import 'package:task_tracking_mobile/core/services/image_service.dart';
 
-class PickAndCompressImageUseCase {
+class PickAndCompressImageHelper {
   final ImageService service;
 
-  PickAndCompressImageUseCase(this.service);
+  PickAndCompressImageHelper(this.service);
 
   Future<File?> call(ImageSource source) async {
     final picked = await service.pickImage(source);

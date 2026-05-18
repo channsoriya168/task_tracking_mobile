@@ -7,7 +7,7 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/confirm_delete_dialog_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_detail_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_actions_row.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_date_row.dart';

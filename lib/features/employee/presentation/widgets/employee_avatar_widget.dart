@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/user_avatar_widget.dart';
 
 class EmployeeAvatarWidget extends StatelessWidget {
   const EmployeeAvatarWidget({

@@ -14,7 +14,7 @@ import 'package:task_tracking_mobile/features/auth/domain/usecases/logout_usecas
 import 'package:task_tracking_mobile/features/auth/domain/usecases/qr_login_usecase.dart';
 import 'package:task_tracking_mobile/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:task_tracking_mobile/core/constants/user_role.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/main/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/controllers/profile_controller.dart';
 
 class AuthController extends GetxController {

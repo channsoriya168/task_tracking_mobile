@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_comment.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/user_avatar_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/user_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_comment_controller.dart';
 
 class TaskCommentsTab extends StatelessWidget {

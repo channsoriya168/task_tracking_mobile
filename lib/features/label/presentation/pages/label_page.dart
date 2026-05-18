@@ -8,7 +8,7 @@ import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/controllers/label_controller.dart';
 import 'package:task_tracking_mobile/features/label/presentation/widgets/label_dialog.dart';
 import 'package:task_tracking_mobile/features/label/presentation/widgets/label_shimmer_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:task_tracking_mobile/core/widgets/confirm_delete_dialog.dart';
 
 enum _AdminLabelMenuAction { edit, delete }
 
@@ -383,6 +383,7 @@ class LabelPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: null,
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
         onPressed: () {

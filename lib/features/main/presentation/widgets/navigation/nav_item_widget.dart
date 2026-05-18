@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/navigation/notification_icon_with_badge.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/navigation/profile_avatar_widget.dart';
+import 'package:task_tracking_mobile/features/main/presentation/widgets/navigation/notification_icon_with_badge.dart';
+import 'package:task_tracking_mobile/features/main/presentation/widgets/navigation/profile_avatar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/nav_item.dart';
 
 class NavItemWidget extends StatelessWidget {

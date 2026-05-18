@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/utils/responsive.dart';
 import 'package:task_tracking_mobile/features/employee/data/models/nav_item.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/navigation/bottom_nav_bar_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/navigation/navigation_rail_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/main/presentation/widgets/navigation/bottom_nav_bar_widget.dart';
+import 'package:task_tracking_mobile/features/main/presentation/widgets/navigation/navigation_rail_widget.dart';
+import 'package:task_tracking_mobile/features/main/presentation/controllers/navigation_controller.dart';
 
 class ResponsiveScaffold extends StatelessWidget {
   final List<NavItem> navItems;
@@ -41,7 +41,12 @@ class ResponsiveScaffold extends StatelessWidget {
           child: Row(
             children: [
               if (!isMobile) NavigationRailWidget(items: railItems),
-              Expanded(child: navItems[index].page),
+              Expanded(
+                child: IndexedStack(
+                  index: index,
+                  children: navItems.map((e) => e.page).toList(),
+                ),
+              ),
             ],
           ),
         ),

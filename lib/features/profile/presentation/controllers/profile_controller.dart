@@ -8,7 +8,7 @@ import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/features/profile/domain/entities/employee_profile.dart';
 import 'package:task_tracking_mobile/features/profile/domain/usecases/fetch_profile_usecase.dart';
 import 'package:task_tracking_mobile/features/profile/domain/usecases/update_profile_usecase.dart';
-import 'package:task_tracking_mobile/features/core/domain/usecases/pick_and_compress_image_usecase.dart';
+import 'package:task_tracking_mobile/core/utils/pick_and_compress_image_helper.dart';
 
 class ProfileController extends GetxController {
   final FetchProfileUsecase fetchProfileUsecase;
@@ -66,7 +66,7 @@ class ProfileController extends GetxController {
 
   // ── Profile image ─────────────────────────────────────────
   Future<void> pickAndUploadProfileImage(ImageSource source) async {
-    final pickImage = Get.find<PickAndCompressImageUseCase>();
+    final pickImage = Get.find<PickAndCompressImageHelper>();
     final File? file = await pickImage(source);
     if (file == null) return;
     isUploadingImage.value = true;

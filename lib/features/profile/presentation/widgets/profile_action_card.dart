@@ -4,7 +4,7 @@ import 'package:task_tracking_mobile/core/constants/user_role.dart';
 import 'package:task_tracking_mobile/core/utils/app_snackbar.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/confirm_delete_dialog_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/confirm_delete_dialog_widget.dart';
 
 class ProfileActionCard extends StatelessWidget {
   const ProfileActionCard({super.key, required this.isDark});

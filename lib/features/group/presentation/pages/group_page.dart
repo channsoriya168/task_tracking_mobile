@@ -162,6 +162,7 @@ class GroupPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: null,
         backgroundColor: kPrimary,
         foregroundColor: Colors.white,
         onPressed: () {

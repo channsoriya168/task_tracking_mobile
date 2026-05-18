@@ -7,10 +7,10 @@ import 'package:task_tracking_mobile/features/group/presentation/controllers/gro
 import 'package:task_tracking_mobile/features/label/domain/entities/label.dart';
 import 'package:task_tracking_mobile/features/lookup/domain/entities/task_priority.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/dropdown_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/field_label_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/date_pickerField_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/dropdown_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/field_label_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/text_field_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/date_pickerField_widget.dart';
 
 class TaskBottomSheet extends StatelessWidget {
   const TaskBottomSheet({super.key});

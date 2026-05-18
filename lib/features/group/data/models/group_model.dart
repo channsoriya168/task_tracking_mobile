@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:task_tracking_mobile/features/core/data/models/json_converters.dart';
+import 'package:task_tracking_mobile/features/group/data/models/json_converters.dart';
 import 'package:task_tracking_mobile/features/group/domain/entities/group.dart';
 
 part 'group_model.g.dart';

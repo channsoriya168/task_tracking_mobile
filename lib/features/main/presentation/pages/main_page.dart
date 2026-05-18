@@ -8,8 +8,8 @@ import 'package:task_tracking_mobile/features/task/presentation/pages/admin_and_
 import 'package:task_tracking_mobile/features/task/presentation/pages/employee_task_page.dart';
 import 'package:task_tracking_mobile/core/constants/user_role.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/responsive_scaffold.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/main/presentation/widgets/responsive_scaffold.dart';
+import 'package:task_tracking_mobile/features/main/presentation/controllers/navigation_controller.dart';
 import 'package:task_tracking_mobile/features/dashboard/pages/employee_home_page.dart';
 import 'package:task_tracking_mobile/features/profile/presentation/pages/profile_page.dart';
 

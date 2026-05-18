@@ -4,11 +4,11 @@ import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/dashboard/widgets/task_line_chart_widget.dart';
 import 'package:task_tracking_mobile/features/dashboard/widgets/task_shimmer_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_card_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});

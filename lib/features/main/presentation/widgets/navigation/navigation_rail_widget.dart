@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/controllers/navigation_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/rail_item_widget.dart';
+import 'package:task_tracking_mobile/features/main/presentation/controllers/navigation_controller.dart';
+import 'package:task_tracking_mobile/features/main/presentation/widgets/rail_item_widget.dart';
 
 class NavRailItem {
   final IconData icon;

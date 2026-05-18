@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/text_field_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/text_field_widget.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/widgets/group_dialog.dart';
 

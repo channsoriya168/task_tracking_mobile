@@ -6,14 +6,14 @@ import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/label/presentation/pages/label_page.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/group/presentation/controllers/group_controller.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/task_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_filter_bar_widget.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/week_calendar_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/task_list_widget.dart';
 
 class TaskMobilePage extends StatelessWidget {
@@ -108,6 +108,7 @@ class TaskMobilePage extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: null,
         onPressed: () async {
           if (!Get.find<NetworkController>().isConnected.value) {
             ctrl.isOfflineDialogOpen.value = true;

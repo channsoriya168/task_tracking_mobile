@@ -6,7 +6,7 @@ import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/tablet_search_field_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/tablet_search_field_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/group/presentation/pages/group_page.dart';
@@ -86,6 +86,7 @@ class EmployeeTabletPage extends StatelessWidget {
       floatingActionButton: Get.find<AuthController>().role == UserRole.employee
           ? null
           : FloatingActionButton.extended(
+              heroTag: null,
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
               onPressed: () {

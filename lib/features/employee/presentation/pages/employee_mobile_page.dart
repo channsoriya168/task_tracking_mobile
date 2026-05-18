@@ -8,7 +8,7 @@ import 'package:task_tracking_mobile/core/widgets/no_internet_dialog.dart';
 import 'package:task_tracking_mobile/core/widgets/offline_card_widget.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/controllers/employee_controller.dart';
-import 'package:task_tracking_mobile/features/core/presentation/widgets/search_bar_widget.dart';
+import 'package:task_tracking_mobile/core/widgets/search_bar_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_bottom_sheet.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_filter_group_chips_widget.dart';
 import 'package:task_tracking_mobile/features/employee/presentation/widgets/employee_list_widget.dart';
@@ -86,6 +86,7 @@ class EmployeeMobilePage extends StatelessWidget {
       floatingActionButton: Get.find<AuthController>().role == UserRole.employee
           ? null
           : FloatingActionButton.extended(
+              heroTag: null,
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
               onPressed: () {
