@@ -30,7 +30,7 @@ class PushNotificationService extends GetxService {
   static const _channelName = 'Task Notifications';
   static const _channelDescription =
       'Notifications for task updates, comments, and reminders.';
-  static const _appIcon = '@drawable/ic_notification';
+  static const _appIcon = '@mipmap/ic_launcher';
 
   // ── Android Notification Channel ──────────────────────────
   static const _channel = AndroidNotificationChannel(
@@ -194,7 +194,7 @@ class PushNotificationService extends GetxService {
         importance: Importance.high,
         priority: Priority.high,
         icon: _appIcon,
-        largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+        // largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
         color: kPrimary,
       ),
       iOS: const DarwinNotificationDetails(

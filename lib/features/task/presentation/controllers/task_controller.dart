@@ -182,6 +182,13 @@ class TaskController extends GetxController {
     fetchTasks();
   }
 
+  /// Reset the calendar to today and re-fetch. Used by pull-to-refresh.
+  Future<void> resetToToday() async {
+    final now = DateTime.now();
+    taskSelectedDate.value = DateTime(now.year, now.month, now.day);
+    await fetchTasks();
+  }
+
   /// Select a status chip. Pass null to clear (show all).
   void selectStatus(TaskStatusLookup? status) {
     if (status == null) {

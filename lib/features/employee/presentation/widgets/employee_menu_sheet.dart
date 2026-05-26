@@ -270,11 +270,11 @@ class _EmployeeMenuSheet extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          if (emp.phone != null)
+                          if (emp.phoneNumber != null)
                             _InfoTile(
                               icon: Icons.phone_outlined,
                               label: 'profile_phone'.tr,
-                              value: emp.phone!,
+                              value: emp.phoneNumber!,
                               mutedColor: mutedColor,
                               textColor: textColor,
                               isDark: isDark,

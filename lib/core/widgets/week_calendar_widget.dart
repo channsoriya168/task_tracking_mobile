@@ -30,6 +30,24 @@ class _WeekCalendarState extends State<WeekCalendarWidget> {
     _weekStart = DateTime(now.year, now.month, now.day - (now.weekday - 1));
   }
 
+  @override
+  void didUpdateWidget(WeekCalendarWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newDate = widget.selectedDate;
+    if (newDate == null || newDate == oldWidget.selectedDate) return;
+    // Snap the displayed week when the new date is outside the current view.
+    final weekEnd = _weekStart.add(const Duration(days: 6));
+    if (newDate.isBefore(_weekStart) || newDate.isAfter(weekEnd)) {
+      setState(() {
+        _weekStart = DateTime(
+          newDate.year,
+          newDate.month,
+          newDate.day - (newDate.weekday - 1),
+        );
+      });
+    }
+  }
+
   List<DateTime> get _days =>
       List.generate(7, (i) => _weekStart.add(Duration(days: i)));
 

@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
+import 'package:task_tracking_mobile/core/services/shorebird_service.dart';
 import 'package:task_tracking_mobile/routes/app_routes.dart';
 import 'package:task_tracking_mobile/features/auth/presentation/controllers/auth_controller.dart';
 
@@ -13,12 +15,15 @@ class SplashController extends GetxController {
   }
 
   Future<void> _run() async {
-    // Start progress bar animation after a short delay
+    // Check for patch in parallel with the splash animation
+    final updateFuture = Get.find<ShorebirdService>().checkAndUpdate();
+
     await Future.delayed(500.ms);
     progress.value = 1.0;
-
-    // Wait for animation to finish then validate session
     await Future.delayed(2900.ms);
+
+    await updateFuture;
+
     final isValid = await Get.find<AuthController>().checkAuth();
     if (isValid) {
       Get.offAllNamed(AppRoutes.mainPage);

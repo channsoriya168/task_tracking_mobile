@@ -30,7 +30,7 @@ class EmployeeHomePage extends StatelessWidget {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            await homeCtrl.fetchTasks();
+            await homeCtrl.resetToToday();
             await homeCtrl.fetchStatuses();
           },
           child: CustomScrollView(

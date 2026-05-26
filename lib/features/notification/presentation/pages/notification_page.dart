@@ -5,7 +5,6 @@ import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/controllers/notification_controller.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/filter_pill_widget.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_empty_widget.dart';
-import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_error_state_widget.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_list_widget.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/mark_all_read_dialog.dart';
 import 'package:task_tracking_mobile/features/notification/presentation/widgets/notification_skeletion_widget.dart';
@@ -94,13 +93,6 @@ class NotificationPage extends StatelessWidget {
 
               if (controller.isLoading.value && all.isEmpty) {
                 return NotificationSkeletonWidget(isDark: isDark);
-              }
-
-              if (controller.errorMessage.isNotEmpty && all.isEmpty) {
-                return NotificationErrorStateWidget(
-                  message: controller.errorMessage.value,
-                  onRetry: controller.fetchNotifications,
-                );
               }
 
               if (displayed.isEmpty) {

@@ -149,6 +149,13 @@ class EmployeeHomeController extends GetxController {
     fetchTasks();
   }
 
+  /// Reset the calendar to today and re-fetch. Used by pull-to-refresh.
+  Future<void> resetToToday() async {
+    final now = DateTime.now();
+    selectedDate.value = DateTime(now.year, now.month, now.day);
+    await fetchTasks();
+  }
+
   void selectStatus(TaskStatusLookup? status) {
     if (status == null) {
       filterStatus.value = 'All';

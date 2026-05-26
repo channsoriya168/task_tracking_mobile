@@ -20,7 +20,7 @@ class Employee {
   final String id;
   final String fullName;
   final String email;
-  final String? phone;
+  final String? phoneNumber;
   final bool isActive;
   final String? role;
   final String? profileImageUrl;
@@ -35,7 +35,7 @@ class Employee {
     required this.id,
     required this.fullName,
     required this.email,
-    this.phone,
+    this.phoneNumber,
     required this.isActive,
     this.role,
     this.profileImageUrl,

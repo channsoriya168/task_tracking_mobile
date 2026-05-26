@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/controllers/language_controller.dart';
+import 'package:task_tracking_mobile/core/services/shorebird_service.dart';
 import 'package:task_tracking_mobile/core/controllers/network_controller.dart';
 import 'package:task_tracking_mobile/core/network/network_info_impl.dart';
 import 'package:task_tracking_mobile/routes/app_pages.dart';
@@ -35,6 +36,7 @@ void main() async {
   // Read persisted locale before the first frame to avoid a flash.
   final savedIsKhmer = await LanguageController.readSavedIsKhmer();
 
+  Get.put<ShorebirdService>(ShorebirdService(), permanent: true);
   Get.put<ThemeController>(ThemeController(), permanent: true);
   Get.put<LanguageController>(
     LanguageController(initialIsKhmer: savedIsKhmer),

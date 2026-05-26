@@ -147,7 +147,9 @@ class EmployeeController extends GetxController {
     isEditMode.value = true;
     nameCtrl.text = emp.fullName;
     emailCtrl.text = emp.email;
-    phoneCtrl.text = emp.phone != null ? _toLocalDigits(emp.phone!) : '';
+    phoneCtrl.text = emp.phoneNumber != null
+        ? _toLocalDigits(emp.phoneNumber!)
+        : '';
     placeCtrl.text = emp.placeOfBirth ?? '';
     formDob.value = emp.dateOfBirth;
     selectedGenderId.value = emp.genderId;

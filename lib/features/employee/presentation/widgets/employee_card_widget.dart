@@ -62,7 +62,8 @@ class EmployeeCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     const accent = kPrimary;
     final protected = _isProtected;
-    final hasPhone = employee.phone != null && employee.phone!.isNotEmpty;
+    final hasPhone =
+        employee.phoneNumber != null && employee.phoneNumber!.isNotEmpty;
     final hasGroups = employee.groups.isNotEmpty || taskGroup != null;
 
     return GestureDetector(
@@ -222,7 +223,7 @@ class EmployeeCardWidget extends StatelessWidget {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            employee.phone!,
+                            employee.phoneNumber!,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
