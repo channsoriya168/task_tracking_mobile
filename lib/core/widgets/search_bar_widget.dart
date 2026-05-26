@@ -23,7 +23,6 @@ class SearchBarWidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsetsGeometry.symmetric(horizontal: 12, vertical: 8),
       child: Container(
-        height: 44,
         decoration: BoxDecoration(
           color: isDark ? kCardDark : Colors.white,
           borderRadius: BorderRadius.circular(12),
