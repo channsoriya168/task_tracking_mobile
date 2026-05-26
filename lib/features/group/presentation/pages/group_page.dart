@@ -156,6 +156,9 @@ class GroupPage extends StatelessWidget {
                     );
                   }),
                 ),
+                SizedBox(
+                  height: isTablet ? 80 : 60,
+                )
               ],
             );
           },

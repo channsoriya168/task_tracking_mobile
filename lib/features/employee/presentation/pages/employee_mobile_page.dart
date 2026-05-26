@@ -81,6 +81,9 @@ class EmployeeMobilePage extends StatelessWidget {
           Expanded(
             child: EmployeeListWidget(isDark: isDark, ctrl: ctrl),
           ),
+          SizedBox(
+            height: 60,
+          )
         ],
       ),
       floatingActionButton: Get.find<AuthController>().role == UserRole.employee

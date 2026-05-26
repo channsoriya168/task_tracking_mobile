@@ -21,7 +21,7 @@ class StickyToolbarDelegateWidget extends SliverPersistentHeaderDelegate {
   // FilterBar: 52
   // SearchBar: padding-top 16 + 44  =  60
   // Total = 260
-  static const double _height = 250;
+  static const double _height = 270;
 
   @override
   double get minExtent => _height;

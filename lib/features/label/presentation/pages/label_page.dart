@@ -377,6 +377,9 @@ class LabelPage extends StatelessWidget {
                     );
                   }),
                 ),
+                SizedBox(
+                  height: isTabletLayout ? 80 : 60,
+                )
               ],
             );
           },

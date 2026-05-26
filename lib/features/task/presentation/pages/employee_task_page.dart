@@ -46,7 +46,7 @@ class EmployeeTaskPage extends StatelessWidget {
                 elevation: 0,
                 //Week calendar and Status filter bar
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(132),
+                  preferredSize: const Size.fromHeight(140),
                   child: Column(
                     children: [
                       // ── Week calendar ──────────────────────────────────
