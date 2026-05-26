@@ -113,7 +113,7 @@ class TaskDetailBodyWidget extends StatelessWidget {
           label: 'label'.tr,
           child: Text(
             task.labelName!,
-            style: AppTextStyles.formLabel(
+            style: AppTextStyles.subTitle(
               color: textColor,
             ).copyWith(fontWeight: FontWeight.w500),
             maxLines: 4,

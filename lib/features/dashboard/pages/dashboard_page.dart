@@ -56,7 +56,7 @@ class DashboardPage extends StatelessWidget {
                   preferredSize: Size.fromHeight(
                     offline && !adminTaskCtrl.isOfflineDialogOpen.value
                         ? 168
-                        : 95,
+                        : 100,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

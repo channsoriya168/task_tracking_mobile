@@ -39,7 +39,7 @@ abstract class AppTextStyles {
 
   // ── Shared styles ───────────────────────────────────────────────────────
   static TextStyle chipLabel({required bool selected, Color? color}) => _font(
-    fontSize: _sp(16),
+    fontSize: _sp(19),
     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
     color: color,
   );
@@ -48,17 +48,17 @@ abstract class AppTextStyles {
       _font(fontSize: _sp(25), fontWeight: FontWeight.bold, color: color);
 
   static TextStyle title({Color? color}) =>
-      _font(fontSize: _sp(18), letterSpacing: -0.5, color: color);
+      _font(fontSize: _sp(22), letterSpacing: -0.5, color: color);
 
   static TextStyle subTitle({Color? color}) => _font(
-    fontSize: _sp(16),
+    fontSize: _sp(19),
     fontWeight: FontWeight.bold,
     letterSpacing: -0.5,
     color: color,
   );
 
   static TextStyle buttonLabel({Color? color}) => _font(
-    fontSize: _sp(18),
+    fontSize: _sp(19),
     fontWeight: FontWeight.bold,
     letterSpacing: -0.5,
     color: color,
@@ -71,11 +71,11 @@ abstract class AppTextStyles {
     height: 1.2,
   );
   static TextStyle loginSubtitle({Color? color}) =>
-      _font(fontSize: _sp(18), color: color);
+      _font(fontSize: _sp(22), color: color);
   static TextStyle formLabel({Color? color}) =>
-      _font(fontSize: _sp(15), fontWeight: FontWeight.w600, color: color);
+      _font(fontSize: _sp(18), fontWeight: FontWeight.w600, color: color);
   static TextStyle inputText({Color? color}) =>
-      _font(fontSize: _sp(15), color: color);
+      _font(fontSize: _sp(18), color: color);
   static TextStyle errorText({Color? color}) =>
-      _font(fontSize: _sp(15), fontWeight: FontWeight.w500, color: color);
+      _font(fontSize: _sp(18), fontWeight: FontWeight.w500, color: color);
 }

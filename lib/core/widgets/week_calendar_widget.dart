@@ -154,11 +154,7 @@ class _WeekCalendarState extends State<WeekCalendarWidget> {
                     alignment: Alignment.center,
                     child: Text(
                       '${day.day}',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: isSelected || isToday
-                            ? FontWeight.w700
-                            : FontWeight.w400,
+                      style: AppTextStyles.subTitle(
                         color: isSelected
                             ? Colors.white
                             : isToday

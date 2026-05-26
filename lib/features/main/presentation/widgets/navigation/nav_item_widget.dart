@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/main/presentation/widgets/navigation/notification_icon_with_badge.dart';
 import 'package:task_tracking_mobile/features/main/presentation/widgets/navigation/profile_avatar_widget.dart';
@@ -63,13 +64,7 @@ class NavItemWidget extends StatelessWidget {
               vertical: 8,
             ),
             decoration: BoxDecoration(
-              gradient: isSelected
-                  ? const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF7C6FFF), Color(0xFF6C63FF)],
-                    )
-                  : null,
+              color: isSelected ? kPrimary : Colors.transparent,
               borderRadius: BorderRadius.circular(22),
               boxShadow: isSelected
                   ? [
@@ -109,6 +104,7 @@ class NavItemWidget extends StatelessWidget {
               item.label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.buttonLabel(),
             ),
           ),
         ],
