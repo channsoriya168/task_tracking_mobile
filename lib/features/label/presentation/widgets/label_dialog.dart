@@ -21,7 +21,8 @@ Future<void> showLabelDialog(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => Padding(
+    builder: (context) => AnimatedPadding(
+      duration: const Duration(milliseconds: 200),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),

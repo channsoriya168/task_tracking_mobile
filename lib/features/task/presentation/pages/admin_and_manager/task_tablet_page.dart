@@ -147,7 +147,7 @@ class TaskTabletPage extends StatelessWidget {
             return;
           }
           final groupCtrl = Get.find<GroupController>();
-          final futures = <Future<void>>[ctrl.refreshFormData()];
+          final futures = <Future<void>>[ctrl.refreshFormData(), ctrl.fetchLabels()];
           if (groupCtrl.groups.isEmpty) futures.add(groupCtrl.fetchGroups());
           await Future.wait(futures);
           final groups = groupCtrl.groups.toList();

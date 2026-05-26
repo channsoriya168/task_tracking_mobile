@@ -29,7 +29,7 @@ Future<void> showGroupDialog(
   BuildContext context,
   GroupController ctrl,
   bool isDark, [
-  Group? existing,
+  Group? existing,                                         
   RxBool? dialogOpenFlag,
 ]) async {
   ctrl.initGroupForm(existing);
@@ -38,7 +38,8 @@ Future<void> showGroupDialog(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => Padding(
+    builder: (context) => AnimatedPadding(
+      duration: const Duration(milliseconds: 200),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
