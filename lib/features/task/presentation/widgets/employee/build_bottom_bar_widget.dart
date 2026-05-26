@@ -36,7 +36,6 @@ class BuildBottomBarWidget extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(12, 12, 12, 12 + bottomPad),
       decoration: BoxDecoration(
         color: isDark ? kBgDark : kBgLight,
-        border: Border(top: BorderSide(color: divColor)),
       ),
       child: Obx(() {
         final activeId = ctrl.transitionLoadingId.value;

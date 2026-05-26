@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_tracking_mobile/core/constants/app_text_styles.dart';
-import 'package:task_tracking_mobile/core/utils/format_date.dart';
 import 'package:task_tracking_mobile/core/constants/constants.dart';
 import 'package:task_tracking_mobile/features/task/domain/entities/task_item.dart';
 import 'package:task_tracking_mobile/features/task/presentation/controllers/employee_task_controller.dart';
@@ -13,7 +12,6 @@ import 'package:task_tracking_mobile/features/task/presentation/widgets/employee
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/info_card_widget.dart';
 import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/tab_section_widget.dart';
 
-import 'package:task_tracking_mobile/features/task/presentation/widgets/employee/task_sheet_widgets.dart';
 
 class EmployeeTaskDetailPage extends StatelessWidget {
   const EmployeeTaskDetailPage({
